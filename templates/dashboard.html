@@ -39,26 +39,29 @@ z-index:-1;
 .container{
 max-width:1200px;
 margin:auto;
-padding:20px;
+padding:90px 20px 20px;
 }
 
 /* TOPBAR */
 
 .topbar{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+
 display:flex;
 justify-content:space-between;
 align-items:center;
 
 padding:15px 20px;
 
-border:1px solid rgba(33,150,243,.3);
-
 background:rgba(0,0,0,.25);
 backdrop-filter:blur(15px);
 
-border-radius:18px;
+border-bottom:1px solid rgba(33,150,243,.3);
 
-margin-bottom:25px;
+z-index:9999;
 }
 
 .logo{
@@ -200,6 +203,158 @@ padding:12px;
 
 }
 
+.menu-btn{
+background:none;
+border:none;
+color:#fff;
+font-size:28px;
+cursor:pointer;
+}
+
+.sidebar{
+position:fixed;
+top:0;
+right:-320px;
+
+width:300px;
+height:100vh;
+
+background:#071120;
+
+padding:20px;
+
+display:flex;
+flex-direction:column;
+
+transition:.35s;
+
+z-index:10000;
+}
+
+.sidebar.active{
+right:0;
+}
+
+.sidebar-header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:25px;
+}
+
+.close-btn{
+background:none;
+border:none;
+color:white;
+font-size:24px;
+cursor:pointer;
+}
+
+.sidebar a{
+color:white;
+text-decoration:none;
+
+padding:14px;
+margin-bottom:8px;
+
+border-radius:12px;
+
+transition:.3s;
+}
+
+.sidebar a:hover{
+background:rgba(33,150,243,.15);
+color:#2196f3;
+}
+
+.sidebar-footer{
+margin-top:auto;
+text-align:center;
+opacity:.7;
+font-size:13px;
+}
+
+.overlay{
+position:fixed;
+inset:0;
+
+background:rgba(0,0,0,.5);
+
+opacity:0;
+visibility:hidden;
+
+transition:.3s;
+
+z-index:9998;
+}
+
+.overlay.active{
+opacity:1;
+visibility:visible;
+}
+
+.dashboard-footer{
+margin-top:40px;
+text-align:center;
+opacity:.8;
+padding:20px;
+}
+
+.user-menu{
+position:relative;
+}
+
+.account-btn{
+width:45px;
+height:45px;
+border:none;
+border-radius:50%;
+background:#2196f3;
+color:white;
+font-size:20px;
+cursor:pointer;
+}
+
+.account-dropdown{
+display:none;
+
+position:absolute;
+right:0;
+top:55px;
+
+width:220px;
+
+padding:15px;
+
+background:#071120;
+
+border:1px solid #2196f3;
+border-radius:15px;
+
+box-shadow:0 0 20px rgba(33,150,243,.3);
+}
+
+.account-dropdown.show{
+display:block;
+}
+
+.saldo-box{
+margin:10px 0;
+padding:10px;
+border-radius:10px;
+background:rgba(33,150,243,.15);
+}
+
+.logout-btn{
+width:100%;
+padding:10px;
+border:none;
+border-radius:10px;
+background:#ef4444;
+color:white;
+cursor:pointer;
+}
+
 </style>
 </head>
 <body>
@@ -210,19 +365,84 @@ padding:12px;
 
 <div class="topbar">
 
+<div class="sidebar" id="sidebar">
+
+    <div class="sidebar-header">
+        <h2>MENU</h2>
+
+        <button class="close-btn"
+        onclick="closeMenu()">
+            ✕
+        </button>
+    </div>
+
+    <a href="/dashboard" onclick="closeMenu()">🏠 Dashboard</a>
+
+    <a href="#" onclick="closeMenu()">🔗 Kelola Tautan</a>
+
+    <a href="#" onclick="closeMenu()">➕ Sell Link New</a>
+
+    <a href="#" onclick="closeMenu()">💰 Payments</a>
+
+    <a href="#" onclick="closeMenu()">👥 Referrals</a>
+
+    <a href="#" onclick="closeMenu()">📄 Invoices</a>
+
+    <a href="#" onclick="closeMenu()">⚙️ Pengaturan</a>
+
+    <a href="#" onclick="closeMenu()">🛟 Dukungan</a>
+
+    <div class="sidebar-footer">
+        © <span id="year"></span><br>
+        EarnShortlink Best CPM
+    </div>
+
+</div>
+
+<div
+class="overlay"
+id="overlay"
+onclick="closeMenu()">
+</div>
+
+<div class="menu-btn" onclick="openMenu()">
+☰
+</div>
+
 <div class="logo">
 EARN<span>SHORTLINK</span>
 </div>
 
-<button class="logout">
-Logout
-</button>
+<div class="user-menu">
+
+    <button class="account-btn" onclick="toggleUserMenu()">
+        👤
+    </button>
+
+    <div class="account-dropdown" id="accountDropdown">
+
+        <h4>Username</h4>
+        <p>{{ username }}</p>
+
+        <div class="saldo-box">
+            Saldo: <b>Rp {{ saldo }}</b>
+        </div>
+
+        <button
+            class="logout-btn"
+            onclick="window.location.href='/'">
+            Logout
+        </button>
+
+    </div>
+
+</div>
 
 </div>
 
 <div class="welcome">
 
-<h2>Halo, User 👋</h2>
+<h2>Halo, {{ username }} 👋</h2>
 
 <p>
 Selamat datang kembali di EarnShortlink.
@@ -235,7 +455,7 @@ Mulai kerjakan shortlink dan kumpulkan saldo hari ini.
 
 <div class="stat-card">
 <h3>Saldo</h3>
-<h1>Rp0</h1>
+<h1>Rp {{ saldo }}</h1>
 </div>
 
 <div class="stat-card">
@@ -288,8 +508,46 @@ Mulai kerjakan shortlink dan kumpulkan saldo hari ini.
 </div>
 
 </div>
-
+<footer class="dashboard-footer">
+© <span id="footerYear"></span>
+EarnShortlink Best CPM
+</footer>
 </div>
+<script>
 
+function openMenu(){
+document
+.getElementById("sidebar")
+.classList.add("active");
+
+document
+.getElementById("overlay")
+.classList.add("active");
+}
+
+function closeMenu(){
+document
+.getElementById("sidebar")
+.classList.remove("active");
+
+document
+.getElementById("overlay")
+.classList.remove("active");
+}
+
+const year = new Date().getFullYear();
+
+document.getElementById("year").innerText = year;
+
+document.getElementById("footerYear").innerText = year;
+
+function toggleUserMenu(){
+
+document
+.getElementById("accountDropdown")
+.classList.toggle("show");
+
+}
+</script>
 </body>
 </html>
