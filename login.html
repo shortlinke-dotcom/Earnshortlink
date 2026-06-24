@@ -131,38 +131,93 @@ color:#2196f3;
 text-decoration:none;
 font-weight:700;
 }
-/* TABLET */
-@media(max-width:768px){
+/* DESKTOP */
+@media (min-width:769px){
+
 .login-card{
-padding:25px;
+    max-width:600px;
+    padding:45px;
 }
+
 .login-header h1{
-font-size:36px;
+    font-size:52px;
 }
-}
-/* MOBILE */
-@media(max-width:480px){
-.login-section{
-padding:15px;
-}
-.login-card{
-padding:20px;
-border-radius:20px;
-}
-.login-header h1{
-font-size:30px;
-}
+
 .login-header p{
-font-size:13px;
+    font-size:16px;
 }
+
 .form-group input{
-padding:13px;
-font-size:14px;
+    padding:18px;
+    font-size:16px;
 }
+
 .login-btn{
-padding:14px;
-font-size:15px;
+    padding:18px;
+    font-size:17px;
 }
+
+}
+
+/* ANDROID */
+@media (max-width:768px){
+
+.login-section{
+    padding:12px;
+    align-items:flex-start;
+    padding-top:80px;
+}
+
+.login-card{
+    width:100%;
+    max-width:none;
+    padding:20px;
+    border-radius:20px;
+}
+
+.login-header h1{
+    font-size:30px;
+    line-height:1.1;
+}
+
+.login-header p{
+    font-size:13px;
+}
+
+.form-group{
+    margin-bottom:14px;
+}
+
+.form-group input{
+    padding:13px;
+    font-size:14px;
+}
+
+.login-btn{
+    padding:14px;
+    font-size:15px;
+}
+
+.remember-box{
+    font-size:13px;
+}
+
+.register-link{
+    font-size:13px;
+}
+
+}
+
+@media (max-width:768px){
+
+body{
+    padding:0;
+}
+
+.login-section{
+    min-height:auto;
+}
+
 }
 </style>
 </head>
