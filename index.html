@@ -287,6 +287,80 @@ footer{
 }
 
 }
+
+.payment-section{
+    margin-top:60px;
+    padding:30px;
+    border:1px solid #00aaff;
+    border-radius:25px;
+    background:rgba(0,0,0,.25);
+    backdrop-filter:blur(10px);
+    overflow:hidden;
+
+    box-shadow:
+    0 0 20px rgba(0,170,255,.4),
+    inset 0 0 15px rgba(0,170,255,.2);
+}
+
+.payment-section h2{
+    text-align:center;
+    margin-bottom:25px;
+    color:#00aaff;
+}
+
+.marquee{
+    overflow:hidden;
+    white-space:nowrap;
+    margin:15px 0;
+}
+
+.marquee-content{
+    display:inline-flex;
+    align-items:center;
+    gap:50px;
+    animation:scrollLeft 25s linear infinite;
+}
+
+.reverse .marquee-content{
+    animation:scrollRight 25s linear infinite;
+}
+
+.marquee img{
+    height:42px;
+    width:auto;
+    object-fit:contain;
+    filter:drop-shadow(0 0 10px rgba(255,255,255,.3));
+}
+
+@keyframes scrollLeft{
+    from{
+        transform:translateX(0);
+    }
+    to{
+        transform:translateX(-50%);
+    }
+}
+
+@keyframes scrollRight{
+    from{
+        transform:translateX(-50%);
+    }
+    to{
+        transform:translateX(0);
+    }
+}
+
+@media(max-width:768px){
+
+.marquee-content{
+    gap:30px;
+}
+
+.marquee img{
+    height:28px;
+}
+
+}
 </style>
 </head>
 <body>
@@ -350,17 +424,60 @@ penghasilan tambahan dengan real CPM terbaik dan fast stabilitas.
 </div>
 </div>
 
-<div class="section-title">
-<h3>MENERIMA PEMBAYARAN VIA</h3>
+<div class="payment-section">
+
+<h2>MENERIMA PEMBAYARAN VIA</h2>
+
+<div class="marquee">
+    <div class="marquee-content">
+
+        <img src="assets/payment/bca.png">
+        <img src="assets/payment/mandiri.png">
+        <img src="assets/payment/bri.png">
+        <img src="assets/payment/bni.png">
+        <img src="assets/payment/cimb.png">
+        <img src="assets/payment/danamon.png">
+        <img src="assets/payment/permata.png">
+        <img src="assets/payment/bsi.png">
+
+        <!-- duplikat agar loop mulus -->
+        <img src="assets/payment/bca.png">
+        <img src="assets/payment/mandiri.png">
+        <img src="assets/payment/bri.png">
+        <img src="assets/payment/bni.png">
+        <img src="assets/payment/cimb.png">
+        <img src="assets/payment/danamon.png">
+        <img src="assets/payment/permata.png">
+        <img src="assets/payment/bsi.png">
+
+    </div>
 </div>
 
-<div class="payments">
-<img src="https://upload.wikimedia.org/wikipedia/commons/5/5c/BCA_logo.svg">
-<img src="https://upload.wikimedia.org/wikipedia/commons/a/ad/Bank_Mandiri_logo_2016.svg">
-<img src="https://upload.wikimedia.org/wikipedia/commons/2/2e/Logo_BRI.png">
-<img src="https://upload.wikimedia.org/wikipedia/commons/7/72/Dana_logo.svg">
-<img src="https://upload.wikimedia.org/wikipedia/commons/e/eb/Logo_ovo_purple.svg">
-<img src="https://upload.wikimedia.org/wikipedia/commons/8/86/PayPal_logo.svg">
+<div class="marquee reverse">
+    <div class="marquee-content">
+
+        <img src="assets/payment/dana.png">
+        <img src="assets/payment/ovo.png">
+        <img src="assets/payment/gopay.png">
+        <img src="assets/payment/shopeepay.png">
+        <img src="assets/payment/linkaja.png">
+        <img src="assets/payment/paypal.png">
+        <img src="assets/payment/payeer.png">
+        <img src="assets/payment/bitcoin.png">
+
+        <!-- duplikat -->
+        <img src="assets/payment/dana.png">
+        <img src="assets/payment/ovo.png">
+        <img src="assets/payment/gopay.png">
+        <img src="assets/payment/shopeepay.png">
+        <img src="assets/payment/linkaja.png">
+        <img src="assets/payment/paypal.png">
+        <img src="assets/payment/payeer.png">
+        <img src="assets/payment/bitcoin.png">
+
+    </div>
+</div>
+
 </div>
 
 <div class="info-grid">
