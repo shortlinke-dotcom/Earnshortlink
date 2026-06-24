@@ -606,35 +606,17 @@ EarnShortlink Best CPM
 <script>
 
 function openMenu(){
-document
-.getElementById("sidebar")
-.classList.add("active");
-
-document
-.getElementById("overlay")
-.classList.add("active");
+    document.getElementById("sidebar").classList.add("active");
+    document.getElementById("overlay").classList.add("active");
 }
 
 function closeMenu(){
-document
-.getElementById("sidebar")
-.classList.remove("active");
-
-document
-.getElementById("overlay")
-.classList.remove("active");
+    document.getElementById("sidebar").classList.remove("active");
+    document.getElementById("overlay").classList.remove("active");
 }
 
-const year = new Date().getFullYear();
-
-document.getElementById("year").innerText = year;
-
-document.getElementById("footerYear").innerText = year;
-
 function toggleUserMenu(){
-    document
-    .getElementById("accountDropdown")
-    .classList.toggle("show");
+    document.getElementById("accountDropdown").classList.toggle("show");
 }
 
 document.addEventListener("click", function(e){
@@ -653,7 +635,6 @@ document.addEventListener("click", function(e){
 
 });
 
-<script>
 function setActiveMenu(){
     const links = document.querySelectorAll(".sidebar a");
     const currentPath = window.location.pathname;
@@ -663,14 +644,19 @@ function setActiveMenu(){
 
         if(linkPath === currentPath){
             link.classList.add("active");
-        } else {
-            link.classList.remove("active");
         }
     });
 }
 
-setActiveMenu();
-</script>
+/* INIT (WAJIB DI BAWAH) */
+window.addEventListener("load", () => {
+    setActiveMenu();
+
+    const year = new Date().getFullYear();
+    document.getElementById("year").innerText = year;
+    document.getElementById("footerYear").innerText = year;
+});
+
 </script>
 </body>
 </html>
