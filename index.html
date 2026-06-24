@@ -1,256 +1,238 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EarnShortlink</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <title>EarnShortlink - Best CPM</title>
 
-<style>
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
-}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
 
-body {
-    background: radial-gradient(circle at top, #0a0f2c, #02050f);
-    color: white;
-    overflow-x: hidden;
-}
-
-/* NAVBAR */
-.navbar {
-    display: flex;
-    justify-content: space-between;
-    padding: 20px 40px;
-    align-items: center;
-}
-
-.logo {
-    font-size: 22px;
-    font-weight: 700;
-    color: #00d9ff;
-}
-
-.nav-btns button {
-    margin-left: 10px;
-    padding: 10px 20px;
-    border-radius: 30px;
-    border: none;
-    cursor: pointer;
-    font-weight: 600;
-}
-
-.login {
-    background: transparent;
-    border: 1px solid #00d9ff;
-    color: #00d9ff;
-}
-
-.register {
-    background: linear-gradient(45deg,#00d9ff,#0066ff);
-    color: white;
-}
-
-/* HERO */
-.hero {
-    text-align: center;
-    padding: 80px 20px;
-}
-
-.hero h1 {
-    font-size: 50px;
-    font-weight: 800;
-    background: linear-gradient(90deg,#ffffff,#00d9ff);
-    -webkit-background-clip: text;
-    color: transparent;
-}
-
-.hero p {
-    margin-top: 10px;
-    color: #aaa;
-}
-
-/* CARD GLOW */
-.card {
-    background: rgba(255,255,255,0.05);
-    border-radius: 20px;
-    padding: 25px;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255,255,255,0.1);
-    transition: 0.3s;
-}
-
-.card:hover {
-    transform: translateY(-8px) scale(1.02);
-    box-shadow: 0 0 30px #00d9ff55;
-}
-
-/* FEATURES */
-.features {
-    display: grid;
-    grid-template-columns: repeat(auto-fit,minmax(200px,1fr));
-    gap: 20px;
-    padding: 40px;
-}
-
-.card h3 {
-    margin-bottom: 10px;
-    color: #00d9ff;
-}
-
-/* PAYMENT */
-.payment {
-    padding: 40px;
-    text-align: center;
-}
-
-.payment img {
-    max-width: 100%;
-    opacity: 0.8;
-}
-
-/* FOOTER */
-.footer {
-    text-align: center;
-    padding: 30px;
-    color: #777;
-}
-
-/* LOGIN MODAL */
-.modal {
-    position: fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    background: rgba(0,0,0,0.7);
-    display:none;
-    justify-content:center;
-    align-items:center;
-}
-
-.modal-box {
-    background:#0b112c;
-    padding:30px;
-    border-radius:15px;
-    width:300px;
-    text-align:center;
-}
-
-.modal-box input {
-    width:100%;
-    padding:10px;
-    margin:10px 0;
-    border:none;
-    border-radius:8px;
-}
-
-.modal-box button {
-    width:100%;
-    padding:10px;
-    border:none;
-    border-radius:8px;
-    background:#00d9ff;
-    color:black;
-    font-weight:600;
-}
-
-/* PARALLAX EFFECT */
-.hero {
-    transform-style: preserve-3d;
-}
-
-</style>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<!-- NAVBAR -->
-<div class="navbar">
-    <div class="logo">EarnShortlink</div>
-    <div class="nav-btns">
-        <button class="login" onclick="openModal()">Masuk</button>
-        <button class="register">Daftar</button>
-    </div>
-</div>
+    <!-- Background Effect -->
+    <div class="bg-glow"></div>
 
-<!-- HERO -->
-<div class="hero" id="hero">
-    <h1>EARNSHORTLINK</h1>
-    <p>Website penghasilan saldo terbaik 2026</p>
-</div>
+    <!-- Navbar -->
+    <header class="navbar">
 
-<!-- FEATURES -->
-<div class="features">
-    <div class="card">
-        <h3>⚡ Fast Respon</h3>
-        <p>Pembayaran cepat tanpa delay</p>
-    </div>
+        <div class="logo">
+            🔗 EarnShortlink
+        </div>
 
-    <div class="card">
-        <h3>💰 Real Membayar</h3>
-        <p>Sudah terbukti legit</p>
-    </div>
+        <nav>
+            <a href="#">Home</a>
+            <a href="#">Features</a>
+            <a href="#">Payment</a>
+            <a href="#">Contact</a>
+        </nav>
 
-    <div class="card">
-        <h3>🔒 Aman</h3>
-        <p>Data aman & terenkripsi</p>
-    </div>
+        <div class="auth-btn">
+            <a href="#" class="login-btn">Masuk</a>
+            <a href="#" class="register-btn">Register</a>
+        </div>
 
-    <div class="card">
-        <h3>📈 CPM Tinggi</h3>
-        <p>Penghasilan maksimal</p>
-    </div>
-</div>
+    </header>
 
-<!-- PAYMENT -->
-<div class="payment">
-    <h2>Menerima Pembayaran</h2>
-    <p>DANA • OVO • GOPAY • BANK • PAYPAL</p>
-</div>
+    <!-- Hero -->
+    <section class="hero">
 
-<!-- FOOTER -->
-<div class="footer">
-    © 2026 EarnShortlink
-</div>
+        <div class="hero-logo">
+            🔗
+        </div>
 
-<!-- MODAL LOGIN -->
-<div class="modal" id="modal">
-    <div class="modal-box">
-        <h2>Login</h2>
-        <input type="text" placeholder="Username">
-        <input type="password" placeholder="Password">
-        <button>Masuk</button>
-    </div>
-</div>
+        <h1>
+            EARN<span>SHORTLINK</span>
+        </h1>
 
-<script>
-// LOGIN MODAL
-function openModal(){
-    document.getElementById("modal").style.display = "flex";
-}
+        <p class="subtitle">
+            Website penghasilan saldo terbaik tahun 2026
+        </p>
 
-window.onclick = function(e){
-    let modal = document.getElementById("modal");
-    if(e.target == modal){
-        modal.style.display = "none";
-    }
-}
+        <div class="notice-box">
 
-// PARALLAX EFFECT
-document.addEventListener("mousemove", (e)=>{
-    let x = (window.innerWidth / 2 - e.pageX) / 30;
-    let y = (window.innerHeight / 2 - e.pageY) / 30;
+            <div class="notice-icon">
+                🔔
+            </div>
 
-    document.getElementById("hero").style.transform =
-        `rotateY(${x}deg) rotateX(${y}deg)`;
-});
+            <div class="notice-content">
 
-</script>
+                <span>NOTIFIKASI</span>
+
+                <h3>Earnshortlink</h3>
+
+                <p>
+                    Adalah website penghasilan saldo dana dan website
+                    penghasilan tambahan dengan real CPM terbaik dan
+                    fast stabilitas.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- Feature Section -->
+
+    <section class="feature-section">
+
+        <div class="section-header">
+
+            <span>SISTEM PEMBAYARAN</span>
+
+            <h2>
+                YANG FAST RESPON DAN REAL MEMBAYAR
+            </h2>
+
+            <p>
+                Kami berkomitmen memberikan pengalaman terbaik dan pembayaran
+                yang cepat, aman dan terpercaya.
+            </p>
+
+        </div>
+
+        <div class="feature-grid">
+
+            <div class="feature-card">
+                <div class="icon">⚡</div>
+                <h3>FAST RESPON</h3>
+                <p>Proses pembayaran cepat dan tidak membutuhkan waktu lama.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="icon">🛡</div>
+                <h3>REAL MEMBAYAR</h3>
+                <p>Terbukti membayar ke semua pengguna tanpa alasan.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="icon">💳</div>
+                <h3>MINIMAL PENARIKAN</h3>
+                <p>Minimal penarikan rendah dan cocok untuk semua pengguna.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="icon">🕐</div>
+                <h3>24 JAM</h3>
+                <p>Pembayaran diproses setiap hari tanpa hari libur.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="icon">🔒</div>
+                <h3>AMAN</h3>
+                <p>Keamanan data dan transaksi pengguna 100% terjamin.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="icon">📈</div>
+                <h3>REAL CPM</h3>
+                <p>Dapatkan penghasilan maksimal dengan real CPM terbaik.</p>
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- Payment -->
+
+    <section class="payment-section">
+
+        <h2>MENERIMA PEMBAYARAN VIA</h2>
+
+        <div class="payment-slider">
+
+            <div class="slider-track">
+
+                <div>BCA</div>
+                <div>MANDIRI</div>
+                <div>BRI</div>
+                <div>BNI</div>
+                <div>CIMB</div>
+                <div>DANA</div>
+                <div>OVO</div>
+                <div>GOPAY</div>
+                <div>SHOPEEPAY</div>
+                <div>PAYPAL</div>
+                <div>PAYEER</div>
+
+                <!-- duplicate -->
+                <div>BCA</div>
+                <div>MANDIRI</div>
+                <div>BRI</div>
+                <div>BNI</div>
+                <div>CIMB</div>
+                <div>DANA</div>
+                <div>OVO</div>
+                <div>GOPAY</div>
+                <div>SHOPEEPAY</div>
+                <div>PAYPAL</div>
+                <div>PAYEER</div>
+
+            </div>
+
+        </div>
+
+        <p class="payment-info">
+            Semua bank, e-wallet dan Paypal tersedia
+        </p>
+
+    </section>
+
+    <!-- Bottom Card -->
+
+    <section class="security-section">
+
+        <div class="security-card purple">
+
+            <h3>PRIVASI</h3>
+
+            <p>
+                Kami sangat menghargai privasi pengguna.
+                Semua data akan dijaga kerahasiaannya.
+            </p>
+
+        </div>
+
+        <div class="security-card green">
+
+            <h3>KEAMANAN</h3>
+
+            <p>
+                Sistem keamanan berlapis melindungi akun dan transaksi.
+            </p>
+
+        </div>
+
+        <div class="security-card blue">
+
+            <h3>TERPERCAYA</h3>
+
+            <p>
+                Ribuan pengguna mempercayai Earnshortlink sebagai
+                sumber penghasilan tambahan.
+            </p>
+
+        </div>
+
+    </section>
+
+    <footer>
+
+        <p>© 2026 Copyright by Earnshortlink</p>
+
+        <span>Best CPM Terbaik</span>
+
+    </footer>
+
+    <script src="script.js"></script>
 
 </body>
+
 </html>
