@@ -218,22 +218,29 @@ opacity:.8;
 @media (max-width:768px){
 
 .topbar{
+    position:fixed;
     top:15px;
-    right:15px;
-    left:auto;
-    transform:none;
-    gap:8px;
-    padding:8px;
+    left:50%;
+    transform:translateX(-50%);
+
+    display:flex;
+    flex-direction:row;
+    flex-wrap:nowrap; /* jangan turun ke bawah */
+    justify-content:center;
+
+    gap:10px;
+    padding:8px 10px;
 }
 
 .btn{
     width:auto;
-    padding:10px 16px;
-    font-size:13px;
+    min-width:110px;
 }
 
 .hero{
-    padding:110px 10px 30px;
+    padding:140px 10px 30px;
+}
+
 }
 
 .hero h1{
@@ -419,16 +426,7 @@ footer{
     text-decoration:none;
 }
 
-@media (max-width:768px){
 
-    .topbar{
-        top:15px;
-        left:50%;
-        right:auto;
-        transform:translateX(-50%);
-    }
-
-}
 </style>
 </head>
 <body>
