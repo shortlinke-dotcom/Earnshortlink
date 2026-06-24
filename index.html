@@ -8,10 +8,14 @@
 <style>
 body{
     margin:0;
-    font-family:Arial,sans-serif;
-    background:#050816;
+    font-family:'Segoe UI',sans-serif;
+    background:
+    radial-gradient(circle at top left,#00d4ff22,transparent 40%),
+    radial-gradient(circle at top right,#0066ff22,transparent 40%),
+    #050816;
     color:white;
     overflow-x:hidden;
+    min-height:100vh;
 }
 
 .hero{
@@ -133,11 +137,101 @@ footer{
     padding:30px;
     border-top:1px solid rgba(255,255,255,.1);
 }
+
+.hero{
+    min-height:70vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+}
+
+.hero h1{
+    font-size:clamp(50px,10vw,110px);
+    letter-spacing:4px;
+}
+
+.subtitle{
+    font-size:clamp(18px,4vw,28px);
+    opacity:.9;
+}
+
+.notice{
+    border:1px solid rgba(255,255,255,.1);
+    box-shadow:
+    0 0 30px rgba(0,234,255,.15);
+}
+
+.card{
+    width:280px;
+    backdrop-filter:blur(12px);
+    border:1px solid rgba(255,255,255,.08);
+    transition:.3s;
+}
+
+.card:hover{
+    transform:translateY(-8px);
+    box-shadow:
+    0 0 25px rgba(0,234,255,.25);
+}
+
+.footer-card{
+    backdrop-filter:blur(12px);
+    border:1px solid rgba(255,255,255,.08);
+}
+
+.stars{
+    position:fixed;
+    inset:0;
+    background-image:
+    radial-gradient(2px 2px at 20px 20px,#fff,transparent),
+    radial-gradient(2px 2px at 120px 120px,#00eaff,transparent),
+    radial-gradient(1px 1px at 220px 80px,#fff,transparent);
+    background-size:300px 300px;
+    animation:starMove 30s linear infinite;
+    opacity:.5;
+    z-index:-1;
+}
+
+@keyframes starMove{
+    from{
+        transform:translateY(0);
+    }
+    to{
+        transform:translateY(-300px);
+    }
+}
+
+@media(max-width:768px){
+
+.hero{
+    padding:80px 15px;
+}
+
+.notice{
+    margin:25px 15px;
+}
+
+.card{
+    width:100%;
+}
+
+.footer-card{
+    width:100%;
+}
+
+.track span{
+    font-size:22px;
+    margin:0 20px;
+}
+
+}
+    
 </style>
 </head>
 
 <body>
-
+<div class="stars"></div>
 <section class="hero">
 
 <h1>EARNSHORTLINK</h1>
@@ -147,12 +241,14 @@ Website Penghasilan Saldo Terbaik Tahun 2026
 </div>
 
 <div class="notice">
-<b>Notifikasi:</b><br><br>
+<h2>🚀 NOTIFIKASI RESMI</h2>
 
-Earnshortlink adalah website penghasilan saldo DANA dan
-website penghasilan tambahan dengan Real CPM terbaik,
-stabilitas tinggi, sistem aman, serta proses pembayaran
-yang cepat dan transparan untuk seluruh pengguna.
+Earnshortlink merupakan platform penghasilan tambahan dengan sistem
+CPM kompetitif, performa stabil, serta dukungan berbagai metode
+pembayaran digital dan perbankan.
+
+Platform dirancang dengan fokus pada kecepatan, keamanan,
+dan pengalaman pengguna yang nyaman di perangkat Android maupun Desktop.
 </div>
 
 </section>
