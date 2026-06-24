@@ -339,6 +339,17 @@ footer{
         transform:translateX(0);
     }
 }
+
+.reveal{
+    opacity:0;
+    transform:translateY(80px);
+    transition:all .8s ease;
+}
+
+.reveal.active{
+    opacity:1;
+    transform:translateY(0);
+}
 </style>
 </head>
 <body>
@@ -352,11 +363,11 @@ footer{
 <button class="btn register">Register</button>
 </div>
 
-<div class="hero">
+<div class="hero reveal">
 <h1>EARN<span>SHORTLINK</span></h1>
 <p>Website penghasilan saldo terbaik tahun 2026</p>
 
-<div class="notice">
+<div class="notice reveal">
 <h3>NOTIFIKASI</h3>
 <p>
 Earnshortlink adalah website penghasilan saldo Dana dan
@@ -370,7 +381,7 @@ penghasilan tambahan dengan real CPM terbaik dan fast stabilitas.
 <h2>YANG FAST RESPON DAN REAL MEMBAYAR</h2>
 </div>
 
-<div class="features">
+<div class="features reveal">
 <div class="card">
 <h3>FAST RESPON</h3>
 <p>Pembayaran cepat dan tepat.</p>
@@ -402,7 +413,7 @@ penghasilan tambahan dengan real CPM terbaik dan fast stabilitas.
 </div>
 </div>
 
-<div class="payment-section">
+<div class="payment-section reveal">
 
 <h2>MENERIMA PEMBAYARAN VIA</h2>
 
@@ -448,7 +459,7 @@ penghasilan tambahan dengan real CPM terbaik dan fast stabilitas.
 
 </div>
 
-<div class="info-grid">
+<div class="info-grid reveal">
 
 <div class="info">
 <h2>PRIVASI</h2>
@@ -481,5 +492,28 @@ Best CPM Terbaik
 
 </div>
 
+<script>
+
+function revealElements(){
+
+    const reveals = document.querySelectorAll('.reveal');
+
+    reveals.forEach((el)=>{
+
+        const windowHeight = window.innerHeight;
+        const elementTop = el.getBoundingClientRect().top;
+
+        if(elementTop < windowHeight - 100){
+            el.classList.add('active');
+        }
+
+    });
+
+}
+
+window.addEventListener('scroll', revealElements);
+window.addEventListener('load', revealElements);
+
+</script>
 </body>
 </html>
