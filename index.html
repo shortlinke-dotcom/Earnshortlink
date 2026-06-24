@@ -51,7 +51,8 @@ display:flex;
 justify-content:space-between;
 align-items:center;
 padding:15px 25px;
-background:rgba(255,255,255,.05);
+background:rgba(10,20,40,.6);
+box-shadow:0 0 30px rgba(0,234,255,.1);
 backdrop-filter:blur(15px);
 border:1px solid rgba(255,255,255,.1);
 border-radius:20px;
@@ -75,45 +76,38 @@ text-decoration:none;
 }
 
 .hero{
-min-height:100vh;
 display:flex;
 flex-direction:column;
 justify-content:center;
 align-items:center;
 text-align:center;
-padding:120px 20px 60px;
+min-height:100vh;
+padding:0 20px;
 position:relative;
 }
 
-.hero::before{
-content:'';
-position:absolute;
-width:500px;
-height:500px;
-background:#00eaff;
-filter:blur(220px);
-opacity:.15;
-z-index:-1;
-}
-
 .hero h1{
-font-size:clamp(50px,10vw,110px);
+font-size:clamp(3rem,10vw,7rem);
+font-weight:800;
+letter-spacing:4px;
+margin-bottom:15px;
 color:#00eaff;
 text-shadow:
 0 0 10px #00eaff,
 0 0 20px #00eaff,
-0 0 40px #00eaff;
-animation:glow 2s infinite alternate;
+0 0 40px #00eaff,
+0 0 80px #00eaff;
+}
+
+.subtitle{
+max-width:800px;
+font-size:clamp(1rem,2vw,1.5rem);
+margin-bottom:30px;
 }
 
 @keyframes glow{
 from{filter:brightness(1);}
 to{filter:brightness(1.5);}
-}
-
-.subtitle{
-margin-top:15px;
-font-size:clamp(18px,4vw,28px);
 }
 
 .hero-buttons{
@@ -125,15 +119,20 @@ justify-content:center;
 }
 
 .btn{
-padding:14px 28px;
+padding:14px 30px;
 border-radius:50px;
+font-weight:700;
 text-decoration:none;
-font-weight:600;
+transition:.3s;
 }
 
 .btn-primary{
 background:#00eaff;
 color:#000;
+}
+
+.btn-primary:hover{
+transform:translateY(-3px);
 }
 
 .btn-secondary{
@@ -142,14 +141,15 @@ color:#00eaff;
 }
 
 .notice{
-max-width:900px;
+width:100%;
+max-width:850px;
 margin-top:40px;
-padding:25px;
-border-radius:20px;
-background:rgba(255,255,255,.06);
-backdrop-filter:blur(15px);
-border:1px solid rgba(255,255,255,.08);
-box-shadow:0 0 30px rgba(0,234,255,.15);
+padding:30px;
+border-radius:25px;
+background:rgba(255,255,255,.05);
+backdrop-filter:blur(20px);
+border:1px solid rgba(255,255,255,.1);
+box-shadow:0 0 40px rgba(0,234,255,.15);
 }
 
 .section{
@@ -248,6 +248,28 @@ font-size:22px;
 margin:0 15px;
 }
 
+.hero::before{
+content:'';
+position:absolute;
+width:500px;
+height:500px;
+background:#00eaff;
+border-radius:50%;
+filter:blur(220px);
+opacity:.15;
+z-index:-1;
+} 
+
+.gradient-bg{
+position:fixed;
+inset:0;
+background:
+radial-gradient(circle at 20% 20%,rgba(0,234,255,.12),transparent 30%),
+radial-gradient(circle at 80% 20%,rgba(0,120,255,.12),transparent 30%),
+radial-gradient(circle at 50% 80%,rgba(0,255,200,.08),transparent 30%);
+z-index:-3;
+}  
+
 }
 </style>
 </head>
@@ -255,6 +277,7 @@ margin:0 15px;
 <body>
 
 <div class="stars"></div>
+<div class="gradient-bg"></div> 
 
 <nav class="navbar">
 <div class="brand">EARNSHORTLINK</div>
