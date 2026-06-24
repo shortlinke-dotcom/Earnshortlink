@@ -29,3 +29,10 @@ async def register(request: Request):
         request=request,
         name="register.html"
     )
+
+@app.get("/dashboard", response_class=HTMLResponse)
+async def dashboard(request: Request):
+    return templates.TemplateResponse(
+        request,
+        "dashboard.html"
+    )
