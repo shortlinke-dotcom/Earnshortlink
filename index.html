@@ -2,237 +2,962 @@
 <html lang="id">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>EarnShortlink - Best CPM</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
-        rel="stylesheet">
+<title>EarnShortlink</title>
 
-    <link rel="stylesheet" href="style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+:root{
+
+    --primary:#00a8ff;
+    --primary2:#0078ff;
+
+    --dark:#020814;
+    --glass:rgba(255,255,255,.05);
+
+}
+
+body{
+
+    font-family:'Poppins',sans-serif;
+
+    background:
+    radial-gradient(
+        circle at top,
+        #0f2f70 0%,
+        #061021 35%,
+        #020814 70%
+    );
+
+    color:white;
+
+    overflow-x:hidden;
+
+}
+
+/* ======================
+   NAVBAR
+====================== */
+
+.navbar{
+
+    position:fixed;
+
+    top:0;
+    left:0;
+
+    width:100%;
+
+    padding:18px 7%;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    backdrop-filter:blur(15px);
+
+    background:
+    rgba(0,0,0,.25);
+
+    z-index:999;
+}
+
+.logo{
+
+    font-size:30px;
+    font-weight:800;
+
+    color:white;
+
+    text-shadow:
+    0 0 15px #00a8ff,
+    0 0 40px #00a8ff;
+}
+
+.nav-links{
+
+    display:flex;
+    gap:30px;
+}
+
+.nav-links a{
+
+    color:white;
+
+    text-decoration:none;
+
+    transition:.3s;
+}
+
+.nav-links a:hover{
+
+    color:#00a8ff;
+}
+
+.auth{
+
+    display:flex;
+    gap:10px;
+}
+
+.login-btn{
+
+    padding:12px 25px;
+
+    border-radius:14px;
+
+    border:1px solid #00a8ff;
+
+    color:white;
+
+    text-decoration:none;
+}
+
+.register-btn{
+
+    padding:12px 25px;
+
+    border-radius:14px;
+
+    text-decoration:none;
+
+    color:white;
+
+    background:
+    linear-gradient(
+        135deg,
+        #00a8ff,
+        #0078ff
+    );
+
+    box-shadow:
+    0 0 15px #00a8ff;
+}
+
+/* ======================
+   HERO
+====================== */
+
+.hero{
+
+    min-height:100vh;
+
+    display:flex;
+    flex-direction:column;
+
+    justify-content:center;
+    align-items:center;
+
+    text-align:center;
+
+    padding:120px 20px;
+}
+
+.chain-logo{
+
+    width:180px;
+    height:180px;
+
+    margin-bottom:30px;
+
+    filter:
+    drop-shadow(0 0 20px #00a8ff)
+    drop-shadow(0 0 60px #00a8ff);
+}
+
+.hero h1{
+
+    font-size:90px;
+    font-weight:800;
+
+    line-height:1;
+}
+
+.hero h1 span{
+
+    color:#00a8ff;
+
+    text-shadow:
+    0 0 20px #00a8ff,
+    0 0 50px #00a8ff;
+}
+
+.subtitle{
+
+    margin-top:20px;
+
+    color:#d8ecff;
+
+    font-size:22px;
+}
+
+/* ======================
+   GLASS CARD
+====================== */
+
+.glass{
+
+    background:
+    rgba(255,255,255,.05);
+
+    border:
+    1px solid rgba(255,255,255,.1);
+
+    backdrop-filter:blur(20px);
+
+    border-radius:25px;
+}
+
+.notice{
+
+    width:100%;
+    max-width:1000px;
+
+    margin-top:60px;
+
+    padding:30px;
+
+    display:flex;
+    align-items:center;
+
+    gap:25px;
+}
+
+.notice-icon{
+
+    width:80px;
+    height:80px;
+
+    border-radius:20px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    background:
+    linear-gradient(
+        135deg,
+        #00a8ff,
+        #0078ff
+    );
+
+    font-size:35px;
+}
+
+.notice-content{
+
+    text-align:left;
+}
+
+.notice-content span{
+
+    color:#78d4ff;
+}
+
+/* ======================
+   SECTION
+====================== */
+
+.section{
+
+    padding:100px 7%;
+}
+
+.section-title{
+
+    text-align:center;
+
+    margin-bottom:60px;
+}
+
+.section-title h2{
+
+    font-size:50px;
+}
+
+.section-title span{
+
+    color:#00a8ff;
+}
+
+.features{
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(3,1fr);
+
+    gap:25px;
+}
+
+.card{
+
+    padding:30px;
+
+    transition:.3s;
+
+    background:
+    rgba(255,255,255,.05);
+
+    border:
+    1px solid rgba(255,255,255,.08);
+
+    border-radius:25px;
+}
+
+.card:hover{
+
+    transform:
+    translateY(-8px);
+
+    box-shadow:
+    0 0 30px rgba(0,168,255,.25);
+}
+
+.card-icon{
+
+    font-size:40px;
+
+    margin-bottom:15px;
+}
+/* ======================
+   PAYMENT
+====================== */
+
+.payment-slider{
+
+    overflow:hidden;
+}
+
+.slider-track{
+
+    display:flex;
+    gap:20px;
+
+    width:max-content;
+}
+
+.payment-item{
+
+    min-width:180px;
+
+    padding:20px;
+
+    border-radius:18px;
+
+    background:
+    rgba(255,255,255,.05);
+
+    text-align:center;
+
+    font-weight:700;
+}
+
+/* ======================
+   FOOTER
+====================== */
+
+footer{
+
+    padding:50px;
+
+    text-align:center;
+
+    color:#89a5c5;
+}
+
+/* ======================
+   MOBILE
+====================== */
+
+@media(max-width:768px){
+
+    .hero h1{
+
+        font-size:48px;
+    }
+
+    .features{
+
+        grid-template-columns:1fr;
+    }
+
+    .navbar{
+
+        flex-direction:column;
+
+        gap:15px;
+    }
+
+    .nav-links{
+
+        flex-wrap:wrap;
+
+        justify-content:center;
+    }
+
+    .notice{
+
+        flex-direction:column;
+    }
+
+}
+
+</style>
+
 </head>
 
 <body>
+<!-- ======================
+     NAVBAR
+====================== -->
 
-    <!-- Background Effect -->
-    <div class="bg-glow"></div>
+<header class="navbar">
 
-    <!-- Navbar -->
-    <header class="navbar">
+    <div class="logo">
+        EarnShortlink
+    </div>
 
-        <div class="logo">
-            🔗 EarnShortlink
+    <nav class="nav-links">
+
+        <a href="#home">Home</a>
+        <a href="#features">Features</a>
+        <a href="#payment">Payment</a>
+        <a href="#security">Security</a>
+
+    </nav>
+
+    <div class="auth">
+
+        <a href="#" class="login-btn">
+            Masuk
+        </a>
+
+        <a href="#" class="register-btn">
+            Register
+        </a>
+
+    </div>
+
+</header>
+
+<!-- ======================
+     HERO
+====================== -->
+
+<section class="hero" id="home">
+
+    <!-- SVG LOGO RANTAI -->
+
+    <svg
+        class="chain-logo"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="#00a8ff"
+        stroke-width="2.5"
+        stroke-linecap="round"
+        stroke-linejoin="round">
+
+        <path d="M10 13a5 5 0 0 1 0-7l1-1a5 5 0 0 1 7 7l-1 1"/>
+
+        <path d="M14 11a5 5 0 0 1 0 7l-1 1a5 5 0 1 1-7-7l1-1"/>
+
+    </svg>
+
+    <h1>
+
+        EARN<span>SHORTLINK</span>
+
+    </h1>
+
+    <p class="subtitle">
+
+        Website Penghasilan Saldo Digital Terbaik
+
+    </p>
+
+    <div class="notice glass">
+
+        <div class="notice-icon">
+
+            🔔
+
         </div>
 
-        <nav>
-            <a href="#">Home</a>
-            <a href="#">Features</a>
-            <a href="#">Payment</a>
-            <a href="#">Contact</a>
-        </nav>
+        <div class="notice-content">
 
-        <div class="auth-btn">
-            <a href="#" class="login-btn">Masuk</a>
-            <a href="#" class="register-btn">Register</a>
-        </div>
+            <span>NOTIFIKASI</span>
 
-    </header>
-
-    <!-- Hero -->
-    <section class="hero">
-
-        <div class="hero-logo">
-            🔗
-        </div>
-
-        <h1>
-            EARN<span>SHORTLINK</span>
-        </h1>
-
-        <p class="subtitle">
-            Website penghasilan saldo terbaik tahun 2026
-        </p>
-
-        <div class="notice-box">
-
-            <div class="notice-icon">
-                🔔
-            </div>
-
-            <div class="notice-content">
-
-                <span>NOTIFIKASI</span>
-
-                <h3>Earnshortlink</h3>
-
-                <p>
-                    Adalah website penghasilan saldo dana dan website
-                    penghasilan tambahan dengan real CPM terbaik dan
-                    fast stabilitas.
-                </p>
-
-            </div>
-
-        </div>
-
-    </section>
-
-    <!-- Feature Section -->
-
-    <section class="feature-section">
-
-        <div class="section-header">
-
-            <span>SISTEM PEMBAYARAN</span>
-
-            <h2>
-                YANG FAST RESPON DAN REAL MEMBAYAR
-            </h2>
+            <h3>
+                Selamat Datang di EarnShortlink
+            </h3>
 
             <p>
-                Kami berkomitmen memberikan pengalaman terbaik dan pembayaran
-                yang cepat, aman dan terpercaya.
+
+                Platform shortlink premium dengan CPM tinggi,
+                pembayaran cepat dan sistem stabil.
+
             </p>
 
         </div>
 
-        <div class="feature-grid">
+    </div>
 
-            <div class="feature-card">
-                <div class="icon">⚡</div>
-                <h3>FAST RESPON</h3>
-                <p>Proses pembayaran cepat dan tidak membutuhkan waktu lama.</p>
+</section>
+
+<!-- ======================
+     FEATURES
+====================== -->
+
+<section class="section" id="features">
+
+    <div class="section-title">
+
+        <span>FITUR UNGGULAN</span>
+
+        <h2>
+
+            Mengapa Memilih Kami?
+
+        </h2>
+
+    </div>
+
+    <div class="features">
+
+        <div class="card">
+
+            <div class="card-icon">
+                ⚡
             </div>
 
-            <div class="feature-card">
-                <div class="icon">🛡</div>
-                <h3>REAL MEMBAYAR</h3>
-                <p>Terbukti membayar ke semua pengguna tanpa alasan.</p>
-            </div>
-
-            <div class="feature-card">
-                <div class="icon">💳</div>
-                <h3>MINIMAL PENARIKAN</h3>
-                <p>Minimal penarikan rendah dan cocok untuk semua pengguna.</p>
-            </div>
-
-            <div class="feature-card">
-                <div class="icon">🕐</div>
-                <h3>24 JAM</h3>
-                <p>Pembayaran diproses setiap hari tanpa hari libur.</p>
-            </div>
-
-            <div class="feature-card">
-                <div class="icon">🔒</div>
-                <h3>AMAN</h3>
-                <p>Keamanan data dan transaksi pengguna 100% terjamin.</p>
-            </div>
-
-            <div class="feature-card">
-                <div class="icon">📈</div>
-                <h3>REAL CPM</h3>
-                <p>Dapatkan penghasilan maksimal dengan real CPM terbaik.</p>
-            </div>
-
-        </div>
-
-    </section>
-
-    <!-- Payment -->
-
-    <section class="payment-section">
-
-        <h2>MENERIMA PEMBAYARAN VIA</h2>
-
-        <div class="payment-slider">
-
-            <div class="slider-track">
-
-                <div>BCA</div>
-                <div>MANDIRI</div>
-                <div>BRI</div>
-                <div>BNI</div>
-                <div>CIMB</div>
-                <div>DANA</div>
-                <div>OVO</div>
-                <div>GOPAY</div>
-                <div>SHOPEEPAY</div>
-                <div>PAYPAL</div>
-                <div>PAYEER</div>
-
-                <!-- duplicate -->
-                <div>BCA</div>
-                <div>MANDIRI</div>
-                <div>BRI</div>
-                <div>BNI</div>
-                <div>CIMB</div>
-                <div>DANA</div>
-                <div>OVO</div>
-                <div>GOPAY</div>
-                <div>SHOPEEPAY</div>
-                <div>PAYPAL</div>
-                <div>PAYEER</div>
-
-            </div>
-
-        </div>
-
-        <p class="payment-info">
-            Semua bank, e-wallet dan Paypal tersedia
-        </p>
-
-    </section>
-
-    <!-- Bottom Card -->
-
-    <section class="security-section">
-
-        <div class="security-card purple">
-
-            <h3>PRIVASI</h3>
+            <h3>Fast Payment</h3>
 
             <p>
-                Kami sangat menghargai privasi pengguna.
-                Semua data akan dijaga kerahasiaannya.
+                Proses pembayaran cepat dan otomatis.
             </p>
 
         </div>
 
-        <div class="security-card green">
+        <div class="card">
 
-            <h3>KEAMANAN</h3>
+            <div class="card-icon">
+                🔒
+            </div>
+
+            <h3>Secure System</h3>
 
             <p>
-                Sistem keamanan berlapis melindungi akun dan transaksi.
+                Keamanan akun dan transaksi terjamin.
             </p>
 
         </div>
 
-        <div class="security-card blue">
+        <div class="card">
 
-            <h3>TERPERCAYA</h3>
+            <div class="card-icon">
+                💰
+            </div>
+
+            <h3>High CPM</h3>
 
             <p>
-                Ribuan pengguna mempercayai Earnshortlink sebagai
-                sumber penghasilan tambahan.
+                CPM tinggi untuk meningkatkan pendapatan.
             </p>
 
         </div>
 
-    </section>
+        <div class="card">
 
-    <footer>
+            <div class="card-icon">
+                📈
+            </div>
 
-        <p>© 2026 Copyright by Earnshortlink</p>
+            <h3>Real Statistics</h3>
 
-        <span>Best CPM Terbaik</span>
+            <p>
+                Statistik realtime dan transparan.
+            </p>
 
-    </footer>
+        </div>
 
-    <script src="script.js"></script>
+        <div class="card">
+
+            <div class="card-icon">
+                🌎
+            </div>
+
+            <h3>Global Traffic</h3>
+
+            <p>
+                Mendukung trafik dari berbagai negara.
+            </p>
+
+        </div>
+
+        <div class="card">
+
+            <div class="card-icon">
+                🚀
+            </div>
+
+            <h3>Stable Server</h3>
+
+            <p>
+                Infrastruktur cepat dan stabil.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ======================
+     PAYMENT
+====================== -->
+
+<section class="section" id="payment">
+
+    <div class="section-title">
+
+        <span>PAYMENT</span>
+
+        <h2>
+
+            Metode Pembayaran
+
+        </h2>
+
+    </div>
+
+    <div class="payment-slider">
+
+        <div class="slider-track">
+
+            <div class="payment-item">
+                BCA
+            </div>
+
+            <div class="payment-item">
+                BRI
+            </div>
+
+            <div class="payment-item">
+                DANA
+            </div>
+
+            <div class="payment-item">
+                OVO
+            </div>
+
+            <div class="payment-item">
+                GOPAY
+            </div>
+
+            <div class="payment-item">
+                BCA
+            </div>
+
+            <div class="payment-item">
+                BRI
+            </div>
+
+            <div class="payment-item">
+                DANA
+            </div>
+
+            <div class="payment-item">
+                OVO
+            </div>
+
+            <div class="payment-item">
+                GOPAY
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ======================
+     SECURITY
+====================== -->
+
+<section class="section" id="security">
+
+    <div class="section-title">
+
+        <span>SECURITY</span>
+
+        <h2>
+
+            Aman & Terpercaya
+
+        </h2>
+
+    </div>
+
+    <div class="features">
+
+        <div class="card">
+
+            <h3>
+                Data Protection
+            </h3>
+
+            <p>
+                Data pengguna dienkripsi dan aman.
+            </p>
+
+        </div>
+
+        <div class="card">
+
+            <h3>
+                Anti Fraud
+            </h3>
+
+            <p>
+                Sistem mendeteksi aktivitas mencurigakan.
+            </p>
+
+        </div>
+
+        <div class="card">
+
+            <h3>
+                Trusted Platform
+            </h3>
+
+            <p>
+                Dipercaya oleh ribuan pengguna aktif.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+<footer>
+
+    <h3>
+        EarnShortlink
+    </h3>
+
+    <p>
+
+        © 2026 All Rights Reserved
+
+    </p>
+
+</footer>
+<script>
+
+/* ==========================
+   PAYMENT SLIDER
+========================== */
+
+const sliderTrack =
+document.querySelector(".slider-track");
+
+if(sliderTrack){
+
+    let position = 0;
+
+    function animateSlider(){
+
+        position -= 0.5;
+
+        const limit =
+        sliderTrack.scrollWidth / 2;
+
+        if(Math.abs(position) >= limit){
+
+            position = 0;
+
+        }
+
+        sliderTrack.style.transform =
+        `translateX(${position}px)`;
+
+        requestAnimationFrame(
+            animateSlider
+        );
+    }
+
+    animateSlider();
+}
+
+/* ==========================
+   NAVBAR EFFECT
+========================== */
+
+const navbar =
+document.querySelector(".navbar");
+
+window.addEventListener(
+"scroll",
+
+() => {
+
+    if(window.scrollY > 30){
+
+        navbar.style.background =
+        "rgba(0,0,0,.7)";
+
+        navbar.style.boxShadow =
+        "0 10px 30px rgba(0,0,0,.3)";
+
+    }
+
+    else{
+
+        navbar.style.background =
+        "rgba(0,0,0,.25)";
+
+        navbar.style.boxShadow =
+        "none";
+    }
+
+});
+
+/* ==========================
+   REVEAL ANIMATION
+========================== */
+
+const cards =
+document.querySelectorAll(
+".card"
+);
+
+const observer =
+new IntersectionObserver(
+
+(entries)=>{
+
+    entries.forEach(entry=>{
+
+        if(entry.isIntersecting){
+
+            entry.target.style.opacity = 1;
+
+            entry.target.style.transform =
+            "translateY(0)";
+        }
+
+    });
+
+},
+
+{
+    threshold:0.1
+}
+
+);
+
+cards.forEach(card=>{
+
+    card.style.opacity = 0;
+
+    card.style.transform =
+    "translateY(40px)";
+
+    card.style.transition =
+    ".8s ease";
+
+    observer.observe(card);
+
+});
+
+/* ==========================
+   BUTTON EFFECT
+========================== */
+
+document.querySelectorAll(
+".register-btn,.login-btn"
+).forEach(btn=>{
+
+    btn.addEventListener(
+
+    "mouseenter",
+
+    ()=>{
+
+        btn.style.transform =
+        "translateY(-3px)";
+    }
+
+    );
+
+    btn.addEventListener(
+
+    "mouseleave",
+
+    ()=>{
+
+        btn.style.transform =
+        "translateY(0)";
+    }
+
+    );
+
+});
+
+/* ==========================
+   FLOATING LOGO
+========================== */
+
+const logo =
+document.querySelector(
+".chain-logo"
+);
+
+document.addEventListener(
+"mousemove",
+
+(e)=>{
+
+    if(!logo) return;
+
+    let x =
+    (window.innerWidth/2
+    - e.clientX) / 40;
+
+    let y =
+    (window.innerHeight/2
+    - e.clientY) / 40;
+
+    logo.style.transform =
+    `translate(${x}px,${y}px)`;
+});
+
+console.log(
+"EarnShortlink Loaded"
+);
+
+</script>
 
 </body>
-
 </html>
