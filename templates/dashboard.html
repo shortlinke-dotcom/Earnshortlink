@@ -652,6 +652,25 @@ document.addEventListener("click", function(e){
     }
 
 });
+
+<script>
+function setActiveMenu(){
+    const links = document.querySelectorAll(".sidebar a");
+    const currentPath = window.location.pathname;
+
+    links.forEach(link => {
+        const linkPath = link.getAttribute("href");
+
+        if(linkPath === currentPath){
+            link.classList.add("active");
+        } else {
+            link.classList.remove("active");
+        }
+    });
+}
+
+setActiveMenu();
+</script>
 </script>
 </body>
 </html>
