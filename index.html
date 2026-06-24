@@ -288,51 +288,41 @@ footer{
 
 }
 
-.payment-section{
-    margin-top:60px;
-    padding:30px;
-    border:1px solid #00aaff;
-    border-radius:25px;
-    background:rgba(0,0,0,.25);
-    backdrop-filter:blur(10px);
-    overflow:hidden;
-
-    box-shadow:
-    0 0 20px rgba(0,170,255,.4),
-    inset 0 0 15px rgba(0,170,255,.2);
-}
-
-.payment-section h2{
-    text-align:center;
-    margin-bottom:25px;
-    color:#00aaff;
-}
-
 .marquee{
     overflow:hidden;
-    white-space:nowrap;
+    width:100%;
     margin:15px 0;
 }
 
-.marquee-content{
-    display:inline-flex;
-    align-items:center;
-    gap:50px;
-    animation:scrollLeft 25s linear infinite;
+.track{
+    display:flex;
+    width:max-content;
+    gap:20px;
 }
 
-.reverse .marquee-content{
-    animation:scrollRight 25s linear infinite;
+.bank .track{
+    animation:leftMove 20s linear infinite;
 }
 
-.marquee img{
-    height:42px;
-    width:auto;
-    object-fit:contain;
-    filter:drop-shadow(0 0 10px rgba(255,255,255,.3));
+.wallet .track{
+    animation:rightMove 20s linear infinite;
 }
 
-@keyframes scrollLeft{
+.track span{
+    padding:12px 24px;
+    border-radius:12px;
+    border:1px solid #00bfff;
+    background:rgba(0,191,255,.1);
+    color:#fff;
+    font-weight:600;
+    white-space:nowrap;
+
+    box-shadow:
+    0 0 10px rgba(0,191,255,.4),
+    inset 0 0 10px rgba(0,191,255,.2);
+}
+
+@keyframes leftMove{
     from{
         transform:translateX(0);
     }
@@ -341,25 +331,13 @@ footer{
     }
 }
 
-@keyframes scrollRight{
+@keyframes rightMove{
     from{
         transform:translateX(-50%);
     }
     to{
         transform:translateX(0);
     }
-}
-
-@media(max-width:768px){
-
-.marquee-content{
-    gap:30px;
-}
-
-.marquee img{
-    height:28px;
-}
-
 }
 </style>
 </head>
