@@ -39,7 +39,8 @@ padding:20px;
 .topbar{
 position:fixed;
 top:20px;
-right:20px;
+left:50%;
+transform:translateX(-50%);
 display:flex;
 gap:12px;
 z-index:9999;
@@ -48,7 +49,6 @@ border-radius:15px;
 background:rgba(0,0,0,.25);
 backdrop-filter:blur(15px);
 border:1px solid rgba(33,150,243,.3);
-box-shadow:0 0 20px rgba(33,150,243,.2);
 }
 .btn{
     display:inline-flex;
@@ -132,42 +132,60 @@ margin-bottom:10px;
 }
 /* PAYMENT */
 .payment-section{
-margin-top:50px;
+    margin-top:50px;
 }
+
 .payment-section h2{
-text-align:center;
-margin-bottom:20px;
+    text-align:center;
+    margin-bottom:20px;
 }
+
 .marquee{
-overflow:hidden;
-width:100%;
-margin:15px 0;
+    overflow:hidden;
+    width:100%;
+    margin:15px 0;
 }
+
 .track{
-display:flex;
-width:max-content;
-gap:20px;
+    display:flex;
+    width:max-content;
+    gap:15px;
 }
+
 .bank .track{
-animation:leftMove 20s linear infinite;
+    animation:leftMove 25s linear infinite;
 }
+
 .wallet .track{
-animation:rightMove 20s linear infinite;
+    animation:rightMove 25s linear infinite;
 }
+
 .track span{
-padding:12px 24px;
-border-radius:12px;
-border:1px solid #00bfff;
-background:rgba(0,191,255,.1);
-white-space:nowrap;
+    padding:12px 22px;
+    border-radius:12px;
+    border:1px solid #2196f3;
+    background:rgba(33,150,243,.1);
+    color:#fff;
+    white-space:nowrap;
+    font-weight:600;
 }
+
 @keyframes leftMove{
-from{transform:translateX(0);}
-to{transform:translateX(-50%);}
+    from{
+        transform:translateX(0);
+    }
+    to{
+        transform:translateX(-50%);
+    }
 }
+
 @keyframes rightMove{
-from{transform:translateX(-50%);}
-to{transform:translateX(0);}
+    from{
+        transform:translateX(-50%);
+    }
+    to{
+        transform:translateX(0);
+    }
 }
 /* INFO */
 .info-grid{
@@ -227,7 +245,6 @@ grid-template-columns:1fr;
     font-size:14px;
 }
 
-}
 .hero{
 padding:130px 10px 40px;
 }
@@ -277,11 +294,14 @@ transform:translateY(0);
 <div class="container">
 <div class="topbar">
 <button class="btn login"
-onclick="location.href='login.html'">
+onclick="location.href='/login'">
 Masuk
 </button>
 
+<button class="btn register"
+onclick="location.href='/register'">
 Register
+</button>
 </div>
 <div class="hero reveal">
 <h1>EARN<span>SHORTLINK</span></h1>
@@ -325,47 +345,55 @@ penghasilan tambahan dengan CPM terbaik dan stabil.
 </div>
 </div>
 <div class="payment-section reveal">
-<h2>MENERIMA PEMBAYARAN VIA</h2>
-<div class="marquee bank">
-<div class="track">
-<span>BCA</span>
-<span>MANDIRI</span>
-<span>BRI</span>
-<span>BNI</span>
-<span>CIMB NIAGA</span>
-<span>BSI</span>
-<span>PERMATA BANK</span>
 
-BCA
-MANDIRI
-BRI
-BNI
-CIMB NIAGA
-BSI
-PERMATA BANK
+    <h2>MENERIMA PEMBAYARAN VIA</h2>
 
-</div>
-</div>
-<div class="marquee wallet">
-<div class="track">
-<span>DANA</span>
-<span>OVO</span>
-<span>GOPAY</span>
-<span>SHOPEEPAY</span>
-<span>LINKAJA</span>
-<span>PAYPAL</span>
-<span>PAYEER</span>
+    <!-- BANK -->
+    <div class="marquee bank">
+        <div class="track">
 
-DANA
-OVO
-GOPAY
-SHOPEEPAY
-LINKAJA
-PAYPAL
-PAYEER
+            <span>BCA</span>
+            <span>MANDIRI</span>
+            <span>BRI</span>
+            <span>BNI</span>
+            <span>CIMB NIAGA</span>
+            <span>BSI</span>
+            <span>PERMATA BANK</span>
 
-</div>
-</div>
+            <span>BCA</span>
+            <span>MANDIRI</span>
+            <span>BRI</span>
+            <span>BNI</span>
+            <span>CIMB NIAGA</span>
+            <span>BSI</span>
+            <span>PERMATA BANK</span>
+
+        </div>
+    </div>
+
+    <!-- EWALLET -->
+    <div class="marquee wallet">
+        <div class="track">
+
+            <span>DANA</span>
+            <span>OVO</span>
+            <span>GOPAY</span>
+            <span>SHOPEEPAY</span>
+            <span>LINKAJA</span>
+            <span>PAYPAL</span>
+            <span>PAYEER</span>
+
+            <span>DANA</span>
+            <span>OVO</span>
+            <span>GOPAY</span>
+            <span>SHOPEEPAY</span>
+            <span>LINKAJA</span>
+            <span>PAYPAL</span>
+            <span>PAYEER</span>
+
+        </div>
+    </div>
+
 </div>
 <div class="info-grid reveal">
 <div class="info">
