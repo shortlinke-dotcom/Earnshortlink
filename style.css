@@ -637,3 +637,57 @@ footer span {
         text-align:center;
     }
 }
+
+/* Reveal Animation */
+
+.hidden{
+    opacity:0;
+    transform:translateY(40px);
+    transition:.8s ease;
+}
+
+.show{
+    opacity:1;
+    transform:translateY(0);
+}
+
+/* Ripple */
+
+.login-btn,
+.register-btn{
+    position:relative;
+    overflow:hidden;
+}
+
+.ripple{
+    position:absolute;
+    border-radius:50%;
+    transform:scale(0);
+    animation:ripple .6s linear;
+    background:rgba(255,255,255,.4);
+}
+
+@keyframes ripple{
+    to{
+        transform:scale(4);
+        opacity:0;
+    }
+}
+
+/* Floating */
+
+@keyframes floatCard{
+
+    0%{
+        transform:translateY(0);
+    }
+
+    50%{
+        transform:translateY(-8px);
+    }
+
+    100%{
+        transform:translateY(0);
+    }
+
+}
