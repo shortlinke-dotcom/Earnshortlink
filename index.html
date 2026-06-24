@@ -218,45 +218,71 @@ opacity:.8;
 @media (max-width:768px){
 
 .topbar{
-    justify-content:center;
-    flex-wrap:wrap;
+    top:15px;
+    right:15px;
+    left:auto;
+    transform:none;
+    gap:8px;
+    padding:8px;
+}
+
+.btn{
+    width:auto;
+    padding:10px 16px;
+    font-size:13px;
 }
 
 .hero{
-    padding:40px 10px;
+    padding:110px 10px 30px;
 }
 
 .hero h1{
-    font-size:42px;
+    font-size:38px;
     line-height:1.1;
 }
 
 .hero p{
-    font-size:18px;
+    font-size:15px;
 }
 
 .notice{
-    padding:20px;
+    padding:18px;
+    margin-top:25px;
+}
+
+.section-title{
+    margin-top:40px;
+}
+
+.section-title h3{
+    font-size:14px;
 }
 
 .section-title h2{
-    font-size:28px;
+    font-size:24px;
 }
 
 .features{
     grid-template-columns:1fr;
+    gap:15px;
 }
 
 .card{
-    padding:20px;
+    padding:18px;
 }
 
-.payments{
-    gap:12px;
+.payment-section{
+    margin-top:30px;
 }
 
-.payments img{
-    height:28px;
+.payment-section h2{
+    font-size:20px;
+    text-align:center;
+}
+
+.track span{
+    padding:10px 16px;
+    font-size:13px;
 }
 
 .info-grid{
@@ -264,11 +290,12 @@ opacity:.8;
 }
 
 .info{
-    padding:20px;
+    padding:18px;
 }
 
-.btn{
-    width:140px;
+footer{
+    padding:20px;
+    font-size:13px;
 }
 
 }
@@ -298,6 +325,26 @@ opacity:.8;
 
 footer{
     font-size:13px;
+}
+
+}
+
+@media (min-width:769px){
+
+.hero h1{
+    font-size:90px;
+}
+
+.hero p{
+    font-size:25px;
+}
+
+.features{
+    grid-template-columns:repeat(6,1fr);
+}
+
+.info-grid{
+    grid-template-columns:repeat(3,1fr);
 }
 
 }
