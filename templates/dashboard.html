@@ -385,27 +385,19 @@ font-size:16px;
     <div class="sidebar-header">
         <h2>MENU</h2>
 
-        <button class="close-btn"
-        onclick="closeMenu()">
+        <button class="close-btn" onclick="closeMenu()">
             ✕
         </button>
     </div>
 
     <a href="/dashboard" onclick="closeMenu()">🏠 Dashboard</a>
-
-    <a href="#" onclick="closeMenu()">🔗 Kelola Tautan</a>
-
-    <a href="#" onclick="closeMenu()">➕ Sell Link New</a>
-
-    <a href="#" onclick="closeMenu()">💰 Payments</a>
-
-    <a href="#" onclick="closeMenu()">👥 Referrals</a>
-
-    <a href="#" onclick="closeMenu()">📄 Invoices</a>
-
-    <a href="#" onclick="closeMenu()">⚙️ Pengaturan</a>
-
-    <a href="#" onclick="closeMenu()">🛟 Dukungan</a>
+    <a href="/links" onclick="closeMenu()">🔗 Kelola Tautan</a>
+    <a href="/sell-link" onclick="closeMenu()">➕ Sell Link New</a>
+    <a href="/payments" onclick="closeMenu()">💰 Payments</a>
+    <a href="/referrals" onclick="closeMenu()">👥 Referrals</a>
+    <a href="/invoices" onclick="closeMenu()">📄 Invoices</a>
+    <a href="/settings" onclick="closeMenu()">⚙️ Pengaturan</a>
+    <a href="/support" onclick="closeMenu()">🛟 Dukungan</a>
 
     <div class="sidebar-footer">
         © <span id="year"></span><br>
@@ -414,44 +406,39 @@ font-size:16px;
 
 </div>
 
-<div
-class="overlay"
-id="overlay"
-onclick="closeMenu()">
-</div>
+<div class="overlay" id="overlay" onclick="closeMenu()"></div>
 
-<div class="menu-btn" onclick="openMenu()">
-☰
-</div>
-
-<div class="logo">
-EARN<span>SHORTLINK</span>
-</div>
-
-<div class="user-menu">
-
-    <button class="account-btn" onclick="toggleUserMenu()">
-        👤
+    <button class="menu-btn" onclick="openMenu()">
+        ☰
     </button>
 
-    <div class="account-dropdown" id="accountDropdown">
-
-        <h4>Username</h4>
-        <p>{{ username }}</p>
-
-        <div class="saldo-box">
-            Saldo: <b>Rp {{ saldo }}</b>
-        </div>
-
-        <button
-            class="logout-btn"
-            onclick="window.location.href='/'">
-            Logout
-        </button>
-
+    <div class="logo">
+        EARN<span>SHORTLINK</span>
     </div>
 
-</div>
+    <div class="user-menu">
+
+        <button class="account-btn" onclick="toggleUserMenu()">
+            👤
+        </button>
+
+        <div class="account-dropdown" id="accountDropdown">
+
+            <h4>{{ username }}</h4>
+
+            <div class="saldo-box">
+                Saldo: <b>Rp {{ saldo }}</b>
+            </div>
+
+            <button
+                class="logout-btn"
+                onclick="window.location.href='/'">
+                Logout
+            </button>
+
+        </div>
+
+    </div>
 
 </div>
 
