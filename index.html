@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EARNSHORTLINK - Best CPM 2026</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<title>Earnshortlink - Best CPM 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
 <style>
 *{
 margin:0;
@@ -13,128 +13,68 @@ box-sizing:border-box;
 font-family:'Poppins',sans-serif;
 }
 body{
-background:#050816;
+background:#030712;
 color:#fff;
 overflow-x:hidden;
 }
-/* BACKGROUND */
-.stars{
+/* BACKGROUND IMAGE */
+.bg{
 position:fixed;
 inset:0;
-background-image:
-radial-gradient(2px 2px at 20px 20px,#fff,transparent),
-radial-gradient(2px 2px at 120px 120px,#00eaff,transparent);
-background-size:300px 300px;
-animation:starMove 30s linear infinite;
-opacity:.4;
-z-index:-2;
-}
-@keyframes starMove{
-from{transform:translateY(0);}
-to{transform:translateY(-300px);}
-}
-.gradient-bg{
-position:fixed;
-inset:0;
-background:
-radial-gradient(circle at 20% 20%,rgba(0,234,255,.12),transparent 30%);
+background:url('https://images.unsplash.com/photo-1614728263952-84ea256f9679?q=80&w=2070') center/cover;
+opacity:.25;
 z-index:-3;
 }
-/* NAVBAR */
-.navbar{
+.overlay{
 position:fixed;
-top:15px;
-left:50%;
-transform:translateX(-50%);
-width:92%;
-max-width:1200px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:15px 25px;
-background:rgba(10,20,40,.6);
-backdrop-filter:blur(15px);
-border-radius:20px;
-z-index:999;
-}
-.brand{
-font-size:22px;
-font-weight:700;
-color:#00eaff;
-}
-.menu{
-display:flex;
-gap:20px;
-}
-.menu a{
-color:white;
-text-decoration:none;
-font-size:14px;
-}
-.auth-buttons{
-display:flex;
-gap:10px;
-}
-.login-btn{
-padding:8px 18px;
-border:1px solid #00eaff;
-border-radius:50px;
-color:#00eaff;
-text-decoration:none;
-}
-.register-btn{
-padding:8px 18px;
-background:#00eaff;
-border-radius:50px;
-color:#000;
-font-weight:600;
-text-decoration:none;
+inset:0;
+background:radial-gradient(circle at center,#0af 0%,transparent 70%);
+opacity:.2;
+z-index:-2;
 }
 /* HERO */
 .hero{
-display:flex;
-flex-direction:column;
-align-items:center;
 text-align:center;
-min-height:100vh;
-padding:160px 20px 80px;
+padding:120px 20px 60px;
 }
 .hero h1{
-font-size:clamp(3rem,10vw,6rem);
+font-size:clamp(3rem,9vw,6rem);
 font-weight:800;
-color:#00eaff;
-text-shadow:0 0 30px #00eaff;
+background:linear-gradient(90deg,#fff,#00eaff,#007bff);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+text-shadow:0 0 30px rgba(0,234,255,.5);
 }
 .subtitle{
 margin-top:10px;
-font-size:18px;
-max-width:600px;
+font-size:20px;
+color:#ccefff;
 }
-.hero-buttons{
-margin-top:30px;
-display:flex;
-gap:15px;
-flex-wrap:wrap;
+/* NOTIF BOX */
+.notice{
+max-width:800px;
+margin:40px auto;
+padding:25px;
+border-radius:20px;
+background:rgba(0,200,255,.05);
+border:1px solid rgba(0,200,255,.3);
+box-shadow:0 0 30px rgba(0,200,255,.2);
+backdrop-filter:blur(15px);
 }
-.btn{
-padding:12px 25px;
-border-radius:50px;
-font-weight:600;
-text-decoration:none;
-}
-.btn-primary{
-background:#00eaff;
-color:#000;
-}
-.btn-secondary{
-border:1px solid #00eaff;
-color:#00eaff;
-}
-/* CARD */
+/* SECTION */
 .section{
-padding:70px 20px;
 text-align:center;
+padding:60px 20px;
 }
+.section h2{
+color:#00eaff;
+margin-bottom:10px;
+}
+.section h3{
+font-size:28px;
+margin-bottom:30px;
+}
+/* CARDS */
 .cards{
 display:flex;
 flex-wrap:wrap;
@@ -142,119 +82,124 @@ justify-content:center;
 gap:20px;
 }
 .card{
-width:260px;
+width:240px;
 padding:20px;
-background:rgba(255,255,255,.05);
-border-radius:15px;
+border-radius:20px;
+background:rgba(255,255,255,.04);
+border:1px solid rgba(0,234,255,.2);
 transition:.3s;
 }
 .card:hover{
-transform:translateY(-5px);
-box-shadow:0 0 20px rgba(0,234,255,.2);
+transform:translateY(-6px);
+box-shadow:0 0 25px rgba(0,234,255,.3);
 }
-/* STATS */
-.stats{
+/* PAYMENT */
+.payment{
+margin-top:40px;
+padding:30px;
+border-radius:20px;
+border:1px solid rgba(0,234,255,.3);
+background:rgba(0,0,0,.4);
+backdrop-filter:blur(10px);
+}
+.logos{
+display:flex;
+flex-wrap:wrap;
+justify-content:center;
+gap:25px;
+margin-top:20px;
+}
+.logo{
+padding:10px 15px;
+border-radius:10px;
+background:rgba(255,255,255,.05);
+font-size:14px;
+}
+/* FOOTER CARDS */
+.footer-box{
 display:flex;
 flex-wrap:wrap;
 justify-content:center;
 gap:20px;
-margin:50px auto;
+padding:60px 20px;
 }
-.stat-box{
-width:200px;
+.footer-card{
+width:260px;
 padding:20px;
+border-radius:20px;
 background:rgba(255,255,255,.05);
-border-radius:15px;
+border:1px solid rgba(0,234,255,.2);
 }
-.stat-box h3{
-color:#00eaff;
-}
-/* FOOTER */
 footer{
 text-align:center;
-padding:20px;
+padding:30px;
 border-top:1px solid rgba(255,255,255,.1);
+color:#aaa;
 }
 /* MOBILE */
 @media(max-width:768px){
-.menu{
-display:none;
-}
-.navbar{
-flex-direction:column;
-gap:10px;
-}
-.hero{
-padding-top:200px;
+.card,.footer-card{
+width:100%;
+max-width:320px;
 }
 }
 </style>
 </head>
 <body>
-<div class="stars"></div>
-<div class="gradient-bg"></div>
-<nav class="navbar">
-<div class="brand">EARNSHORTLINK</div>
-<div class="menu">
-<a href="#">Home</a>
-<a href="#">Payment</a>
-<a href="#">Support</a>
-</div>
-<div class="auth-buttons">
-<a href="#" class="login-btn">Login</a>
-<a href="#" class="register-btn">Register</a>
-</div>
-</nav>
+<div class="bg"></div>
+<div class="overlay"></div>
 <section class="hero">
 <h1>EARNSHORTLINK</h1>
 <p class="subtitle">
-Website penghasil saldo terbaik 2026 dengan CPM tinggi & withdraw cepat
+Website penghasilan saldo <b>terbaik</b> tahun <b>2026</b>
 </p>
-<div class="hero-buttons">
-<a href="#" class="btn btn-primary">Mulai</a>
-<a href="#" class="btn btn-secondary">Info</a>
+<div class="notice">
+<b>NOTIFIKASI</b><br><br>
+Earnshortlink adalah website penghasilan saldo dana dengan real CPM tinggi dan sistem stabil serta terpercaya.
 </div>
 </section>
 <section class="section">
-<h2>Sistem Pembayaran</h2>
+<h2>SISTEM PEMBAYARAN</h2>
+<h3>YANG FAST RESPON DAN REAL MEMBAYAR</h3>
 <div class="cards">
-<div class="card">⚡ Fast Withdraw</div>
-<div class="card">✅ Real Payment</div>
-<div class="card">💳 Semua E-Wallet</div>
-<div class="card">🏦 Semua Bank</div>
+<div class="card">⚡ Fast Respon</div>
+<div class="card">✅ Real Membayar</div>
+<div class="card">💸 Minimal Rendah</div>
+<div class="card">🕒 24 Jam</div>
+<div class="card">🔒 Aman</div>
+<div class="card">📈 CPM Tinggi</div>
+</div>
+<div class="payment">
+<h2>MENERIMA PEMBAYARAN VIA</h2>
+<div class="logos">
+<div class="logo">BCA</div>
+<div class="logo">BRI</div>
+<div class="logo">BNI</div>
+<div class="logo">Mandiri</div>
+<div class="logo">DANA</div>
+<div class="logo">OVO</div>
+<div class="logo">GoPay</div>
+<div class="logo">ShopeePay</div>
+<div class="logo">PayPal</div>
+</div>
 </div>
 </section>
-<div class="stats">
-<div class="stat-box">
-<h3 id="users">0</h3>
-<p>User</p>
+<div class="footer-box">
+<div class="footer-card">
+<h3>🔒 Privasi</h3>
+<p>Data aman dan tidak dibagikan</p>
 </div>
-<div class="stat-box">
-<h3 id="withdraw">0</h3>
-<p>Withdraw</p>
+<div class="footer-card">
+<h3>🛡️ Keamanan</h3>
+<p>Sistem enkripsi dan proteksi tinggi</p>
+</div>
+<div class="footer-card">
+<h3>⭐ Terpercaya</h3>
+<p>Sudah digunakan ribuan user</p>
 </div>
 </div>
 <footer>
-© 2026 EARNSHORTLINK
+© 2026 Earnshortlink - Best CPM
 </footer>
-<script>
-function animateValue(id,start,end,duration){
-let obj=document.getElementById(id);
-if(!obj) return;
-let range=end-start;
-let current=start;
-let increment=end>start?1:-1;
-let stepTime=Math.abs(Math.floor(duration/range));
-let timer=setInterval(function(){
-current+=increment;
-obj.textContent=current.toLocaleString()+"+";
-if(current==end){
-clearInterval(timer);
-}
-},stepTime);
-}
-animateValue("users",0,12547,1500);
-animateValue("withdraw",0,8932,1500);
-</script>
 </body>
 </html>
