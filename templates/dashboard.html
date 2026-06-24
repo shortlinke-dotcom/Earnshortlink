@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dashboard - EarnShortlink</title>
 
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 
 <style>
@@ -50,23 +52,25 @@ top:0;
 left:0;
 width:100%;
 
-display:flex;
-justify-content:space-between;
+display:grid;
+grid-template-columns:60px 1fr 60px;
 align-items:center;
 
 padding:15px 20px;
 
 background:rgba(0,0,0,.25);
 backdrop-filter:blur(15px);
-
 border-bottom:1px solid rgba(33,150,243,.3);
 
 z-index:9999;
 }
 
 .logo{
-font-size:28px;
-font-weight:800;
+text-align:center;
+}
+
+.user-menu{
+justify-self:end;
 }
 
 .logo span{
@@ -81,6 +85,15 @@ background:#ef4444;
 color:white;
 cursor:pointer;
 font-weight:600;
+}
+
+.logo{
+font-size:28px;
+font-weight:800;
+
+text-shadow:
+0 0 10px rgba(33,150,243,.7),
+0 0 20px rgba(33,150,243,.4);
 }
 
 /* WELCOME */
@@ -164,6 +177,12 @@ border:none;
 color:#fff;
 font-size:28px;
 cursor:pointer;
+}
+
+.sidebar a.active{
+background:rgba(33,150,243,.15);
+color:#2196f3;
+border-left:3px solid #2196f3;
 }
 
 .sidebar{
@@ -343,6 +362,20 @@ right:-5px;
 
 }
 
+.account-dropdown{
+opacity:0;
+visibility:hidden;
+transform:translateY(10px);
+transition:.3s;
+}
+
+.account-dropdown.show{
+opacity:1;
+visibility:visible;
+transform:translateY(0);
+display:block;
+}
+
 @media(max-width:480px){
 
 .stats{
@@ -369,6 +402,58 @@ font-size:16px;
 
 }
 
+.sidebar a{
+display:flex;
+align-items:center;
+gap:12px;
+
+color:white;
+text-decoration:none;
+
+padding:14px;
+margin-bottom:8px;
+
+border-radius:12px;
+
+transition:.3s;
+}
+
+.sidebar a i{
+width:20px;
+text-align:center;
+
+color:#2196f3;
+
+text-shadow:
+0 0 10px rgba(33,150,243,.8),
+0 0 20px rgba(33,150,243,.4);
+}
+
+.sidebar a:hover{
+background:rgba(33,150,243,.15);
+color:#2196f3;
+}
+
+.sidebar a:hover i{
+transform:scale(1.1);
+transition:.3s;
+}
+
+.sidebar a{
+display:flex;
+align-items:center;
+gap:12px;
+}
+
+.sidebar a i{
+width:20px;
+color:#2196f3;
+}
+
+.account-btn i{
+font-size:18px;
+}
+
 </style>
 </head>
 <body>
@@ -379,46 +464,82 @@ font-size:16px;
 
 <div class="topbar">
 
-<div class="sidebar" id="sidebar">
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
 
-    <div class="sidebar-header">
-        <h2>MENU</h2>
+        <div class="sidebar-header">
+            <h2>MENU</h2>
 
-        <button class="close-btn" onclick="closeMenu()">
-            ✕
-        </button>
+            <button class="close-btn" onclick="closeMenu()">
+                ✕
+            </button>
+        </div>
+
+        <a href="/dashboard" onclick="closeMenu()">
+            <i class="fa-solid fa-chart-line"></i>
+            Dashboard
+        </a>
+
+        <a href="/links" onclick="closeMenu()">
+            <i class="fa-solid fa-link"></i>
+            Kelola Tautan
+        </a>
+
+        <a href="/sell-link" onclick="closeMenu()">
+            <i class="fa-solid fa-plus"></i>
+            Sell Link New
+        </a>
+
+        <a href="/payments" onclick="closeMenu()">
+            <i class="fa-solid fa-wallet"></i>
+            Payments
+        </a>
+
+        <a href="/referrals" onclick="closeMenu()">
+            <i class="fa-solid fa-users"></i>
+            Referrals
+        </a>
+
+        <a href="/invoices" onclick="closeMenu()">
+            <i class="fa-solid fa-file-invoice"></i>
+            Invoices
+        </a>
+
+        <a href="/settings" onclick="closeMenu()">
+            <i class="fa-solid fa-gear"></i>
+            Pengaturan
+        </a>
+
+        <a href="/support" onclick="closeMenu()">
+            <i class="fa-solid fa-headset"></i>
+            Dukungan
+        </a>
+
+        <div class="sidebar-footer">
+            © <span id="year"></span><br>
+            EarnShortlink Best CPM
+        </div>
+
     </div>
 
-    <a href="/dashboard" onclick="closeMenu()">🏠 Dashboard</a>
-    <a href="/links" onclick="closeMenu()">🔗 Kelola Tautan</a>
-    <a href="/sell-link" onclick="closeMenu()">➕ Sell Link New</a>
-    <a href="/payments" onclick="closeMenu()">💰 Payments</a>
-    <a href="/referrals" onclick="closeMenu()">👥 Referrals</a>
-    <a href="/invoices" onclick="closeMenu()">📄 Invoices</a>
-    <a href="/settings" onclick="closeMenu()">⚙️ Pengaturan</a>
-    <a href="/support" onclick="closeMenu()">🛟 Dukungan</a>
+    <!-- Overlay -->
+    <div class="overlay" id="overlay" onclick="closeMenu()"></div>
 
-    <div class="sidebar-footer">
-        © <span id="year"></span><br>
-        EarnShortlink Best CPM
-    </div>
-
-</div>
-
-<div class="overlay" id="overlay" onclick="closeMenu()"></div>
-
+    <!-- Tombol Menu -->
     <button class="menu-btn" onclick="openMenu()">
         ☰
     </button>
 
+    <!-- Logo -->
     <div class="logo">
         EARN<span>SHORTLINK</span>
     </div>
 
+    <!-- User Menu -->
     <div class="user-menu">
 
         <button class="account-btn" onclick="toggleUserMenu()">
-            👤
+            <i class="fa-solid fa-user"></i>
         </button>
 
         <div class="account-dropdown" id="accountDropdown">
@@ -472,8 +593,6 @@ Mulai kerjakan shortlink dan kumpulkan saldo hari ini.
 <div class="stat-card">
 <h3>Level</h3>
 <h1>VIP</h1>
-</div>
-
 </div>
 
 </div>
