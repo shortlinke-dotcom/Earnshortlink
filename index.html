@@ -248,6 +248,8 @@ font-size:22px;
 margin:0 15px;
 }
 
+}
+
 .hero::before{
 content:'';
 position:absolute;
@@ -313,7 +315,64 @@ border-radius:50px;
 color:#000;
 text-decoration:none;
 font-weight:600;
-}  
+}
+
+.payment-logos{
+padding:80px 20px;
+text-align:center;
+}
+
+.payment-logos h2{
+color:#00eaff;
+margin-bottom:30px;
+}
+
+.logo-slider{
+overflow:hidden;
+position:relative;
+width:100%;
+}
+
+.logo-track{
+display:flex;
+align-items:center;
+gap:80px;
+width:max-content;
+animation:logoMove 25s linear infinite;
+}
+
+.logo-track img{
+height:45px;
+filter:brightness(0) invert(1);
+opacity:.9;
+transition:.3s;
+}
+
+.logo-track img:hover{
+transform:scale(1.1);
+opacity:1;
+}
+
+@keyframes logoMove{
+from{
+transform:translateX(0);
+}
+to{
+transform:translateX(-50%);
+}
+}
+
+@media(max-width:768px){
+
+.logo-track{
+gap:40px;
+}
+
+.logo-track img{
+height:30px;
+}
+
+}
 
 }
 </style>
@@ -397,19 +456,47 @@ serta pengalaman pengguna yang nyaman di Android maupun Desktop.
 
 </section>
 
-<div class="marquee">
-<div class="track">
-<span>🏦 BCA</span>
-<span>🏦 BRI</span>
-<span>🏦 BNI</span>
-<span>🏦 MANDIRI</span>
-<span>💙 DANA</span>
-<span>💜 OVO</span>
-<span>💚 GOPAY</span>
-<span>🧡 SHOPEEPAY</span>
-<span>🌎 PAYPAL</span>
+<section class="payment-logos">
+
+<h2>Metode Pembayaran</h2>
+
+<div class="logo-slider">
+
+<div class="logo-track">
+
+<img src="https://upload.wikimedia.org/wikipedia/commons/5/5c/Bank_Central_Asia.svg">
+
+<img src="https://upload.wikimedia.org/wikipedia/commons/6/68/Bank_Rakyat_Indonesia_logo.svg">
+
+<img src="https://upload.wikimedia.org/wikipedia/commons/7/7d/BNI_logo.svg">
+
+<img src="https://upload.wikimedia.org/wikipedia/commons/a/ad/Bank_Mandiri_logo_2016.svg">
+
+<img src="https://upload.wikimedia.org/wikipedia/commons/7/72/Logo_dana_blue.svg">
+
+<img src="https://upload.wikimedia.org/wikipedia/commons/8/86/Logo_OVO_purple.svg">
+
+<img src="https://upload.wikimedia.org/wikipedia/commons/8/86/PayPal.svg">
+
+<img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Shopee_logo.svg">
+
+<img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Gojek_logo_2022.svg">
+
+<!-- Duplikat agar loop mulus -->
+
+<img src="https://upload.wikimedia.org/wikipedia/commons/5/5c/Bank_Central_Asia.svg">
+
+<img src="https://upload.wikimedia.org/wikipedia/commons/6/68/Bank_Rakyat_Indonesia_logo.svg">
+
+<img src="https://upload.wikimedia.org/wikipedia/commons/7/7d/BNI_logo.svg">
+
+<img src="https://upload.wikimedia.org/wikipedia/commons/a/ad/Bank_Mandiri_logo_2016.svg">
+
 </div>
+
 </div>
+
+</section>
 
 <div class="footer-box">
 
