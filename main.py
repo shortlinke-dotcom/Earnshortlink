@@ -35,15 +35,25 @@ async def register(request: Request):
 
 
 # REGISTER PROCESS
+
 @app.post("/register")
 async def register_post(
-    email: str = Form(...),
+    gmail: str = Form(...),
     username: str = Form(...),
-    password: str = Form(...)
+    password: str = Form(...),
+    confirm_password: str = Form(...)
 ):
-    print("REGISTER:")
-    print("Email:", email)
+
+    if password != confirm_password:
+        return {
+            "success": False,
+            "message": "Password tidak sama"
+        }
+
+    print("========== REGISTER ==========")
+    print("Gmail:", gmail)
     print("Username:", username)
+    print("==============================")
 
     return RedirectResponse(
         url="/dashboard",
