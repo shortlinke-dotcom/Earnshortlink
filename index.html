@@ -82,7 +82,7 @@ justify-content:center;
 align-items:center;
 text-align:center;
 min-height:100vh;
-padding:120px 20px 50px;
+padding:150px 20px 80px;
 position:relative;
 }
 
@@ -277,7 +277,9 @@ display:flex;
 flex-wrap:wrap;
 justify-content:center;
 gap:20px;
-margin-top:40px;
+max-width:1100px;
+margin:60px auto;
+padding:0 20px;
 }
 
 .stat-box{
@@ -318,53 +320,93 @@ font-weight:600;
 }
 
 .payment-logos{
-padding:80px 20px;
-text-align:center;
+    padding:80px 20px;
+    text-align:center;
 }
 
 .payment-logos h2{
-color:#00eaff;
-margin-bottom:30px;
+    color:#00eaff;
+    margin-bottom:30px;
 }
 
 .logo-slider{
-overflow:hidden;
-position:relative;
-width:100%;
+    width:100%;
+    overflow:hidden;
+    position:relative;
 }
 
 .logo-track{
-display:flex;
-align-items:center;
-gap:80px;
-width:max-content;
-animation:logoMove 25s linear infinite;
+    display:flex;
+    align-items:center;
+    gap:60px;
+    width:max-content;
+    animation:logoMove 20s linear infinite;
 }
 
 .logo-track img{
-height:45px;
-width:auto;
-object-fit:contain;
-background:transparent;
-padding:0;
-filter:none;
-opacity:.95;
-transition:.3s;
+    height:40px;
+    width:auto;
+    object-fit:contain;
+    display:block;
+    opacity:.95;
+    transition:.3s;
+    background:none;
+    border:none;
+    filter:none;
 }
 
 .logo-track img:hover{
-transform:scale(1.08);
-opacity:1;
+    transform:scale(1.08);
+    opacity:1;
 }
 
-.stats{
-display:flex;
-flex-wrap:wrap;
-justify-content:center;
-gap:20px;
-margin:40px auto 80px;
-padding:0 20px;
-max-width:1100px;
+@keyframes logoMove{
+    from{
+        transform:translateX(0);
+    }
+    to{
+        transform:translateX(-50%);
+    }
+}
+
+@media(max-width:768px){
+
+    .navbar{
+        flex-direction:column;
+        gap:15px;
+        padding:20px;
+    }
+
+    .auth-buttons{
+        width:100%;
+        justify-content:center;
+    }
+
+    .hero{
+        padding-top:180px;
+    }
+
+    .logo-track{
+        gap:30px;
+    }
+
+    .logo-track img{
+        height:28px;
+    }
+}
+
+.section,
+.payment-logos,
+.footer-box{
+    position:relative;
+    z-index:2;
+}
+
+.notice,
+.card,
+.footer-card,
+.stat-box{
+    overflow:hidden;
 }
 
 @media(max-width:768px){
@@ -380,37 +422,8 @@ width:100%;
 justify-content:center;
 }
 
-}
-@keyframes logoMove{
-from{
-transform:translateX(0);
-}
-to{
-transform:translateX(-50%);
-}
-}
-
-@media(max-width:768px){
-    .logo-track{
-        gap:40px;
-    }
-
-    .logo-track img{
-        height:30px;
-    }
-
-.section,
-.payment-logos,
-.footer-box{
-position:relative;
-z-index:2;
-}
-
-.notice,
-.card,
-.footer-card,
-.stat-box{
-overflow:hidden;
+.hero{
+padding-top:180px;
 }
 
 }
@@ -495,6 +508,11 @@ serta pengalaman pengguna yang nyaman di Android maupun Desktop.
 
 </section>
 
+<section class="payment-logos">
+
+<h2>Metode Pembayaran</h2>
+
+<div class="logo-slider">
 <div class="logo-track">
 
 <img src="logo/bca.png" alt="BCA">
@@ -507,6 +525,19 @@ serta pengalaman pengguna yang nyaman di Android maupun Desktop.
 <img src="logo/shopeepay.png" alt="ShopeePay">
 <img src="logo/paypal.png" alt="PayPal">
 
+<!-- duplikat untuk loop -->
+
+<img src="logo/bca.png" alt="BCA">
+<img src="logo/bri.png" alt="BRI">
+<img src="logo/bni.png" alt="BNI">
+<img src="logo/mandiri.png" alt="Mandiri">
+<img src="logo/dana.png" alt="DANA">
+<img src="logo/ovo.png" alt="OVO">
+<img src="logo/gopay.png" alt="GoPay">
+<img src="logo/shopeepay.png" alt="ShopeePay">
+<img src="logo/paypal.png" alt="PayPal">
+
+</div>
 </div>
 
 </section>
