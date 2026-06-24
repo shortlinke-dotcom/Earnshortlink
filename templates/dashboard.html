@@ -137,49 +137,6 @@ font-size:30px;
 color:#2196f3;
 }
 
-/* MENU */
-
-.menu-grid{
-margin-top:30px;
-
-display:grid;
-grid-template-columns:repeat(3,1fr);
-
-gap:20px;
-}
-
-.menu-card{
-padding:25px;
-
-border-radius:18px;
-
-background:rgba(0,0,0,.3);
-
-border:1px solid rgba(33,150,243,.3);
-
-text-align:center;
-
-cursor:pointer;
-
-transition:.3s;
-}
-
-.menu-card:hover{
-transform:translateY(-5px);
-
-box-shadow:
-0 0 20px rgba(33,150,243,.5);
-}
-
-.menu-card h2{
-color:#2196f3;
-margin-bottom:10px;
-}
-
-.menu-card p{
-color:#cbd5e1;
-font-size:14px;
-}
 
 /* MOBILE */
 
@@ -189,9 +146,7 @@ font-size:14px;
 grid-template-columns:1fr 1fr;
 }
 
-.menu-grid{
-grid-template-columns:1fr;
-}
+
 
 .logo{
 font-size:22px;
@@ -214,7 +169,7 @@ cursor:pointer;
 .sidebar{
 position:fixed;
 top:0;
-right:-320px;
+left:-320px;
 
 width:300px;
 height:100vh;
@@ -355,6 +310,66 @@ color:white;
 cursor:pointer;
 }
 
+@media(max-width:768px){
+
+.container{
+padding:85px 15px 15px;
+}
+
+.stats{
+grid-template-columns:1fr 1fr;
+gap:12px;
+}
+
+.stat-card{
+padding:18px;
+}
+
+.stat-card h1{
+font-size:22px;
+}
+
+.logo{
+font-size:18px;
+}
+
+.sidebar{
+width:280px;
+}
+
+.account-dropdown{
+width:200px;
+right:-5px;
+}
+
+}
+
+@media(max-width:480px){
+
+.stats{
+grid-template-columns:1fr;
+}
+
+.topbar{
+padding:10px 12px;
+}
+
+.logo{
+font-size:16px;
+}
+
+.menu-btn{
+font-size:24px;
+}
+
+.account-btn{
+width:40px;
+height:40px;
+font-size:16px;
+}
+
+}
+
 </style>
 </head>
 <body>
@@ -475,44 +490,13 @@ Mulai kerjakan shortlink dan kumpulkan saldo hari ini.
 
 </div>
 
-<div class="menu-grid">
-
-<div class="menu-card">
-<h2>🔗 Shortlink</h2>
-<p>Kerjakan shortlink dan dapatkan saldo.</p>
-</div>
-
-<div class="menu-card">
-<h2>💰 Withdraw</h2>
-<p>Tarik saldo ke Dana, OVO, Bank.</p>
-</div>
-
-<div class="menu-card">
-<h2>👥 Referral</h2>
-<p>Undang teman dan dapatkan bonus.</p>
-</div>
-
-<div class="menu-card">
-<h2>📜 Riwayat</h2>
-<p>Lihat riwayat pendapatan.</p>
-</div>
-
-<div class="menu-card">
-<h2>🎁 Bonus Harian</h2>
-<p>Claim bonus setiap hari.</p>
-</div>
-
-<div class="menu-card">
-<h2>⚙️ Pengaturan</h2>
-<p>Kelola akun dan keamanan.</p>
-</div>
 
 </div>
+
 <footer class="dashboard-footer">
 © <span id="footerYear"></span>
 EarnShortlink Best CPM
 </footer>
-</div>
 <script>
 
 function openMenu(){
@@ -542,12 +526,26 @@ document.getElementById("year").innerText = year;
 document.getElementById("footerYear").innerText = year;
 
 function toggleUserMenu(){
-
-document
-.getElementById("accountDropdown")
-.classList.toggle("show");
-
+    document
+    .getElementById("accountDropdown")
+    .classList.toggle("show");
 }
+
+document.addEventListener("click", function(e){
+
+    const btn = document.querySelector(".account-btn");
+    const menu = document.getElementById("accountDropdown");
+
+    if(
+        btn &&
+        menu &&
+        !btn.contains(e.target) &&
+        !menu.contains(e.target)
+    ){
+        menu.classList.remove("show");
+    }
+
+});
 </script>
 </body>
 </html>
