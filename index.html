@@ -159,6 +159,134 @@ margin-top:60px;
 padding:30px;
 opacity:.8;
 }
+
+.container{
+    width:100%;
+    max-width:1200px;
+    margin:auto;
+    padding:20px;
+}
+
+.hero h1{
+    font-size:90px;
+}
+
+.features{
+    display:grid;
+    grid-template-columns:repeat(6,1fr);
+    gap:20px;
+}
+
+.info-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:20px;
+}
+
+/* TABLET */
+@media (max-width:1024px){
+
+.hero h1{
+    font-size:70px;
+}
+
+.features{
+    grid-template-columns:repeat(3,1fr);
+}
+
+.info-grid{
+    grid-template-columns:1fr;
+}
+
+}
+
+/* ANDROID */
+@media (max-width:768px){
+
+.topbar{
+    justify-content:center;
+    flex-wrap:wrap;
+}
+
+.hero{
+    padding:40px 10px;
+}
+
+.hero h1{
+    font-size:42px;
+    line-height:1.1;
+}
+
+.hero p{
+    font-size:18px;
+}
+
+.notice{
+    padding:20px;
+}
+
+.section-title h2{
+    font-size:28px;
+}
+
+.features{
+    grid-template-columns:1fr;
+}
+
+.card{
+    padding:20px;
+}
+
+.payments{
+    gap:12px;
+}
+
+.payments img{
+    height:28px;
+}
+
+.info-grid{
+    grid-template-columns:1fr;
+}
+
+.info{
+    padding:20px;
+}
+
+.btn{
+    width:140px;
+}
+
+}
+
+/* HP KECIL */
+@media (max-width:480px){
+
+.hero h1{
+    font-size:34px;
+}
+
+.hero p{
+    font-size:16px;
+}
+
+.section-title h2{
+    font-size:22px;
+}
+
+.notice{
+    font-size:14px;
+}
+
+.payments img{
+    height:24px;
+}
+
+footer{
+    font-size:13px;
+}
+
+}
 </style>
 </head>
 <body>
