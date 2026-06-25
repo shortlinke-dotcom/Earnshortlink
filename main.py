@@ -320,15 +320,10 @@ async def create_link(request: Request):
     form = await request.form()
 
     login = str(form.get("login", "")).strip()
-    destination_url = str(
-        form.get("destination_url", "")
-    ).strip()
+    destination_url = str(form.get("destination_url", "")).strip()
 
     if not login or not destination_url:
-        return RedirectResponse(
-            "/dashboard",
-            status_code=303
-        )
+        return RedirectResponse("/dashboard", status_code=303)
 
     user = (
         supabase
@@ -340,18 +335,13 @@ async def create_link(request: Request):
     )
 
     if not user.data:
-        return RedirectResponse(
-            "/login",
-            status_code=303
-        )
+        return RedirectResponse("/login", status_code=303)
 
     user_id = user.data[0]["id"]
 
+    # generate short code
     short_code = ''.join(
-        random.choices(
-            string.ascii_letters + string.digits,
-            k=6
-        )
+        random.choices(string.ascii_letters + string.digits, k=6)
     )
 
     supabase.table("links").insert({
@@ -362,8 +352,10 @@ async def create_link(request: Request):
         "earnings": 0
     }).execute()
 
+    short_url = f"https://earnshortlink.up.railway.app/s/{short_code}"
+
     return RedirectResponse(
-        f"/dashboard?login={login}",
+        f"/dashboard?login={login}&created={short_url}",
         status_code=303
     )
 @app.get("/s/{short_code}", response_class=HTMLResponse)
@@ -379,16 +371,16 @@ async def shortlink(request: Request, short_code: str):
     )
 
     if not result.data:
-        return HTMLResponse(
-            "Link tidak ditemukan",
-            status_code=404
-        )
+        return HTMLResponse("Link tidak ditemukan", status_code=404)
+
+    link = result.data[0]
 
     return templates.TemplateResponse(
         "task1.html",
         {
             "request": request,
-            "short_code": short_code
+            "short_code": short_code,
+            "destination_url": link["destination_url"]
         }
     )
 # =========================
@@ -404,30 +396,17 @@ async def send_chat(request: Request):
     message = str(form.get("message", "")).strip()
 
     if not login:
-        return RedirectResponse(
-            "/login",
-            status_code=303
-        )
+        return RedirectResponse("/login", status_code=303)
 
     if not message:
-        return RedirectResponse(
-            f"/dashboard?login={login}",
-            status_code=303
-        )
+        return RedirectResponse(f"/dashboard?login={login}", status_code=303)
 
-    try:
-        supabase.table("chat_messages").insert({
-            "username": login,
-            "message": message
-        }).execute()
+    supabase.table("chat_messages").insert({
+        "username": login,
+        "message": message
+    }).execute()
 
-    except Exception as e:
-        print("CHAT ERROR:", e)
-
-    return RedirectResponse(
-        f"/dashboard?login={login}",
-        status_code=303
-    )
+    return RedirectResponse(f"/dashboard?login={login}", status_code=303)
 # =========================
 # FAVICON (IGNORE ERROR LOG)
 # =========================
