@@ -15,22 +15,18 @@ templates = Jinja2Templates(directory="templates")
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
     return templates.TemplateResponse(
-        "index.html",
-        {"request": request}
+        request=request,
+        name="index.html"
     )
-
-
 # =========================
 # LOGIN PAGE
 # =========================
 @app.get("/login", response_class=HTMLResponse)
 async def login_page(request: Request):
     return templates.TemplateResponse(
-        "login.html",
-        {"request": request}
+        request=request,
+        name="login.html"
     )
-
-
 # =========================
 # LOGIN REAL
 # =========================
@@ -40,7 +36,8 @@ def login_post(
     password: str = Form(...)
 ):
     result = (
-        supabase.table("users")
+        supabase
+        .table("users")
         .select("*")
         .eq("username", username)
         .execute()
@@ -48,35 +45,34 @@ def login_post(
 
     if not result.data:
         return HTMLResponse(
-            "User tidak ditemukan",
+            content="User tidak ditemukan",
             status_code=404
         )
 
     user = result.data[0]
 
-    if not verify_password(password, user["password"]):
+    if not verify_password(
+        password,
+        user["password"]
+    ):
         return HTMLResponse(
-            "Password salah",
+            content="Password salah",
             status_code=401
         )
 
     return RedirectResponse(
-        "/dashboard",
+        url="/dashboard",
         status_code=303
     )
-
-
 # =========================
 # REGISTER PAGE
 # =========================
 @app.get("/register", response_class=HTMLResponse)
 async def register_page(request: Request):
     return templates.TemplateResponse(
-        "register.html",
-        {"request": request}
+        request=request,
+        name="register.html"
     )
-
-
 # =========================
 # REGISTER REAL
 # =========================
@@ -89,12 +85,13 @@ def register_post(
 ):
     if password != confirm_password:
         return HTMLResponse(
-            "Password tidak sama",
+            content="Password tidak sama",
             status_code=400
         )
 
     existing = (
-        supabase.table("users")
+        supabase
+        .table("users")
         .select("*")
         .eq("username", username)
         .execute()
@@ -102,7 +99,7 @@ def register_post(
 
     if existing.data:
         return HTMLResponse(
-            "Username sudah digunakan",
+            content="Username sudah digunakan",
             status_code=400
         )
 
@@ -113,17 +110,15 @@ def register_post(
     }).execute()
 
     return RedirectResponse(
-        "/login",
+        url="/login",
         status_code=303
     )
-
-
 # =========================
 # DASHBOARD
 # =========================
 @app.get("/dashboard", response_class=HTMLResponse)
 async def dashboard(request: Request):
     return templates.TemplateResponse(
-        "dashboard.html",
-        {"request": request}
+        request=request,
+        name="dashboard.html"
     )
