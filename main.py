@@ -163,30 +163,83 @@ def register_post(
 # =========================
 @app.get("/dashboard", response_class=HTMLResponse)
 async def dashboard(request: Request, login: str = None):
-
     if not login:
         return RedirectResponse("/login")
-
-    user = (
+    user_res = (
         supabase
         .table("users")
-        .select("username, saldo")
+        .select("*")
         .or_(f"username.eq.{login},gmail.eq.{login}")
         .limit(1)
         .execute()
     )
-
-    if not user.data:
+    if not user_res.data:
         return RedirectResponse("/login")
-
-    data = user.data[0]
-
+    user = user_res.data[0]
+    user_id = user["id"]
+    # LINKS USER
+    links_res = (
+        supabase
+        .table("links")
+        .select("*")
+        .eq("user_id", user_id)
+        .execute()
+    )
+    links = links_res.data or []
+    total_links = len(links)
+    total_clicks = sum(
+        int(link.get("clicks", 0))
+        for link in links
+    )
+    total_link_earnings = sum(
+        int(link.get("earnings", 0))
+        for link in links
+    )
+    # RECENT ACTIVITY
+    recent_links = (
+        supabase
+        .table("links")
+        .select("*")
+        .eq("user_id", user_id)
+        .order("created_at", desc=True)
+        .limit(10)
+        .execute()
+    ).data or []
+    # ANNOUNCEMENT
+    announcement = (
+        supabase
+        .table("announcements")
+        .select("*")
+        .order("created_at", desc=True)
+        .limit(1)
+        .execute()
+    ).data
+    announcement_text = ""
+    if announcement:
+        announcement_text = announcement[0]["content"]
+    # GLOBAL CHAT
+    chat_messages = (
+        supabase
+        .table("chat_messages")
+        .select("*")
+        .order("created_at", desc=True)
+        .limit(30)
+        .execute()
+    ).data or []
     return templates.TemplateResponse(
         "dashboard.html",
         {
             "request": request,
-            "username": data["username"],
-            "saldo": data.get("saldo", 0)
+            "username": user["username"],
+            "saldo": user.get("saldo", 0),
+            "total_earn": user.get("total_earn", 0),
+            "referrals": user.get("referrals", 0),
+            "total_links": total_links,
+            "total_clicks": total_clicks,
+            "total_link_earnings": total_link_earnings,
+            "announcement": announcement_text,
+            "recent_links": recent_links,
+            "chat_messages": chat_messages
         }
     )
 # =========================
