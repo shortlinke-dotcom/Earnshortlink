@@ -339,12 +339,13 @@ visibility:visible;
 }
 
 #adPopup{
-width:95%;
-max-width:900px;
+width:340px;
+max-width:95%;
 background:#111827;
 border-radius:20px;
 padding:20px;
 position:relative;
+overflow:hidden;
 
 transform:translateY(120vh) scale(.8);
 opacity:0;
@@ -370,6 +371,7 @@ border-radius:50%;
 cursor:pointer;
 font-size:18px;
 font-weight:bold;
+z-index:1000;
 }
 
 .ad-title{
@@ -379,28 +381,13 @@ font-weight:700;
 }
 
 .ad-container{
-display:flex;
-justify-content:center;
-align-items:center;
-overflow:hidden;
-}
-
-#adPopup{
-width:95%;
-max-width:900px;
-background:#111827;
-border-radius:20px;
-padding:20px;
-position:relative;
-overflow:hidden;
-}
-
-.ad-container{
-width:100%;
-display:flex;
-justify-content:center;
-align-items:center;
+width:300px;
 min-height:250px;
+margin:auto;
+display:flex;
+justify-content:center;
+align-items:center;
+overflow:hidden;
 }
 </style>
 </head>
@@ -661,17 +648,20 @@ Dengan menjaga keamanan akun serta menggunakan platform sesuai ketentuan, Anda d
 
         <div class="ad-container">
 
-            <script>
-              atOptions = {
+            <script type="text/javascript">
+            atOptions = {
                 'key' : '5737a07c4a33cf9a6e8fc68028ae5b82',
                 'format' : 'iframe',
                 'height' : 250,
                 'width' : 300,
                 'params' : {}
-              };
+            };
             </script>
 
-            <script src="https://nooseamazingbatch.com/5737a07c4a33cf9a6e8fc68028ae5b82/invoke.js"></script>
+            <script
+                type="text/javascript"
+                src="https://nooseamazingbatch.com/5737a07c4a33cf9a6e8fc68028ae5b82/invoke.js">
+            </script>
 
         </div>
 
