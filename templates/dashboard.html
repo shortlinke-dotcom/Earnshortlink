@@ -763,19 +763,30 @@ flex-direction:column;
     </div>
     <div class="chat-box">
         <div id="chatMessages" class="chat-messages">
-            {% for msg in chat_messages %}
-            <div class="chat-item">
-                <b>{{ msg.username }}</b> :
-                {{ msg.message }}
-            </div>
-            {% endfor %}
+            {% if chat_messages %}
+                {% for msg in chat_messages %}
+                <div class="chat-item">
+                    <b>{{ msg.username }}</b> :
+                    {{ msg.message }}
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="chat-empty">
+                    Belum ada pesan.
+                </div>
+            {% endif %}
         </div>
         <form action="/send-chat" method="post" class="chat-form">
+            <input
+                type="hidden"
+                name="login"
+                value="{{ username }}">
             <input
                 type="text"
                 name="message"
                 maxlength="200"
-                placeholder="Tulis pesan...">
+                placeholder="Tulis pesan..."
+                required>
             <button type="submit">
                 Kirim
             </button>
