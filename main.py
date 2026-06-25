@@ -1,4 +1,6 @@
 import re
+import random
+import string
 from urllib.parse import quote
 
 from fastapi import FastAPI, Request, Form
@@ -309,6 +311,91 @@ async def dashboard(request: Request, login: str = None):
             f"<h1>Dashboard Error</h1><pre>{e}</pre>",
             status_code=500
         )
+# ========================
+# CREATE LINKS
+# ========================
+@app.post("/create-link")
+async def create_link(request: Request):
+
+    form = await request.form()
+
+    login = str(form.get("login", "")).strip()
+    destination_url = str(
+        form.get("destination_url", "")
+    ).strip()
+
+    if not login or not destination_url:
+        return RedirectResponse(
+            "/dashboard",
+            status_code=303
+        )
+
+    user = (
+        supabase
+        .table("users")
+        .select("id")
+        .eq("username", login)
+        .limit(1)
+        .execute()
+    )
+
+    if not user.data:
+        return RedirectResponse(
+            "/login",
+            status_code=303
+        )
+
+    user_id = user.data[0]["id"]
+
+    short_code = ''.join(
+        random.choices(
+            string.ascii_letters + string.digits,
+            k=6
+        )
+    )
+
+    supabase.table("links").insert({
+        "user_id": user_id,
+        "destination_url": destination_url,
+        "short_code": short_code,
+        "clicks": 0,
+        "earnings": 0
+    }).execute()
+
+    return RedirectResponse(
+        f"/dashboard?login={login}",
+        status_code=303
+    )
+@app.get("/{short_code}")
+async def open_shortlink(short_code: str):
+
+    result = (
+        supabase
+        .table("links")
+        .select("*")
+        .eq("short_code", short_code)
+        .limit(1)
+        .execute()
+    )
+
+    if not result.data:
+        return HTMLResponse(
+            "Link tidak ditemukan",
+            status_code=404
+        )
+
+    link = result.data[0]
+
+    supabase.table("links").update({
+        "clicks": int(link["clicks"]) + 1
+    }).eq(
+        "id",
+        link["id"]
+    ).execute()
+
+    return RedirectResponse(
+        link["destination_url"]
+    )
 # =========================
 # SEND CHAT
 # =========================
