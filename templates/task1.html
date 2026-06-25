@@ -2,27 +2,25 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Task 1 - EarnShortlink</title>
-
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
+<!-- POPUNDER -->
+<script src="https://nooseamazingbatch.com/ab/80/ed/ab80ed2aaa28a3dd93bd1cd7c7d44835.js"></script>
+<!-- SOCIAL BAR -->
+<script src="https://nooseamazingbatch.com/d3/2b/cf/d32bcff5f18bf12434b8174312acf206.js"></script>
 <style>
-
 *{
 margin:0;
 padding:0;
 box-sizing:border-box;
 font-family:'Poppins',sans-serif;
 }
-
 body{
 background:#020817;
 color:#fff;
 overflow-x:hidden;
 }
-
 .bg{
 position:fixed;
 inset:0;
@@ -33,7 +31,6 @@ background-size:cover;
 background-position:center;
 z-index:-1;
 }
-
 .navbar{
 position:sticky;
 top:0;
@@ -44,22 +41,18 @@ background:rgba(0,0,0,.35);
 backdrop-filter:blur(15px);
 border-bottom:1px solid rgba(33,150,243,.3);
 }
-
 .logo{
 font-size:28px;
 font-weight:800;
 }
-
 .logo span{
 color:#2196f3;
 }
-
 .container{
 max-width:1000px;
 margin:auto;
 padding:20px;
 }
-
 .card{
 background:rgba(0,0,0,.3);
 border:1px solid rgba(33,150,243,.3);
@@ -68,324 +61,402 @@ padding:20px;
 margin-bottom:20px;
 backdrop-filter:blur(10px);
 }
-
 .notice{
 border-left:5px solid #22c55e;
 }
-
-.notice h2{
-margin-bottom:10px;
-}
-
 .notice p{
+line-height:1.8;
 color:#cbd5e1;
-line-height:1.7;
 }
-
+.ad-wrapper{
+width:100%;
+display:flex;
+justify-content:center;
+align-items:center;
+margin:20px 0;
+overflow:hidden;
+}
 .download-section{
 text-align:center;
 }
-
-.download-btn{
-padding:15px 35px;
+.btn{
+display:inline-flex;
+justify-content:center;
+align-items:center;
+padding:15px 30px;
 border:none;
 border-radius:15px;
-background:#2196f3;
-color:white;
-font-size:18px;
 font-weight:700;
 cursor:pointer;
+text-decoration:none;
 }
-
-.download-btn:hover{
-transform:scale(1.03);
+.btn-primary{
+background:#2196f3;
+color:#fff;
 }
-
+.btn-success{
+background:#22c55e;
+color:#fff;
+}
 .timer{
+display:none;
 font-size:50px;
 font-weight:800;
 margin-top:20px;
 color:#22c55e;
-display:none;
 }
-
-.scroll-btn{
+#scrollBtn{
 display:none;
 margin-top:20px;
-padding:15px 30px;
-border:none;
-border-radius:15px;
-background:#22c55e;
-color:white;
-font-weight:700;
-cursor:pointer;
 }
-
 .article h2{
 margin-bottom:15px;
 color:#2196f3;
 }
-
 .article p{
-line-height:1.9;
+line-height:1.8;
 color:#dbeafe;
-margin-bottom:18px;
-text-align:justify;
 }
-
-.ad-box{
-height:250px;
-display:flex;
-align-items:center;
-justify-content:center;
-border:2px dashed #2196f3;
-border-radius:20px;
-font-size:22px;
-font-weight:700;
-margin:25px 0;
-background:rgba(33,150,243,.08);
-}
-
-.final-download{
+.verify-box{
 text-align:center;
 }
-
-.final-btn{
-display:inline-block;
-padding:18px 35px;
-background:#22c55e;
-color:white;
-text-decoration:none;
-border-radius:15px;
+#loadingBox{
+display:none;
+margin-top:20px;
 font-weight:700;
-font-size:18px;
 }
-
+#downloadBox{
+display:none;
+margin-top:20px;
+}
 .footer{
-margin-top:40px;
 padding:25px;
 text-align:center;
 opacity:.8;
 font-size:14px;
 }
-
 @media(max-width:768px){
-
 .logo{
 font-size:22px;
 }
-
 .timer{
-font-size:38px;
+font-size:36px;
 }
-
-.download-btn,
-.scroll-btn,
-.final-btn{
+.btn{
 width:100%;
 }
+}
+.marquee-wrap{
+width:100%;
+overflow:hidden;
+background:#16a34a;
+padding:10px 0;
+border-bottom:1px solid rgba(255,255,255,.1);
+}
 
-.container{
-padding:15px;
+.marquee{
+white-space:nowrap;
+display:inline-block;
+padding-left:100%;
+font-weight:700;
+animation:marquee 18s linear infinite;
+}
+
+@keyframes marquee{
+0%{
+transform:translateX(0);
+}
+100%{
+transform:translateX(-100%);
+}
+}
+
+.sponsor-btn{
+display:inline-flex;
+align-items:center;
+justify-content:center;
+padding:16px 30px;
+border-radius:16px;
+text-decoration:none;
+font-weight:800;
+color:#fff;
+background:linear-gradient(45deg,#2196f3,#22c55e);
+animation:pulse 1.5s infinite;
+box-shadow:0 0 20px rgba(33,150,243,.4);
+}
+
+@keyframes pulse{
+0%{
+transform:scale(1);
+}
+50%{
+transform:scale(1.05);
+}
+100%{
+transform:scale(1);
+}
+}
+
+.claim-btn{
+display:inline-flex;
+align-items:center;
+justify-content:center;
+padding:16px 28px;
+border-radius:18px;
+font-weight:800;
+font-size:16px;
+text-decoration:none;
+color:#fff;
+background:linear-gradient(45deg,#22c55e,#16a34a);
+box-shadow:0 0 25px rgba(34,197,94,.35);
+animation:claimPulse 1.5s infinite;
+transition:.3s;
+}
+
+.claim-btn:hover{
+transform:scale(1.05);
+}
+
+@keyframes claimPulse{
+
+0%{
+transform:scale(1);
+}
+
+50%{
+transform:scale(1.08);
+}
+
+100%{
+transform:scale(1);
 }
 
 }
-
 </style>
 </head>
 <body>
-
 <div class="bg"></div>
-
+<!-- TEXT BERJALAN -->
+<div class="marquee-wrap">
+<div class="marquee">
+🔥 Join Group Telegram 18+ sekarang juga • Update harian • Komunitas aktif • Klik tombol sponsor di bawah untuk melihat penawaran mitra 🔥
+</div>
+</div>
 <div class="navbar">
 <div class="logo">
 EARN<span>SHORTLINK</span>
 </div>
 </div>
-
 <div class="container">
-
-<!-- NOTIFIKASI -->
-
 <div class="card notice">
-
-<h2>📢 Notifikasi Penting</h2>
-
+<h2>📢 Notifikasi</h2>
 <p>
-Website Penghasil Saldo Tercepat dengan High CPM dan Fast Withdraw.
-Selesaikan seluruh langkah untuk membuka link tujuan dan mendapatkan pengalaman terbaik.
+Silakan ikuti langkah verifikasi untuk melanjutkan ke halaman berikutnya.
 </p>
-
 </div>
-
-<!-- TOMBOL DOWNLOAD -->
-
+<!-- TOMBOL SPONSOR / IKLAN -->
 <div class="card download-section">
 
-<h2>⬇️ Download Access</h2>
+🎁 LIHAT PENAWARAN SPONSOR
 
+</a>
+</div>
+<!-- BANNER 320x50 -->
+<div class="ad-wrapper">
+<script>
+atOptions = {
+'key' : 'ccf15142f738c1098b148a5b80b9d570',
+'format' : 'iframe',
+'height' : 50,
+'width' : 320,
+'params' : {}
+};
+</script>
+<script src="https://nooseamazingbatch.com/ccf15142f738c1098b148a5b80b9d570/invoke.js"></script>
+</div>
+<section class="card article">
+<h2>📈 Kembangkan Potensi Anda</h2>
+<p>
+Banyak pengguna memulai dari langkah kecil dan secara bertahap meningkatkan aktivitas mereka seiring bertambahnya pengalaman. Konsistensi dan pemanfaatan fitur yang tersedia dapat membantu Anda memperoleh hasil yang lebih baik dari waktu ke waktu.
+</p>
+<p>
+Semakin memahami cara kerja platform dan memanfaatkan peluang yang ada, semakin besar potensi yang dapat Anda capai.
+</p>
+<div style="text-align:center;margin-top:25px;">
+
+🎁 KLAIM BONUS RP 100.000 SEKARANG
+
+</a>
+</div>
+</section>
+<!-- BANNER 728x90 -->
+<div class="ad-wrapper">
+<script>
+atOptions = {
+'key' : 'c683046fae98c4e9a864553821c5556a',
+'format' : 'iframe',
+'height' : 90,
+'width' : 728,
+'params' : {}
+};
+</script>
+<script src="https://nooseamazingbatch.com/c683046fae98c4e9a864553821c5556a/invoke.js"></script>
+</div>
+<div class="card download-section">
+<h2>⬇️ Download Access</h2>
 <p style="margin:15px 0;color:#cbd5e1;">
-Klik tombol di bawah untuk memulai proses verifikasi.
+Klik tombol di bawah lalu tunggu hitung mundur selesai untuk membuka langkah berikutnya.
 </p>
 
-<button class="download-btn" onclick="startCountdown()">
-DOWNLOAD
-</button>
-
-<div class="timer" id="timer">
+🚀 MULAI VERIFIKASI
+<div id="timer" class="timer">
 10
 </div>
 
-<button class="scroll-btn" id="scrollBtn" onclick="scrollToBottom()">
 ⬇️ SCROLL DOWN
-</button>
-
+<div style="margin-top:20px;font-size:14px;color:#94a3b8;">
+Mohon Tunggu Sebentar ...
 </div>
-
-<!-- BERITA -->
-
-<div class="card article">
-
-<h2>🌱 Menjaga Kesehatan Jasmani dan Rohani di Era Digital</h2>
-
-<p>
-Di tengah perkembangan teknologi yang sangat cepat, menjaga kesehatan jasmani dan rohani menjadi tantangan tersendiri. Aktivitas yang sebagian besar dilakukan secara digital sering membuat seseorang lupa bergerak, kurang tidur, dan mengalami stres berkepanjangan.
-</p>
-
-<p>
-Kesehatan jasmani dapat dijaga melalui olahraga rutin, pola makan seimbang, serta istirahat yang cukup. Bahkan aktivitas sederhana seperti berjalan kaki selama tiga puluh menit setiap hari dapat membantu menjaga kebugaran tubuh.
-</p>
-
-<p>
-Selain kesehatan fisik, kesehatan mental dan rohani juga memiliki peran penting. Meluangkan waktu untuk keluarga, membaca, beribadah, dan mengurangi paparan informasi negatif dapat membantu menjaga keseimbangan hidup.
-</p>
-
-<p>
-Banyak penelitian menunjukkan bahwa individu yang memiliki keseimbangan antara kesehatan fisik dan mental cenderung lebih produktif, lebih bahagia, dan memiliki kualitas hidup yang lebih baik dibandingkan mereka yang hanya fokus pada salah satunya.
-</p>
-
 </div>
+<!-- ARTIKEL -->
 
-<!-- IKLAN -->
+<section class="card article">
+...
+</section>
 
-<div class="ad-box">
-ADSTERRA BANNER 728x90
-</div>
+<section class="card article">
 
-<div class="card article">
-
-<h2>📱 Media Sosial dan Dampaknya Terhadap Kehidupan</h2>
+<h2>💰 Peluang Penghasilan yang Menarik</h2>
 
 <p>
-Media sosial telah menjadi bagian penting dalam kehidupan modern. Berbagai informasi dapat diperoleh hanya dalam hitungan detik. Namun, penggunaan media sosial yang berlebihan juga dapat menimbulkan dampak negatif seperti kecanduan digital dan penurunan produktivitas.
+Sebagai member EarnShortlink, Anda dapat mengakses berbagai fitur yang dirancang untuk membantu meningkatkan potensi penghasilan, Semakin aktif Anda menggunakan layanan yang tersedia, semakin besar peluang yang bisa diperoleh.
 </p>
 
 <p>
-Para ahli menyarankan agar pengguna membatasi waktu penggunaan media sosial dan lebih banyak melakukan aktivitas di dunia nyata. Dengan begitu keseimbangan hidup dapat tetap terjaga.
+Banyak anggota memanfaatkan platform ini sebagai sumber penghasilan tambahan untuk memenuhi kebutuhan sehari-hari, menambah tabungan, atau mendukung berbagai tujuan finansial lainnya.
 </p>
 
-<p>
-Tren konten edukatif saat ini juga semakin berkembang. Banyak kreator yang membagikan informasi seputar kesehatan, pendidikan, teknologi, dan pengembangan diri yang dapat memberikan manfaat positif bagi masyarakat luas.
-</p>
+</section>
 
+</script>
+<script src="https://nooseamazingbatch.com/5737a07c4a33cf9a6e8fc68028ae5b82/invoke.js"></script>
 </div>
-
-<!-- IKLAN -->
-
-<div class="ad-box">
-ADSTERRA NATIVE ADS
-</div>
-
-<!-- TARGET SCROLL -->
-
 <div id="bottomSection">
+<div class="card verify-box">
+<h2>✅ Verifikasi</h2>
 
-<div class="card article">
+🔒 TERKUNCI
+<div id="loadingBox">
+⏳ Memproses...
+<span id="loadingTimer">5</span>
+</div>
+<div id="downloadBox" style="display:none;margin-top:20px;">
 
-<h2>✨ Kehidupan Seimbang untuk Masa Depan Lebih Baik</h2>
+➡️ LANJUT KE TASK 2
+</div>
+<p style="margin-top:15px;color:#94a3b8;font-size:14px;">
+Verivikasi Terlebih Dahulu ...
+</p>
+</div>
+</div>
 
+<section class="card article">
+<h2>🌍 Dapat Diakses Kapan Saja dan Di Mana Saja</h2>
 <p>
-Menjaga kesehatan tubuh dan pikiran bukan hanya investasi jangka pendek tetapi juga investasi jangka panjang. Dengan tubuh yang sehat dan pikiran yang tenang, seseorang akan lebih siap menghadapi berbagai tantangan kehidupan.
+Salah satu keunggulan EarnShortlink adalah fleksibilitasnya. Platform dapat diakses menggunakan perangkat komputer, laptop, maupun smartphone selama terhubung dengan internet.
 </p>
-
 <p>
-Mulailah dari langkah kecil setiap hari. Konsisten dalam kebiasaan baik akan memberikan hasil yang luar biasa di masa mendatang.
+Anda tidak perlu datang ke lokasi tertentu atau mengikuti jadwal yang ketat. Semua aktivitas dapat dilakukan sesuai waktu yang Anda miliki sehingga lebih nyaman dan efisien.
 </p>
+</section>
+<div id="downloadBox" style="display:none;">
 
+Download Now
 </div>
-
-<div class="ad-box">
-ADSTERRA POPUNDER / SOCIAL BAR
 </div>
-
-<div class="card final-download">
-
-<h2>✅ Verifikasi Berhasil</h2>
-
-<p style="margin:15px 0;">
-Silakan lanjut ke langkah berikutnya.
+</div>
+<section class="card article">
+<h2>⚡ Proses Cepat dan Mudah</h2>
+<p>
+EarnShortlink dirancang dengan antarmuka yang sederhana sehingga mudah digunakan oleh semua kalangan. Proses pendaftaran dapat dilakukan dalam beberapa langkah sederhana dan Anda dapat langsung mulai menjelajahi fitur yang tersedia.
 </p>
-
-<a
-class="final-btn"
-href="/s/{{ short_code }}/task2">
-LANJUT KE TASK 2 →
-</a>
-
-</div>
-
-</div>
-
-</div>
-
-<div class="footer">
-© 2026 EarnShortlink — High CPM • Fast Withdraw
-</div>
-
+<p>
+Sistem yang ringan dan responsif juga memberikan pengalaman penggunaan yang lebih nyaman baik melalui perangkat mobile maupun desktop.
+</p>
+</section>
+<!-- BANNER 468x60 -->
+<div class="ad-wrapper">
 <script>
-
+atOptions = {
+'key' : '8573bb1dc88e1ef48abf8c9c09e4c546',
+'format' : 'iframe',
+'height' : 60,
+'width' : 468,
+'params' : {}
+};
+</script>
+<script src="https://nooseamazingbatch.com/8573bb1dc88e1ef48abf8c9c09e4c546/invoke.js"></script>
+</div>
+<section class="card article">
+<h2>🔒 Aman dan Nyaman Digunakan</h2>
+<p>
+Keamanan pengguna merupakan salah satu prioritas utama. Oleh karena itu, setiap anggota diharapkan menggunakan akun secara bijak dan mengikuti aturan yang berlaku agar pengalaman penggunaan tetap aman dan nyaman.
+</p>
+<p>
+Dengan menjaga keamanan akun serta menggunakan platform sesuai ketentuan, Anda dapat memanfaatkan berbagai fitur EarnShortlink secara optimal.
+</p>
+</section>
+<div class="footer">
+© 2026 EarnShortlink
+</div>
+<script>
+let countdownFinished=false;
 function startCountdown(){
-
-const timer = document.getElementById("timer");
-const scrollBtn = document.getElementById("scrollBtn");
-
+const timer=document.getElementById("timer");
+const scrollBtn=document.getElementById("scrollBtn");
 timer.style.display="block";
-
-let count = 10;
-
-timer.innerText = count;
-
-const interval = setInterval(()=>{
-
+let count=10;
+timer.innerHTML=count;
+const interval=setInterval(()=>{
 count--;
-
-timer.innerText = count;
-
-if(count <= 0){
-
+timer.innerHTML=count;
+if(count<=0){
 clearInterval(interval);
-
+countdownFinished=true;
 timer.innerHTML="✅ Selesai";
-
-scrollBtn.style.display="inline-block";
-
+scrollBtn.style.display="inline-flex";
 }
-
 },1000);
-
 }
-
 function scrollToBottom(){
-
-document
-.getElementById("bottomSection")
+if(!countdownFinished) return;
+document.getElementById("bottomSection")
 .scrollIntoView({
 behavior:"smooth"
 });
-
+const verifyBtn=document.getElementById("verifyBtn");
+verifyBtn.disabled=false;
+verifyBtn.style.opacity="1";
+verifyBtn.style.cursor="pointer";
+verifyBtn.innerHTML="✅ BUKA VERIFIKASI";
 }
-
+function startVerification(){
+const loadingBox=document.getElementById("loadingBox");
+const loadingTimer=document.getElementById("loadingTimer");
+loadingBox.style.display="block";
+let count=5;
+loadingTimer.innerHTML=count;
+const interval=setInterval(()=>{
+count--;
+loadingTimer.innerHTML=count;
+if(count<=0){
+clearInterval(interval);
+loadingBox.innerHTML="✅ Verifikasi Berhasil";
+document.getElementById("downloadBox")
+.style.display="block";
+}
+},1000);
+}
 </script>
-
 </body>
 </html>
