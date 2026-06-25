@@ -32,8 +32,6 @@ async def login_page(request: Request, error: str = None):
         "login.html",
         {"request": request, "error": error}
     )
-
-
 # =========================
 # LOGIN REAL
 # =========================
