@@ -22,10 +22,16 @@ async def home(request: Request):
 # LOGIN PAGE
 # =========================
 @app.get("/login", response_class=HTMLResponse)
-async def login_page(request: Request):
+async def login_page(
+    request: Request,
+    error: str = None
+):
     return templates.TemplateResponse(
         request=request,
-        name="login.html"
+        name="login.html",
+        context={
+            "error": error
+        }
     )
 # =========================
 # LOGIN REAL
@@ -44,17 +50,17 @@ def login_post(
     )
 
     if not result.data:
-        return HTMLResponse(
-            content="User tidak ditemukan",
-            status_code=404
+        return RedirectResponse(
+            url="/login?error=Username atau Gmail tidak ditemukan",
+            status_code=303
         )
 
     user = result.data[0]
 
     if not verify_password(password, user["password"]):
-        return HTMLResponse(
-            content="Password salah",
-            status_code=401
+        return RedirectResponse(
+            url="/login?error=Password salah",
+            status_code=303
         )
 
     return RedirectResponse(
