@@ -366,8 +366,8 @@ async def create_link(request: Request):
         f"/dashboard?login={login}",
         status_code=303
     )
-@app.get("/{short_code}")
-async def open_shortlink(short_code: str):
+@app.get("/s/{short_code}", response_class=HTMLResponse)
+async def shortlink(request: Request, short_code: str):
 
     result = (
         supabase
@@ -384,17 +384,12 @@ async def open_shortlink(short_code: str):
             status_code=404
         )
 
-    link = result.data[0]
-
-    supabase.table("links").update({
-        "clicks": int(link["clicks"]) + 1
-    }).eq(
-        "id",
-        link["id"]
-    ).execute()
-
-    return RedirectResponse(
-        link["destination_url"]
+    return templates.TemplateResponse(
+        "task1.html",
+        {
+            "request": request,
+            "short_code": short_code
+        }
     )
 # =========================
 # SEND CHAT
