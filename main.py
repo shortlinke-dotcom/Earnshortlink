@@ -45,7 +45,7 @@ def login_post(
     result = (
         supabase
         .table("users")
-        .select("*")
+        .select("username, password")
         .or_(f"username.eq.{login},gmail.eq.{login}")
         .limit(1)
         .execute()
@@ -65,9 +65,11 @@ def login_post(
             status_code=303
         )
 
-    return RedirectResponse("/dashboard", status_code=303)
-
-
+    # kirim username ke dashboard
+    return RedirectResponse(
+        f"/dashboard?login={user['username']}",
+        status_code=303
+    )
 # =========================
 # REGISTER PAGE
 # =========================
@@ -145,23 +147,48 @@ def register_post(
     supabase.table("users").insert({
         "gmail": gmail,
         "username": username,
-        "password": hash_password(password)
+        "password": hash_password(password),
+        "saldo": 0
     }).execute()
 
-    return RedirectResponse("/login", status_code=303)
+    # ambil username untuk dashboard
+    return RedirectResponse(
+        f"/dashboard?login={username}",
+        status_code=303
+    )
 
 
 # =========================
 # DASHBOARD
 # =========================
 @app.get("/dashboard", response_class=HTMLResponse)
-async def dashboard(request: Request):
-    return templates.TemplateResponse(
-        "dashboard.html",
-        {"request": request}
+async def dashboard(request: Request, login: str = None):
+
+    if not login:
+        return RedirectResponse("/login")
+
+    user = (
+        supabase
+        .table("users")
+        .select("username, saldo")
+        .or_(f"username.eq.{login},gmail.eq.{login}")
+        .limit(1)
+        .execute()
     )
 
+    if not user.data:
+        return RedirectResponse("/login")
 
+    data = user.data[0]
+
+    return templates.TemplateResponse(
+        "dashboard.html",
+        {
+            "request": request,
+            "username": data["username"],
+            "saldo": data.get("saldo", 0)
+        }
+    )
 # =========================
 # FAVICON (IGNORE ERROR LOG)
 # =========================
