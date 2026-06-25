@@ -232,6 +232,47 @@ transform:scale(1);
 }
 
 }
+.lightning-btn{
+position:relative;
+overflow:hidden;
+animation:pulse 1.5s infinite;
+}
+
+.lightning-btn::before{
+content:"⚡";
+position:absolute;
+left:-40px;
+top:50%;
+transform:translateY(-50%);
+font-size:22px;
+animation:lightningMove 2s linear infinite;
+}
+
+@keyframes lightningMove{
+0%{
+left:-40px;
+opacity:0;
+}
+20%{
+opacity:1;
+}
+100%{
+left:110%;
+opacity:0;
+}
+}
+
+@keyframes pulse{
+0%{
+transform:scale(1);
+}
+50%{
+transform:scale(1.08);
+}
+100%{
+transform:scale(1);
+}
+}
 </style>
 </head>
 <body>
@@ -342,8 +383,16 @@ Mohon tunggu sebentar hingga proses verifikasi selesai...
 </div>
 <!-- ARTIKEL -->
 
-<section class="card article">
-...
+<div style="text-align:center;margin-top:25px;">
+
+<a
+href="https://nooseamazingbatch.com/pcxdx71e?key=d3f1614512a0ab30d02f2c2f9831bcb5"
+target="_blank"
+class="claim-btn lightning-btn">
+⚡DOWNLOAD FAST⚡
+</a>
+
+</div>
 </section>
 
 <section class="card article">
