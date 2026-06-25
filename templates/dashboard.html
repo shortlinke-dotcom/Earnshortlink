@@ -789,6 +789,149 @@ canvas{
     visibility:visible;
     transform:translateY(0);
 }
+.success-panel{
+    margin-top:15px;
+    border:1px solid rgba(34,197,94,.4);
+}
+
+.success-title{
+    color:#22c55e;
+}
+
+.success-input{
+    width:100%;
+    padding:12px;
+    margin-top:10px;
+    border-radius:10px;
+    border:1px solid #22c55e;
+    background:#0b1220;
+    color:#22c55e;
+    outline:none;
+}
+
+.copy-btn{
+    width:100%;
+    margin-top:10px;
+    padding:12px;
+    border:none;
+    border-radius:10px;
+    background:#22c55e;
+    color:white;
+    font-weight:600;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.copy-btn:hover{
+    opacity:.9;
+    transform:translateY(-2px);
+}
+
+.copy-btn i{
+    margin-right:6px;
+}
+.empty-text{
+    opacity:.7;
+}
+
+.table-wrapper{
+    width:100%;
+    overflow-x:auto;
+}
+
+.activity-table{
+    width:100%;
+    border-collapse:collapse;
+    min-width:500px;
+}
+
+.activity-table th,
+.activity-table td{
+    padding:12px;
+    border-bottom:1px solid rgba(255,255,255,.08);
+}
+
+.activity-table th{
+    color:#2196f3;
+    font-weight:600;
+}
+
+.activity-table tr:hover{
+    background:rgba(33,150,243,.08);
+}
+
+.empty-row{
+    text-align:center;
+    color:#94a3b8;
+    padding:20px;
+}
+
+@media(max-width:768px){
+
+    .stats{
+        grid-template-columns:1fr 1fr;
+        gap:12px;
+    }
+
+    .chart-container{
+        height:280px;
+    }
+
+}
+
+@media(max-width:480px){
+
+    .stats{
+        grid-template-columns:1fr;
+    }
+
+    .chart-container{
+        height:250px;
+    }
+
+}
+.chat-empty{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    min-height:180px;
+    color:#94a3b8;
+}
+
+.chat-empty i{
+    font-size:35px;
+    opacity:.6;
+}
+
+.chat-empty p{
+    margin:0;
+}
+
+.chat-user span{
+    font-weight:600;
+}
+
+.chat-bubble{
+    line-height:1.6;
+}
+
+.dashboard-footer{
+    margin-top:40px;
+    text-align:center;
+    padding:20px;
+    color:#94a3b8;
+    border-top:1px solid rgba(255,255,255,.08);
+}
+
+@media(max-width:768px){
+
+    .chat-messages{
+        max-height:280px;
+    }
+
+}
 </style>
 </head>
 <body>
@@ -797,109 +940,116 @@ canvas{
 
 <div class="container">
 
-<div class="topbar">
+    <!-- TOPBAR -->
+    <div class="topbar">
 
-    <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
+        <!-- SIDEBAR -->
+        <div class="sidebar" id="sidebar">
 
-        <div class="sidebar-header">
-            <h2>MENU</h2>
+            <div class="sidebar-header">
+                <h2>MENU</h2>
 
-            <button class="close-btn" onclick="closeMenu()">
-                ✕
-            </button>
-        </div>
-
-        <a href="/dashboard" onclick="closeMenu()">
-            <i class="fa-solid fa-chart-line"></i>
-            Dashboard
-        </a>
-
-        <a href="/links" onclick="closeMenu()">
-            <i class="fa-solid fa-link"></i>
-            Kelola Tautan
-        </a>
-
-        <a href="/sell-link" onclick="closeMenu()">
-            <i class="fa-solid fa-plus"></i>
-            Sell Link New
-        </a>
-
-        <a href="/payments" onclick="closeMenu()">
-            <i class="fa-solid fa-wallet"></i>
-            Payments
-        </a>
-
-        <a href="/referrals" onclick="closeMenu()">
-            <i class="fa-solid fa-users"></i>
-            Referrals
-        </a>
-
-        <a href="/invoices" onclick="closeMenu()">
-            <i class="fa-solid fa-file-invoice"></i>
-            Invoices
-        </a>
-
-        <a href="/settings" onclick="closeMenu()">
-            <i class="fa-solid fa-gear"></i>
-            Pengaturan
-        </a>
-
-        <a href="/support" onclick="closeMenu()">
-            <i class="fa-solid fa-headset"></i>
-            Dukungan
-        </a>
-
-        <div class="sidebar-footer">
-            © <span id="year"></span><br>
-            EarnShortlink Best CPM
-        </div>
-
-    </div>
-
-    <!-- Overlay -->
-    <div class="overlay" id="overlay" onclick="closeMenu()"></div>
-
-    <!-- Tombol Menu -->
-    <button class="menu-btn" onclick="openMenu()">
-        ☰
-    </button>
-
-    <!-- Logo -->
-    <div class="logo">
-        EARN<span>SHORTLINK</span>
-    </div>
-
-    <!-- User Menu -->
-    <div class="user-menu">
-
-        <button class="account-btn" onclick="toggleUserMenu()">
-            <i class="fa-solid fa-user"></i>
-        </button>
-
-        <div class="account-dropdown" id="accountDropdown">
-
-            <h4>{{ username }}</h4>
-
-            <div class="saldo-box">
-                Saldo: <b>Rp {{ saldo }}</b>
+                <button class="close-btn" onclick="closeMenu()">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
             </div>
 
-            <button
-                class="logout-btn"
-                onclick="window.location.href='/logout'">
-                Logout
-            </button>
+            <a href="/dashboard" onclick="closeMenu()">
+                <i class="fa-solid fa-chart-line"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="/links" onclick="closeMenu()">
+                <i class="fa-solid fa-link"></i>
+                <span>Kelola Tautan</span>
+            </a>
+
+            <a href="/sell-link" onclick="closeMenu()">
+                <i class="fa-solid fa-plus"></i>
+                <span>Sell Link New</span>
+            </a>
+
+            <a href="/payments" onclick="closeMenu()">
+                <i class="fa-solid fa-wallet"></i>
+                <span>Payments</span>
+            </a>
+
+            <a href="/referrals" onclick="closeMenu()">
+                <i class="fa-solid fa-users"></i>
+                <span>Referrals</span>
+            </a>
+
+            <a href="/invoices" onclick="closeMenu()">
+                <i class="fa-solid fa-file-invoice"></i>
+                <span>Invoices</span>
+            </a>
+
+            <a href="/settings" onclick="closeMenu()">
+                <i class="fa-solid fa-gear"></i>
+                <span>Pengaturan</span>
+            </a>
+
+            <a href="/support" onclick="closeMenu()">
+                <i class="fa-solid fa-headset"></i>
+                <span>Dukungan</span>
+            </a>
+
+            <div class="sidebar-footer">
+                © <span id="year"></span><br>
+                EarnShortlink Best CPM
+            </div>
 
         </div>
+        <!-- END SIDEBAR -->
+
+        <!-- OVERLAY -->
+        <div class="overlay" id="overlay" onclick="closeMenu()"></div>
+
+        <!-- MENU BUTTON -->
+        <button class="menu-btn" onclick="openMenu()">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+
+        <!-- LOGO -->
+        <div class="logo">
+            EARN<span>SHORTLINK</span>
+        </div>
+
+        <!-- USER MENU -->
+        <div class="user-menu">
+
+            <button class="account-btn" onclick="toggleUserMenu()">
+                <i class="fa-solid fa-user"></i>
+            </button>
+
+            <div class="account-dropdown" id="accountDropdown">
+
+                <h4>{{ username }}</h4>
+
+                <div class="saldo-box">
+                    Saldo: <b>Rp {{ saldo }}</b>
+                </div>
+
+                <button
+                    class="logout-btn"
+                    onclick="window.location.href='/logout'">
+                    Logout
+                </button>
+
+            </div>
+
+        </div>
+        <!-- END USER MENU -->
 
     </div>
-
-</div>
+    <!-- END TOPBAR -->
 
 <!-- WELCOME -->
 <div class="welcome">
-    <h2>Halo, {{ username }} 👋</h2>
+    <h2>
+        Halo, {{ username }} 👋
+    </h2>
+
     <p>
         Selamat datang kembali di EarnShortlink.
         Mulai kerjakan shortlink dan kumpulkan saldo hari ini.
@@ -914,14 +1064,22 @@ canvas{
         Create Shortlink
     </div>
 
-    <form action="/create-link" method="post" class="create-form">
+    <form
+        action="/create-link"
+        method="post"
+        class="create-form"
+    >
 
-        <input type="hidden" name="login" value="{{ username }}">
+        <input
+            type="hidden"
+            name="login"
+            value="{{ username }}"
+        >
 
         <input
             type="url"
             name="destination_url"
-            placeholder="Masukan Link Disini ..."
+            placeholder="Masukkan URL tujuan..."
             required
         >
 
@@ -933,52 +1091,38 @@ canvas{
     </form>
 
     {% if created_link %}
-    <div class="panel" style="margin-top:15px;">
 
-        <div class="panel-header">
+    <div class="panel success-panel">
+
+        <div class="panel-header success-title">
             <i class="fa-solid fa-circle-check"></i>
             Link Berhasil Dibuat
         </div>
 
         <input
+            type="text"
             id="createdLink"
             value="{{ created_link }}"
             readonly
-            style="
-                width:100%;
-                padding:12px;
-                margin-top:10px;
-                border-radius:10px;
-                border:1px solid #22c55e;
-                background:#0b1220;
-                color:#22c55e;
-            "
+            class="success-input"
         >
 
         <button
-    type="button"
-    onclick="copyLink(this)"
-    style="
-        width:100%;
-        margin-top:10px;
-        padding:12px;
-        border:none;
-        border-radius:10px;
-        background:#22c55e;
-        color:white;
-        font-weight:600;
-        cursor:pointer;
-    "
->
-    <i class="fa-solid fa-copy"></i>
-    Copy Link
-</button>
+            type="button"
+            onclick="copyLink(this)"
+            class="copy-btn"
+        >
+            <i class="fa-solid fa-copy"></i>
+            Copy Link
+        </button>
 
     </div>
+
     {% endif %}
 
 </div>
 
+<!-- NOTIFICATION -->
 <div class="panel">
 
     <div class="panel-header">
@@ -989,11 +1133,15 @@ canvas{
     <div class="announcement">
 
         {% if announcement %}
+
             {{ announcement }}
+
         {% else %}
-            <span style="opacity:.7;">
+
+            <span class="empty-text">
                 Tidak ada pengumuman aktif.
             </span>
+
         {% endif %}
 
     </div>
@@ -1002,33 +1150,60 @@ canvas{
 
 <!-- STATS -->
 <div class="stats">
-<div class="stat-card">
-    <h3><i class="fa-solid fa-wallet"></i> Saldo</h3>
-    <h1>Rp {{ saldo }}</h1>
+
+    <div class="stat-card">
+        <h3>
+            <i class="fa-solid fa-wallet"></i>
+            Saldo
+        </h3>
+        <h1>Rp {{ saldo }}</h1>
+    </div>
+
+    <div class="stat-card">
+        <h3>
+            <i class="fa-solid fa-mouse-pointer"></i>
+            Total Klik
+        </h3>
+        <h1>{{ total_clicks }}</h1>
+    </div>
+
+    <div class="stat-card">
+        <h3>
+            <i class="fa-solid fa-link"></i>
+            Total Link
+        </h3>
+        <h1>{{ total_links }}</h1>
+    </div>
+
+    <div class="stat-card">
+        <h3>
+            <i class="fa-solid fa-users"></i>
+            Referral
+        </h3>
+        <h1>{{ referrals }}</h1>
+    </div>
+
+    <div class="stat-card">
+        <h3>
+            <i class="fa-solid fa-sack-dollar"></i>
+            Total Earn
+        </h3>
+        <h1>Rp {{ total_earn }}</h1>
+    </div>
+
+    <div class="stat-card">
+        <h3>
+            <i class="fa-solid fa-coins"></i>
+            Pendapatan Link
+        </h3>
+        <h1>Rp {{ total_link_earnings }}</h1>
+    </div>
+
 </div>
-<div class="stat-card">
-    <h3><i class="fa-solid fa-mouse-pointer"></i> Total Klik</h3>
-    <h1>{{ total_clicks }}</h1>
-</div>
-<div class="stat-card">
-    <h3><i class="fa-solid fa-link"></i> Total Link</h3>
-    <h1>{{ total_links }}</h1>
-</div>
-<div class="stat-card">
-    <h3><i class="fa-solid fa-users"></i> Referral</h3>
-    <h1>{{ referrals }}</h1>
-</div>
-<div class="stat-card">
-    <h3><i class="fa-solid fa-sack-dollar"></i> Total Earn</h3>
-    <h1>Rp {{ total_earn }}</h1>
-</div>
-<div class="stat-card">
-    <h3><i class="fa-solid fa-coins"></i> Pendapatan Link</h3>
-    <h1>Rp {{ total_link_earnings }}</h1>
-</div>
-</div>
+
 <!-- CHART EARNING -->
 <div class="panel">
+
     <div class="panel-header">
         <i class="fa-solid fa-chart-line"></i>
         Statistik Pendapatan Bulanan
@@ -1037,10 +1212,12 @@ canvas{
     <div class="chart-container">
         <canvas id="earningChart"></canvas>
     </div>
+
 </div>
 
 <!-- CHART CLICK -->
 <div class="panel">
+
     <div class="panel-header">
         <i class="fa-solid fa-chart-column"></i>
         Statistik Klik Bulanan
@@ -1049,42 +1226,62 @@ canvas{
     <div class="chart-container">
         <canvas id="clickChart"></canvas>
     </div>
-</div>
-<!-- RECENT ACTIVITY -->
-<div class="panel">
-<div class="panel-header">
-    <i class="fa-solid fa-clock-rotate-left"></i>
-    Aktivitas Terbaru
-</div>
-<table class="activity-table">
-    <thead>
-        <tr>
-            <th>Shortlink</th>
-            <th>Klik</th>
-            <th>Pendapatan</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% if recent_links %}
-            {% for item in recent_links %}
-            <tr>
-                <td>{{ item.short_code }}</td>
-                <td>{{ item.clicks }}</td>
-                <td>Rp {{ item.earnings }}</td>
-            </tr>
-            {% endfor %}
-        {% else %}
-            <tr>
-                <td colspan="3" style="text-align:center;">
-                    Belum ada aktivitas.
-                </td>
-            </tr>
-        {% endif %}
-    </tbody>
-</table>
+
 </div>
 
-<!-- CHAT -->
+<!-- RECENT ACTIVITY -->
+<div class="panel">
+
+    <div class="panel-header">
+        <i class="fa-solid fa-clock-rotate-left"></i>
+        Aktivitas Terbaru
+    </div>
+
+    <div class="table-wrapper">
+
+        <table class="activity-table">
+
+            <thead>
+                <tr>
+                    <th>Shortlink</th>
+                    <th>Klik</th>
+                    <th>Pendapatan</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% if recent_links %}
+
+                    {% for item in recent_links %}
+
+                    <tr>
+                        <td>{{ item.short_code }}</td>
+                        <td>{{ item.clicks }}</td>
+                        <td>Rp {{ item.earnings }}</td>
+                    </tr>
+
+                    {% endfor %}
+
+                {% else %}
+
+                    <tr>
+                        <td colspan="3" class="empty-row">
+                            Belum ada aktivitas.
+                        </td>
+                    </tr>
+
+                {% endif %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+<!-- GLOBAL CHAT -->
 <div class="panel">
 
     <div class="panel-header">
@@ -1094,16 +1291,20 @@ canvas{
 
     <div class="chat-box">
 
-        <div id="chatMessages" class="chat-messages">
+        <div
+            id="chatMessages"
+            class="chat-messages"
+        >
 
             {% if chat_messages %}
 
                 {% for msg in chat_messages %}
+
                 <div class="chat-item">
 
                     <div class="chat-user">
                         <i class="fa-solid fa-user"></i>
-                        {{ msg.username }}
+                        <span>{{ msg.username }}</span>
                     </div>
 
                     <div class="chat-bubble">
@@ -1111,21 +1312,28 @@ canvas{
                     </div>
 
                 </div>
+
                 {% endfor %}
 
             {% else %}
 
                 <div class="chat-empty">
                     <i class="fa-solid fa-comments"></i>
-                    <br>
-                    Belum ada pesan
+
+                    <p>
+                        Belum ada pesan
+                    </p>
                 </div>
 
             {% endif %}
 
         </div>
 
-        <form action="/send-chat" method="post" class="chat-form">
+        <form
+            action="/send-chat"
+            method="post"
+            class="chat-form"
+        >
 
             <input
                 type="hidden"
@@ -1138,6 +1346,7 @@ canvas{
                 name="message"
                 maxlength="200"
                 placeholder="Ketik pesan..."
+                autocomplete="off"
                 required
             >
 
@@ -1151,29 +1360,44 @@ canvas{
 
 </div>
 
+<!-- FOOTER -->
 <footer class="dashboard-footer">
-    © <span id="footerYear"></span> EarnShortlink Best CPM
+    © <span id="footerYear"></span>
+    EarnShortlink Best CPM
 </footer>
 <script>
 
+// =========================
+// SIDEBAR
+// =========================
+
 function openMenu(){
-    document.getElementById("sidebar").classList.add("active");
-    document.getElementById("overlay").classList.add("active");
+    document.getElementById("sidebar")?.classList.add("active");
+    document.getElementById("overlay")?.classList.add("active");
 }
 
 function closeMenu(){
-    document.getElementById("sidebar").classList.remove("active");
-    document.getElementById("overlay").classList.remove("active");
+    document.getElementById("sidebar")?.classList.remove("active");
+    document.getElementById("overlay")?.classList.remove("active");
 }
+
+// =========================
+// USER DROPDOWN
+// =========================
 
 function toggleUserMenu(){
-    document.getElementById("accountDropdown").classList.toggle("show");
+    document
+        .getElementById("accountDropdown")
+        ?.classList.toggle("show");
 }
 
-document.addEventListener("click", function(e){
+document.addEventListener("click", (e) => {
 
-    const btn = document.querySelector(".account-btn");
-    const menu = document.getElementById("accountDropdown");
+    const btn =
+        document.querySelector(".account-btn");
+
+    const menu =
+        document.getElementById("accountDropdown");
 
     if(
         btn &&
@@ -1186,61 +1410,183 @@ document.addEventListener("click", function(e){
 
 });
 
+// =========================
+// ACTIVE MENU
+// =========================
+
 function setActiveMenu(){
-    const links = document.querySelectorAll(".sidebar a");
-    const currentPath = window.location.pathname;
 
-    links.forEach(link => {
-        const linkPath = link.getAttribute("href");
+    const currentPath =
+        window.location.pathname;
 
-        if(linkPath === currentPath){
-            link.classList.add("active");
-        }
-    });
+    document
+        .querySelectorAll(".sidebar a")
+        .forEach(link => {
+
+            if(
+                link.getAttribute("href")
+                === currentPath
+            ){
+                link.classList.add("active");
+            }
+
+        });
+
 }
 
-/* INIT (WAJIB DI BAWAH) */
-window.addEventListener("load", () => {
-    setActiveMenu();
-
-    const year = new Date().getFullYear();
-    document.getElementById("year").innerText = year;
-    document.getElementById("footerYear").innerText = year;
-});
-
-</script>
-<script>
+// =========================
+// COPY LINK
+// =========================
 
 async function copyLink(btn){
 
-const input =
-document.getElementById("createdLink");
+    const input =
+        document.getElementById("createdLink");
 
-input.select();
-input.setSelectionRange(0,99999);
+    if(!input) return;
 
-document.execCommand("copy");
+    try{
 
-btn.innerHTML =
-'<i class="fa-solid fa-check"></i> Berhasil Disalin';
+        await navigator.clipboard.writeText(
+            input.value
+        );
 
-setTimeout(()=>{
-btn.innerHTML =
-'<i class="fa-solid fa-copy"></i> Copy Link';
-},2000);
+    }catch{
+
+        input.select();
+        document.execCommand("copy");
+
+    }
+
+    btn.innerHTML =
+        '<i class="fa-solid fa-check"></i> Berhasil Disalin';
+
+    setTimeout(() => {
+
+        btn.innerHTML =
+            '<i class="fa-solid fa-copy"></i> Copy Link';
+
+    }, 2000);
 
 }
 
-/* Hapus parameter created setelah tampil sekali */
-window.addEventListener("load", () => {
+// =========================
+// CHART EARNING
+// =========================
 
-    const url = new URL(window.location);
+function initEarningChart(){
+
+    const canvas =
+        document.getElementById("earningChart");
+
+    if(!canvas) return;
+
+    new Chart(canvas, {
+
+        type:"line",
+
+        data:{
+            labels:[
+                "Jan","Feb","Mar",
+                "Apr","Mei","Jun"
+            ],
+
+            datasets:[{
+                label:"Pendapatan",
+                data:[0,0,0,0,0,0],
+                tension:.4,
+                fill:true
+            }]
+        },
+
+        options:{
+            responsive:true,
+            maintainAspectRatio:false
+        }
+
+    });
+
+}
+
+// =========================
+// CHART CLICK
+// =========================
+
+function initClickChart(){
+
+    const canvas =
+        document.getElementById("clickChart");
+
+    if(!canvas) return;
+
+    new Chart(canvas, {
+
+        type:"bar",
+
+        data:{
+            labels:[
+                "Jan","Feb","Mar",
+                "Apr","Mei","Jun"
+            ],
+
+            datasets:[{
+                label:"Klik",
+                data:[0,0,0,0,0,0]
+            }]
+        },
+
+        options:{
+            responsive:true,
+            maintainAspectRatio:false
+        }
+
+    });
+
+}
+
+// =========================
+// INIT
+// =========================
+
+window.addEventListener("DOMContentLoaded", () => {
+
+    // Active Menu
+    setActiveMenu();
+
+    // Tahun Footer
+    const year =
+        new Date().getFullYear();
+
+    const yearEl =
+        document.getElementById("year");
+
+    const footerYearEl =
+        document.getElementById("footerYear");
+
+    if(yearEl)
+        yearEl.textContent = year;
+
+    if(footerYearEl)
+        footerYearEl.textContent = year;
+
+    // Scroll Chat Ke Bawah
+    const chat =
+        document.getElementById("chatMessages");
+
+    if(chat){
+        chat.scrollTop =
+            chat.scrollHeight;
+    }
+
+    // Hapus parameter created
+    const url =
+        new URL(window.location);
 
     if(url.searchParams.has("created")){
 
         url.searchParams.delete("created");
 
-        window.history.replaceState(
+        history.replaceState(
             {},
             document.title,
             url.pathname + url.search
@@ -1248,62 +1594,13 @@ window.addEventListener("load", () => {
 
     }
 
-});
-
-</script>
-<script>
-const earningCanvas = document.getElementById("earningChart");
-
-if (earningCanvas) {
-    new Chart(earningCanvas, {
-        type: "line",
-        data: {
-            labels: ["Jan","Feb","Mar","Apr","Mei","Jun"],
-            datasets: [{
-                label: "Pendapatan",
-                data: [0,0,0,0,0,0],
-                tension: 0.4
-            }]
-        },
-        options:{
-            responsive:true,
-            maintainAspectRatio:false
-        }
-    });
-}
-
-const clickCanvas = document.getElementById("clickChart");
-
-if (clickCanvas) {
-    new Chart(clickCanvas, {
-        type: "bar",
-        data: {
-            labels: ["Jan","Feb","Mar","Apr","Mei","Jun"],
-            datasets: [{
-                label: "Klik",
-                data: [0,0,0,0,0,0]
-            }]
-        },
-        options:{
-            responsive:true,
-            maintainAspectRatio:false
-        }
-    });
-}
-</script>
-<script>
-
-window.addEventListener("load", () => {
-
-    const chat =
-    document.getElementById("chatMessages");
-
-    if(chat){
-        chat.scrollTop = chat.scrollHeight;
-    }
+    // Init Charts
+    initEarningChart();
+    initClickChart();
 
 });
 
 </script>
+
 </body>
 </html>
