@@ -125,7 +125,7 @@ color:#cbd5e1;
 
 .stats{
 display:grid;
-grid-template-columns:repeat(4,1fr);
+grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
 gap:20px;
 }
 
@@ -151,7 +151,10 @@ font-size:30px;
 color:#2196f3;
 }
 
-
+#earningChart,
+#clickChart{
+height:350px !important;
+}
 /* MOBILE */
 
 @media(max-width:768px){
@@ -1127,24 +1130,28 @@ window.addEventListener("load", () => {
 </script>
 <script>
 
-function copyLink(btn) {
+async function copyLink(btn){
 
-    const input = document.getElementById("createdLink");
+    try{
 
-    navigator.clipboard.writeText(input.value)
-    .then(() => {
+        const text =
+        document.getElementById("createdLink").value;
+
+        await navigator.clipboard.writeText(text);
 
         btn.innerHTML =
         '<i class="fa-solid fa-check"></i> Berhasil Disalin';
 
-        setTimeout(() => {
-
+        setTimeout(()=>{
             btn.innerHTML =
             '<i class="fa-solid fa-copy"></i> Copy Link';
+        },2000);
 
-        }, 2000);
+    }catch(err){
 
-    });
+        alert("Gagal menyalin link");
+
+    }
 
 }
 
