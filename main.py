@@ -257,6 +257,102 @@ async def send_chat(request: Request):
     return RedirectResponse(f"/dashboard?login={login}", status_code=303)
 
 
+# ========================
+#ADMIN PANEL
+# ========================
+def is_admin(login: str):
+    res = (
+        supabase.table("users")
+        .select("is_admin")
+        .eq("username", login)
+        .limit(1)
+        .execute()
+    )
+
+    if not res.data:
+        return False
+
+    return bool(res.data[0].get("is_admin"))
+
+@app.get("/admin", response_class=HTMLResponse)
+async def admin_dashboard(request: Request, login: str = None):
+
+    if not login or not is_admin(login):
+        return HTMLResponse("403 Forbidden", status_code=403)
+
+    users = supabase.table("users").select("*").execute().data or []
+    links = supabase.table("links").select("*").execute().data or []
+    chats = supabase.table("chat_messages").select("*").order("created_at", desc=True).limit(50).execute().data or []
+
+    total_users = len(users)
+    total_links = len(links)
+    total_earnings = sum(int(u.get("total_earn") or 0) for u in users)
+
+    return templates.TemplateResponse(
+        "admin.html",
+        {
+            "request": request,
+            "login": login,
+
+            "users": users,
+            "links": links,
+            "chats": chats,
+
+            "total_users": total_users,
+            "total_links": total_links,
+            "total_earnings": total_earnings
+        }
+    )
+
+@app.post("/admin/ban")
+async def ban_user(request: Request):
+
+    form = await request.form()
+    login = form.get("login")
+    target = form.get("target")
+
+    if not is_admin(login):
+        return HTMLResponse("Forbidden", status_code=403)
+
+    supabase.table("users").update({
+        "is_banned": True
+    }).eq("username", target).execute()
+
+    return RedirectResponse(f"/admin?login={login}", status_code=303)
+
+
+@app.post("/admin/unban")
+async def unban_user(request: Request):
+
+    form = await request.form()
+    login = form.get("login")
+    target = form.get("target")
+
+    if not is_admin(login):
+        return HTMLResponse("Forbidden", status_code=403)
+
+    supabase.table("users").update({
+        "is_banned": False
+    }).eq("username", target).execute()
+
+    return RedirectResponse(f"/admin?login={login}", status_code=303)
+
+@app.post("/admin/broadcast")
+async def broadcast(request: Request):
+
+    form = await request.form()
+    login = form.get("login")
+    message = form.get("message")
+
+    if not is_admin(login):
+        return HTMLResponse("Forbidden", status_code=403)
+
+    supabase.table("announcements").insert({
+        "title": "Broadcast",
+        "content": message
+    }).execute()
+
+    return RedirectResponse(f"/admin?login={login}", status_code=303)
 # =========================
 # FAVICON
 # =========================
