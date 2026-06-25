@@ -32,14 +32,14 @@ async def login_page(request: Request):
 # =========================
 @app.post("/login")
 def login_post(
-    username: str = Form(...),
+    login: str = Form(...),
     password: str = Form(...)
 ):
     result = (
         supabase
         .table("users")
         .select("*")
-        .eq("username", username)
+        .or_(f"username.eq.{login},gmail.eq.{login}")
         .execute()
     )
 
@@ -51,10 +51,7 @@ def login_post(
 
     user = result.data[0]
 
-    if not verify_password(
-        password,
-        user["password"]
-    ):
+    if not verify_password(password, user["password"]):
         return HTMLResponse(
             content="Password salah",
             status_code=401
