@@ -549,7 +549,48 @@ max-height:350px;
 flex-direction:column;
 }
 }
+.panel{
+    margin-top:20px;
+    padding:20px;
+    border-radius:18px;
+    background:rgba(0,0,0,.3);
+    border:1px solid rgba(33,150,243,.4);
+}
 
+.panel-header{
+    font-size:18px;
+    font-weight:700;
+    margin-bottom:15px;
+}
+
+.create-form{
+    display:flex;
+    gap:10px;
+}
+
+.create-form input{
+    flex:1;
+    padding:12px;
+    border:none;
+    border-radius:10px;
+    outline:none;
+}
+
+.create-form button{
+    padding:12px 20px;
+    border:none;
+    border-radius:10px;
+    background:#2196f3;
+    color:white;
+    cursor:pointer;
+    font-weight:600;
+}
+
+@media(max-width:768px){
+    .create-form{
+        flex-direction:column;
+    }
+}
 </style>
 </head>
 <body>
