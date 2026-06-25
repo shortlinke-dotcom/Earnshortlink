@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dashboard - EarnShortlink</title>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <link rel="stylesheet"
 href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
@@ -1163,6 +1164,43 @@ window.addEventListener("load", () => {
             url.pathname + url.search
         );
 
+    }
+
+});
+
+</script>
+<script>
+new Chart(document.getElementById('earningChart'), {
+    type: 'line',
+    data: {
+        labels: ['Jan','Feb','Mar','Apr','Mei','Jun'],
+        datasets: [{
+            label: 'Pendapatan',
+            data: [0,0,0,0,0,0]
+        }]
+    }
+});
+
+new Chart(document.getElementById('clickChart'), {
+    type: 'bar',
+    data: {
+        labels: ['Jan','Feb','Mar','Apr','Mei','Jun'],
+        datasets: [{
+            label: 'Klik',
+            data: [0,0,0,0,0,0]
+        }]
+    }
+});
+</script>
+<script>
+
+window.addEventListener("load", () => {
+
+    const chat =
+    document.getElementById("chatMessages");
+
+    if(chat){
+        chat.scrollTop = chat.scrollHeight;
     }
 
 });
