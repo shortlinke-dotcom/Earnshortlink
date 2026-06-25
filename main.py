@@ -318,7 +318,9 @@ async def send_chat(
     message: str = Form(...)
 ):
 
-    if not message.strip():
+    message = message.strip()
+
+    if not message:
         return RedirectResponse(
             f"/dashboard?login={login}",
             status_code=303
@@ -326,7 +328,7 @@ async def send_chat(
 
     supabase.table("chat_messages").insert({
         "username": login,
-        "message": message.strip()
+        "message": message
     }).execute()
 
     return RedirectResponse(
