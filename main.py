@@ -2,7 +2,7 @@ import re
 from urllib.parse import quote
 
 from fastapi import FastAPI, Request, Form
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, Response
 from fastapi.templating import Jinja2Templates
 
 from database import supabase
@@ -32,6 +32,8 @@ async def login_page(request: Request, error: str = None):
         "login.html",
         {"request": request, "error": error}
     )
+
+
 # =========================
 # LOGIN REAL
 # =========================
@@ -159,8 +161,10 @@ async def dashboard(request: Request):
         {"request": request}
     )
 
-from fastapi.responses import Response
 
+# =========================
+# FAVICON (IGNORE ERROR LOG)
+# =========================
 @app.get("/favicon.ico")
 async def favicon():
     return Response(status_code=204)
