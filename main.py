@@ -116,7 +116,7 @@ def register_post(
             status_code=303
         )
 
-    existing = (
+    existing_username = (
         supabase
         .table("users")
         .select("*")
@@ -124,17 +124,38 @@ def register_post(
         .execute()
     )
 
-    if existing.data:
+    if existing_username.data:
         return RedirectResponse(
             url=f"/register?error={quote('Username sudah digunakan')}",
             status_code=303
         )
 
-    supabase.table("users").insert({
-        "gmail": gmail,
-        "username": username,
-        "password": hash_password(password)
-    }).execute()
+    existing_gmail = (
+        supabase
+        .table("users")
+        .select("*")
+        .eq("gmail", gmail)
+        .execute()
+    )
+
+    if existing_gmail.data:
+        return RedirectResponse(
+            url=f"/register?error={quote('Gmail sudah terdaftar')}",
+            status_code=303
+        )
+
+    try:
+        supabase.table("users").insert({
+            "gmail": gmail,
+            "username": username,
+            "password": hash_password(password)
+        }).execute()
+
+    except Exception:
+        return RedirectResponse(
+            url=f"/register?error={quote('Gagal membuat akun')}",
+            status_code=303
+        )
 
     return RedirectResponse(
         url="/login",
