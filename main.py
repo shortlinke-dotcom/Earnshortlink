@@ -1,7 +1,6 @@
 import re
 import random
 import string
-from urllib.parse import quote
 
 from fastapi import FastAPI, Request, Form
 from fastapi.responses import HTMLResponse, RedirectResponse, Response
@@ -28,7 +27,7 @@ async def home(request: Request):
 @app.post("/login")
 def login_post(login: str = Form(...), password: str = Form(...)):
 
-    result = (
+    res = (
         supabase.table("users")
         .select("username, password")
         .or_(f"username.eq.{login},gmail.eq.{login}")
@@ -36,10 +35,10 @@ def login_post(login: str = Form(...), password: str = Form(...)):
         .execute()
     )
 
-    if not result.data:
+    if not res.data:
         return RedirectResponse("/login?error=notfound", status_code=303)
 
-    user = result.data[0]
+    user = res.data[0]
 
     if not verify_password(password, user["password"]):
         return RedirectResponse("/login?error=wrongpass", status_code=303)
@@ -54,10 +53,12 @@ def login_post(login: str = Form(...), password: str = Form(...)):
 # REGISTER
 # =========================
 @app.post("/register")
-def register_post(gmail: str = Form(...),
-                  username: str = Form(...),
-                  password: str = Form(...),
-                  confirm_password: str = Form(...)):
+def register_post(
+    gmail: str = Form(...),
+    username: str = Form(...),
+    password: str = Form(...),
+    confirm_password: str = Form(...)
+):
 
     if password != confirm_password:
         return RedirectResponse("/register?error=nomatch", status_code=303)
@@ -75,7 +76,7 @@ def register_post(gmail: str = Form(...),
 
 
 # =========================
-# DASHBOARD
+# DASHBOARD (FIXED created_link)
 # =========================
 @app.get("/dashboard", response_class=HTMLResponse)
 async def dashboard(request: Request, login: str = None):
@@ -95,26 +96,22 @@ async def dashboard(request: Request, login: str = None):
         return RedirectResponse("/login")
 
     user = user_res.data[0]
-
     user_id = user["id"]
 
-    created_link = request.query_params.get("created")
+    # 🔥 FIX INI PENTING
+    created_link = request.query_params.get("created", "")
 
-    links_res = (
+    links = (
         supabase.table("links")
         .select("*")
         .eq("user_id", user_id)
         .order("created_at", desc=True)
         .execute()
-    )
-
-    links = links_res.data or []
+    ).data or []
 
     total_links = len(links)
     total_clicks = sum(int(l.get("clicks") or 0) for l in links)
     total_link_earnings = sum(int(l.get("earnings") or 0) for l in links)
-
-    recent_links = links[:10]
 
     announcement = (
         supabase.table("announcements")
@@ -147,18 +144,17 @@ async def dashboard(request: Request, login: str = None):
             "total_clicks": total_clicks,
             "total_link_earnings": total_link_earnings,
 
-            "recent_links": recent_links,
+            "recent_links": links[:10],
             "announcement": announcement_text,
             "chat_messages": chat_messages,
 
-            # ✅ FIX INI PENTING
             "created_link": created_link
         }
     )
 
 
 # =========================
-# CREATE LINK (FIXED)
+# CREATE LINK (FIXED REDIRECT)
 # =========================
 @app.post("/create-link")
 async def create_link(request: Request):
@@ -181,9 +177,7 @@ async def create_link(request: Request):
 
     user_id = user.data[0]["id"]
 
-    short_code = ''.join(
-        random.choices(string.ascii_letters + string.digits, k=6)
-    )
+    short_code = ''.join(random.choices(string.ascii_letters + string.digits, k=6))
 
     supabase.table("links").insert({
         "user_id": user_id,
@@ -193,7 +187,7 @@ async def create_link(request: Request):
         "earnings": 0
     }).execute()
 
-    short_url = f"/s/{short_code}"
+    short_url = f"https://earnshortlink.up.railway.app/s/{short_code}"
 
     return RedirectResponse(
         f"/dashboard?login={login}&created={short_url}",
@@ -202,12 +196,12 @@ async def create_link(request: Request):
 
 
 # =========================
-# SHORTLINK
+# SHORTLINK (CLICK FIX)
 # =========================
 @app.get("/s/{short_code}", response_class=HTMLResponse)
 async def shortlink(request: Request, short_code: str):
 
-    result = (
+    res = (
         supabase.table("links")
         .select("*")
         .eq("short_code", short_code)
@@ -215,12 +209,11 @@ async def shortlink(request: Request, short_code: str):
         .execute()
     )
 
-    if not result.data:
+    if not res.data:
         return HTMLResponse("Not found", status_code=404)
 
-    link = result.data[0]
+    link = res.data[0]
 
-    # 🔥 increment click
     supabase.table("links").update({
         "clicks": (link.get("clicks") or 0) + 1
     }).eq("short_code", short_code).execute()
@@ -236,7 +229,7 @@ async def shortlink(request: Request, short_code: str):
 
 
 # =========================
-# CHAT
+# CHAT (FIXED)
 # =========================
 @app.post("/send-chat")
 async def send_chat(request: Request):
@@ -256,11 +249,13 @@ async def send_chat(request: Request):
 
     return RedirectResponse(f"/dashboard?login={login}", status_code=303)
 
-
-# ========================
-#ADMIN PANEL
-# ========================
+# =========================
+# ADMIN CHECK
+# =========================
 def is_admin(login: str):
+    if not login:
+        return False
+
     res = (
         supabase.table("users")
         .select("is_admin")
@@ -272,20 +267,35 @@ def is_admin(login: str):
     if not res.data:
         return False
 
-    return bool(res.data[0].get("is_admin"))
+    return bool(res.data[0].get("is_admin", False))
 
+
+# =========================
+# ADMIN PANEL
+# =========================
 @app.get("/admin", response_class=HTMLResponse)
-async def admin_dashboard(request: Request, login: str = None):
+async def admin_panel(request: Request, login: str = None):
 
-    if not login or not is_admin(login):
+    if not is_admin(login):
         return HTMLResponse("403 Forbidden", status_code=403)
 
     users = supabase.table("users").select("*").execute().data or []
     links = supabase.table("links").select("*").execute().data or []
-    chats = supabase.table("chat_messages").select("*").order("created_at", desc=True).limit(50).execute().data or []
+    chats = (
+        supabase.table("chat_messages")
+        .select("*")
+        .order("created_at", desc=True)
+        .limit(50)
+        .execute()
+    ).data or []
 
-    total_users = len(users)
-    total_links = len(links)
+    withdrawals = (
+        supabase.table("withdrawals")
+        .select("*")
+        .order("created_at", desc=True)
+        .execute()
+    ).data or []
+
     total_earnings = sum(int(u.get("total_earn") or 0) for u in users)
 
     return templates.TemplateResponse(
@@ -297,17 +307,68 @@ async def admin_dashboard(request: Request, login: str = None):
             "users": users,
             "links": links,
             "chats": chats,
+            "withdrawals": withdrawals,
 
-            "total_users": total_users,
-            "total_links": total_links,
+            "total_users": len(users),
+            "total_links": len(links),
             "total_earnings": total_earnings
         }
     )
 
+@app.post("/admin/wd/process")
+async def wd_process(request: Request):
+    form = await request.form()
+
+    login = form.get("login")
+    wd_id = form.get("id")
+
+    if not is_admin(login):
+        return HTMLResponse("Forbidden", status_code=403)
+
+    supabase.table("withdrawals").update({
+        "status": "process"
+    }).eq("id", wd_id).execute()
+
+    return RedirectResponse(f"/admin?login={login}", status_code=303)
+
+
+@app.post("/admin/wd/success")
+async def wd_success(request: Request):
+    form = await request.form()
+
+    login = form.get("login")
+    wd_id = form.get("id")
+
+    if not is_admin(login):
+        return HTMLResponse("Forbidden", status_code=403)
+
+    supabase.table("withdrawals").update({
+        "status": "success"
+    }).eq("id", wd_id).execute()
+
+    return RedirectResponse(f"/admin?login={login}", status_code=303)
+
+
+@app.post("/admin/wd/failed")
+async def wd_failed(request: Request):
+    form = await request.form()
+
+    login = form.get("login")
+    wd_id = form.get("id")
+
+    if not is_admin(login):
+        return HTMLResponse("Forbidden", status_code=403)
+
+    supabase.table("withdrawals").update({
+        "status": "failed"
+    }).eq("id", wd_id).execute()
+
+    return RedirectResponse(f"/admin?login={login}", status_code=303)
+
 @app.post("/admin/ban")
 async def ban_user(request: Request):
-
     form = await request.form()
+
     login = form.get("login")
     target = form.get("target")
 
@@ -323,8 +384,8 @@ async def ban_user(request: Request):
 
 @app.post("/admin/unban")
 async def unban_user(request: Request):
-
     form = await request.form()
+
     login = form.get("login")
     target = form.get("target")
 
@@ -337,22 +398,6 @@ async def unban_user(request: Request):
 
     return RedirectResponse(f"/admin?login={login}", status_code=303)
 
-@app.post("/admin/broadcast")
-async def broadcast(request: Request):
-
-    form = await request.form()
-    login = form.get("login")
-    message = form.get("message")
-
-    if not is_admin(login):
-        return HTMLResponse("Forbidden", status_code=403)
-
-    supabase.table("announcements").insert({
-        "title": "Broadcast",
-        "content": message
-    }).execute()
-
-    return RedirectResponse(f"/admin?login={login}", status_code=303)
 # =========================
 # FAVICON
 # =========================
