@@ -170,6 +170,15 @@ font-size:30px;
 padding:14px;
 }
 }
+.alert{
+    background:#ef4444;
+    color:#fff;
+    padding:14px;
+    border-radius:12px;
+    margin-bottom:18px;
+    text-align:center;
+    font-weight:600;
+}
 </style>
 </head>
 <body>
@@ -180,6 +189,11 @@ padding:14px;
 <h1>EARN<span>SHORTLINK</span></h1>
 <p>Buat akun baru dan mulai menghasilkan saldo hari ini</p>
 </div>
+{% if error %}
+<div class="alert">
+    {{ error }}
+</div>
+{% endif %}
 <form action="/register" method="POST">
 <div class="form-group">
 <input type="email" name="gmail" placeholder="Masukkan Gmail" required>
