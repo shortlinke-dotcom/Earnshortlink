@@ -454,6 +454,102 @@ color:#2196f3;
 font-size:18px;
 }
 
+.panel{
+margin-top:25px;
+padding:20px;
+border-radius:18px;
+background:rgba(0,0,0,.3);
+border:1px solid rgba(33,150,243,.35);
+}
+.panel-header{
+font-size:18px;
+font-weight:700;
+margin-bottom:15px;
+color:#2196f3;
+}
+.quick-form{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+}
+.quick-form input{
+flex:1;
+padding:14px;
+border:none;
+border-radius:12px;
+background:#0f172a;
+color:white;
+}
+.quick-form button{
+padding:14px 24px;
+border:none;
+border-radius:12px;
+background:#2196f3;
+color:white;
+cursor:pointer;
+font-weight:600;
+}
+.announcement{
+color:#cbd5e1;
+line-height:1.8;
+}
+.activity-table{
+width:100%;
+border-collapse:collapse;
+}
+.activity-table th,
+.activity-table td{
+padding:12px;
+text-align:left;
+border-bottom:1px solid rgba(255,255,255,.08);
+}
+.chat-box{
+display:flex;
+flex-direction:column;
+gap:15px;
+}
+.chat-messages{
+max-height:300px;
+overflow:auto;
+padding:10px;
+background:#0f172a;
+border-radius:12px;
+}
+.chat-item{
+margin-bottom:10px;
+word-break:break-word;
+}
+.chat-form{
+display:flex;
+gap:10px;
+}
+.chat-form input{
+flex:1;
+padding:12px;
+border:none;
+border-radius:12px;
+background:#0f172a;
+color:white;
+}
+.chat-form button{
+padding:12px 20px;
+border:none;
+border-radius:12px;
+background:#2196f3;
+color:white;
+cursor:pointer;
+}
+canvas{
+width:100% !important;
+max-height:350px;
+}
+@media(max-width:768px){
+.chat-form,
+.quick-form{
+flex-direction:column;
+}
+}
+
 </style>
 </head>
 <body>
@@ -562,39 +658,121 @@ font-size:18px;
 
 </div>
 
+<!-- WELCOME -->
 <div class="welcome">
-
-<h2>Halo, {{ username }} 👋</h2>
-
-<p>
-Selamat datang kembali di EarnShortlink.
-Mulai kerjakan shortlink dan kumpulkan saldo hari ini.
-</p>
-
+    <h2>Halo, {{ username }} 👋</h2>
+    <p>
+        Selamat datang kembali di EarnShortlink.
+        Mulai kerjakan shortlink dan kumpulkan saldo hari ini.
+    </p>
 </div>
-
+<!-- QUICK CREATE SHORTLINK -->
+<div class="panel">
+    <div class="panel-header">
+        🔗 Create Shortlink
+    </div>
+    <form action="/create-link" method="post" class="quick-form">
+        <input
+            type="url"
+            name="url"
+            placeholder="Tempel URL tujuan..."
+            required>
+        <button type="submit">
+            Create
+        </button>
+    </form>
+</div>
+<!-- ADMIN ANNOUNCEMENT -->
+<div class="panel">
+    <div class="panel-header">
+        📢 Pengumuman Admin
+    </div>
+    <div class="announcement">
+        {{ announcement or "Belum ada pengumuman terbaru." }}
+    </div>
+</div>
+<!-- REAL STATS -->
 <div class="stats">
-
-<div class="stat-card">
-<h3>Saldo</h3>
-<h1>Rp {{ saldo }}</h1>
+    <div class="stat-card">
+        <h3>Saldo</h3>
+        <h1>Rp {{ saldo }}</h1>
+    </div>
+    <div class="stat-card">
+        <h3>Total Klik</h3>
+        <h1>{{ total_clicks }}</h1>
+    </div>
+    <div class="stat-card">
+        <h3>Total Link</h3>
+        <h1>{{ total_links }}</h1>
+    </div>
+    <div class="stat-card">
+        <h3>Referral</h3>
+        <h1>{{ referrals }}</h1>
+    </div>
 </div>
-
-<div class="stat-card">
-<h3>Total Klik</h3>
-<h1>0</h1>
+<!-- CHART PENDAPATAN -->
+<div class="panel">
+    <div class="panel-header">
+        📈 Statistik Pendapatan Bulanan
+    </div>
+    <canvas id="earningChart"></canvas>
 </div>
-
-<div class="stat-card">
-<h3>Referral</h3>
-<h1>0</h1>
+<!-- CHART KLIK -->
+<div class="panel">
+    <div class="panel-header">
+        📊 Statistik Klik Bulanan
+    </div>
+    <canvas id="clickChart"></canvas>
 </div>
-
-<div class="stat-card">
-<h3>Level</h3>
-<h1>VIP</h1>
+<!-- RECENT ACTIVITY -->
+<div class="panel">
+    <div class="panel-header">
+        🕒 Aktivitas Terbaru
+    </div>
+    <table class="activity-table">
+        <thead>
+            <tr>
+                <th>Shortlink</th>
+                <th>Klik</th>
+                <th>Pendapatan</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in recent_links %}
+            <tr>
+                <td>{{ item.short_code }}</td>
+                <td>{{ item.clicks }}</td>
+                <td>Rp {{ item.earnings }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
-
+<!-- GLOBAL CHAT -->
+<div class="panel">
+    <div class="panel-header">
+        💬 Global Member Chat
+    </div>
+    <div class="chat-box">
+        <div id="chatMessages" class="chat-messages">
+            {% for msg in chat_messages %}
+            <div class="chat-item">
+                <b>{{ msg.username }}</b> :
+                {{ msg.message }}
+            </div>
+            {% endfor %}
+        </div>
+        <form action="/send-chat" method="post" class="chat-form">
+            <input
+                type="text"
+                name="message"
+                maxlength="200"
+                placeholder="Tulis pesan...">
+            <button type="submit">
+                Kirim
+            </button>
+        </form>
+    </div>
 </div>
 
 </div>
