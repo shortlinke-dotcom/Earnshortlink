@@ -484,18 +484,22 @@ canvas{
 }
 
 
-/* FOOTER */
+/* =========================
+   FOOTER
+========================= */
 
 .dashboard-footer{
     margin-top:40px;
     padding:20px;
-
     text-align:center;
-    opacity:.8;
+    color:#94a3b8;
+    border-top:1px solid rgba(255,255,255,.08);
+    font-size:14px;
 }
 
-
-/* USER MENU */
+/* =========================
+   USER MENU
+========================= */
 
 .user-menu{
     position:relative;
@@ -505,28 +509,40 @@ canvas{
     width:45px;
     height:45px;
 
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
     border:none;
     border-radius:50%;
 
     background:#2196f3;
     color:#fff;
 
-    font-size:20px;
+    font-size:18px;
     cursor:pointer;
+
+    transition:all .3s ease;
+}
+
+.account-btn:hover{
+    transform:scale(1.05);
+    box-shadow:0 0 15px rgba(33,150,243,.45);
 }
 
 .saldo-box{
-    margin:10px 0;
-    padding:10px;
+    margin:12px 0;
+    padding:12px;
 
     border-radius:10px;
 
-    background:rgba(33,150,243,.15);
+    background:rgba(33,150,243,.12);
+    border:1px solid rgba(33,150,243,.2);
 }
 
 .logout-btn{
     width:100%;
-    padding:10px;
+    padding:12px;
 
     border:none;
     border-radius:10px;
@@ -534,26 +550,24 @@ canvas{
     background:#ef4444;
     color:#fff;
 
+    font-weight:600;
     cursor:pointer;
+
+    transition:.3s;
 }
 
-@media(max-width:768px){
+.logout-btn:hover{
+    opacity:.9;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width:768px){
 
     .container{
         padding:85px 15px 15px;
-    }
-
-    .stats{
-        grid-template-columns:1fr 1fr;
-        gap:12px;
-    }
-
-    .stat-card{
-        padding:18px;
-    }
-
-    .stat-card h1{
-        font-size:22px;
     }
 
     .logo{
@@ -566,11 +580,7 @@ canvas{
 
 }
 
-@media(max-width:480px){
-
-    .stats{
-        grid-template-columns:1fr;
-    }
+@media (max-width:480px){
 
     .topbar{
         padding:10px 12px;
@@ -578,10 +588,6 @@ canvas{
 
     .logo{
         font-size:16px;
-    }
-
-    .menu-btn{
-        font-size:24px;
     }
 
     .account-btn{
@@ -592,40 +598,9 @@ canvas{
 
 }
 
-/* SIDEBAR */
-
-.sidebar a{
-    display:flex;
-    align-items:center;
-    gap:12px;
-    color:white;
-    text-decoration:none;
-    padding:14px;
-    margin-bottom:8px;
-    border-radius:12px;
-    transition:.3s;
-}
-
-.sidebar a i{
-    width:20px;
-    text-align:center;
-    color:#2196f3;
-
-    text-shadow:
-    0 0 10px rgba(33,150,243,.8),
-    0 0 20px rgba(33,150,243,.4);
-}
-
-.sidebar a:hover{
-    background:rgba(33,150,243,.15);
-    color:#2196f3;
-}
-
-.sidebar a:hover i{
-    transform:scale(1.1);
-}
-
-/* ACCOUNT */
+/* =========================
+   ACCOUNT DROPDOWN
+========================= */
 
 .account-btn i{
     font-size:18px;
@@ -633,23 +608,32 @@ canvas{
 
 .account-dropdown{
     position:absolute;
-    right:0;
     top:55px;
+    right:0;
 
     width:220px;
     padding:15px;
 
     background:#071120;
-    border:1px solid #2196f3;
+    backdrop-filter:blur(15px);
+
+    border:1px solid rgba(33,150,243,.35);
     border-radius:15px;
 
-    box-shadow:0 0 20px rgba(33,150,243,.3);
+    box-shadow:
+        0 10px 30px rgba(0,0,0,.35),
+        0 0 20px rgba(33,150,243,.15);
 
     opacity:0;
     visibility:hidden;
+
     transform:translateY(10px);
 
-    transition:.3s;
+    transition:
+        opacity .25s ease,
+        transform .25s ease,
+        visibility .25s ease;
+
     z-index:9999;
 }
 
@@ -659,7 +643,25 @@ canvas{
     transform:translateY(0);
 }
 
-/* QUICK FORM */
+.account-dropdown h4{
+    margin-bottom:10px;
+    font-size:15px;
+    color:#fff;
+
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+
+.account-dropdown hr{
+    border:none;
+    border-top:1px solid rgba(255,255,255,.08);
+    margin:12px 0;
+}
+
+/* =========================
+   QUICK FORM
+========================= */
 
 .quick-form{
     display:flex;
@@ -669,24 +671,48 @@ canvas{
 
 .quick-form input{
     flex:1;
+    min-width:200px;
+
     padding:14px;
+
     border:none;
+    outline:none;
+
     border-radius:12px;
+
     background:#0f172a;
-    color:white;
+    color:#fff;
+
+    transition:.3s;
+}
+
+.quick-form input:focus{
+    box-shadow:0 0 0 2px rgba(33,150,243,.3);
 }
 
 .quick-form button{
     padding:14px 24px;
+
     border:none;
     border-radius:12px;
+
     background:#2196f3;
-    color:white;
-    cursor:pointer;
+    color:#fff;
+
     font-weight:600;
+    cursor:pointer;
+
+    transition:.3s;
 }
 
-/* TABLE */
+.quick-form button:hover{
+    transform:translateY(-2px);
+    box-shadow:0 0 15px rgba(33,150,243,.35);
+}
+
+/* =========================
+   TABLE
+========================= */
 
 .activity-table{
     width:100%;
@@ -700,173 +726,18 @@ canvas{
     border-bottom:1px solid rgba(255,255,255,.08);
 }
 
-/* CHAT */
-
-.chat-box{
-    display:flex;
-    flex-direction:column;
-    gap:15px;
-}
-
-.chat-messages{
-    max-height:300px;
-    overflow:auto;
-    padding:10px;
-    background:#0f172a;
-    border-radius:12px;
-}
-
-.chat-item{
-    margin-bottom:10px;
-    word-break:break-word;
-}
-
-.chat-form{
-    display:flex;
-    gap:10px;
-}
-
-.chat-form input{
-    flex:1;
-    padding:12px;
-    border:none;
-    border-radius:12px;
-    background:#0f172a;
-    color:white;
-}
-
-.chat-form button{
-    padding:12px 20px;
-    border:none;
-    border-radius:12px;
-    background:#2196f3;
-    color:white;
-    cursor:pointer;
-}
-
-/* CHART */
-
-.chart-container{
-    position:relative;
-    width:100%;
-    height:350px;
-}
-
-canvas{
-    width:100% !important;
-    height:100% !important;
-}
-
-/* MOBILE FORM */
-
-/* MOBILE */
-@media(max-width:768px){
-
-    .chat-form,
-    .quick-form,
-    .create-form{
-        flex-direction:column;
-    }
-
-}
-
-/* PANEL */
-
-.panel{
-    margin-top:20px;
-    padding:20px;
-    border-radius:18px;
-    background:rgba(0,0,0,.3);
-    border:1px solid rgba(33,150,243,.4);
-    transition:.3s;
-}
-
-.panel:hover{
-    box-shadow:0 0 20px rgba(33,150,243,.15);
-}
-
-.panel-header{
-    font-size:18px;
-    font-weight:700;
-    margin-bottom:15px;
-}
-
-.panel-header i{
+.activity-table th{
     color:#2196f3;
-    margin-right:8px;
-
-    text-shadow:
-    0 0 10px rgba(33,150,243,.8),
-    0 0 20px rgba(33,150,243,.4);
-}
-
-/* CREATE FORM */
-
-.create-form{
-    display:flex;
-    gap:10px;
-}
-
-.create-form input{
-    flex:1;
-    padding:12px;
-    border:none;
-    border-radius:10px;
-    outline:none;
-}
-
-.create-form button{
-    padding:12px 20px;
-    border:none;
-    border-radius:10px;
-    background:#2196f3;
-    color:white;
-    cursor:pointer;
     font-weight:600;
 }
 
-/* ANNOUNCEMENT */
-
-.announcement{
-    padding:15px;
-    border-radius:12px;
-    background:rgba(33,150,243,.08);
-    border:1px solid rgba(33,150,243,.25);
-    color:#e2e8f0;
-    line-height:1.7;
-}
-
-/* STAT */
-
-.stat-card h3 i{
-    color:#2196f3;
-    margin-right:6px;
-
-    text-shadow:
-    0 0 10px rgba(33,150,243,.8),
-    0 0 20px rgba(33,150,243,.4);
-}
-
-/* TABLE */
-
-.activity-table{
-    width:100%;
-    border-collapse:collapse;
-}
-
-.activity-table th{
-    color:#2196f3;
-}
-
 .activity-table tr:hover{
-    background:rgba(33,150,243,.08);
+    background:rgba(33,150,243,.05);
 }
 
-.activity-wrapper{
-    overflow-x:auto;
-}
-
-/* CHAT */
+/* =========================
+   CHAT
+========================= */
 
 .chat-box{
     display:flex;
@@ -876,67 +747,59 @@ canvas{
 
 .chat-messages{
     max-height:320px;
+
     overflow-y:auto;
+
     padding:12px;
+
     background:#0f172a;
+
     border-radius:14px;
+    border:1px solid rgba(255,255,255,.05);
 }
 
 .chat-item{
     margin-bottom:12px;
-}
-
-.chat-user{
-    font-size:12px;
-    color:#60a5fa;
-    margin-bottom:4px;
-    display:flex;
-    align-items:center;
-    gap:6px;
-}
-
-.chat-bubble{
-    display:inline-block;
-    max-width:85%;
-    padding:8px 12px;
-    border-radius:12px;
-    background:rgba(33,150,243,.15);
-    border:1px solid rgba(33,150,243,.25);
-    font-size:14px;
     word-break:break-word;
-}
-
-.chat-empty{
-    text-align:center;
-    color:#94a3b8;
-    padding:25px;
 }
 
 .chat-form{
     display:flex;
-    gap:8px;
+    gap:10px;
 }
 
 .chat-form input{
     flex:1;
-    height:42px;
-    padding:0 14px;
+
+    padding:12px 14px;
+
     border:none;
     outline:none;
+
     border-radius:12px;
-    background:#0b1220;
-    color:white;
+
+    background:#0f172a;
+    color:#fff;
+
+    transition:.3s;
+}
+
+.chat-form input:focus{
+    box-shadow:0 0 0 2px rgba(33,150,243,.3);
 }
 
 .chat-form button{
-    width:42px;
-    height:42px;
+    padding:12px 20px;
+
     border:none;
     border-radius:12px;
+
     background:#2196f3;
-    color:white;
+    color:#fff;
+
     cursor:pointer;
-    flex-shrink:0;
+
+    transition:.3s;
 }
 
 .chat-form button:hover{
@@ -952,81 +815,162 @@ canvas{
     border-radius:10px;
 }
 
-/* ACCOUNT DROPDOWN */
+/* =========================
+   MOBILE
+========================= */
 
-.account-dropdown{
-    position:absolute;
-    right:0;
-    top:55px;
+@media(max-width:768px){
 
-    width:220px;
-    padding:15px;
+    .quick-form,
+    .chat-form{
+        flex-direction:column;
+    }
 
-    background:#071120;
-    border:1px solid #2196f3;
-    border-radius:15px;
+    .chat-form button{
+        width:100%;
+    }
 
-    box-shadow:0 0 20px rgba(33,150,243,.3);
-
-    opacity:0;
-    visibility:hidden;
-    transform:translateY(10px);
-
-    transition:.3s;
-    z-index:9999;
 }
 
-.account-dropdown.show{
-    opacity:1;
-    visibility:visible;
-    transform:translateY(0);
-}
-.success-panel{
-    margin-top:15px;
-    border:1px solid rgba(34,197,94,.4);
-}
+/* =========================
+   CHART
+========================= */
 
-.success-title{
-    color:#22c55e;
-}
-
-.success-input{
+.chart-container{
+    position:relative;
     width:100%;
-    padding:12px;
-    margin-top:10px;
-    border-radius:10px;
-    border:1px solid #22c55e;
-    background:#0b1220;
-    color:#22c55e;
+    height:350px;
+}
+
+canvas{
+    width:100% !important;
+    height:100% !important;
+}
+
+/* =========================
+   PANEL
+========================= */
+
+.panel{
+    margin-top:20px;
+    padding:20px;
+
+    border-radius:18px;
+
+    background:rgba(15,23,42,.75);
+    backdrop-filter:blur(12px);
+
+    border:1px solid rgba(33,150,243,.25);
+
+    transition:.3s ease;
+}
+
+.panel:hover{
+    box-shadow:
+        0 0 25px rgba(33,150,243,.15);
+}
+
+.panel-header{
+    display:flex;
+    align-items:center;
+
+    font-size:18px;
+    font-weight:700;
+
+    margin-bottom:15px;
+}
+
+.panel-header i{
+    color:#2196f3;
+    margin-right:8px;
+
+    text-shadow:
+        0 0 10px rgba(33,150,243,.8),
+        0 0 20px rgba(33,150,243,.4);
+}
+
+/* =========================
+   CREATE FORM
+========================= */
+
+.create-form{
+    display:flex;
+    gap:10px;
+}
+
+.create-form input{
+    flex:1;
+
+    padding:12px 15px;
+
+    border:none;
     outline:none;
+
+    border-radius:10px;
+
+    background:#0f172a;
+    color:#fff;
 }
 
-.copy-btn{
-    width:100%;
-    margin-top:10px;
-    padding:12px;
+.create-form input::placeholder{
+    color:#94a3b8;
+}
+
+.create-form button{
+    padding:12px 20px;
+
     border:none;
     border-radius:10px;
-    background:#22c55e;
-    color:white;
+
+    background:#2196f3;
+    color:#fff;
+
     font-weight:600;
     cursor:pointer;
+
     transition:.3s;
 }
 
-.copy-btn:hover{
-    opacity:.9;
+.create-form button:hover{
     transform:translateY(-2px);
+    box-shadow:
+        0 0 15px rgba(33,150,243,.4);
 }
 
-.copy-btn i{
+/* =========================
+   ANNOUNCEMENT
+========================= */
+
+.announcement{
+    padding:15px;
+
+    border-radius:12px;
+
+    background:rgba(33,150,243,.08);
+    border:1px solid rgba(33,150,243,.25);
+
+    color:#e2e8f0;
+    line-height:1.7;
+}
+
+/* =========================
+   STAT ICON
+========================= */
+
+.stat-card h3 i{
+    color:#2196f3;
     margin-right:6px;
-}
-.empty-text{
-    opacity:.7;
+
+    text-shadow:
+        0 0 10px rgba(33,150,243,.8),
+        0 0 20px rgba(33,150,243,.4);
 }
 
-.table-wrapper{
+/* =========================
+   TABLE
+========================= */
+
+.activity-wrapper{
     width:100%;
     overflow-x:auto;
 }
@@ -1034,12 +978,12 @@ canvas{
 .activity-table{
     width:100%;
     border-collapse:collapse;
-    min-width:500px;
 }
 
 .activity-table th,
 .activity-table td{
     padding:12px;
+    text-align:left;
     border-bottom:1px solid rgba(255,255,255,.08);
 }
 
@@ -1052,17 +996,16 @@ canvas{
     background:rgba(33,150,243,.08);
 }
 
-.empty-row{
-    text-align:center;
-    color:#94a3b8;
-    padding:20px;
-}
+/* =========================
+   MOBILE
+========================= */
 
 @media(max-width:768px){
 
-    .stats{
-        grid-template-columns:1fr 1fr;
-        gap:12px;
+    .chat-form,
+    .quick-form,
+    .create-form{
+        flex-direction:column;
     }
 
     .chart-container{
@@ -1073,22 +1016,80 @@ canvas{
 
 @media(max-width:480px){
 
-    .stats{
-        grid-template-columns:1fr;
-    }
-
     .chart-container{
-        height:250px;
+        height:220px;
     }
 
 }
+
+/* =========================
+   CHAT
+========================= */
+
+.chat-box{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+}
+
+.chat-messages{
+    max-height:320px;
+    overflow-y:auto;
+
+    padding:12px;
+
+    background:#0f172a;
+    border:1px solid rgba(33,150,243,.15);
+    border-radius:14px;
+}
+
+.chat-item{
+    margin-bottom:12px;
+}
+
+.chat-user{
+    display:flex;
+    align-items:center;
+    gap:6px;
+
+    margin-bottom:4px;
+
+    font-size:12px;
+    color:#60a5fa;
+}
+
+.chat-user span{
+    font-weight:600;
+}
+
+.chat-bubble{
+    display:inline-block;
+
+    max-width:85%;
+
+    padding:10px 14px;
+
+    border-radius:12px;
+
+    background:rgba(33,150,243,.15);
+    border:1px solid rgba(33,150,243,.25);
+
+    font-size:14px;
+    line-height:1.6;
+
+    word-break:break-word;
+}
+
 .chat-empty{
     display:flex;
     flex-direction:column;
     align-items:center;
     justify-content:center;
+
     gap:10px;
+
     min-height:180px;
+
     color:#94a3b8;
 }
 
@@ -1101,26 +1102,204 @@ canvas{
     margin:0;
 }
 
-.chat-user span{
+/* =========================
+   CHAT FORM
+========================= */
+
+.chat-form{
+    display:flex;
+    gap:8px;
+}
+
+.chat-form input{
+    flex:1;
+
+    height:42px;
+    padding:0 14px;
+
+    border:none;
+    outline:none;
+
+    border-radius:12px;
+
+    background:#0b1220;
+    color:#fff;
+}
+
+.chat-form input::placeholder{
+    color:#94a3b8;
+}
+
+.chat-form button{
+    width:42px;
+    height:42px;
+
+    border:none;
+    border-radius:12px;
+
+    background:#2196f3;
+    color:#fff;
+
+    cursor:pointer;
+    flex-shrink:0;
+
+    transition:.3s;
+}
+
+.chat-form button:hover{
+    transform:scale(1.05);
+}
+
+/* =========================
+   CHAT SCROLLBAR
+========================= */
+
+.chat-messages::-webkit-scrollbar{
+    width:6px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb{
+    background:#2196f3;
+    border-radius:10px;
+}
+
+/* =========================
+   ACCOUNT DROPDOWN
+========================= */
+
+.account-dropdown{
+    position:absolute;
+
+    right:0;
+    top:55px;
+
+    width:220px;
+    padding:15px;
+
+    background:#071120;
+
+    border:1px solid rgba(33,150,243,.4);
+    border-radius:15px;
+
+    box-shadow:
+        0 0 20px rgba(33,150,243,.25);
+
+    opacity:0;
+    visibility:hidden;
+
+    transform:translateY(10px);
+
+    transition:.3s;
+    z-index:9999;
+}
+
+.account-dropdown.show{
+    opacity:1;
+    visibility:visible;
+    transform:translateY(0);
+}
+
+/* =========================
+   SUCCESS PANEL
+========================= */
+
+.success-panel{
+    margin-top:15px;
+    border:1px solid rgba(34,197,94,.4);
+}
+
+.success-title{
+    color:#22c55e;
+}
+
+.success-input{
+    width:100%;
+
+    padding:12px;
+    margin-top:10px;
+
+    border-radius:10px;
+    border:1px solid #22c55e;
+
+    background:#0b1220;
+    color:#22c55e;
+
+    outline:none;
+}
+
+.copy-btn{
+    width:100%;
+
+    margin-top:10px;
+    padding:12px;
+
+    border:none;
+    border-radius:10px;
+
+    background:#22c55e;
+    color:#fff;
+
     font-weight:600;
+    cursor:pointer;
+
+    transition:.3s;
 }
 
-.chat-bubble{
-    line-height:1.6;
+.copy-btn:hover{
+    opacity:.9;
+    transform:translateY(-2px);
 }
 
-.dashboard-footer{
-    margin-top:40px;
+.copy-btn i{
+    margin-right:6px;
+}
+
+/* =========================
+   UTILITIES
+========================= */
+
+.empty-text{
+    opacity:.7;
+}
+
+.empty-row{
     text-align:center;
     padding:20px;
     color:#94a3b8;
+}
+
+/* =========================
+   FOOTER
+========================= */
+
+.dashboard-footer{
+    margin-top:40px;
+
+    padding:20px;
+
+    text-align:center;
+
+    color:#94a3b8;
+
     border-top:1px solid rgba(255,255,255,.08);
 }
+
+/* =========================
+   MOBILE
+========================= */
 
 @media(max-width:768px){
 
     .chat-messages{
         max-height:280px;
+    }
+
+}
+
+@media(max-width:480px){
+
+    .chat-bubble{
+        max-width:100%;
     }
 
 }
@@ -1563,66 +1742,57 @@ canvas{
 // SIDEBAR
 // =========================
 
-function openMenu(){
-    document.getElementById("sidebar")?.classList.add("active");
-    document.getElementById("overlay")?.classList.add("active");
+function openMenu() {
+    document.getElementById("sidebar").classList.add("active");
+    document.getElementById("overlay").classList.add("active");
 }
 
-function closeMenu(){
-    document.getElementById("sidebar")?.classList.remove("active");
-    document.getElementById("overlay")?.classList.remove("active");
+function closeMenu() {
+    document.getElementById("sidebar").classList.remove("active");
+    document.getElementById("overlay").classList.remove("active");
 }
 
 // =========================
-// USER DROPDOWN
+// USER MENU
 // =========================
 
-function toggleUserMenu(){
-    document
-        .getElementById("accountDropdown")
-        ?.classList.toggle("show");
+function toggleUserMenu() {
+    document.getElementById("accountDropdown").classList.toggle("show");
 }
 
-document.addEventListener("click", (e) => {
+document.addEventListener("click", function (e) {
 
-    const btn =
-        document.querySelector(".account-btn");
+    const btn = document.querySelector(".account-btn");
+    const menu = document.getElementById("accountDropdown");
 
-    const menu =
-        document.getElementById("accountDropdown");
-
-    if(
+    if (
         btn &&
         menu &&
         !btn.contains(e.target) &&
         !menu.contains(e.target)
-    ){
+    ) {
         menu.classList.remove("show");
     }
 
 });
 
 // =========================
-// ACTIVE MENU
+// ACTIVE SIDEBAR
 // =========================
 
-function setActiveMenu(){
+function setActiveMenu() {
 
-    const currentPath =
-        window.location.pathname;
+    const currentPath = window.location.pathname;
 
-    document
-        .querySelectorAll(".sidebar a")
-        .forEach(link => {
+    document.querySelectorAll(".sidebar a").forEach(link => {
 
-            if(
-                link.getAttribute("href")
-                === currentPath
-            ){
-                link.classList.add("active");
-            }
+        link.classList.remove("active");
 
-        });
+        if (link.getAttribute("href") === currentPath) {
+            link.classList.add("active");
+        }
+
+    });
 
 }
 
@@ -1630,34 +1800,30 @@ function setActiveMenu(){
 // COPY LINK
 // =========================
 
-async function copyLink(btn){
+async function copyLink(btn) {
 
-    const input =
-        document.getElementById("createdLink");
+    const input = document.getElementById("createdLink");
 
-    if(!input) return;
+    if (!input) return;
 
-    try{
+    try {
 
-        await navigator.clipboard.writeText(
-            input.value
-        );
+        await navigator.clipboard.writeText(input.value);
 
-    }catch{
+    } catch (err) {
 
         input.select();
         document.execCommand("copy");
 
     }
 
+    const oldText = btn.innerHTML;
+
     btn.innerHTML =
         '<i class="fa-solid fa-check"></i> Berhasil Disalin';
 
     setTimeout(() => {
-
-        btn.innerHTML =
-            '<i class="fa-solid fa-copy"></i> Copy Link';
-
+        btn.innerHTML = oldText;
     }, 2000);
 
 }
@@ -1666,34 +1832,74 @@ async function copyLink(btn){
 // CHART EARNING
 // =========================
 
-function initEarningChart(){
+function initEarningChart() {
 
-    const canvas =
-        document.getElementById("earningChart");
+    const canvas = document.getElementById("earningChart");
 
-    if(!canvas) return;
+    if (!canvas) return;
 
     new Chart(canvas, {
 
-        type:"line",
+        type: "line",
 
-        data:{
-            labels:[
-                "Jan","Feb","Mar",
-                "Apr","Mei","Jun"
+        data: {
+
+            labels: [
+                "Jan",
+                "Feb",
+                "Mar",
+                "Apr",
+                "Mei",
+                "Jun"
             ],
 
-            datasets:[{
-                label:"Pendapatan",
-                data:[0,0,0,0,0,0],
-                tension:.4,
-                fill:true
+            datasets: [{
+                label: "Pendapatan (Rp)",
+                data: [
+                    {{ earning_jan|default(0) }},
+                    {{ earning_feb|default(0) }},
+                    {{ earning_mar|default(0) }},
+                    {{ earning_apr|default(0) }},
+                    {{ earning_mei|default(0) }},
+                    {{ earning_jun|default(0) }}
+                ],
+
+                borderColor: "#2196f3",
+                backgroundColor: "rgba(33,150,243,.15)",
+                fill: true,
+                tension: .4
             }]
         },
 
-        options:{
-            responsive:true,
-            maintainAspectRatio:false
+        options: {
+
+            responsive: true,
+            maintainAspectRatio: false,
+
+            plugins: {
+                legend: {
+                    labels: {
+                        color: "#ffffff"
+                    }
+                }
+            },
+
+            scales: {
+
+                x: {
+                    ticks: {
+                        color: "#ffffff"
+                    }
+                },
+
+                y: {
+                    ticks: {
+                        color: "#ffffff"
+                    }
+                }
+
+            }
+
         }
 
     });
@@ -1704,32 +1910,71 @@ function initEarningChart(){
 // CHART CLICK
 // =========================
 
-function initClickChart(){
+function initClickChart() {
 
-    const canvas =
-        document.getElementById("clickChart");
+    const canvas = document.getElementById("clickChart");
 
-    if(!canvas) return;
+    if (!canvas) return;
 
     new Chart(canvas, {
 
-        type:"bar",
+        type: "bar",
 
-        data:{
-            labels:[
-                "Jan","Feb","Mar",
-                "Apr","Mei","Jun"
+        data: {
+
+            labels: [
+                "Jan",
+                "Feb",
+                "Mar",
+                "Apr",
+                "Mei",
+                "Jun"
             ],
 
-            datasets:[{
-                label:"Klik",
-                data:[0,0,0,0,0,0]
+            datasets: [{
+                label: "Klik",
+                data: [
+                    {{ click_jan|default(0) }},
+                    {{ click_feb|default(0) }},
+                    {{ click_mar|default(0) }},
+                    {{ click_apr|default(0) }},
+                    {{ click_mei|default(0) }},
+                    {{ click_jun|default(0) }}
+                ],
+
+                backgroundColor: "#2196f3"
             }]
         },
 
-        options:{
-            responsive:true,
-            maintainAspectRatio:false
+        options: {
+
+            responsive: true,
+            maintainAspectRatio: false,
+
+            plugins: {
+                legend: {
+                    labels: {
+                        color: "#ffffff"
+                    }
+                }
+            },
+
+            scales: {
+
+                x: {
+                    ticks: {
+                        color: "#ffffff"
+                    }
+                },
+
+                y: {
+                    ticks: {
+                        color: "#ffffff"
+                    }
+                }
+
+            }
+
         }
 
     });
@@ -1742,39 +1987,30 @@ function initClickChart(){
 
 window.addEventListener("DOMContentLoaded", () => {
 
-    // Active Menu
     setActiveMenu();
 
-    // Tahun Footer
-    const year =
-        new Date().getFullYear();
+    const year = new Date().getFullYear();
 
-    const yearEl =
-        document.getElementById("year");
+    const yearEl = document.getElementById("year");
+    const footerYearEl = document.getElementById("footerYear");
 
-    const footerYearEl =
-        document.getElementById("footerYear");
-
-    if(yearEl)
+    if (yearEl) {
         yearEl.textContent = year;
-
-    if(footerYearEl)
-        footerYearEl.textContent = year;
-
-    // Scroll Chat Ke Bawah
-    const chat =
-        document.getElementById("chatMessages");
-
-    if(chat){
-        chat.scrollTop =
-            chat.scrollHeight;
     }
 
-    // Hapus parameter created
-    const url =
-        new URL(window.location);
+    if (footerYearEl) {
+        footerYearEl.textContent = year;
+    }
 
-    if(url.searchParams.has("created")){
+    const chat = document.getElementById("chatMessages");
+
+    if (chat) {
+        chat.scrollTop = chat.scrollHeight;
+    }
+
+    const url = new URL(window.location);
+
+    if (url.searchParams.has("created")) {
 
         url.searchParams.delete("created");
 
@@ -1786,7 +2022,6 @@ window.addEventListener("DOMContentLoaded", () => {
 
     }
 
-    // Init Charts
     initEarningChart();
     initClickChart();
 
