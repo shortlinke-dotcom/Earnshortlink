@@ -707,6 +707,7 @@ flex-direction:column;
         Mulai kerjakan shortlink dan kumpulkan saldo hari ini.
     </p>
 </div>
+
 <!-- QUICK CREATE SHORTLINK -->
 <div class="panel">
 
@@ -716,16 +717,14 @@ flex-direction:column;
 
     <form action="/create-link" method="post" class="create-form">
 
-        <input
-            type="hidden"
-            name="login"
-            value="{{ username }}">
+        <input type="hidden" name="login" value="{{ username }}">
 
         <input
             type="url"
             name="destination_url"
             placeholder="https://example.com"
-            required>
+            required
+        >
 
         <button type="submit">
             Create Link
@@ -733,8 +732,34 @@ flex-direction:column;
 
     </form>
 
+    <!-- ✅ RESULT SHORTLINK -->
+    {% if created_link %}
+    <div class="panel" style="margin-top:15px;">
+
+        <div class="panel-header">
+            ✅ Link Berhasil Dibuat
+        </div>
+
+        <input
+            value="{{ created_link }}"
+            readonly
+            style="
+                width:100%;
+                padding:12px;
+                margin-top:10px;
+                border-radius:10px;
+                border:1px solid #22c55e;
+                background:#0b1220;
+                color:#22c55e;
+            "
+        >
+
+    </div>
+    {% endif %}
+
 </div>
-<!-- NOTIFICATION ANNOUNCEMENT -->
+
+<!-- NOTIFICATION -->
 <div class="panel">
     <div class="panel-header">
         📢 Notification
@@ -743,52 +768,64 @@ flex-direction:column;
         {{ announcement or "Belum ada pengumuman terbaru." }}
     </div>
 </div>
-<!-- REAL STATS -->
+
+<!-- STATS -->
 <div class="stats">
-<div class="stat-card">
-<h3>Saldo</h3>
-<h1>Rp {{ saldo }}</h1>
+
+    <div class="stat-card">
+        <h3>Saldo</h3>
+        <h1>Rp {{ saldo }}</h1>
+    </div>
+
+    <div class="stat-card">
+        <h3>Total Klik</h3>
+        <h1>{{ total_clicks }}</h1>
+    </div>
+
+    <div class="stat-card">
+        <h3>Total Link</h3>
+        <h1>{{ total_links }}</h1>
+    </div>
+
+    <div class="stat-card">
+        <h3>Referral</h3>
+        <h1>{{ referrals }}</h1>
+    </div>
+
+    <div class="stat-card">
+        <h3>Total Earn</h3>
+        <h1>Rp {{ total_earn }}</h1>
+    </div>
+
+    <div class="stat-card">
+        <h3>Pendapatan Link</h3>
+        <h1>Rp {{ total_link_earnings }}</h1>
+    </div>
+
 </div>
-<div class="stat-card">
-<h3>Total Klik</h3>
-<h1>{{ total_clicks }}</h1>
-</div>
-<div class="stat-card">
-<h3>Total Link</h3>
-<h1>{{ total_links }}</h1>
-</div>
-<div class="stat-card">
-<h3>Referral</h3>
-<h1>{{ referrals }}</h1>
-</div>
-<div class="stat-card">
-<h3>Total Earn</h3>
-<h1>Rp {{ total_earn }}</h1>
-</div>
-<div class="stat-card">
-<h3>Pendapatan Link</h3>
-<h1>Rp {{ total_link_earnings }}</h1>
-</div>
-</div>
-<!-- CHART PENDAPATAN -->
+
+<!-- CHART -->
 <div class="panel">
     <div class="panel-header">
         📈 Statistik Pendapatan Bulanan
     </div>
     <canvas id="earningChart"></canvas>
 </div>
-<!-- CHART KLIK -->
+
 <div class="panel">
     <div class="panel-header">
         📊 Statistik Klik Bulanan
     </div>
     <canvas id="clickChart"></canvas>
 </div>
+
 <!-- RECENT ACTIVITY -->
 <div class="panel">
+
     <div class="panel-header">
         🕒 Aktivitas Terbaru
     </div>
+
     <table class="activity-table">
         <thead>
             <tr>
@@ -807,14 +844,20 @@ flex-direction:column;
             {% endfor %}
         </tbody>
     </table>
+
 </div>
+
 <!-- GLOBAL CHAT -->
 <div class="panel">
+
     <div class="panel-header">
         💬 Global Member Chat
     </div>
+
     <div class="chat-box">
+
         <div id="chatMessages" class="chat-messages">
+
             {% if chat_messages %}
                 {% for msg in chat_messages %}
                 <div class="chat-item">
@@ -827,30 +870,31 @@ flex-direction:column;
                     Belum ada pesan.
                 </div>
             {% endif %}
+
         </div>
+
         <form action="/send-chat" method="post" class="chat-form">
-            <input
-                type="hidden"
-                name="login"
-                value="{{ username }}">
+
+            <input type="hidden" name="login" value="{{ username }}">
+
             <input
                 type="text"
                 name="message"
                 maxlength="200"
                 placeholder="Tulis pesan..."
                 required>
+
             <button type="submit">
                 Kirim
             </button>
+
         </form>
+
     </div>
 </div>
 
-</div>
-
 <footer class="dashboard-footer">
-© <span id="footerYear"></span>
-EarnShortlink Best CPM
+    © <span id="footerYear"></span> EarnShortlink Best CPM
 </footer>
 <script>
 
