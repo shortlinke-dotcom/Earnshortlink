@@ -398,6 +398,33 @@ async def unban_user(request: Request):
 
     return RedirectResponse(f"/admin?login={login}", status_code=303)
 
+
+@app.post("/admin/reset-password")
+async def reset_password(request: Request):
+
+    form = await request.form()
+
+    login = form.get("login")
+    target = form.get("target")
+
+    if not is_admin(login):
+        return HTMLResponse("Forbidden", status_code=403)
+
+    # generate password baru
+    new_password = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
+
+    supabase.table("users").update({
+        "password": hash_password(new_password)
+    }).eq("username", target).execute()
+
+    return HTMLResponse(
+        f"""
+        <h3>Password baru untuk {target}:</h3>
+        <h2>{new_password}</h2>
+        <a href="/admin?login={login}">Kembali</a>
+        """,
+        status_code=200
+    )
 # =========================
 # FAVICON
 # =========================
