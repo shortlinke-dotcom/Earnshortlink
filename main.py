@@ -310,6 +310,32 @@ async def dashboard(request: Request, login: str = None):
             status_code=500
         )
 # =========================
+# SEND CHAT
+# =========================
+@app.post("/send-chat")
+async def send_chat(
+    username: str = Form(...),
+    message: str = Form(...)
+):
+
+    message = message.strip()
+
+    if not message:
+        return RedirectResponse(
+            f"/dashboard?login={username}",
+            status_code=303
+        )
+
+    supabase.table("chat_messages").insert({
+        "username": username,
+        "message": message
+    }).execute()
+
+    return RedirectResponse(
+        f"/dashboard?login={username}",
+        status_code=303
+    )
+# =========================
 # FAVICON (IGNORE ERROR LOG)
 # =========================
 @app.get("/favicon.ico")
