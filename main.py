@@ -312,13 +312,20 @@ async def dashboard(request: Request, login: str = None):
 # =========================
 # SEND CHAT
 # =========================
-@app.post("/send-chat")
-async def send_chat(
-    login: str = Form(...),
-    message: str = Form(...)
-):
 
-    message = message.strip()
+@app.post("/send-chat")
+async def send_chat(request: Request):
+
+    form = await request.form()
+
+    login = str(form.get("login", "")).strip()
+    message = str(form.get("message", "")).strip()
+
+    if not login:
+        return RedirectResponse(
+            "/login",
+            status_code=303
+        )
 
     if not message:
         return RedirectResponse(
@@ -326,10 +333,14 @@ async def send_chat(
             status_code=303
         )
 
-    supabase.table("chat_messages").insert({
-        "username": login,
-        "message": message
-    }).execute()
+    try:
+        supabase.table("chat_messages").insert({
+            "username": login,
+            "message": message
+        }).execute()
+
+    except Exception as e:
+        print("CHAT ERROR:", e)
 
     return RedirectResponse(
         f"/dashboard?login={login}",
