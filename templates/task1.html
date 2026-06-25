@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Task 1 - EarnShortlink</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+background:#020817;
+color:#fff;
+overflow-x:hidden;
+}
+
+.bg{
+position:fixed;
+inset:0;
+background:
+linear-gradient(rgba(0,0,0,.75),rgba(0,0,0,.85)),
+url('https://images.unsplash.com/photo-1462331940025-496dfbfc7564');
+background-size:cover;
+background-position:center;
+z-index:-1;
+}
+
+.navbar{
+position:sticky;
+top:0;
+z-index:999;
+padding:18px;
+text-align:center;
+background:rgba(0,0,0,.35);
+backdrop-filter:blur(15px);
+border-bottom:1px solid rgba(33,150,243,.3);
+}
+
+.logo{
+font-size:28px;
+font-weight:800;
+}
+
+.logo span{
+color:#2196f3;
+}
+
+.container{
+max-width:1000px;
+margin:auto;
+padding:20px;
+}
+
+.card{
+background:rgba(0,0,0,.3);
+border:1px solid rgba(33,150,243,.3);
+border-radius:20px;
+padding:20px;
+margin-bottom:20px;
+backdrop-filter:blur(10px);
+}
+
+.notice{
+border-left:5px solid #22c55e;
+}
+
+.notice h2{
+margin-bottom:10px;
+}
+
+.notice p{
+color:#cbd5e1;
+line-height:1.7;
+}
+
+.download-section{
+text-align:center;
+}
+
+.download-btn{
+padding:15px 35px;
+border:none;
+border-radius:15px;
+background:#2196f3;
+color:white;
+font-size:18px;
+font-weight:700;
+cursor:pointer;
+}
+
+.download-btn:hover{
+transform:scale(1.03);
+}
+
+.timer{
+font-size:50px;
+font-weight:800;
+margin-top:20px;
+color:#22c55e;
+display:none;
+}
+
+.scroll-btn{
+display:none;
+margin-top:20px;
+padding:15px 30px;
+border:none;
+border-radius:15px;
+background:#22c55e;
+color:white;
+font-weight:700;
+cursor:pointer;
+}
+
+.article h2{
+margin-bottom:15px;
+color:#2196f3;
+}
+
+.article p{
+line-height:1.9;
+color:#dbeafe;
+margin-bottom:18px;
+text-align:justify;
+}
+
+.ad-box{
+height:250px;
+display:flex;
+align-items:center;
+justify-content:center;
+border:2px dashed #2196f3;
+border-radius:20px;
+font-size:22px;
+font-weight:700;
+margin:25px 0;
+background:rgba(33,150,243,.08);
+}
+
+.final-download{
+text-align:center;
+}
+
+.final-btn{
+display:inline-block;
+padding:18px 35px;
+background:#22c55e;
+color:white;
+text-decoration:none;
+border-radius:15px;
+font-weight:700;
+font-size:18px;
+}
+
+.footer{
+margin-top:40px;
+padding:25px;
+text-align:center;
+opacity:.8;
+font-size:14px;
+}
+
+@media(max-width:768px){
+
+.logo{
+font-size:22px;
+}
+
+.timer{
+font-size:38px;
+}
+
+.download-btn,
+.scroll-btn,
+.final-btn{
+width:100%;
+}
+
+.container{
+padding:15px;
+}
+
+}
+
+</style>
+</head>
+<body>
+
+<div class="bg"></div>
+
+<div class="navbar">
+<div class="logo">
+EARN<span>SHORTLINK</span>
+</div>
+</div>
+
+<div class="container">
+
+<!-- NOTIFIKASI -->
+
+<div class="card notice">
+
+<h2>📢 Notifikasi Penting</h2>
+
+<p>
+Website Penghasil Saldo Tercepat dengan High CPM dan Fast Withdraw.
+Selesaikan seluruh langkah untuk membuka link tujuan dan mendapatkan pengalaman terbaik.
+</p>
+
+</div>
+
+<!-- TOMBOL DOWNLOAD -->
+
+<div class="card download-section">
+
+<h2>⬇️ Download Access</h2>
+
+<p style="margin:15px 0;color:#cbd5e1;">
+Klik tombol di bawah untuk memulai proses verifikasi.
+</p>
+
+<button class="download-btn" onclick="startCountdown()">
+DOWNLOAD
+</button>
+
+<div class="timer" id="timer">
+10
+</div>
+
+<button class="scroll-btn" id="scrollBtn" onclick="scrollToBottom()">
+⬇️ SCROLL DOWN
+</button>
+
+</div>
+
+<!-- BERITA -->
+
+<div class="card article">
+
+<h2>🌱 Menjaga Kesehatan Jasmani dan Rohani di Era Digital</h2>
+
+<p>
+Di tengah perkembangan teknologi yang sangat cepat, menjaga kesehatan jasmani dan rohani menjadi tantangan tersendiri. Aktivitas yang sebagian besar dilakukan secara digital sering membuat seseorang lupa bergerak, kurang tidur, dan mengalami stres berkepanjangan.
+</p>
+
+<p>
+Kesehatan jasmani dapat dijaga melalui olahraga rutin, pola makan seimbang, serta istirahat yang cukup. Bahkan aktivitas sederhana seperti berjalan kaki selama tiga puluh menit setiap hari dapat membantu menjaga kebugaran tubuh.
+</p>
+
+<p>
+Selain kesehatan fisik, kesehatan mental dan rohani juga memiliki peran penting. Meluangkan waktu untuk keluarga, membaca, beribadah, dan mengurangi paparan informasi negatif dapat membantu menjaga keseimbangan hidup.
+</p>
+
+<p>
+Banyak penelitian menunjukkan bahwa individu yang memiliki keseimbangan antara kesehatan fisik dan mental cenderung lebih produktif, lebih bahagia, dan memiliki kualitas hidup yang lebih baik dibandingkan mereka yang hanya fokus pada salah satunya.
+</p>
+
+</div>
+
+<!-- IKLAN -->
+
+<div class="ad-box">
+ADSTERRA BANNER 728x90
+</div>
+
+<div class="card article">
+
+<h2>📱 Media Sosial dan Dampaknya Terhadap Kehidupan</h2>
+
+<p>
+Media sosial telah menjadi bagian penting dalam kehidupan modern. Berbagai informasi dapat diperoleh hanya dalam hitungan detik. Namun, penggunaan media sosial yang berlebihan juga dapat menimbulkan dampak negatif seperti kecanduan digital dan penurunan produktivitas.
+</p>
+
+<p>
+Para ahli menyarankan agar pengguna membatasi waktu penggunaan media sosial dan lebih banyak melakukan aktivitas di dunia nyata. Dengan begitu keseimbangan hidup dapat tetap terjaga.
+</p>
+
+<p>
+Tren konten edukatif saat ini juga semakin berkembang. Banyak kreator yang membagikan informasi seputar kesehatan, pendidikan, teknologi, dan pengembangan diri yang dapat memberikan manfaat positif bagi masyarakat luas.
+</p>
+
+</div>
+
+<!-- IKLAN -->
+
+<div class="ad-box">
+ADSTERRA NATIVE ADS
+</div>
+
+<!-- TARGET SCROLL -->
+
+<div id="bottomSection">
+
+<div class="card article">
+
+<h2>✨ Kehidupan Seimbang untuk Masa Depan Lebih Baik</h2>
+
+<p>
+Menjaga kesehatan tubuh dan pikiran bukan hanya investasi jangka pendek tetapi juga investasi jangka panjang. Dengan tubuh yang sehat dan pikiran yang tenang, seseorang akan lebih siap menghadapi berbagai tantangan kehidupan.
+</p>
+
+<p>
+Mulailah dari langkah kecil setiap hari. Konsisten dalam kebiasaan baik akan memberikan hasil yang luar biasa di masa mendatang.
+</p>
+
+</div>
+
+<div class="ad-box">
+ADSTERRA POPUNDER / SOCIAL BAR
+</div>
+
+<div class="card final-download">
+
+<h2>✅ Verifikasi Berhasil</h2>
+
+<p style="margin:15px 0;">
+Silakan lanjut ke langkah berikutnya.
+</p>
+
+<a
+class="final-btn"
+href="/s/{{ short_code }}/task2">
+LANJUT KE TASK 2 →
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="footer">
+© 2026 EarnShortlink — High CPM • Fast Withdraw
+</div>
+
+<script>
+
+function startCountdown(){
+
+const timer = document.getElementById("timer");
+const scrollBtn = document.getElementById("scrollBtn");
+
+timer.style.display="block";
+
+let count = 10;
+
+timer.innerText = count;
+
+const interval = setInterval(()=>{
+
+count--;
+
+timer.innerText = count;
+
+if(count <= 0){
+
+clearInterval(interval);
+
+timer.innerHTML="✅ Selesai";
+
+scrollBtn.style.display="inline-block";
+
+}
+
+},1000);
+
+}
+
+function scrollToBottom(){
+
+document
+.getElementById("bottomSection")
+.scrollIntoView({
+behavior:"smooth"
+});
+
+}
+
+</script>
+
+</body>
+</html>
