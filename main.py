@@ -10,7 +10,6 @@ from auth import hash_password, verify_password
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
-templates.env.cache = None
 
 
 # =========================
