@@ -674,23 +674,27 @@ Dengan menjaga keamanan akun serta menggunakan platform sesuai ketentuan, Anda d
 
 </div>
 <script>
-setTimeout(function(){
-
+function showPopupAd(){
     document
     .getElementById("adOverlay")
     .classList
     .add("show");
+}
 
-},3000);
-
-function closeAd(){
-
+function closePopupAd(){
     document
     .getElementById("adOverlay")
     .classList
     .remove("show");
 
+    setTimeout(function(){
+        showPopupAd();
+    },5000);
 }
+
+window.onload = function(){
+    setTimeout(showPopupAd,3000);
+};
 </script>
 <script>
 let countdownFinished=false;
