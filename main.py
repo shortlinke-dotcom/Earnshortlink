@@ -65,14 +65,25 @@ def login_post(
 # REGISTER PAGE
 # =========================
 @app.get("/register", response_class=HTMLResponse)
-async def register_page(request: Request):
+async def register_page(
+    request: Request,
+    error: str = None
+):
     return templates.TemplateResponse(
         request=request,
-        name="register.html"
+        name="register.html",
+        context={
+            "error": error
+        }
     )
+
+
 # =========================
 # REGISTER REAL
 # =========================
+import re
+from urllib.parse import quote
+
 @app.post("/register")
 def register_post(
     gmail: str = Form(...),
@@ -80,10 +91,29 @@ def register_post(
     password: str = Form(...),
     confirm_password: str = Form(...)
 ):
+
+    if len(password) < 8:
+        return RedirectResponse(
+            url=f"/register?error={quote('Password minimal 8 karakter')}",
+            status_code=303
+        )
+
+    if not re.search(r"[A-Za-z]", password):
+        return RedirectResponse(
+            url=f"/register?error={quote('Password harus mengandung huruf')}",
+            status_code=303
+        )
+
+    if not re.search(r"\d", password):
+        return RedirectResponse(
+            url=f"/register?error={quote('Password harus mengandung angka')}",
+            status_code=303
+        )
+
     if password != confirm_password:
-        return HTMLResponse(
-            content="Password tidak sama",
-            status_code=400
+        return RedirectResponse(
+            url=f"/register?error={quote('Konfirmasi password tidak cocok')}",
+            status_code=303
         )
 
     existing = (
@@ -95,9 +125,9 @@ def register_post(
     )
 
     if existing.data:
-        return HTMLResponse(
-            content="Username sudah digunakan",
-            status_code=400
+        return RedirectResponse(
+            url=f"/register?error={quote('Username sudah digunakan')}",
+            status_code=303
         )
 
     supabase.table("users").insert({
