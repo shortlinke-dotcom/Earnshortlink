@@ -3,3 +3,7 @@ uvicorn
 jinja2
 python-multipart
 supabase
+SQLAlchemy
+asyncpg
+passlib[bcrypt]
+bcrypt
