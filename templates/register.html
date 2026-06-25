@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Register - EarnShortlink</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *{
@@ -194,14 +195,16 @@ padding:14px;
     top: 50%;
     transform: translateY(-50%);
     cursor: pointer;
-    font-size: 18px;
+    font-size: 16px;
     color: #94a3b8;
     user-select: none;
     transition: 0.2s;
+    font-family: monospace;
 }
 
 .toggle-eye:hover {
     color: #2196f3;
+    transform: translateY(-50%) scale(1.1);
 }
 </style>
 </head>
@@ -226,17 +229,17 @@ padding:14px;
 <input type="text" name="username" placeholder="Masukkan Nama Akun" required>
 </div>
 <div class="form-group">
-    <div class="password-wrapper">
-        <input type="password" name="password" id="password" placeholder="Password" required>
-        <span class="toggle-eye" onclick="togglePassword('password', this)">👁️</span>
-    </div>
+  <div class="password-wrapper">
+    <input type="password" name="password" id="password" placeholder="Password" required>
+    <span class="toggle-eye" onclick="togglePassword('password', this)">👁</span>
+  </div>
 </div>
 
 <div class="form-group">
-    <div class="password-wrapper">
-        <input type="password" name="confirm_password" id="confirm_password" placeholder="Konfirmasi Password" required>
-        <span class="toggle-eye" onclick="togglePassword('confirm_password', this)">👁️</span>
-    </div>
+  <div class="password-wrapper">
+    <input type="password" name="confirm_password" id="confirm_password" placeholder="Konfirmasi Password" required>
+    <span class="toggle-eye" onclick="togglePassword('confirm_password', this)">👁</span>
+  </div>
 </div>
 <div class="agree-box">
 <input type="checkbox" required>
@@ -261,16 +264,14 @@ Sudah punya akun?
 function togglePassword(id, el) {
     const input = document.getElementById(id);
 
-    if (input.type === "password") {
-        input.type = "text";
-        el.textContent = "✧";
-        el.style.color = "#2196f3";
-    } else {
-        input.type = "password";
-        el.textContent = "✦";
-        el.style.color = "#94a3b8";
-    }
+    const isHidden = input.type === "password";
+
+    input.type = isHidden ? "text" : "password";
+
+    // pakai simbol simpel, bukan emoji beda-beda
+    el.textContent = isHidden ? "◉" : "◯";
 }
+</script>
 </script>
 </body>
 </html>
