@@ -1303,6 +1303,50 @@ canvas{
     }
 
 }
+
+/* WELCOME RUNNING TEXT */
+
+.welcome-bar{
+    margin-bottom:20px;
+    overflow:hidden;
+
+    border-radius:14px;
+    border:1px solid rgba(33,150,243,.35);
+
+    background:rgba(33,150,243,.08);
+
+    height:50px;
+    display:flex;
+    align-items:center;
+}
+
+.welcome-track{
+    display:flex;
+    white-space:nowrap;
+    animation:welcomeScroll 25s linear infinite;
+}
+
+.welcome-track span{
+    padding-right:80px;
+    color:#e2e8f0;
+    font-size:14px;
+}
+
+.welcome-track b{
+    color:#2196f3;
+}
+
+@keyframes welcomeScroll{
+
+    from{
+        transform:translateX(0);
+    }
+
+    to{
+        transform:translateX(-50%);
+    }
+
+}
 </style>
 </head>
 <body>
@@ -1312,72 +1356,88 @@ canvas{
 <div class="container">
 
     <!-- TOPBAR -->
-    <div class="topbar">
+    <header class="topbar">
 
         <!-- SIDEBAR -->
-        <div class="sidebar" id="sidebar">
+        <aside class="sidebar" id="sidebar">
 
             <div class="sidebar-header">
                 <h2>MENU</h2>
 
-                <button class="close-btn" onclick="closeMenu()">
+                <button
+                    type="button"
+                    class="close-btn"
+                    onclick="closeMenu()"
+                >
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
 
-            <a href="/dashboard" onclick="closeMenu()">
-                <i class="fa-solid fa-chart-line"></i>
-                <span>Dashboard</span>
-            </a>
+            <nav>
 
-            <a href="/links" onclick="closeMenu()">
-                <i class="fa-solid fa-link"></i>
-                <span>Kelola Tautan</span>
-            </a>
+                <a href="/dashboard" onclick="closeMenu()">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <span>Dashboard</span>
+                </a>
 
-            <a href="/sell-link" onclick="closeMenu()">
-                <i class="fa-solid fa-plus"></i>
-                <span>Sell Link New</span>
-            </a>
+                <a href="/links" onclick="closeMenu()">
+                    <i class="fa-solid fa-link"></i>
+                    <span>Kelola Tautan</span>
+                </a>
 
-            <a href="/payments" onclick="closeMenu()">
-                <i class="fa-solid fa-wallet"></i>
-                <span>Payments</span>
-            </a>
+                <a href="/sell-link" onclick="closeMenu()">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>Sell Link New</span>
+                </a>
 
-            <a href="/referrals" onclick="closeMenu()">
-                <i class="fa-solid fa-users"></i>
-                <span>Referrals</span>
-            </a>
+                <a href="/payments" onclick="closeMenu()">
+                    <i class="fa-solid fa-wallet"></i>
+                    <span>Payments</span>
+                </a>
 
-            <a href="/invoices" onclick="closeMenu()">
-                <i class="fa-solid fa-file-invoice"></i>
-                <span>Invoices</span>
-            </a>
+                <a href="/referrals" onclick="closeMenu()">
+                    <i class="fa-solid fa-users"></i>
+                    <span>Referrals</span>
+                </a>
 
-            <a href="/settings" onclick="closeMenu()">
-                <i class="fa-solid fa-gear"></i>
-                <span>Pengaturan</span>
-            </a>
+                <a href="/invoices" onclick="closeMenu()">
+                    <i class="fa-solid fa-file-invoice"></i>
+                    <span>Invoices</span>
+                </a>
 
-            <a href="/support" onclick="closeMenu()">
-                <i class="fa-solid fa-headset"></i>
-                <span>Dukungan</span>
-            </a>
+                <a href="/settings" onclick="closeMenu()">
+                    <i class="fa-solid fa-gear"></i>
+                    <span>Pengaturan</span>
+                </a>
+
+                <a href="/support" onclick="closeMenu()">
+                    <i class="fa-solid fa-headset"></i>
+                    <span>Dukungan</span>
+                </a>
+
+            </nav>
 
             <div class="sidebar-footer">
                 © <span id="year"></span><br>
                 EarnShortlink Best CPM
             </div>
 
-        </div>
+        </aside>
         <!-- END SIDEBAR -->
 
         <!-- OVERLAY -->
-        <div class="overlay" id="overlay" onclick="closeMenu()"></div>
+        <div
+            class="overlay"
+            id="overlay"
+            onclick="closeMenu()"
+        ></div>
 
         <!-- MENU BUTTON -->
-        <button class="menu-btn" onclick="openMenu()">
+        <button
+            type="button"
+            class="menu-btn"
+            onclick="openMenu()"
+        >
             <i class="fa-solid fa-bars"></i>
         </button>
 
@@ -1389,21 +1449,32 @@ canvas{
         <!-- USER MENU -->
         <div class="user-menu">
 
-            <button class="account-btn" onclick="toggleUserMenu()">
+            <button
+                type="button"
+                class="account-btn"
+                onclick="toggleUserMenu()"
+            >
                 <i class="fa-solid fa-user"></i>
             </button>
 
-            <div class="account-dropdown" id="accountDropdown">
+            <div
+                class="account-dropdown"
+                id="accountDropdown"
+            >
 
                 <h4>{{ username }}</h4>
 
                 <div class="saldo-box">
-                    Saldo: <b>Rp {{ saldo }}</b>
+                    Saldo:
+                    <b>Rp {{ saldo }}</b>
                 </div>
 
                 <button
+                    type="button"
                     class="logout-btn"
-                    onclick="window.location.href='/logout'">
+                    onclick="window.location.href='/logout'"
+                >
+                    <i class="fa-solid fa-right-from-bracket"></i>
                     Logout
                 </button>
 
@@ -1412,19 +1483,30 @@ canvas{
         </div>
         <!-- END USER MENU -->
 
-    </div>
+    </header>
     <!-- END TOPBAR -->
 
-<!-- WELCOME -->
-<div class="welcome">
-    <h2>
-        Halo, {{ username }} 👋
-    </h2>
+<!-- WELCOME MARQUEE -->
+<div class="welcome-bar">
 
-    <p>
-        Selamat datang kembali di EarnShortlink.
-        Mulai kerjakan shortlink dan kumpulkan saldo hari ini.
-    </p>
+    <div class="welcome-track">
+
+        <span>
+            👋 Halo, <b>{{ username }}</b> •
+            Selamat datang kembali di EarnShortlink •
+            Mulai kerjakan shortlink dan kumpulkan saldo hari ini •
+            CPM Tinggi • Withdraw Cepat • Referral Bonus Menarik •
+        </span>
+
+        <span>
+            👋 Halo, <b>{{ username }}</b> •
+            Selamat datang kembali di EarnShortlink •
+            Mulai kerjakan shortlink dan kumpulkan saldo hari ini •
+            CPM Tinggi • Withdraw Cepat • Referral Bonus Menarik •
+        </span>
+
+    </div>
+
 </div>
 
 <!-- CREATE SHORTLINK -->
@@ -1451,6 +1533,7 @@ canvas{
             type="url"
             name="destination_url"
             placeholder="Masukkan URL tujuan..."
+            autocomplete="off"
             required
         >
 
@@ -1473,15 +1556,15 @@ canvas{
         <input
             type="text"
             id="createdLink"
+            class="success-input"
             value="{{ created_link }}"
             readonly
-            class="success-input"
         >
 
         <button
             type="button"
-            onclick="copyLink(this)"
             class="copy-btn"
+            onclick="copyLink(this)"
         >
             <i class="fa-solid fa-copy"></i>
             Copy Link
@@ -1510,7 +1593,7 @@ canvas{
         {% else %}
 
             <span class="empty-text">
-                Tidak ada pengumuman aktif.
+                📢 Tidak ada pengumuman aktif saat ini.
             </span>
 
         {% endif %}
@@ -1615,7 +1698,7 @@ canvas{
             <thead>
                 <tr>
                     <th>Shortlink</th>
-                    <th>Klik</th>
+                    <th>Total Klik</th>
                     <th>Pendapatan</th>
                 </tr>
             </thead>
@@ -1627,9 +1710,17 @@ canvas{
                     {% for item in recent_links %}
 
                     <tr>
-                        <td>{{ item.short_code }}</td>
-                        <td>{{ item.clicks }}</td>
-                        <td>Rp {{ item.earnings }}</td>
+                        <td>
+                            <code>{{ item.short_code }}</code>
+                        </td>
+
+                        <td>
+                            {{ item.clicks }}
+                        </td>
+
+                        <td>
+                            Rp {{ item.earnings }}
+                        </td>
                     </tr>
 
                     {% endfor %}
@@ -1638,7 +1729,8 @@ canvas{
 
                     <tr>
                         <td colspan="3" class="empty-row">
-                            Belum ada aktivitas.
+                            <i class="fa-solid fa-folder-open"></i>
+                            Belum ada aktivitas shortlink.
                         </td>
                     </tr>
 
@@ -1662,10 +1754,7 @@ canvas{
 
     <div class="chat-box">
 
-        <div
-            id="chatMessages"
-            class="chat-messages"
-        >
+        <div id="chatMessages" class="chat-messages">
 
             {% if chat_messages %}
 
@@ -1690,27 +1779,16 @@ canvas{
 
                 <div class="chat-empty">
                     <i class="fa-solid fa-comments"></i>
-
-                    <p>
-                        Belum ada pesan
-                    </p>
+                    <p>Belum ada pesan</p>
                 </div>
 
             {% endif %}
 
         </div>
 
-        <form
-            action="/send-chat"
-            method="post"
-            class="chat-form"
-        >
+        <form action="/send-chat" method="post" class="chat-form">
 
-            <input
-                type="hidden"
-                name="login"
-                value="{{ username }}"
-            >
+            <input type="hidden" name="login" value="{{ username }}">
 
             <input
                 type="text"
@@ -1730,7 +1808,6 @@ canvas{
     </div>
 
 </div>
-
 <!-- FOOTER -->
 <footer class="dashboard-footer">
     © <span id="footerYear"></span>
