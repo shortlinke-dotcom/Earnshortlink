@@ -668,24 +668,35 @@ flex-direction:column;
 </div>
 <!-- QUICK CREATE SHORTLINK -->
 <div class="panel">
+
     <div class="panel-header">
         🔗 Create Shortlink
     </div>
-    <form action="/create-link" method="post" class="quick-form">
+
+    <form action="/create-link" method="post" class="create-form">
+
+        <input
+            type="hidden"
+            name="login"
+            value="{{ username }}">
+
         <input
             type="url"
-            name="url"
-            placeholder="Tempel URL tujuan..."
+            name="destination_url"
+            placeholder="https://example.com"
             required>
+
         <button type="submit">
-            Create
+            Create Link
         </button>
+
     </form>
+
 </div>
-<!-- ADMIN ANNOUNCEMENT -->
+<!-- NOTIFICATION ANNOUNCEMENT -->
 <div class="panel">
     <div class="panel-header">
-        📢 Pengumuman Admin
+        📢 Notification
     </div>
     <div class="announcement">
         {{ announcement or "Belum ada pengumuman terbaru." }}
