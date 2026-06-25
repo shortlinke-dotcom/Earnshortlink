@@ -634,47 +634,52 @@ Dengan menjaga keamanan akun serta menggunakan platform sesuai ketentuan, Anda d
 </div>
 <div id="adOverlay">
 
-    <button id="adClose" onclick="closePopupAd()">
-        ✕
-    </button>
+    <div id="adPopup">
 
-    <script type="text/javascript">
-    atOptions = {
-        'key' : '5737a07c4a33cf9a6e8fc68028ae5b82',
-        'format' : 'iframe',
-        'height' : 250,
-        'width' : 300,
-        'params' : {}
-    };
-    </script>
+        <button id="adClose" onclick="closePopupAd()">✕</button>
 
-    <script
-        type="text/javascript"
-        src="https://nooseamazingbatch.com/5737a07c4a33cf9a6e8fc68028ae5b82/invoke.js">
-    </script>
+        <div class="ad-title">
+            Sponsor
+        </div>
+
+        <div class="ad-container">
+
+            <script>
+            atOptions = {
+                'key' : '5737a07c4a33cf9a6e8fc68028ae5b82',
+                'format' : 'iframe',
+                'height' : 250,
+                'width' : 300,
+                'params' : {}
+            };
+            </script>
+
+            <script src="https://nooseamazingbatch.com/5737a07c4a33cf9a6e8fc68028ae5b82/invoke.js"></script>
+
+        </div>
+
+    </div>
 
 </div>
 <script>
-function showPopupAd(){
-    document
-    .getElementById("adOverlay")
-    .classList
-    .add("show");
+let popupInterval;
+
+function showPopupAd() {
+    const el = document.getElementById("adOverlay");
+    el.classList.add("show");
 }
 
-function closePopupAd(){
-    document
-    .getElementById("adOverlay")
-    .classList
-    .remove("show");
-
-    setTimeout(function(){
-        showPopupAd();
-    },5000);
+function closePopupAd() {
+    const el = document.getElementById("adOverlay");
+    el.classList.remove("show");
 }
 
-window.onload = function(){
-    setTimeout(showPopupAd,3000);
+window.onload = function () {
+    // tampil pertama kali setelah 3 detik
+    setTimeout(showPopupAd, 3000);
+
+    // setelah itu muncul tiap 30 detik
+    popupInterval = setInterval(showPopupAd, 5000);
 };
 </script>
 <script>
