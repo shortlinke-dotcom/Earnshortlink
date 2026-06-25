@@ -273,6 +273,53 @@ transform:scale(1.08);
 transform:scale(1);
 }
 }
+#floatingAd{
+position:fixed;
+bottom:0;
+left:50%;
+transform:translateX(-50%);
+z-index:9999;
+background:#111;
+border-radius:12px 12px 0 0;
+box-shadow:0 -5px 20px rgba(0,0,0,.4);
+animation:slideUp .5s ease;
+max-width:100%;
+}
+
+.ad-header{
+display:flex;
+justify-content:flex-end;
+gap:5px;
+padding:5px;
+background:#222;
+}
+
+.ad-header button{
+border:none;
+background:#333;
+color:#fff;
+cursor:pointer;
+width:28px;
+height:28px;
+border-radius:6px;
+}
+
+.ad-content{
+padding:5px;
+}
+
+.minimized .ad-content{
+display:none;
+}
+
+@keyframes slideUp{
+from{
+bottom:-200px;
+}
+to{
+bottom:0;
+}
+}
 </style>
 </head>
 <body>
@@ -489,6 +536,35 @@ Dengan menjaga keamanan akun serta menggunakan platform sesuai ketentuan, Anda d
 <div class="footer">
 © 2026 EarnShortlink
 </div>
+<div id="floatingAd">
+
+    <div class="ad-header">
+
+        <button onclick="minimizeAd()">▲</button>
+
+        <button onclick="closeAd()">✕</button>
+
+    </div>
+
+    <div class="ad-content">
+
+        <!-- KODE IKLAN ADSTERRA -->
+
+        <script>
+        atOptions = {
+            'key':'ccf15142f738c1098b148a5b80b9d570',
+            'format':'iframe',
+            'height':50,
+            'width':320,
+            'params':{}
+        };
+        </script>
+
+        <script src="https://nooseamazingbatch.com/ccf15142f738c1098b148a5b80b9d570/invoke.js"></script>
+
+    </div>
+
+</div>
 <script>
 let countdownFinished=false;
 function startCountdown(){
@@ -536,6 +612,24 @@ document.getElementById("downloadBox")
 .style.display="block";
 }
 },1000);
+}
+</script>
+<script>
+function minimizeAd(){
+
+document
+.getElementById("floatingAd")
+.classList
+.toggle("minimized");
+
+}
+
+function closeAd(){
+
+document
+.getElementById("floatingAd")
+.style.display="none";
+
 }
 </script>
 </body>
