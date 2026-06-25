@@ -21,7 +21,7 @@ min-height:100vh;
 display:flex;
 justify-content:center;
 align-items:center;
-background: radial-gradient(circle at top, #1b2a4a, #050814);
+background: radial-gradient(circle at top, #0b1b33, #050814);
 color:#fff;
 padding:20px;
 }
@@ -29,23 +29,23 @@ padding:20px;
 /* CARD */
 .card{
 width:100%;
-max-width:460px;
-padding:35px;
-border-radius:18px;
+max-width:480px;
+padding:40px;
+border-radius:20px;
 background:rgba(255,255,255,0.06);
 backdrop-filter:blur(18px);
 border:1px solid rgba(255,255,255,0.1);
-box-shadow:0 20px 60px rgba(0,0,0,0.6);
+box-shadow:0 25px 70px rgba(0,0,0,0.6);
 }
 
 /* HEADER */
 .header{
 text-align:center;
-margin-bottom:25px;
+margin-bottom:28px;
 }
 
 .header h1{
-font-size:28px;
+font-size:30px;
 font-weight:700;
 letter-spacing:1px;
 }
@@ -60,21 +60,21 @@ color:#aab4c0;
 margin-top:8px;
 }
 
-/* INPUT */
+/* INPUT GROUP */
 .group{
-margin-bottom:15px;
+margin-bottom:14px;
 }
 
 input{
 width:100%;
 padding:14px 15px;
-border-radius:10px;
+border-radius:12px;
 border:1px solid rgba(255,255,255,0.08);
 background:rgba(255,255,255,0.04);
 color:#fff;
 outline:none;
-transition:.2s;
 font-size:14px;
+transition:.2s;
 }
 
 input:focus{
@@ -92,7 +92,7 @@ position:relative;
 }
 
 .password input{
-padding-right:42px;
+padding-right:45px;
 }
 
 .toggle{
@@ -112,10 +112,12 @@ color:#4da3ff;
 /* CHECKBOX */
 .check{
 display:flex;
+align-items:flex-start;
 gap:10px;
 font-size:12px;
 color:#aab4c0;
-margin:10px 0 18px;
+margin:12px 0 18px;
+line-height:1.4;
 }
 
 .check a{
@@ -128,23 +130,24 @@ button{
 width:100%;
 padding:14px;
 border:none;
-border-radius:10px;
+border-radius:12px;
 background:linear-gradient(135deg,#4da3ff,#2b7cff);
 color:#fff;
 font-weight:600;
 cursor:pointer;
 transition:.2s;
+font-size:14px;
 }
 
 button:hover{
 transform:translateY(-2px);
-box-shadow:0 10px 25px rgba(77,163,255,0.3);
+box-shadow:0 12px 30px rgba(77,163,255,0.35);
 }
 
 /* FOOTER */
 .footer{
 text-align:center;
-margin-top:15px;
+margin-top:18px;
 font-size:13px;
 color:#aab4c0;
 }
@@ -155,22 +158,55 @@ text-decoration:none;
 font-weight:600;
 }
 
-/* ERROR */
+/* ALERT */
 .alert{
-background:rgba(255,70,70,0.15);
-border:1px solid rgba(255,70,70,0.3);
-padding:10px;
-border-radius:10px;
+background:rgba(255,70,70,0.12);
+border:1px solid rgba(255,70,70,0.25);
+padding:12px;
+border-radius:12px;
 font-size:13px;
 margin-bottom:15px;
 text-align:center;
 }
 
-/* MOBILE */
-@media(max-width:480px){
-.card{
-padding:25px;
+/* ===================== */
+/* RESPONSIVE MOBILE     */
+/* ===================== */
+@media(max-width:768px){
+
+body{
+padding:0;
+align-items:stretch;
 }
+
+.card{
+width:100%;
+max-width:100%;
+min-height:100vh;
+border-radius:0;
+padding:28px 22px;
+display:flex;
+flex-direction:column;
+justify-content:center;
+}
+
+.header h1{
+font-size:26px;
+}
+
+input{
+padding:13px;
+font-size:14px;
+}
+
+button{
+padding:13px;
+}
+
+}
+
+/* SMALL PHONE */
+@media(max-width:420px){
 .header h1{
 font-size:24px;
 }
@@ -184,7 +220,7 @@ font-size:24px;
 
 <div class="header">
 <h1>EARN<span>SHORTLINK</span></h1>
-<p>Buat akun dan mulai menghasilkan uang</p>
+<p>Buat akun dan mulai menghasilkan uang dengan sistem modern</p>
 </div>
 
 {% if error %}
@@ -213,7 +249,9 @@ font-size:24px;
 
 <div class="check">
 <input type="checkbox" required>
-<label>Saya setuju dengan <a href="#">Privacy</a> & <a href="#">Terms</a></label>
+<label>
+Saya menyetujui <a href="#">Privacy Policy</a> & <a href="#">Terms of Service</a>
+</label>
 </div>
 
 <button type="submit">Create Account</button>
