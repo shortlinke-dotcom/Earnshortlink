@@ -1170,27 +1170,44 @@ window.addEventListener("load", () => {
 
 </script>
 <script>
-new Chart(document.getElementById('earningChart'), {
-    type: 'line',
-    data: {
-        labels: ['Jan','Feb','Mar','Apr','Mei','Jun'],
-        datasets: [{
-            label: 'Pendapatan',
-            data: [0,0,0,0,0,0]
-        }]
-    }
-});
+const earningCanvas = document.getElementById("earningChart");
 
-new Chart(document.getElementById('clickChart'), {
-    type: 'bar',
-    data: {
-        labels: ['Jan','Feb','Mar','Apr','Mei','Jun'],
-        datasets: [{
-            label: 'Klik',
-            data: [0,0,0,0,0,0]
-        }]
-    }
-});
+if (earningCanvas) {
+    new Chart(earningCanvas, {
+        type: "line",
+        data: {
+            labels: ["Jan","Feb","Mar","Apr","Mei","Jun"],
+            datasets: [{
+                label: "Pendapatan",
+                data: [0,0,0,0,0,0],
+                tension: 0.4
+            }]
+        },
+        options:{
+            responsive:true,
+            maintainAspectRatio:false
+        }
+    });
+}
+
+const clickCanvas = document.getElementById("clickChart");
+
+if (clickCanvas) {
+    new Chart(clickCanvas, {
+        type: "bar",
+        data: {
+            labels: ["Jan","Feb","Mar","Apr","Mei","Jun"],
+            datasets: [{
+                label: "Klik",
+                data: [0,0,0,0,0,0]
+            }]
+        },
+        options:{
+            responsive:true,
+            maintainAspectRatio:false
+        }
+    });
+}
 </script>
 <script>
 
