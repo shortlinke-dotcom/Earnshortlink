@@ -3,8 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Login - EarnShortlink</title>
+<title>Register - EarnShortlink</title>
+
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 <style>
 *{
 margin:0;
@@ -12,11 +15,14 @@ padding:0;
 box-sizing:border-box;
 font-family:'Poppins',sans-serif;
 }
+
 body{
 background:#020817;
 color:#fff;
 overflow-x:hidden;
 }
+
+/* BACKGROUND (SAMA LOGIN) */
 .bg{
 position:fixed;
 top:0;
@@ -30,14 +36,18 @@ background-size:cover;
 background-position:center;
 z-index:-1;
 }
-.login-section{
+
+/* SECTION */
+.register-section{
 min-height:100vh;
 display:flex;
 justify-content:center;
 align-items:center;
 padding:30px;
 }
-.login-card{
+
+/* CARD (SAMA LOGIN) */
+.register-card{
 width:100%;
 max-width:600px;
 padding:40px;
@@ -49,24 +59,32 @@ box-shadow:
 0 0 25px rgba(33,150,243,.3),
 0 0 60px rgba(33,150,243,.1);
 }
-.login-header{
+
+/* HEADER (SAMA LOGIN) */
+.register-header{
 text-align:center;
 margin-bottom:30px;
 }
-.login-header h1{
+
+.register-header h1{
 font-size:52px;
 font-weight:800;
 }
-.login-header span{
+
+.register-header span{
 color:#2196f3;
 }
-.login-header p{
+
+.register-header p{
 margin-top:10px;
 color:#cbd5e1;
 }
+
+/* INPUT */
 .form-group{
 margin-bottom:18px;
 }
+
 .form-group input{
 width:100%;
 padding:16px;
@@ -79,31 +97,56 @@ color:#fff;
 font-size:15px;
 transition:.3s;
 }
+
 .form-group input:focus{
 border-color:#2196f3;
 box-shadow:0 0 15px rgba(33,150,243,.5);
 }
+
 .form-group input::placeholder{
 color:#94a3b8;
 }
-.forgot-password{
-text-align:right;
-margin-bottom:15px;
+
+/* PASSWORD */
+.password-wrapper{
+position:relative;
 }
-.forgot-password a{
+
+.password-wrapper input{
+padding-right:45px;
+}
+
+.toggle-eye{
+position:absolute;
+right:12px;
+top:50%;
+transform:translateY(-50%);
+cursor:pointer;
+color:#94a3b8;
+transition:.2s;
+}
+
+.toggle-eye:hover{
 color:#2196f3;
-text-decoration:none;
-font-size:13px;
 }
-.remember-box{
+
+/* CHECKBOX */
+.check{
 display:flex;
 align-items:center;
 gap:10px;
-margin-bottom:20px;
 font-size:14px;
 color:#cbd5e1;
+margin-bottom:20px;
 }
-.login-btn{
+
+.check a{
+color:#2196f3;
+text-decoration:none;
+}
+
+/* BUTTON (SAMA LOGIN) */
+.register-btn{
 width:100%;
 padding:16px;
 border:none;
@@ -115,33 +158,46 @@ font-weight:700;
 cursor:pointer;
 transition:.3s;
 }
-.login-btn:hover{
+
+.register-btn:hover{
 transform:translateY(-2px);
-box-shadow:
-0 0 20px rgba(33,150,243,.6);
+box-shadow:0 0 20px rgba(33,150,243,.6);
 }
-.register-link{
+
+/* FOOTER */
+.login-link{
 margin-top:20px;
 text-align:center;
 color:#cbd5e1;
 }
-.register-link a{
+
+.login-link a{
 color:#2196f3;
 font-weight:700;
 text-decoration:none;
 }
-/* DESKTOP */
-@media(min-width:769px){
-.login-card{
-max-width:600px;
+
+/* ALERT */
+.alert{
+background:#ef4444;
+color:#fff;
+padding:14px;
+border-radius:12px;
+margin-bottom:18px;
+text-align:center;
+font-weight:600;
 }
-}
-/* ANDROID */
+
+/* ===================== */
+/* RESPONSIVE (SAMA LOGIN) */
+/* ===================== */
 @media(max-width:768px){
-.login-section{
+
+.register-section{
 padding:0;
 }
-.login-card{
+
+.register-card{
 width:100%;
 max-width:100%;
 min-height:100vh;
@@ -151,83 +207,98 @@ display:flex;
 flex-direction:column;
 justify-content:center;
 }
-.login-header h1{
+
+.register-header h1{
 font-size:34px;
 }
-.login-header p{
+
+.register-header p{
 font-size:14px;
 }
+
 .form-group input{
 padding:15px;
 font-size:14px;
 }
-.login-btn{
+
+.register-btn{
 padding:15px;
 font-size:15px;
 }
 }
-/* HP KECIL */
+
 @media(max-width:480px){
-.login-header h1{
+.register-header h1{
 font-size:30px;
 }
-.form-group input{
-padding:14px;
-}
-}
-.alert{
-    background:#ef4444;
-    color:#fff;
-    padding:14px;
-    border-radius:12px;
-    margin-bottom:18px;
-    text-align:center;
-    font-weight:600;
 }
 </style>
 </head>
+
 <body>
+
 <div class="bg"></div>
-<section class="login-section">
-<div class="login-card">
-<div class="login-header">
+
+<section class="register-section">
+
+<div class="register-card">
+
+<div class="register-header">
 <h1>EARN<span>SHORTLINK</span></h1>
-<p>Masuk ke akun Anda dan mulai menghasilkan saldo</p>
+<p>Buat akun dan mulai menghasilkan saldo</p>
 </div>
+
 {% if error %}
-<div class="alert">
-    {{ error }}
-</div>
+<div class="alert">{{ error }}</div>
 {% endif %}
-<form action="/login" method="POST">
+
+<form action="/register" method="POST">
+
 <div class="form-group">
-<input type="text"
-name="login"
-placeholder="Gmail atau Nama Akun"
-required>
+<input type="email" name="gmail" placeholder="Gmail" required>
 </div>
+
 <div class="form-group">
-<input type="password"
-name="password"
-placeholder="Kata Sandi"
-required>
+<input type="text" name="username" placeholder="Username" required>
 </div>
-<div class="forgot-password">
-<a href="#">Lupa Kata Sandi?</a>
+
+<div class="form-group password-wrapper">
+<input type="password" id="password" name="password" placeholder="Password" required>
+<i class="fa-solid fa-eye toggle-eye" onclick="togglePassword('password', this)"></i>
 </div>
-<div class="remember-box">
-<input type="checkbox" id="remember">
-<label for="remember">Ingatkan Saya</label>
+
+<div class="form-group password-wrapper">
+<input type="password" id="confirm_password" name="confirm_password" placeholder="Konfirmasi Password" required>
+<i class="fa-solid fa-eye toggle-eye" onclick="togglePassword('confirm_password', this)"></i>
 </div>
-<button type="submit" class="login-btn">
-Masuk
-</button>
+
+<div class="check">
+<input type="checkbox" required>
+<label>Saya menyetujui <a href="#">Privacy</a> & <a href="#">Terms</a></label>
+</div>
+
+<button type="submit" class="register-btn">Daftar</button>
+
 </form>
-<div class="register-link">
-Belum punya akun?
-<a href="/register">Daftar Sekarang</a>
+
+<div class="login-link">
+Sudah punya akun? <a href="/login">Masuk</a>
 </div>
+
 </div>
+
 </section>
+
+<script>
+function togglePassword(id, el){
+const input = document.getElementById(id);
+const show = input.type === "password";
+
+input.type = show ? "text" : "password";
+el.classList.toggle("fa-eye");
+el.classList.toggle("fa-eye-slash");
+}
+</script>
+
 </body>
 </html>
