@@ -151,9 +151,9 @@ font-size:30px;
 color:#2196f3;
 }
 
-#earningChart,
-#clickChart{
-height:350px !important;
+.chart-container{
+height:350px;
+position:relative;
 }
 /* MOBILE */
 
@@ -292,29 +292,6 @@ font-size:20px;
 cursor:pointer;
 }
 
-.account-dropdown{
-display:none;
-
-position:absolute;
-right:0;
-top:55px;
-
-width:220px;
-
-padding:15px;
-
-background:#071120;
-
-border:1px solid #2196f3;
-border-radius:15px;
-
-box-shadow:0 0 20px rgba(33,150,243,.3);
-}
-
-.account-dropdown.show{
-display:block;
-}
-
 .saldo-box{
 margin:10px 0;
 padding:10px;
@@ -360,15 +337,21 @@ width:280px;
 }
 
 .account-dropdown{
-width:200px;
-right:-5px;
-}
+position:absolute;
+right:0;
+top:55px;
 
-}
+width:220px;
+padding:15px;
 
-.account-dropdown{
+background:#071120;
+
+border:1px solid #2196f3;
+border-radius:15px;
+
 opacity:0;
 visibility:hidden;
+
 transform:translateY(10px);
 transition:.3s;
 }
@@ -377,8 +360,8 @@ transition:.3s;
 opacity:1;
 visibility:visible;
 transform:translateY(0);
-display:block;
 }
+
 
 @media(max-width:480px){
 
@@ -803,7 +786,7 @@ flex-direction:column;
 
             <button
                 class="logout-btn"
-                onclick="window.location.href='/'">
+                onclick="window.location.href='/logout'"
                 Logout
             </button>
 
@@ -946,10 +929,14 @@ flex-direction:column;
 <!-- CHART EARNING -->
 <div class="panel">
 <div class="panel-header">
-    <i class="fa-solid fa-chart-line"></i>
-    Statistik Pendapatan Bulanan
+<i class="fa-solid fa-chart-line"></i>
+Statistik Pendapatan Bulanan
 </div>
+
+<div class="chart-container">
 <canvas id="earningChart"></canvas>
+</div>
+
 </div>
 <!-- CHART CLICK -->
 <div class="panel">
@@ -1122,26 +1109,21 @@ window.addEventListener("load", () => {
 
 async function copyLink(btn){
 
-    try{
+const input =
+document.getElementById("createdLink");
 
-        const text =
-        document.getElementById("createdLink").value;
+input.select();
+input.setSelectionRange(0,99999);
 
-        await navigator.clipboard.writeText(text);
+document.execCommand("copy");
 
-        btn.innerHTML =
-        '<i class="fa-solid fa-check"></i> Berhasil Disalin';
+btn.innerHTML =
+'<i class="fa-solid fa-check"></i> Berhasil Disalin';
 
-        setTimeout(()=>{
-            btn.innerHTML =
-            '<i class="fa-solid fa-copy"></i> Copy Link';
-        },2000);
-
-    }catch(err){
-
-        alert("Gagal menyalin link");
-
-    }
+setTimeout(()=>{
+btn.innerHTML =
+'<i class="fa-solid fa-copy"></i> Copy Link';
+},2000);
 
 }
 
