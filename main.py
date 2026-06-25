@@ -52,6 +52,72 @@ def login_post(login: str = Form(...), password: str = Form(...)):
         status_code=303
     )
 
+@app.post("/forgot-password")
+async def forgot_password(request: Request):
+    form = await request.form()
+    gmail = form.get("gmail")
+
+    user = (
+        supabase.table("users")
+        .select("username, gmail")
+        .eq("gmail", gmail)
+        .limit(1)
+        .execute()
+    )
+
+    if not user.data:
+        return HTMLResponse("Email tidak ditemukan", status_code=404)
+
+    user_data = user.data[0]
+
+    token = ''.join(random.choices(string.ascii_letters + string.digits, k=32))
+
+    # simpan token ke DB (WAJIB bikin kolom reset_token)
+    supabase.table("users").update({
+        "reset_token": token
+    }).eq("gmail", gmail).execute()
+
+    reset_link = f"https://yourdomain.com/reset-password?token={token}"
+
+    # kirim email
+    send_email(gmail, "Reset Password", f"Buka link ini: {reset_link}")
+
+    return HTMLResponse("Cek email untuk reset password")
+
+@app.get("/reset-password", response_class=HTMLResponse)
+async def reset_page(request: Request, token: str):
+
+    return templates.TemplateResponse("reset.html", {
+        "request": request,
+        "token": token
+    })
+
+@app.post("/reset-password")
+async def reset_password(request: Request):
+
+    form = await request.form()
+    token = form.get("token")
+    new_password = form.get("password")
+
+    user = (
+        supabase.table("users")
+        .select("username")
+        .eq("reset_token", token)
+        .limit(1)
+        .execute()
+    )
+
+    if not user.data:
+        return HTMLResponse("Token invalid", status_code=400)
+
+    username = user.data[0]["username"]
+
+    supabase.table("users").update({
+        "password": hash_password(new_password),
+        "reset_token": None
+    }).eq("username", username).execute()
+
+    return HTMLResponse("Password berhasil diganti")
 
 # =========================
 # REGISTER
