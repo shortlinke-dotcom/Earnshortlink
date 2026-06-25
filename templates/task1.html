@@ -341,18 +341,22 @@ visibility:visible;
 #adPopup{
 width:95%;
 max-width:900px;
-min-height:250px;
 background:#111827;
 border-radius:20px;
 padding:20px;
-border:1px solid rgba(255,255,255,.15);
-transform:translateY(100vh);
-transition:transform 1s ease;
 position:relative;
+
+transform:translateY(120vh) scale(.8);
+opacity:0;
+
+transition:
+transform 1.2s cubic-bezier(.22,1,.36,1),
+opacity 1.2s ease;
 }
 
 #adOverlay.show #adPopup{
-transform:translateY(0);
+transform:translateY(0) scale(1);
+opacity:1;
 }
 
 #adClose{
@@ -379,6 +383,24 @@ display:flex;
 justify-content:center;
 align-items:center;
 overflow:hidden;
+}
+
+#adPopup{
+width:95%;
+max-width:900px;
+background:#111827;
+border-radius:20px;
+padding:20px;
+position:relative;
+overflow:hidden;
+}
+
+.ad-container{
+width:100%;
+display:flex;
+justify-content:center;
+align-items:center;
+min-height:250px;
 }
 </style>
 </head>
@@ -602,7 +624,7 @@ Dengan menjaga keamanan akun serta menggunakan platform sesuai ketentuan, Anda d
 
         <button onclick="minimizeAd()">▲</button>
 
-        <button onclick="closeAd()">✕</button>
+        <button onclick="closeFloatingAd()">✕</button>
 
     </div>
 
@@ -629,7 +651,7 @@ Dengan menjaga keamanan akun serta menggunakan platform sesuai ketentuan, Anda d
 
     <div id="adPopup">
 
-        <button id="adClose" onclick="closeAd()">
+        <button id="adClose" onclick="closePopupAd()">
             ✕
         </button>
 
@@ -639,17 +661,12 @@ Dengan menjaga keamanan akun serta menggunakan platform sesuai ketentuan, Anda d
 
         <div class="ad-container">
 
-            <script>
-            atOptions = {
-                'key':'c683046fae98c4e9a864553821c5556a',
-                'format':'iframe',
-                'height':90,
-                'width':728,
-                'params':{}
-            };
+            <script async="async"
+                data-cfasync="false"
+                src="https://nooseamazingbatch.com/7b6346e206e1400770a7906ec463d82c/invoke.js">
             </script>
 
-            <script src="https://nooseamazingbatch.com/c683046fae98c4e9a864553821c5556a/invoke.js"></script>
+            <div id="container-7b6346e206e1400770a7906ec463d82c"></div>
 
         </div>
 
