@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Panel</title>
+
+    <style>
+        body { font-family: Arial; background:#0b1220; color:white; padding:20px; }
+
+        .box { background:#111a2e; padding:15px; border-radius:10px; margin-bottom:15px; }
+
+        table { width:100%; border-collapse: collapse; }
+
+        th, td { padding:8px; border-bottom:1px solid #222; }
+
+        button { padding:5px 10px; border:none; border-radius:6px; cursor:pointer; }
+
+        .ban { background:red; color:white; }
+        .unban { background:green; color:white; }
+
+        .process { background:orange; color:black; }
+        .success { background:green; color:white; }
+        .failed { background:red; color:white; }
+    </style>
+</head>
+
+<body>
+
+<h2>🔥 ADMIN PANEL</h2>
+
+<div class="box">
+    <b>Total Users:</b> {{ total_users }} <br>
+    <b>Total Links:</b> {{ total_links }} <br>
+    <b>Total Earnings:</b> Rp {{ total_earnings }}
+</div>
+
+<!-- BROADCAST -->
+<div class="box">
+    <h3>📢 Broadcast</h3>
+    <form method="post" action="/admin/broadcast">
+        <input type="hidden" name="login" value="{{ login }}">
+        <input type="text" name="message" placeholder="Message" style="width:80%;padding:8px;">
+        <button type="submit">Send</button>
+    </form>
+</div>
+
+<!-- USERS -->
+<div class="box">
+    <h3>👤 Users</h3>
+
+    <table>
+        <tr>
+            <th>User</th>
+            <th>Gmail</th>
+            <th>Saldo</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+
+        {% for u in users %}
+        <tr>
+            <td>{{ u.username }}</td>
+            <td>{{ u.gmail }}</td>
+            <td>Rp {{ u.saldo }}</td>
+            <td>{{ "BANNED" if u.is_banned else "ACTIVE" }}</td>
+            <td>
+
+                <form method="post" action="/admin/ban" style="display:inline;">
+                    <input type="hidden" name="login" value="{{ login }}">
+                    <input type="hidden" name="target" value="{{ u.username }}">
+                    <button class="ban">Ban</button>
+                </form>
+
+                <form method="post" action="/admin/unban" style="display:inline;">
+                    <input type="hidden" name="login" value="{{ login }}">
+                    <input type="hidden" name="target" value="{{ u.username }}">
+                    <button class="unban">Unban</button>
+                </form>
+
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+<!-- LINKS -->
+<div class="box">
+    <h3>🔗 Links</h3>
+
+    <table>
+        <tr>
+            <th>Code</th>
+            <th>User ID</th>
+            <th>Clicks</th>
+            <th>Earnings</th>
+        </tr>
+
+        {% for l in links %}
+        <tr>
+            <td>{{ l.short_code }}</td>
+            <td>{{ l.user_id }}</td>
+            <td>{{ l.clicks }}</td>
+            <td>{{ l.earnings }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+<!-- WITHDRAW -->
+<div class="box">
+    <h3>💰 Withdraw Request</h3>
+
+    <table>
+        <tr>
+            <th>User ID</th>
+            <th>Amount</th>
+            <th>Method</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+
+        {% for w in withdrawals %}
+        <tr>
+            <td>{{ w.user_id }}</td>
+            <td>Rp {{ w.amount }}</td>
+            <td>{{ w.method }}</td>
+            <td>{{ w.status }}</td>
+            <td>
+
+                <form method="post" action="/admin/wd/process" style="display:inline;">
+                    <input type="hidden" name="id" value="{{ w.id }}">
+                    <input type="hidden" name="login" value="{{ login }}">
+                    <button class="process">Process</button>
+                </form>
+
+                <form method="post" action="/admin/wd/success" style="display:inline;">
+                    <input type="hidden" name="id" value="{{ w.id }}">
+                    <input type="hidden" name="login" value="{{ login }}">
+                    <button class="success">Success</button>
+                </form>
+
+                <form method="post" action="/admin/wd/failed" style="display:inline;">
+                    <input type="hidden" name="id" value="{{ w.id }}">
+                    <input type="hidden" name="login" value="{{ login }}">
+                    <button class="failed">Failed</button>
+                </form>
+
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+<!-- CHAT -->
+<div class="box">
+    <h3>💬 Chat</h3>
+    {% for c in chats %}
+        <div><b>{{ c.username }}</b>: {{ c.message }}</div>
+    {% endfor %}
+</div>
+
+</body>
+</html>
