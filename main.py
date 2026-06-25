@@ -24,6 +24,10 @@ async def home(request: Request):
 # =========================
 # LOGIN
 # =========================
+@app.get("/login", response_class=HTMLResponse)
+async def login_page(request: Request):
+    return templates.TemplateResponse("login.html", {"request": request})
+
 @app.post("/login")
 def login_post(login: str = Form(...), password: str = Form(...)):
 
@@ -52,6 +56,10 @@ def login_post(login: str = Form(...), password: str = Form(...)):
 # =========================
 # REGISTER
 # =========================
+@app.get("/register", response_class=HTMLResponse)
+async def register_page(request: Request):
+    return templates.TemplateResponse("register.html", {"request": request})
+
 @app.post("/register")
 def register_post(
     gmail: str = Form(...),
