@@ -320,6 +320,66 @@ to{
 bottom:0;
 }
 }
+#adOverlay{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.75);
+display:flex;
+justify-content:center;
+align-items:center;
+z-index:99999;
+opacity:0;
+visibility:hidden;
+transition:all .8s ease;
+}
+
+#adOverlay.show{
+opacity:1;
+visibility:visible;
+}
+
+#adPopup{
+width:95%;
+max-width:900px;
+min-height:250px;
+background:#111827;
+border-radius:20px;
+padding:20px;
+border:1px solid rgba(255,255,255,.15);
+transform:translateY(100vh);
+transition:transform 1s ease;
+position:relative;
+}
+
+#adOverlay.show #adPopup{
+transform:translateY(0);
+}
+
+#adClose{
+position:absolute;
+top:10px;
+right:10px;
+width:35px;
+height:35px;
+border:none;
+border-radius:50%;
+cursor:pointer;
+font-size:18px;
+font-weight:bold;
+}
+
+.ad-title{
+text-align:center;
+margin-bottom:15px;
+font-weight:700;
+}
+
+.ad-container{
+display:flex;
+justify-content:center;
+align-items:center;
+overflow:hidden;
+}
 </style>
 </head>
 <body>
@@ -565,6 +625,56 @@ Dengan menjaga keamanan akun serta menggunakan platform sesuai ketentuan, Anda d
     </div>
 
 </div>
+<div id="adOverlay">
+
+    <div id="adPopup">
+
+        <button id="adClose" onclick="closeAd()">
+            ✕
+        </button>
+
+        <div class="ad-title">
+            Sponsor
+        </div>
+
+        <div class="ad-container">
+
+            <script>
+            atOptions = {
+                'key':'c683046fae98c4e9a864553821c5556a',
+                'format':'iframe',
+                'height':90,
+                'width':728,
+                'params':{}
+            };
+            </script>
+
+            <script src="https://nooseamazingbatch.com/c683046fae98c4e9a864553821c5556a/invoke.js"></script>
+
+        </div>
+
+    </div>
+
+</div>
+<script>
+setTimeout(function(){
+
+    document
+    .getElementById("adOverlay")
+    .classList
+    .add("show");
+
+},3000);
+
+function closeAd(){
+
+    document
+    .getElementById("adOverlay")
+    .classList
+    .remove("show");
+
+}
+</script>
 <script>
 let countdownFinished=false;
 function startCountdown(){
