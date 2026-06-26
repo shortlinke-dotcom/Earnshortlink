@@ -156,6 +156,21 @@ a.btn{
     font-size:12px;
     opacity:.7;
 }
+
+.spinner{
+    width:45px;
+    height:45px;
+    border:5px solid #444;
+    border-top:5px solid #22c55e;
+    border-radius:50%;
+    margin:auto;
+    animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+    from{transform:rotate(0deg);}
+    to{transform:rotate(360deg);}
+}
 </style>
 </head>
 
@@ -225,6 +240,65 @@ a.btn{
     <script src="https://nooseamazingbatch.com/5737a07c4a33cf9a6e8fc68028ae5b82/invoke.js"></script>
 </div>
 
+
+
+<div style="text-align:center;margin-top:25px">
+
+    <button
+        id="downloadBtn"
+        class="btn btn-download"
+        onclick="startFirstTimer()">
+        ⬇ Download Link
+    </button>
+
+    <div
+        id="timerBox"
+        style="display:none;margin-top:20px;font-size:32px;font-weight:bold;">
+        10
+    </div>
+
+    <button
+        id="downloadNow"
+        class="btn btn-download"
+        style="display:none"
+        onclick="showVerifyButton()">
+        DOWNLOAD NOW
+    </button>
+
+    <button
+        id="verifyBtn"
+        style="
+            display:none;
+            margin-top:15px;
+            background:#ef4444;
+            color:white;
+            padding:10px 20px;
+            border:none;
+            border-radius:10px;
+            cursor:pointer;
+        "
+        onclick="startSecondTimer()">
+        VERIFY
+    </button>
+
+    <div
+        id="loadingBox"
+        style="display:none;margin-top:20px">
+        <div class="spinner"></div>
+        <p id="loadingText">10</p>
+    </div>
+
+    <a
+        id="getLink"
+        href="/task3/{{ token }}"
+        class="btn btn-download"
+        style="display:none">
+        GET LINK
+    </a>
+
+</div>
+
+
 <!-- ARTIKEL 3 -->
 <h2>🌍 Akses Fleksibel</h2>
 <p>Bisa diakses kapan saja dan di mana saja tanpa batas waktu.</p>
@@ -257,6 +331,81 @@ a.btn{
 </div>
 
 </div>
+</body>
+<script>
+function startFirstTimer(){
 
+    document.getElementById("downloadBtn").style.display="none";
+
+    const timer=document.getElementById("timerBox");
+
+    timer.style.display="block";
+
+    let s=10;
+
+    timer.innerHTML=s;
+
+    const x=setInterval(()=>{
+
+        s--;
+
+        timer.innerHTML=s;
+
+        if(s<=0){
+
+            clearInterval(x);
+
+            timer.style.display="none";
+
+            document.getElementById("downloadNow").style.display="inline-block";
+
+        }
+
+    },1000);
+
+}
+
+function showVerifyButton(){
+
+    document.getElementById("downloadNow").style.display="none";
+
+    document.getElementById("verifyBtn").style.display="inline-block";
+
+}
+
+function startSecondTimer(){
+
+    document.getElementById("verifyBtn").style.display="none";
+
+    const box=document.getElementById("loadingBox");
+
+    const text=document.getElementById("loadingText");
+
+    box.style.display="block";
+
+    let s=10;
+
+    text.innerHTML=s;
+
+    const x=setInterval(()=>{
+
+        s--;
+
+        text.innerHTML=s;
+
+        if(s<=0){
+
+            clearInterval(x);
+
+            box.style.display="none";
+
+            document.getElementById("getLink").style.display="inline-block";
+
+        }
+
+    },1000);
+
+}
+</script>
 </body>
 </html>
