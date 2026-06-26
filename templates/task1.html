@@ -983,10 +983,7 @@ async function openTask2() {
     try {
 
         const res = await fetch("/api/create-access", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            }
+            method: "POST"
         });
 
         const data = await res.json();
@@ -996,15 +993,11 @@ async function openTask2() {
             return;
         }
 
-        window.location.href =
-            "/task2/" + encodeURIComponent(data.token);
+        window.location.href = "/task2/" + encodeURIComponent(data.token);
 
     } catch (err) {
-
         alert("Server sedang bermasalah.");
-
     }
-
 }
 // =========================
 // POPUP ADS
