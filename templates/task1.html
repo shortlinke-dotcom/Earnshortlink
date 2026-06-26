@@ -647,7 +647,9 @@ body{
 <!-- VERIFIKASI -->
 <div id="bottomSection">
     <div class="card verify-box">
+
         <h2>✅ Verifikasi</h2>
+
         <button
             id="verifyBtn"
             class="btn btn-success"
@@ -656,20 +658,28 @@ body{
             onclick="startVerification()">
             🔒 TERKUNCI
         </button>
+
         <div id="loadingBox">
             ⏳ Memproses...
             <span id="loadingTimer">5</span>
         </div>
+
+        <!-- Muncul setelah verifikasi -->
         <div id="downloadBox" style="display:none;margin-top:20px;">
-            <a
-                href="task2.html"
-                class="btn btn-success">
+
+            <button
+                id="downloadBtn"
+                class="btn btn-success"
+                onclick="openTask2()">
                 ⬇️ DOWNLOAD NOW
-            </a>
+            </button>
+
         </div>
+
         <p style="margin-top:15px;color:#94a3b8;font-size:14px;">
             Verifikasi terlebih dahulu untuk membuka tombol Download Now.
         </p>
+
     </div>
 </div>
 <!-- ARTIKEL -->
@@ -790,6 +800,38 @@ body{
     </div>
 </div>
 <script>
+// =========================
+// OPEN TASK2 VIA BACKEND
+// =========================
+
+async function openTask2() {
+
+    try {
+
+        const res = await fetch("/api/create-access", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+
+        const data = await res.json();
+
+        if (!data.success) {
+            alert("Verifikasi gagal.");
+            return;
+        }
+
+        window.location.href =
+            "/task2.html?token=" + encodeURIComponent(data.token);
+
+    } catch (err) {
+
+        alert("Server sedang bermasalah.");
+
+    }
+
+}
 // =========================
 // POPUP ADS
 // =========================
