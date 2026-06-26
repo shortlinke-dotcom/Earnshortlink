@@ -119,36 +119,37 @@ async def auth_callback(request: Request):
     print("🔥 CALLBACK HIT:", request.url)
     print("📌 PARAMS:", dict(request.query_params))
 
-    # Supabase biasanya kirim access_token bukan code
-    access_token = request.query_params.get("access_token")
-    error = request.query_params.get("error")
+    # Supabase implicit flow biasanya pakai access_token di fragment (#)
+    # jadi kadang server TIDAK bisa lihat itu
 
-    if error:
-        return RedirectResponse("/login?error=google_failed", 303)
+    code = request.query_params.get("code")
 
-    if not access_token:
-        print("❌ NO ACCESS TOKEN")
+    if not code:
+        print("❌ NO CODE → CHECK SUPABASE FLOW SETTINGS")
         return RedirectResponse("/login?error=google_failed", 303)
 
     import requests
 
-    user_res = requests.get(
-        f"{SUPABASE_URL}/auth/v1/user",
+    res = requests.post(
+        f"{SUPABASE_URL}/auth/v1/token?grant_type=authorization_code",
         headers={
             "apikey": os.getenv("SUPABASE_KEY"),
-            "Authorization": f"Bearer {access_token}"
+            "Content-Type": "application/json"
+        },
+        json={
+            "code": code,
+            "redirect_uri": "https://earnshortlink.up.railway.app/auth/callback"
         }
     )
 
-    user = user_res.json()
-    print("👤 USER:", user)
+    data = res.json()
+    print("SUPABASE RESPONSE:", data)
 
-    email = user.get("email")
-    if not email:
+    user = data.get("user")
+    if not user:
         return RedirectResponse("/login?error=google_failed", 303)
 
-    # lanjut logic kamu (auto register / login)
-
+    email = user.get("email")
 # ===============
 @app.get("/setup-username")
 async def setup_username(request: Request, email: str):
