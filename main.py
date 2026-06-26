@@ -35,27 +35,22 @@ async def home(request: Request):
 # LOGIN
 # ======================================================
 
-@app.get("/login")
-async def login_page(request: Request):
-    return templates.TemplateResponse(
-        "login.html",
-        {"request": request}
-    )
-
-
 @app.post("/login")
 async def login_post(
     login: str = Form(...),
     password: str = Form(...)
 ):
 
+    print("Login yang dimasukkan:", repr(login))
+
     result = (
         supabase.table("users")
-        .select("username,password,is_banned")
-        .or_(f"username.eq.{login},gmail.eq.{login}")
-        .limit(1)
+        .select("*")
+        .eq("username", login)
         .execute()
     )
+
+    print("Hasil query:", result.data)
 
     if not result.data:
         return RedirectResponse(
