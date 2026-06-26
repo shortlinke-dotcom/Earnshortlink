@@ -117,76 +117,37 @@ async def auth_google():
 async def auth_callback(request: Request):
 
     print("🔥 CALLBACK HIT:", request.url)
+    print("📌 PARAMS:", dict(request.query_params))
 
-    code = request.query_params.get("code")
+    # Supabase biasanya kirim access_token bukan code
+    access_token = request.query_params.get("access_token")
+    error = request.query_params.get("error")
 
-    if not code:
+    if error:
+        return RedirectResponse("/login?error=google_failed", 303)
+
+    if not access_token:
+        print("❌ NO ACCESS TOKEN")
         return RedirectResponse("/login?error=google_failed", 303)
 
     import requests
 
-    res = requests.post(
-        f"{SUPABASE_URL}/auth/v1/token?grant_type=authorization_code",
+    user_res = requests.get(
+        f"{SUPABASE_URL}/auth/v1/user",
         headers={
             "apikey": os.getenv("SUPABASE_KEY"),
-            "Content-Type": "application/json"
-        },
-        json={
-            "code": code
+            "Authorization": f"Bearer {access_token}"
         }
     )
 
-    data = res.json()
+    user = user_res.json()
+    print("👤 USER:", user)
 
-    print("SUPABASE RESPONSE:", data)
-
-    session = data.get("user")
-    if not session:
-        return RedirectResponse("/login?error=google_failed", 303)
-
-    email = session.get("email")
-
+    email = user.get("email")
     if not email:
         return RedirectResponse("/login?error=google_failed", 303)
 
-    user = (
-        supabase.table("users")
-        .select("*")
-        .eq("gmail", email)
-        .limit(1)
-        .execute()
-    )
-
-    # =========================
-    # AUTO REGISTER
-    # =========================
-    if not user.data:
-
-        base = email.split("@")[0]
-        username = base
-        i = 1
-
-        while True:
-            check = supabase.table("users").select("id").eq("username", username).execute()
-            if not check.data:
-                break
-            username = f"{base}{i}"
-            i += 1
-
-        supabase.table("users").insert({
-            "gmail": email,
-            "username": username,
-            "password": "",
-            "saldo": 0,
-            "total_earn": 0,
-            "referrals": 0,
-            "is_banned": False
-        }).execute()
-
-        return RedirectResponse(f"/dashboard?login={username}", 303)
-
-    # LOGIN EXISTING USER
-    return RedirectResponse(f"/dashboard?login={user.data[0]['username']}", 303)
+    # lanjut logic kamu (auto register / login)
 
 # ===============
 @app.get("/setup-username")
