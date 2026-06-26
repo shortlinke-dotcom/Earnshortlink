@@ -34,10 +34,30 @@ async def home(request: Request):
 # LOGIN PAGE
 # ======================================================
 @app.get("/login")
-async def login_page(request: Request):
+async def login_page(
+    request: Request,
+    error: str | None = None
+):
+    message = None
+
+    if error == "google_not_registered":
+        message = "❌ Akun Google ini belum terdaftar. Silakan daftar terlebih dahulu."
+
+    elif error == "notfound":
+        message = "❌ Username atau Gmail tidak ditemukan."
+
+    elif error == "wrongpass":
+        message = "❌ Password yang Anda masukkan salah."
+
+    elif error == "banned":
+        message = "🚫 Akun Anda telah diblokir."
+
     return templates.TemplateResponse(
         "login.html",
-        {"request": request}
+        {
+            "request": request,
+            "error": message
+        }
     )
 # ======================================================
 # LOGIN
