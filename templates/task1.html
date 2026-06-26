@@ -387,94 +387,100 @@ body{
    FLOATING LOGIN REGISTER
 ========================= */
 
-.side-auth{
+/* FLOATING LEFT PANEL */
+.auth-panel{
     position:fixed;
-    right:15px;
+    left:0;
     top:50%;
     transform:translateY(-50%);
-    display:flex;
-    flex-direction:column;
-    gap:12px;
-    z-index:9998;
-}
-
-.auth-btn{
-    width:120px;
-    padding:14px 16px;
-    text-align:center;
-    text-decoration:none;
-    color:#fff;
-    font-weight:700;
-    border-radius:14px;
-    box-shadow:0 10px 25px rgba(0,0,0,.35);
-    transition:.25s;
-    animation:authPulse 2s infinite;
-}
-
-.auth-btn:hover{
-    transform:translateX(-6px);
-}
-
-.login-btn{
-    background:linear-gradient(135deg,#3b82f6,#2563eb);
-}
-
-.register-btn{
-    background:linear-gradient(135deg,#22c55e,#16a34a);
-}
-
-@keyframes authPulse{
-    0%{
-        transform:scale(1);
-    }
-    50%{
-        transform:scale(1.05);
-    }
-    100%{
-        transform:scale(1);
-    }
-}
-
-@media(max-width:768px){
-
-    .side-auth{
-        right:10px;
-    }
-
-    .auth-btn{
-        width:95px;
-        padding:12px;
-        font-size:13px;
-    }
-
-}
-
-.auth-info{
-    width:180px;
-    padding:12px;
-    margin-bottom:10px;
+    width:260px;
     background:rgba(17,24,39,.95);
-    border:1px solid rgba(34,197,94,.35);
-    border-radius:14px;
+    border-right:2px solid #22c55e;
+    border-radius:0 16px 16px 0;
+    box-shadow:0 10px 30px rgba(0,0,0,.5);
+    z-index:99999;
+    transition:.3s;
+}
+
+/* HEADER */
+.auth-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:10px;
+    background:#111827;
+    font-weight:700;
     color:#fff;
-    font-size:12px;
-    line-height:1.5;
-    text-align:center;
-    box-shadow:0 10px 25px rgba(0,0,0,.35);
 }
 
-.auth-info strong{
-    color:#22c55e;
+.auth-close{
+    background:#ef4444;
+    border:none;
+    color:#fff;
+    width:28px;
+    height:28px;
+    border-radius:6px;
+    cursor:pointer;
 }
 
-@media(max-width:768px){
+/* BODY */
+.auth-body{
+    padding:15px;
+    color:#fff;
+}
 
-    .auth-info{
-        width:140px;
-        font-size:11px;
-        padding:10px;
-    }
+.auth-body h3{
+    margin-bottom:10px;
+}
 
+.auth-body p{
+    font-size:13px;
+    color:#cbd5e1;
+    margin-bottom:15px;
+}
+
+/* BUTTON */
+.auth-btn{
+    width:100%;
+    padding:10px;
+    margin-bottom:10px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    font-weight:700;
+}
+
+.auth-btn.login{
+    background:#3b82f6;
+    color:#fff;
+}
+
+.auth-btn.register{
+    background:#22c55e;
+    color:#fff;
+}
+
+/* OPEN BUTTON */
+.open-auth{
+    position:fixed;
+    left:10px;
+    top:50%;
+    transform:translateY(-50%);
+    width:50px;
+    height:50px;
+    border-radius:50%;
+    border:none;
+    background:#22c55e;
+    color:#fff;
+    font-size:22px;
+    cursor:pointer;
+    display:none;
+    z-index:99999;
+}
+
+/* HIDDEN STATE */
+.auth-hidden{
+    transform:translate(-110%, -50%);
 }
 </style>
 </head>
@@ -621,20 +627,35 @@ body{
 <script async="async" data-cfasync="false" src="https://nooseamazingbatch.com/7b6346e206e1400770a7906ec463d82c/invoke.js"></script>
 <div id="container-7b6346e206e1400770a7906ec463d82c"></div>
 
-    <!-- ARTIKEL -->
-    <section class="card article">
+<!-- ARTIKEL -->
+<section class="card article">
 
-        <h2>💰 Peluang Penghasilan yang Menarik</h2>
+    <h2>💰 Peluang Penghasilan yang Menarik</h2>
 
-        <p>
-            Sebagai member EarnShortlink, Anda dapat mengakses berbagai fitur yang dirancang untuk membantu meningkatkan potensi penghasilan. Semakin aktif Anda menggunakan layanan yang tersedia, semakin besar peluang yang bisa diperoleh.
-        </p>
+    <p>
+        Sebagai member <b>EarnShortlink</b>, Anda dapat mengakses berbagai fitur yang dirancang untuk membantu meningkatkan potensi penghasilan secara bertahap dan konsisten.
+    </p>
 
-        <p>
-            Banyak anggota memanfaatkan platform ini sebagai sumber penghasilan tambahan untuk memenuhi kebutuhan sehari-hari, menambah tabungan, atau mendukung berbagai tujuan finansial lainnya.
-        </p>
+    <p>
+        Semakin aktif Anda menggunakan layanan yang tersedia, seperti membuat shortlink, membagikan link, dan menyelesaikan proses verifikasi, semakin besar peluang yang bisa diperoleh dari sistem reward yang berjalan.
+    </p>
 
-    </section>
+    <p>
+        Banyak anggota memanfaatkan platform ini sebagai sumber penghasilan tambahan untuk kebutuhan harian, tabungan, atau tujuan finansial jangka panjang.
+    </p>
+
+    <p>
+        Sistem dirancang agar tetap sederhana, fleksibel, dan dapat digunakan oleh siapa saja tanpa perlu keahlian khusus.
+    </p>
+
+    <ul style="margin-top:15px; padding-left:20px; color:#dbeafe; line-height:1.8;">
+        <li>✔ Buat shortlink dengan mudah</li>
+        <li>✔ Dapatkan reward dari aktivitas user</li>
+        <li>✔ Pantau saldo secara real-time</li>
+        <li>✔ Sistem otomatis tanpa ribet</li>
+    </ul>
+
+</section>
 
 <!-- BANNER 300x250 -->
 <div class="ad-wrapper">
@@ -656,6 +677,44 @@ body{
                 rel="noopener noreferrer"
                 class="claim-btn">
                 DOWNLOAD NOW
+            </a>
+        </div>
+<!-- ARTIKEL -->
+<section class="card article">
+
+    <h2>🌍 Dapat Diakses Kapan Saja dan Di Mana Saja</h2>
+
+    <p>
+        Salah satu keunggulan <b>EarnShortlink</b> adalah fleksibilitasnya yang memungkinkan pengguna mengakses platform kapan saja tanpa batasan waktu.
+    </p>
+
+    <p>
+        Platform ini dapat digunakan melalui perangkat apa pun seperti komputer, laptop, maupun smartphone selama terhubung dengan koneksi internet yang stabil.
+    </p>
+
+    <p>
+        Anda tidak perlu datang ke lokasi tertentu atau mengikuti jadwal kerja yang ketat. Semua aktivitas dapat dilakukan secara mandiri sesuai waktu luang Anda.
+    </p>
+
+    <p>
+        Hal ini membuat EarnShortlink cocok untuk pelajar, pekerja, maupun siapa saja yang ingin mendapatkan penghasilan tambahan secara fleksibel.
+    </p>
+
+    <ul style="margin-top:15px; padding-left:20px; color:#dbeafe; line-height:1.8;">
+        <li>✔ Akses 24 jam tanpa batas waktu</li>
+        <li>✔ Bisa dari HP, laptop, atau PC</li>
+        <li>✔ Tidak perlu lokasi khusus</li>
+        <li>✔ Cocok untuk semua kalangan</li>
+    </ul>
+
+</section>
+        <div style="text-align:center;margin-top:25px;">
+            <a
+                href="https://nooseamazingbatch.com/pcxdx71e?key=d3f1614512a0ab30d02f2c2f9831bcb5"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="claim-btn">
+                DOWNLOAD LINK
             </a>
         </div>
 <!-- VERIFIKASI -->
@@ -698,33 +757,32 @@ body{
 </div>
 <!-- ARTIKEL -->
 <section class="card article">
-    <h2>🌍 Dapat Diakses Kapan Saja dan Di Mana Saja</h2>
-    <p>
-        Salah satu keunggulan EarnShortlink adalah fleksibilitasnya. Platform dapat diakses menggunakan perangkat komputer, laptop, maupun smartphone selama terhubung dengan internet.
-    </p>
-    <p>
-        Anda tidak perlu datang ke lokasi tertentu atau mengikuti jadwal yang ketat. Semua aktivitas dapat dilakukan sesuai waktu yang Anda miliki sehingga lebih nyaman dan efisien.
-    </p>
-</section>
-        <div style="text-align:center;margin-top:25px;">
-            <a
-                href="https://nooseamazingbatch.com/pcxdx71e?key=d3f1614512a0ab30d02f2c2f9831bcb5"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="claim-btn">
-                DOWNLOAD LINK
-            </a>
-        </div>
--->
-<!-- ARTIKEL -->
-<section class="card article">
+
     <h2>⚡ Proses Cepat dan Mudah</h2>
+
     <p>
-        EarnShortlink dirancang dengan antarmuka yang sederhana sehingga mudah digunakan oleh semua kalangan. Proses pendaftaran dapat dilakukan dalam beberapa langkah sederhana dan Anda dapat langsung mulai menjelajahi fitur yang tersedia.
+        <b>EarnShortlink</b> dirancang dengan antarmuka yang sederhana sehingga mudah digunakan oleh semua kalangan, bahkan untuk pengguna baru sekalipun.
     </p>
+
     <p>
-        Sistem yang ringan dan responsif juga memberikan pengalaman penggunaan yang lebih nyaman baik melalui perangkat mobile maupun desktop.
+        Proses pendaftaran hanya membutuhkan beberapa langkah singkat. Setelah itu, Anda sudah bisa langsung membuat shortlink, membagikan, dan mulai mendapatkan penghasilan.
     </p>
+
+    <p>
+        Semua sistem dibuat ringan, cepat, dan responsif sehingga nyaman digunakan baik di perangkat mobile maupun desktop tanpa kendala.
+    </p>
+
+    <p>
+        Tidak diperlukan skill teknis khusus — cukup daftar, login, dan mulai menggunakan fitur yang tersedia.
+    </p>
+
+    <ul style="margin-top:15px; padding-left:20px; color:#dbeafe; line-height:1.8;">
+        <li>✔ Daftar hanya dalam beberapa detik</li>
+        <li>✔ Interface sederhana & mudah dipahami</li>
+        <li>✔ Tidak perlu kemampuan teknis</li>
+        <li>✔ Langsung bisa mulai menghasilkan</li>
+    </ul>
+
 </section>
 <!-- BANNER 468x60 -->
 <div class="ad-wrapper">
@@ -741,13 +799,32 @@ body{
 </div>
 <!-- ARTIKEL -->
 <section class="card article">
+
     <h2>🔒 Aman dan Nyaman Digunakan</h2>
+
     <p>
-        Keamanan pengguna merupakan salah satu prioritas utama. Oleh karena itu, setiap anggota diharapkan menggunakan akun secara bijak dan mengikuti aturan yang berlaku agar pengalaman penggunaan tetap aman dan nyaman.
+        Keamanan pengguna merupakan salah satu prioritas utama di <b>EarnShortlink</b>. Sistem dirancang untuk menjaga kenyamanan dan keamanan akun setiap pengguna selama menggunakan platform.
     </p>
+
     <p>
-        Dengan menjaga keamanan akun serta menggunakan platform sesuai ketentuan, Anda dapat memanfaatkan berbagai fitur EarnShortlink secara optimal.
+        Kami menyarankan setiap anggota untuk menggunakan akun secara bijak, menjaga kerahasiaan data login, serta mengikuti aturan yang telah ditetapkan agar pengalaman tetap aman dan stabil.
     </p>
+
+    <p>
+        Dengan sistem yang terstruktur dan pengawasan otomatis, aktivitas di platform dapat berjalan lebih tertib dan minim risiko penyalahgunaan.
+    </p>
+
+    <p>
+        Dengan demikian, Anda dapat fokus memaksimalkan fitur yang tersedia tanpa perlu khawatir terhadap keamanan akun.
+    </p>
+
+    <ul style="margin-top:15px; padding-left:20px; color:#dbeafe; line-height:1.8;">
+        <li>✔ Sistem keamanan terkontrol</li>
+        <li>✔ Proteksi akun pengguna</li>
+        <li>✔ Anti penyalahgunaan sistem</li>
+        <li>✔ Penggunaan lebih stabil & nyaman</li>
+    </ul>
+
 </section>
 </div> <!-- END .container -->
 <!-- FOOTER -->
@@ -755,31 +832,41 @@ body{
     © 2026 EarnShortlink
 </div>
 
-<!-- LOGIN & REGISTER -->
-<div class="card" style="text-align:center;">
+<!-- FLOATING AUTH LEFT PANEL -->
+<div id="authPanel" class="auth-panel">
 
-    <h2 style="margin-bottom:10px;">
-        💰 Mau Saldo Tambahan?
-    </h2>
+    <div class="auth-header">
+        <span>💰 EarnShortlink</span>
 
-    <p style="color:#cbd5e1;margin-bottom:20px;">
-        Daftar sekarang dan jadilah <b>Top Player</b> berpenghasilan nomor 1 di website <b>EARNSHORTLINK</b>.
-    </p>
+        <button onclick="toggleAuth()" class="auth-close">
+            ✕
+        </button>
+    </div>
 
-    <button
-        class="btn btn-primary"
-        onclick="location.href='/login'"
-        style="margin-right:10px;">
-        🔑 Masuk
-    </button>
+    <div class="auth-body">
 
-    <button
-        class="btn btn-success"
-        onclick="location.href='/register'">
-        📝 Daftar
-    </button>
+        <h3>Mau Saldo Tambahan?</h3>
+
+        <p>
+            Daftar sekarang dan jadi Top Player penghasilan nomor 1.
+        </p>
+
+        <button onclick="location.href='/login'" class="auth-btn login">
+            🔑 Masuk
+        </button>
+
+        <button onclick="location.href='/register'" class="auth-btn register">
+            📝 Daftar
+        </button>
+
+    </div>
 
 </div>
+
+<!-- TOGGLE BUTTON (muncul saat panel ditutup) -->
+<button id="openAuthBtn" onclick="toggleAuth()" class="open-auth">
+    💰
+</button>
 <!-- FLOATING BANNER -->
 <div id="floatingAd">
     <div class="ad-header">
@@ -850,7 +937,7 @@ async function openTask2() {
         }
 
         window.location.href =
-            "/task2.html?token=" + encodeURIComponent(data.token);
+            "/task2/" + encodeURIComponent(data.token);
 
     } catch (err) {
 
@@ -1000,6 +1087,24 @@ function closeFloatingAd() {
 
     document.getElementById("floatingAd").style.display = "none";
 
+}
+
+let authOpen = true;
+
+function toggleAuth(){
+
+    const panel = document.getElementById("authPanel");
+    const btn = document.getElementById("openAuthBtn");
+
+    authOpen = !authOpen;
+
+    if(!authOpen){
+        panel.classList.add("auth-hidden");
+        btn.style.display = "block";
+    } else {
+        panel.classList.remove("auth-hidden");
+        btn.style.display = "none";
+    }
 }
 </script>
 
