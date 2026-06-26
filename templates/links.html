@@ -4,10 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kelola Tautan • EarnShortlink</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
+
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css">
+
 <style>
 *{
 margin:0;
@@ -15,11 +15,13 @@ padding:0;
 box-sizing:border-box;
 font-family:Poppins,sans-serif;
 }
+
 body{
 background:#081120;
 color:#fff;
-overflow-x:hidden;
 }
+
+/* SIDEBAR (FIX) */
 .sidebar{
 position:fixed;
 left:0;
@@ -29,18 +31,18 @@ height:100%;
 background:#111827;
 border-right:1px solid rgba(255,255,255,.05);
 }
+
 .logo{
 padding:25px;
-font-size:24px;
+font-size:22px;
 font-weight:800;
 text-align:center;
 }
-.logo span{
-color:#3b82f6;
-}
-.menu{
-padding:10px;
-}
+
+.logo span{color:#3b82f6;}
+
+.menu{padding:10px;}
+
 .menu a{
 display:flex;
 align-items:center;
@@ -50,113 +52,121 @@ color:#d1d5db;
 text-decoration:none;
 border-radius:12px;
 margin-bottom:6px;
-transition:.25s;
+transition:.2s;
 }
+
 .menu a:hover{
 background:#1e293b;
 color:#fff;
 }
+
 .menu a.active{
 background:#2563eb;
 color:#fff;
 }
+
+/* MAIN */
 .main{
 margin-left:260px;
 padding:30px;
 }
-.topbar{
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin-bottom:25px;
-}
+
+/* TITLE */
 .title{
 font-size:30px;
 font-weight:800;
+margin-bottom:20px;
 }
+
+/* CARDS */
 .cards{
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
 gap:18px;
-margin-bottom:30px;
-}
-.card{
-background:#111827;
-border-radius:18px;
-padding:20px;
-}
-.card small{
-color:#94a3b8;
-display:block;
-margin-bottom:8px;
-}
-.card h2{
-font-size:28px;
-}
-.search-box{
 margin-bottom:25px;
 }
+
+.card{
+background:#111827;
+border-radius:16px;
+padding:20px;
+}
+
+.card small{color:#94a3b8;}
+.card h2{font-size:26px;margin-top:8px;}
+
+/* SEARCH */
+.search-box{
+margin-bottom:20px;
+}
+
 .search-box input{
 width:100%;
 padding:14px;
 border:none;
-outline:none;
-border-radius:14px;
+border-radius:12px;
 background:#1e293b;
 color:#fff;
-font-size:15px;
+outline:none;
 }
+
+/* TABLE */
 .table-box{
 background:#111827;
-border-radius:18px;
+border-radius:16px;
 overflow:hidden;
 }
+
 table{
 width:100%;
 border-collapse:collapse;
 }
+
 thead{
 background:#1e293b;
 }
-th{
-padding:16px;
+
+th,td{
+padding:14px;
+font-size:14px;
 text-align:left;
-font-size:14px;
-}
-td{
-padding:16px;
 border-top:1px solid rgba(255,255,255,.05);
-font-size:14px;
 }
+
 .status{
-padding:5px 12px;
-border-radius:30px;
+padding:5px 10px;
+border-radius:20px;
 font-size:12px;
 font-weight:700;
 }
-.active{
-background:#16a34a;
-}
-.inactive{
-background:#dc2626;
-}
+
+.active{background:#16a34a;}
+.inactive{background:#dc2626;}
+
+/* BUTTON */
 .btn{
-padding:8px 12px;
+padding:7px 10px;
 border:none;
-border-radius:10px;
+border-radius:8px;
 cursor:pointer;
-color:white;
+color:#fff;
 margin-right:5px;
 }
-.copy{
-background:#2563eb;
+
+.copy{background:#2563eb;}
+.edit{background:#f59e0b;}
+.delete{background:#dc2626;}
+
+/* FOOTER INFO */
+.footer-info{
+display:flex;
+justify-content:space-between;
+margin-top:20px;
+color:#94a3b8;
+font-size:14px;
 }
-.edit{
-background:#f59e0b;
-}
-.delete{
-background:#dc2626;
-}
+
+/* RESPONSIVE */
 @media(max-width:900px){
 .sidebar{
 left:-260px;
@@ -167,72 +177,54 @@ margin-left:0;
 }
 </style>
 </head>
+
 <body>
+
+<!-- SIDEBAR -->
 <div class="sidebar">
-<div class="logo">
-EARN<span>SHORTLINK</span>
-</div>
+<div class="logo">EARN<span>SHORTLINK</span></div>
+
 <div class="menu">
-<a href="/dashboard">
-<i class="fa-solid fa-house"></i>
-Dashboard
-</a>
-<a href="/links" class="active">
-<i class="fa-solid fa-link"></i>
-Kelola Tautan
-</a>
-<a href="/sell-link">
-<i class="fa-solid fa-plus"></i>
-Sell Link
-</a>
-<a href="/payments">
-<i class="fa-solid fa-wallet"></i>
-Payments
-</a>
-<a href="/referrals">
-<i class="fa-solid fa-users"></i>
-Referrals
-</a>
-<a href="/invoices">
-<i class="fa-solid fa-file-invoice"></i>
-Invoices
-</a>
-<a href="/settings">
-<i class="fa-solid fa-gear"></i>
-Pengaturan
-</a>
-<a href="/support">
-<i class="fa-solid fa-headset"></i>
-Support
-</a>
+<a href="/dashboard"><i class="fa-solid fa-house"></i>Dashboard</a>
+<a href="/links" class="active"><i class="fa-solid fa-link"></i>Kelola Tautan</a>
+<a href="/sell-link"><i class="fa-solid fa-plus"></i>Sell Link</a>
+<a href="/payments"><i class="fa-solid fa-wallet"></i>Payments</a>
+<a href="/referrals"><i class="fa-solid fa-users"></i>Referrals</a>
+<a href="/invoices"><i class="fa-solid fa-file-invoice"></i>Invoices</a>
+<a href="/settings"><i class="fa-solid fa-gear"></i>Pengaturan</a>
+<a href="/support"><i class="fa-solid fa-headset"></i>Support</a>
 </div>
 </div>
+
+<!-- MAIN -->
 <div class="main">
-<div class="topbar">
-<div class="title">
-Kelola Tautan
-</div>
-</div>
+
+<div class="title">Kelola Tautan</div>
+
+<!-- CARDS -->
 <div class="cards">
 <div class="card">
 <small>Total Link</small>
 <h2>{{ total_links }}</h2>
 </div>
+
 <div class="card">
 <small>Total Klik</small>
 <h2>{{ total_clicks }}</h2>
 </div>
+
 <div class="card">
 <small>Total Pendapatan</small>
 <h2>Rp {{ total_earn }}</h2>
 </div>
 </div>
+
+<!-- SEARCH -->
 <div class="search-box">
-<input
-id="searchInput"
-type="text"
-placeholder="Cari shortlink...">
+<input type="text" placeholder="Cari shortlink...">
 </div>
+
+<!-- TABLE -->
 <div class="table-box">
 <table>
 <thead>
@@ -245,133 +237,82 @@ placeholder="Cari shortlink...">
 <th>Aksi</th>
 </tr>
 </thead>
-<tbody id="tableBody">
+
+<tbody>
 {% for link in links %}
 <tr>
-    <td>
-        <div style="font-weight:600;">
-            {{ base_url }}/s/{{ link.short_code }}
-        </div>
-        <small style="color:#94a3b8;">
-            {{ link.short_code }}
-        </small>
-    </td>
-    <td>
-        <div style="
-            max-width:280px;
-            white-space:nowrap;
-            overflow:hidden;
-            text-overflow:ellipsis;">
-            {{ link.destination_url }}
-        </div>
-    </td>
-    <td>
-        {{ link.clicks or 0 }}
-    </td>
-    <td>
-        Rp {{ "{:,}".format(link.earnings or 0).replace(",", ".") }}
-    </td>
-    <td>
-        {% if link.is_active %}
-            <span class="status active">Aktif</span>
-        {% else %}
-            <span class="status inactive">Nonaktif</span>
-        {% endif %}
-    </td>
-    <td>
-        <button
-            type="button"
-            class="btn copy"
-            onclick="copyLink('{{ base_url }}/s/{{ link.short_code }}', this)"
-            <i class="fa-solid fa-copy"></i>
-        </button>
-        <a href="/s/{{ link.short_code }}" target="_blank">
-            <button type="button" class="btn edit">
-                <i class="fa-solid fa-eye"></i>
-            </button>
-        </a>
-        <a href="/edit-link/{{ link.id }}">
-            <button
-                type="button"
-                class="btn"
-                style="background:#0ea5e9;">
-                <i class="fa-solid fa-pen"></i>
-            </button>
-        </a>
-        <form
-            action="/delete-link/{{ link.id }}"
-            method="post"
-            style="display:inline;"
-            onsubmit="return confirm('Hapus shortlink ini?')">
-            <button
-                type="submit"
-                class="btn delete">
-                <i class="fa-solid fa-trash"></i>
-            </button>
-        </form>
-    </td>
-</tr>
+
+<td>
+<div style="font-weight:600;">
+{{ base_url }}/s/{{ link.short_code }}
+</div>
+<small style="color:#94a3b8">{{ link.short_code }}</small>
+</td>
+
+<td>
+<div style="max-width:250px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+{{ link.destination_url }}
+</div>
+</td>
+
+<td>{{ link.clicks or 0 }}</td>
+
+<td>Rp {{ "{:,}".format(link.earnings or 0).replace(",", ".") }}</td>
+
+<td>
+{% if link.is_active %}
+<span class="status active">Aktif</span>
 {% else %}
-<tr>
-    <td colspan="6"
-        style="
-            padding:40px;
-            text-align:center;
-            color:#94a3b8;
-        ">
-        <i class="fa-solid fa-link-slash"
-           style="font-size:50px;margin-bottom:15px;display:block;">
-        </i>
-        Belum ada shortlink yang dibuat.
-        <br><br>
-        <a href="/dashboard"
-           style="
-                background:#2563eb;
-                padding:10px 20px;
-                border-radius:10px;
-                color:white;
-                text-decoration:none;">
-            + Buat Shortlink
-        </a>
-    </td>
+<span class="status inactive">Nonaktif</span>
+{% endif %}
+</td>
+
+<td>
+<button class="btn copy"
+onclick="copyLink('{{ base_url }}/s/{{ link.short_code }}', this)">
+<i class="fa-solid fa-copy"></i>
+</button>
+
+<a href="/s/{{ link.short_code }}" target="_blank">
+<button class="btn edit"><i class="fa-solid fa-eye"></i></button>
+</a>
+
+<a href="/edit-link/{{ link.id }}">
+<button class="btn" style="background:#0ea5e9;">
+<i class="fa-solid fa-pen"></i>
+</button>
+</a>
+
+<form action="/delete-link/{{ link.id }}" method="post" style="display:inline;">
+<button class="btn delete" onclick="return confirm('Hapus link?')">
+<i class="fa-solid fa-trash"></i>
+</button>
+</form>
+</td>
+
 </tr>
 {% endfor %}
 </tbody>
 </table>
 </div>
-<br>
-<div
-style="
-display:flex;
-justify-content:space-between;
-align-items:center;
-color:#94a3b8;
-font-size:14px;
-">
-<div>
-    Total Link :
-    <b>{{ total_links }}</b>
+
+<!-- FOOTER INFO -->
+<div class="footer-info">
+<div>Total Link: <b>{{ total_links }}</b></div>
+<div>Total Klik: <b>{{ total_clicks }}</b></div>
+<div>Total Pendapatan: <b>Rp {{ total_earn }}</b></div>
 </div>
-<div>
-    Total Klik :
-    <b>{{ total_clicks }}</b>
+
 </div>
-<div>
-    Total Pendapatan :
-    <b>Rp {{ total_earn }}</b>
-</div>
-</div>
+
 <script>
-function copyLink(url, btn) {
-    navigator.clipboard.writeText(url);
-
-    const old = btn.innerHTML;
-    btn.innerHTML = '<i class="fa-solid fa-check"></i>';
-
-    setTimeout(() => {
-        btn.innerHTML = old;
-    }, 1200);
+function copyLink(url, btn){
+navigator.clipboard.writeText(url);
+const old = btn.innerHTML;
+btn.innerHTML = '<i class="fa-solid fa-check"></i>';
+setTimeout(()=>btn.innerHTML = old, 1200);
 }
 </script>
+
 </body>
 </html>
