@@ -2,621 +2,427 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>EarnShortlink</title>
+
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
 <!-- POPUNDER -->
 <script src="https://nooseamazingbatch.com/ab/80/ed/ab80ed2aaa28a3dd93bd1cd7c7d44835.js"></script>
+
 <!-- SOCIAL BAR -->
 <script src="https://nooseamazingbatch.com/d3/2b/cf/d32bcff5f18bf12434b8174312acf206.js"></script>
+
 <style>
 *{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Poppins',sans-serif;
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
 }
+
 body{
-background:#020817;
-color:#fff;
-overflow-x:hidden;
+    background:#020817;
+    color:#fff;
+    overflow-x:hidden;
 }
+
 .bg{
-position:fixed;
-inset:0;
-background:
-linear-gradient(rgba(0,0,0,.75),rgba(0,0,0,.85)),
-url('https://images.unsplash.com/photo-1462331940025-496dfbfc7564');
-background-size:cover;
-background-position:center;
-z-index:-1;
+    position:fixed;
+    inset:0;
+    background:
+        linear-gradient(rgba(0,0,0,.75),rgba(0,0,0,.85)),
+        url('https://images.unsplash.com/photo-1462331940025-496dfbfc7564');
+    background-size:cover;
+    background-position:center;
+    z-index:-1;
 }
+
 .navbar{
-position:sticky;
-top:0;
-z-index:999;
-padding:18px;
-text-align:center;
-background:rgba(0,0,0,.35);
-backdrop-filter:blur(15px);
-border-bottom:1px solid rgba(33,150,243,.3);
+    position:sticky;
+    top:0;
+    z-index:999;
+    padding:18px;
+    text-align:center;
+    background:rgba(0,0,0,.35);
+    backdrop-filter:blur(15px);
+    border-bottom:1px solid rgba(33,150,243,.3);
 }
+
 .logo{
-font-size:28px;
-font-weight:800;
+    font-size:28px;
+    font-weight:800;
 }
+
 .logo span{
-color:#2196f3;
+    color:#2196f3;
 }
+
 .container{
-max-width:1000px;
-margin:auto;
-padding:20px;
+    max-width:1000px;
+    margin:auto;
+    padding:20px;
 }
+
 .card{
-background:rgba(0,0,0,.3);
-border:1px solid rgba(33,150,243,.3);
-border-radius:20px;
-padding:20px;
-margin-bottom:20px;
-backdrop-filter:blur(10px);
+    background:rgba(0,0,0,.3);
+    border:1px solid rgba(33,150,243,.3);
+    border-radius:20px;
+    padding:20px;
+    margin-bottom:20px;
+    backdrop-filter:blur(10px);
 }
+
 .notice{
-border-left:5px solid #22c55e;
+    border-left:5px solid #22c55e;
 }
+
 .notice p{
-line-height:1.8;
-color:#cbd5e1;
+    line-height:1.8;
+    color:#cbd5e1;
 }
+
 .ad-wrapper{
-width:100%;
-display:flex;
-justify-content:center;
-align-items:center;
-margin:20px 0;
-overflow:hidden;
+    width:100%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    margin:20px 0;
+    overflow:hidden;
 }
+
 .download-section{
-text-align:center;
+    text-align:center;
 }
+
 .btn{
-display:inline-flex;
-justify-content:center;
-align-items:center;
-padding:15px 30px;
-border:none;
-border-radius:15px;
-font-weight:700;
-cursor:pointer;
-text-decoration:none;
+    display:inline-flex;
+    justify-content:center;
+    align-items:center;
+    padding:15px 30px;
+    border:none;
+    border-radius:15px;
+    font-weight:700;
+    cursor:pointer;
+    text-decoration:none;
 }
+
 .btn-primary{
-background:#2196f3;
-color:#fff;
+    background:#2196f3;
+    color:#fff;
 }
+
 .btn-success{
-background:#22c55e;
-color:#fff;
+    background:#22c55e;
+    color:#fff;
 }
+
 .timer{
-display:none;
-font-size:50px;
-font-weight:800;
-margin-top:20px;
-color:#22c55e;
+    display:none;
+    font-size:50px;
+    font-weight:800;
+    margin-top:20px;
+    color:#22c55e;
 }
+
 #scrollBtn{
-display:none;
-margin-top:20px;
+    display:none;
+    margin-top:20px;
 }
+
 .article h2{
-margin-bottom:15px;
-color:#2196f3;
+    margin-bottom:15px;
+    color:#2196f3;
 }
+
 .article p{
-line-height:1.8;
-color:#dbeafe;
+    line-height:1.8;
+    color:#dbeafe;
 }
+
 .verify-box{
-text-align:center;
+    text-align:center;
 }
+
 #loadingBox{
-display:none;
-margin-top:20px;
-font-weight:700;
+    display:none;
+    margin-top:20px;
+    font-weight:700;
 }
+
 #downloadBox{
-display:none;
-margin-top:20px;
+    display:none;
+    margin-top:20px;
 }
+
 .footer{
-padding:25px;
-text-align:center;
-opacity:.8;
-font-size:14px;
+    padding:25px;
+    text-align:center;
+    opacity:.8;
+    font-size:14px;
 }
+
 @media(max-width:768px){
-.logo{
-font-size:22px;
+    .logo{
+        font-size:22px;
+    }
+
+    .timer{
+        font-size:36px;
+    }
+
+    .btn{
+        width:100%;
+    }
 }
-.timer{
-font-size:36px;
-}
-.btn{
-width:100%;
-}
-}
+
+/* TEXT BERJALAN */
 .marquee-wrap{
-width:100%;
-overflow:hidden;
-background:#16a34a;
-padding:10px 0;
-border-bottom:1px solid rgba(255,255,255,.1);
+    width:100%;
+    overflow:hidden;
+    background:#16a34a;
+    padding:10px 0;
+    border-bottom:1px solid rgba(255,255,255,.1);
 }
 
 .marquee{
-white-space:nowrap;
-display:inline-block;
-padding-left:100%;
-font-weight:700;
-animation:marquee 18s linear infinite;
+    white-space:nowrap;
+    display:inline-block;
+    padding-left:100%;
+    font-weight:700;
+    animation:marquee 18s linear infinite;
 }
 
 @keyframes marquee{
-0%{
-transform:translateX(0);
-}
-100%{
-transform:translateX(-100%);
-}
+    0%{ transform:translateX(0); }
+    100%{ transform:translateX(-100%); }
 }
 
-.sponsor-btn{
-display:inline-flex;
-align-items:center;
-justify-content:center;
-padding:16px 30px;
-border-radius:16px;
-text-decoration:none;
-font-weight:800;
-color:#fff;
-background:linear-gradient(45deg,#2196f3,#22c55e);
-animation:pulse 1.5s infinite;
-box-shadow:0 0 20px rgba(33,150,243,.4);
-}
-
+/* ANIMASI GLOBAL (FIX: hanya satu pulse) */
 @keyframes pulse{
-0%{
-transform:scale(1);
-}
-50%{
-transform:scale(1.05);
-}
-100%{
-transform:scale(1);
-}
+    0%{ transform:scale(1); }
+    50%{ transform:scale(1.08); }
+    100%{ transform:scale(1); }
 }
 
+/* TOMBOL SPONSOR */
+.sponsor-btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    padding:16px 30px;
+    border-radius:16px;
+    text-decoration:none;
+    font-weight:800;
+    color:#fff;
+    background:linear-gradient(45deg,#2196f3,#22c55e);
+    animation:pulse 1.5s infinite;
+    box-shadow:0 0 20px rgba(33,150,243,.4);
+}
+
+/* TOMBOL CLAIM */
 .claim-btn{
-display:inline-flex;
-align-items:center;
-justify-content:center;
-padding:16px 28px;
-border-radius:18px;
-font-weight:800;
-font-size:16px;
-text-decoration:none;
-color:#fff;
-background:linear-gradient(45deg,#22c55e,#16a34a);
-box-shadow:0 0 25px rgba(34,197,94,.35);
-animation:claimPulse 1.5s infinite;
-transition:.3s;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    padding:16px 28px;
+    border-radius:18px;
+    font-weight:800;
+    font-size:16px;
+    text-decoration:none;
+    color:#fff;
+    background:linear-gradient(45deg,#22c55e,#16a34a);
+    box-shadow:0 0 25px rgba(34,197,94,.35);
+    animation:pulse 1.5s infinite;
+    transition:.3s;
 }
 
 .claim-btn:hover{
-transform:scale(1.05);
+    transform:scale(1.05);
 }
 
-@keyframes claimPulse{
-
-0%{
-transform:scale(1);
-}
-
-50%{
-transform:scale(1.08);
-}
-
-100%{
-transform:scale(1);
-}
-
-}
+/* LIGHTNING BUTTON */
 .lightning-btn{
-position:relative;
-overflow:hidden;
-animation:pulse 1.5s infinite;
+    position:relative;
+    overflow:hidden;
 }
 
 .lightning-btn::before{
-content:"⚡";
-position:absolute;
-left:-40px;
-top:50%;
-transform:translateY(-50%);
-font-size:22px;
-animation:lightningMove 2s linear infinite;
+    content:"⚡";
+    position:absolute;
+    left:-40px;
+    top:50%;
+    transform:translateY(-50%);
+    font-size:22px;
+    animation:lightningMove 2s linear infinite;
 }
 
 @keyframes lightningMove{
-0%{
-left:-40px;
-opacity:0;
-}
-20%{
-opacity:1;
-}
-100%{
-left:110%;
-opacity:0;
-}
+    0%{
+        left:-40px;
+        opacity:0;
+    }
+    20%{ opacity:1; }
+    100%{
+        left:110%;
+        opacity:0;
+    }
 }
 
-@keyframes pulse{
-0%{
-transform:scale(1);
-}
-50%{
-transform:scale(1.08);
-}
-100%{
-transform:scale(1);
-}
-}
+/* FLOATING AD */
 #floatingAd{
-position:fixed;
-bottom:0;
-left:50%;
-transform:translateX(-50%);
-z-index:9999;
-background:#111;
-border-radius:12px 12px 0 0;
-box-shadow:0 -5px 20px rgba(0,0,0,.4);
-animation:slideUp .5s ease;
-max-width:100%;
+    position:fixed;
+    bottom:0;
+    left:50%;
+    transform:translateX(-50%);
+    z-index:9999;
+    background:#111;
+    border-radius:12px 12px 0 0;
+    box-shadow:0 -5px 20px rgba(0,0,0,.4);
+    animation:slideUp .5s ease;
+    max-width:100%;
 }
 
 .ad-header{
-display:flex;
-justify-content:flex-end;
-gap:5px;
-padding:5px;
-background:#222;
+    display:flex;
+    justify-content:flex-end;
+    gap:5px;
+    padding:5px;
+    background:#222;
 }
 
 .ad-header button{
-border:none;
-background:#333;
-color:#fff;
-cursor:pointer;
-width:28px;
-height:28px;
-border-radius:6px;
+    border:none;
+    background:#333;
+    color:#fff;
+    cursor:pointer;
+    width:28px;
+    height:28px;
+    border-radius:6px;
 }
 
 .ad-content{
-padding:5px;
+    padding:5px;
 }
 
 .minimized .ad-content{
-display:none;
+    display:none;
 }
 
 @keyframes slideUp{
-from{
-bottom:-200px;
+    from{ bottom:-200px; }
+    to{ bottom:0; }
 }
-to{
-bottom:0;
-}
-}
-#adOverlay{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,.75);
-display:flex;
-justify-content:center;
-align-items:center;
-z-index:99999;
 
-opacity:0;
-visibility:hidden;
-transition:opacity .5s ease;
+/* POPUP IKLAN */
+#adOverlay{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,.75);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:99999;
+    opacity:0;
+    visibility:hidden;
+    transition:opacity .5s ease;
 }
 
 #adOverlay.show{
-opacity:1;
-visibility:visible;
+    opacity:1;
+    visibility:visible;
 }
 
 #adPopup{
-width:340px;
-max-width:95%;
-background:#111827;
-border-radius:20px;
-padding:20px;
-position:relative;
-text-align:center;
-
-transform:translateY(100px);
-transition:transform .6s ease;
+    width:340px;
+    max-width:95%;
+    background:#111827;
+    border-radius:20px;
+    padding:20px;
+    position:relative;
+    text-align:center;
+    transform:translateY(100px);
+    transition:transform .6s ease;
 }
 
 #adOverlay.show #adPopup{
-transform:translateY(0);
+    transform:translateY(0);
 }
 
 #adClose{
-position:absolute;
-top:10px;
-right:10px;
-width:35px;
-height:35px;
-border:none;
-border-radius:50%;
-background:#ef4444;
-color:#fff;
-font-size:18px;
-font-weight:bold;
-cursor:pointer;
-z-index:100000;
+    position:absolute;
+    top:10px;
+    right:10px;
+    width:35px;
+    height:35px;
+    border:none;
+    border-radius:50%;
+    background:#ef4444;
+    color:#fff;
+    font-size:18px;
+    font-weight:bold;
+    cursor:pointer;
+    z-index:100000;
 }
 
 .ad-title{
-font-size:18px;
-font-weight:700;
-margin-bottom:15px;
+    font-size:18px;
+    font-weight:700;
+    margin-bottom:15px;
 }
 
 .ad-container{
-width:300px;
-height:250px;
-margin:auto;
-overflow:hidden;
+    width:300px;
+    height:250px;
+    margin:auto;
+    overflow:hidden;
 }
 </style>
 </head>
 <body>
+
 <div class="bg"></div>
+
 <!-- TEXT BERJALAN -->
 <div class="marquee-wrap">
-<div class="marquee">
-🔥 Join Group Telegram 18+ sekarang juga • Update harian • Komunitas aktif • Klik tombol sponsor di bawah untuk melihat penawaran mitra 🔥
-</div>
-</div>
-<div class="navbar">
-<div class="logo">
-EARN<span>SHORTLINK</span>
-</div>
-</div>
-<div class="container">
-<div class="card notice">
-<h2>📢 Notifikasi</h2>
-<p>
-Mau Cuan Tambahan?? Daftar Sekarang Juga Di Sini...
-</p>
-</div>
-<!-- TOMBOL SPONSOR / IKLAN -->
-<div class="card download-section">
-
-<a
-href="https://nooseamazingbatch.com/pcxdx71e?key=d3f1614512a0ab30d02f2c2f9831bcb5"
-target="_blank"
-class="sponsor-btn">
-🎁 LIHAT PENAWARAN SPONSOR
-</a>
-
-</div>
-<!-- BANNER 320x50 -->
-<div class="ad-wrapper">
-<script>
-atOptions = {
-'key' : 'ccf15142f738c1098b148a5b80b9d570',
-'format' : 'iframe',
-'height' : 50,
-'width' : 320,
-'params' : {}
-};
-</script>
-<script src="https://nooseamazingbatch.com/ccf15142f738c1098b148a5b80b9d570/invoke.js"></script>
-</div>
-<section class="card article">
-<h2>📈 Kembangkan Potensi Anda</h2>
-<p>
-Banyak pengguna memulai dari langkah kecil dan secara bertahap meningkatkan aktivitas mereka seiring bertambahnya pengalaman. Konsistensi dan pemanfaatan fitur yang tersedia dapat membantu Anda memperoleh hasil yang lebih baik dari waktu ke waktu.
-</p>
-<p>
-Semakin memahami cara kerja platform dan memanfaatkan peluang yang ada, semakin besar potensi yang dapat Anda capai.
-</p>
-<div style="text-align:center;margin-top:25px;">
-
-<a
-href="https://nooseamazingbatch.com/pcxdx71e?key=d3f1614512a0ab30d02f2c2f9831bcb5"
-target="_blank"
-class="claim-btn">
-🎁 KLAIM BONUS RP 100.000 SEKARANG
-</a>
-
-</div>
-</section>
-<!-- BANNER 728x90 -->
-<div class="ad-wrapper">
-<script>
-atOptions = {
-'key' : 'c683046fae98c4e9a864553821c5556a',
-'format' : 'iframe',
-'height' : 90,
-'width' : 728,
-'params' : {}
-};
-</script>
-<script src="https://nooseamazingbatch.com/c683046fae98c4e9a864553821c5556a/invoke.js"></script>
-</div>
-<div class="card download-section">
-
-<h2>⬇️ Download Access</h2>
-
-<p style="margin:15px 0;color:#cbd5e1;">
-Verifikasi terlebih dahulu untuk memastikan Anda benar-benar bukan robot.
-</p>
-
-<button
-class="btn btn-primary"
-onclick="startCountdown()">
-🚀 MULAI VERIFIKASI
-</button>
-
-<div id="timer" class="timer">
-10
-</div>
-
-<button
-id="scrollBtn"
-class="btn btn-success"
-onclick="scrollToBottom()">
-⬇️ SCROLL DOWN TO DOWNLOAD
-</button>
-
-<div style="margin-top:20px;font-size:14px;color:#94a3b8;">
-Mohon tunggu sebentar hingga proses verifikasi selesai...
-</div>
-
-</div>
-<!-- ARTIKEL -->
-
-<div style="text-align:center;margin-top:25px;">
-
-<a
-href="https://nooseamazingbatch.com/pcxdx71e?key=d3f1614512a0ab30d02f2c2f9831bcb5"
-target="_blank"
-class="claim-btn lightning-btn">
-⚡DOWNLOAD FAST⚡
-</a>
-
-</div>
-</section>
-
-<section class="card article">
-
-<h2>💰 Peluang Penghasilan yang Menarik</h2>
-
-<p>
-Sebagai member EarnShortlink, Anda dapat mengakses berbagai fitur yang dirancang untuk membantu meningkatkan potensi penghasilan, Semakin aktif Anda menggunakan layanan yang tersedia, semakin besar peluang yang bisa diperoleh.
-</p>
-
-<p>
-Banyak anggota memanfaatkan platform ini sebagai sumber penghasilan tambahan untuk memenuhi kebutuhan sehari-hari, menambah tabungan, atau mendukung berbagai tujuan finansial lainnya.
-</p>
-
-</section>
-
-</script>
-<script src="https://nooseamazingbatch.com/5737a07c4a33cf9a6e8fc68028ae5b82/invoke.js"></script>
-</div>
-<div id="bottomSection">
-<div class="card verify-box">
-    <h2>✅ Verifikasi</h2>
-    <button
-        id="verifyBtn"
-        class="btn btn-success"
-        disabled
-        style="opacity:.5;cursor:not-allowed;"
-        onclick="startVerification()">
-        🔒 TERKUNCI
-    </button>
-    <div id="loadingBox">
-        ⏳ Memproses...
-        <span id="loadingTimer">5</span>
+    <div class="marquee">
+        🔥 Join Group Telegram 18+ sekarang juga • Update harian • Komunitas aktif • Klik tombol sponsor di bawah untuk melihat penawaran mitra 🔥
     </div>
-    <div id="downloadBox" style="display:none;margin-top:20px;">
+</div>
+
+<!-- NAVBAR -->
+<div class="navbar">
+    <div class="logo">
+        EARN<span>SHORTLINK</span>
+    </div>
+</div>
+
+<div class="container">
+
+    <!-- NOTIFIKASI -->
+    <div class="card notice">
+        <h2>📢 Notifikasi</h2>
+        <p>
+            Mau Cuan Tambahan?? Daftar Sekarang Juga Di Sini...
+        </p>
+    </div>
+
+    <!-- TOMBOL SPONSOR -->
+    <div class="card download-section">
         <a
-            href="task2.html"
-            class="btn btn-success">
-            ⬇️ DOWNLOAD NOW
+            href="https://nooseamazingbatch.com/pcxdx71e?key=d3f1614512a0ab30d02f2c2f9831bcb5"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="sponsor-btn">
+            🎁 LIHAT PENAWARAN SPONSOR
         </a>
     </div>
-    <p style="margin-top:15px;color:#94a3b8;font-size:14px;">
-        Verifikasi terlebih dahulu untuk membuka tombol Download Now.
-    </p>
-</div>
-</div>
 
-<section class="card article">
-<h2>🌍 Dapat Diakses Kapan Saja dan Di Mana Saja</h2>
-<p>
-Salah satu keunggulan EarnShortlink adalah fleksibilitasnya. Platform dapat diakses menggunakan perangkat komputer, laptop, maupun smartphone selama terhubung dengan internet.
-</p>
-<p>
-Anda tidak perlu datang ke lokasi tertentu atau mengikuti jadwal yang ketat. Semua aktivitas dapat dilakukan sesuai waktu yang Anda miliki sehingga lebih nyaman dan efisien.
-</p>
-</section>
-<div id="downloadBox" style="display:none;">
-
-Download Now
-</div>
-</div>
-</div>
-<section class="card article">
-<h2>⚡ Proses Cepat dan Mudah</h2>
-<p>
-EarnShortlink dirancang dengan antarmuka yang sederhana sehingga mudah digunakan oleh semua kalangan. Proses pendaftaran dapat dilakukan dalam beberapa langkah sederhana dan Anda dapat langsung mulai menjelajahi fitur yang tersedia.
-</p>
-<p>
-Sistem yang ringan dan responsif juga memberikan pengalaman penggunaan yang lebih nyaman baik melalui perangkat mobile maupun desktop.
-</p>
-</section>
-<!-- BANNER 468x60 -->
-<div class="ad-wrapper">
-<script>
-atOptions = {
-'key' : '8573bb1dc88e1ef48abf8c9c09e4c546',
-'format' : 'iframe',
-'height' : 60,
-'width' : 468,
-'params' : {}
-};
-</script>
-<script src="https://nooseamazingbatch.com/8573bb1dc88e1ef48abf8c9c09e4c546/invoke.js"></script>
-</div>
-<section class="card article">
-<h2>🔒 Aman dan Nyaman Digunakan</h2>
-<p>
-Keamanan pengguna merupakan salah satu prioritas utama. Oleh karena itu, setiap anggota diharapkan menggunakan akun secara bijak dan mengikuti aturan yang berlaku agar pengalaman penggunaan tetap aman dan nyaman.
-</p>
-<p>
-Dengan menjaga keamanan akun serta menggunakan platform sesuai ketentuan, Anda dapat memanfaatkan berbagai fitur EarnShortlink secara optimal.
-</p>
-</section>
-<div class="footer">
-© 2026 EarnShortlink
-</div>
-<div id="floatingAd">
-
-    <div class="ad-header">
-
-        <button onclick="minimizeAd()">▲</button>
-
-        <button onclick="closeFloatingAd()">✕</button>
-
-    </div>
-
-    <div class="ad-content">
-
-        <!-- KODE IKLAN ADSTERRA -->
-
+    <!-- BANNER 320x50 -->
+    <div class="ad-wrapper">
         <script>
         atOptions = {
             'key':'ccf15142f738c1098b148a5b80b9d570',
@@ -628,126 +434,394 @@ Dengan menjaga keamanan akun serta menggunakan platform sesuai ketentuan, Anda d
         </script>
 
         <script src="https://nooseamazingbatch.com/ccf15142f738c1098b148a5b80b9d570/invoke.js"></script>
+    </div>
+
+    <!-- ARTIKEL -->
+    <section class="card article">
+
+        <h2>📈 Kembangkan Potensi Anda</h2>
+
+        <p>
+            Banyak pengguna memulai dari langkah kecil dan secara bertahap meningkatkan aktivitas mereka seiring bertambahnya pengalaman. Konsistensi dan pemanfaatan fitur yang tersedia dapat membantu Anda memperoleh hasil yang lebih baik dari waktu ke waktu.
+        </p>
+
+        <p>
+            Semakin memahami cara kerja platform dan memanfaatkan peluang yang ada, semakin besar potensi yang dapat Anda capai.
+        </p>
+
+        <div style="text-align:center;margin-top:25px;">
+            <a
+                href="https://nooseamazingbatch.com/pcxdx71e?key=d3f1614512a0ab30d02f2c2f9831bcb5"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="claim-btn">
+                🎁 KLAIM BONUS RP 100.000 SEKARANG
+            </a>
+        </div>
+
+    </section>
+
+    <!-- BANNER 728x90 -->
+    <div class="ad-wrapper">
+
+        <script>
+        atOptions = {
+            'key':'c683046fae98c4e9a864553821c5556a',
+            'format':'iframe',
+            'height':90,
+            'width':728,
+            'params':{}
+        };
+        </script>
+
+        <script src="https://nooseamazingbatch.com/c683046fae98c4e9a864553821c5556a/invoke.js"></script>
 
     </div>
 
+    <!-- DOWNLOAD -->
+    <div class="card download-section">
+
+        <h2>⬇️ Download Access</h2>
+
+        <p style="margin:15px 0;color:#cbd5e1;">
+            Verifikasi terlebih dahulu untuk memastikan Anda benar-benar bukan robot.
+        </p>
+
+        <button
+            class="btn btn-primary"
+            onclick="startCountdown()">
+            🚀 MULAI VERIFIKASI
+        </button>
+
+        <div id="timer" class="timer">
+            10
+        </div>
+
+        <button
+            id="scrollBtn"
+            class="btn btn-success"
+            onclick="scrollToBottom()">
+            ⬇️ SCROLL DOWN TO DOWNLOAD
+        </button>
+
+        <div style="margin-top:20px;font-size:14px;color:#94a3b8;">
+            Mohon tunggu sebentar hingga proses verifikasi selesai...
+        </div>
+
+    </div>
+
+    <!-- TOMBOL DOWNLOAD FAST -->
+    <div style="text-align:center;margin-top:25px;">
+
+        <a
+            href="https://nooseamazingbatch.com/pcxdx71e?key=d3f1614512a0ab30d02f2c2f9831bcb5"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="claim-btn lightning-btn">
+            ⚡ DOWNLOAD FAST ⚡
+        </a>
+
+    </div>
+
+    <!-- ARTIKEL -->
+    <section class="card article">
+
+        <h2>💰 Peluang Penghasilan yang Menarik</h2>
+
+        <p>
+            Sebagai member EarnShortlink, Anda dapat mengakses berbagai fitur yang dirancang untuk membantu meningkatkan potensi penghasilan. Semakin aktif Anda menggunakan layanan yang tersedia, semakin besar peluang yang bisa diperoleh.
+        </p>
+
+        <p>
+            Banyak anggota memanfaatkan platform ini sebagai sumber penghasilan tambahan untuk memenuhi kebutuhan sehari-hari, menambah tabungan, atau mendukung berbagai tujuan finansial lainnya.
+        </p>
+
+    </section>
+
+<!-- BANNER 300x250 -->
+<div class="ad-wrapper">
+    <script>
+    atOptions = {
+        'key':'5737a07c4a33cf9a6e8fc68028ae5b82',
+        'format':'iframe',
+        'height':250,
+        'width':300,
+        'params':{}
+    };
+    </script>
+    <script src="https://nooseamazingbatch.com/5737a07c4a33cf9a6e8fc68028ae5b82/invoke.js"></script>
 </div>
+<!-- VERIFIKASI -->
+<div id="bottomSection">
+    <div class="card verify-box">
+        <h2>✅ Verifikasi</h2>
+        <button
+            id="verifyBtn"
+            class="btn btn-success"
+            disabled
+            style="opacity:.5;cursor:not-allowed;"
+            onclick="startVerification()">
+            🔒 TERKUNCI
+        </button>
+        <div id="loadingBox">
+            ⏳ Memproses...
+            <span id="loadingTimer">5</span>
+        </div>
+        <div id="downloadBox" style="display:none;margin-top:20px;">
+            <a
+                href="task2.html"
+                class="btn btn-success">
+                ⬇️ DOWNLOAD NOW
+            </a>
+        </div>
+        <p style="margin-top:15px;color:#94a3b8;font-size:14px;">
+            Verifikasi terlebih dahulu untuk membuka tombol Download Now.
+        </p>
+    </div>
+</div>
+<!-- ARTIKEL -->
+<section class="card article">
+    <h2>🌍 Dapat Diakses Kapan Saja dan Di Mana Saja</h2>
+    <p>
+        Salah satu keunggulan EarnShortlink adalah fleksibilitasnya. Platform dapat diakses menggunakan perangkat komputer, laptop, maupun smartphone selama terhubung dengan internet.
+    </p>
+    <p>
+        Anda tidak perlu datang ke lokasi tertentu atau mengikuti jadwal yang ketat. Semua aktivitas dapat dilakukan sesuai waktu yang Anda miliki sehingga lebih nyaman dan efisien.
+    </p>
+</section>
+<!-- HAPUS BLOK INI (ID DUPLIKAT)
+<div id="downloadBox" style="display:none;">
+    Download Now
+</div>
+-->
+<!-- ARTIKEL -->
+<section class="card article">
+    <h2>⚡ Proses Cepat dan Mudah</h2>
+    <p>
+        EarnShortlink dirancang dengan antarmuka yang sederhana sehingga mudah digunakan oleh semua kalangan. Proses pendaftaran dapat dilakukan dalam beberapa langkah sederhana dan Anda dapat langsung mulai menjelajahi fitur yang tersedia.
+    </p>
+    <p>
+        Sistem yang ringan dan responsif juga memberikan pengalaman penggunaan yang lebih nyaman baik melalui perangkat mobile maupun desktop.
+    </p>
+</section>
+<!-- BANNER 468x60 -->
+<div class="ad-wrapper">
+    <script>
+    atOptions = {
+        'key':'8573bb1dc88e1ef48abf8c9c09e4c546',
+        'format':'iframe',
+        'height':60,
+        'width':468,
+        'params':{}
+    };
+    </script>
+    <script src="https://nooseamazingbatch.com/8573bb1dc88e1ef48abf8c9c09e4c546/invoke.js"></script>
+</div>
+<!-- ARTIKEL -->
+<section class="card article">
+    <h2>🔒 Aman dan Nyaman Digunakan</h2>
+    <p>
+        Keamanan pengguna merupakan salah satu prioritas utama. Oleh karena itu, setiap anggota diharapkan menggunakan akun secara bijak dan mengikuti aturan yang berlaku agar pengalaman penggunaan tetap aman dan nyaman.
+    </p>
+    <p>
+        Dengan menjaga keamanan akun serta menggunakan platform sesuai ketentuan, Anda dapat memanfaatkan berbagai fitur EarnShortlink secara optimal.
+    </p>
+</section>
+</div> <!-- END .container -->
+<!-- FOOTER -->
+<div class="footer">
+    © 2026 EarnShortlink
+</div>
+<!-- FLOATING BANNER -->
+<div id="floatingAd">
+    <div class="ad-header">
+        <button onclick="minimizeAd()">▲</button>
+        <button onclick="closeFloatingAd()">✕</button>
+    </div>
+    <div class="ad-content">
+        <!-- ADSTERRA 320x50 -->
+        <script>
+        atOptions = {
+            'key':'ccf15142f738c1098b148a5b80b9d570',
+            'format':'iframe',
+            'height':50,
+            'width':320,
+            'params':{}
+        };
+        </script>
+        <script src="https://nooseamazingbatch.com/ccf15142f738c1098b148a5b80b9d570/invoke.js"></script>
+    </div>
+</div>
+<!-- POPUP IKLAN -->
 <div id="adOverlay">
-
     <div id="adPopup">
-
-        <button id="adClose" onclick="closePopupAd()">✕</button>
-
+        <button
+            id="adClose"
+            onclick="closePopupAd()">
+            ✕
+        </button>
         <div class="ad-title">
             Sponsor
         </div>
-
         <div class="ad-container">
-
+            <!-- ADSTERRA 300x250 -->
             <script>
             atOptions = {
-                'key' : '5737a07c4a33cf9a6e8fc68028ae5b82',
-                'format' : 'iframe',
-                'height' : 250,
-                'width' : 300,
-                'params' : {}
+                'key':'5737a07c4a33cf9a6e8fc68028ae5b82',
+                'format':'iframe',
+                'height':250,
+                'width':300,
+                'params':{}
             };
             </script>
-
             <script src="https://nooseamazingbatch.com/5737a07c4a33cf9a6e8fc68028ae5b82/invoke.js"></script>
-
         </div>
-
     </div>
-
 </div>
 <script>
-let popupInterval;
+// =========================
+// POPUP ADS
+// =========================
+
+let popupInterval = null;
 
 function showPopupAd() {
-    const el = document.getElementById("adOverlay");
-    el.classList.add("show");
+    document.getElementById("adOverlay").classList.add("show");
 }
 
 function closePopupAd() {
-    const el = document.getElementById("adOverlay");
-    el.classList.remove("show");
+    document.getElementById("adOverlay").classList.remove("show");
 }
 
-window.onload = function () {
-    // tampil pertama kali setelah 3 detik
+window.addEventListener("load", () => {
+
+    // Muncul pertama kali setelah 3 detik
     setTimeout(showPopupAd, 3000);
 
-    // setelah itu muncul tiap 30 detik
-    popupInterval = setInterval(showPopupAd, 5000);
-};
-</script>
-<script>
-let countdownFinished=false;
-function startCountdown(){
-const timer=document.getElementById("timer");
-const scrollBtn=document.getElementById("scrollBtn");
-timer.style.display="block";
-let count=10;
-timer.innerHTML=count;
-const interval=setInterval(()=>{
-count--;
-timer.innerHTML=count;
-if(count<=0){
-clearInterval(interval);
-countdownFinished=true;
-timer.innerHTML="✅ Selesai";
-scrollBtn.style.display="inline-flex";
-}
-},1000);
-}
-function scrollToBottom(){
-if(!countdownFinished) return;
-document.getElementById("bottomSection")
-.scrollIntoView({
-behavior:"smooth"
+    // Muncul setiap 30 detik
+    popupInterval = setInterval(showPopupAd, 30000);
+
 });
-const verifyBtn=document.getElementById("verifyBtn");
-verifyBtn.disabled=false;
-verifyBtn.style.opacity="1";
-verifyBtn.style.cursor="pointer";
-verifyBtn.innerHTML="✅ BUKA VERIFIKASI";
+
+
+// =========================
+// DOWNLOAD VERIFICATION
+// =========================
+
+let countdownFinished = false;
+let countdownRunning = false;
+
+function startCountdown() {
+
+    if (countdownRunning || countdownFinished) return;
+
+    countdownRunning = true;
+
+    const timer = document.getElementById("timer");
+    const scrollBtn = document.getElementById("scrollBtn");
+
+    timer.style.display = "block";
+
+    let count = 10;
+
+    timer.textContent = count;
+
+    const interval = setInterval(() => {
+
+        count--;
+
+        timer.textContent = count;
+
+        if (count <= 0) {
+
+            clearInterval(interval);
+
+            countdownFinished = true;
+
+            timer.textContent = "✅ Selesai";
+
+            scrollBtn.style.display = "inline-flex";
+
+        }
+
+    }, 1000);
+
 }
-function startVerification(){
-const loadingBox=document.getElementById("loadingBox");
-const loadingTimer=document.getElementById("loadingTimer");
-loadingBox.style.display="block";
-let count=5;
-loadingTimer.innerHTML=count;
-const interval=setInterval(()=>{
-count--;
-loadingTimer.innerHTML=count;
-if(count<=0){
-clearInterval(interval);
-loadingBox.innerHTML="✅ Verifikasi Berhasil";
-document.getElementById("downloadBox")
-.style.display="block";
+
+
+function scrollToBottom() {
+
+    if (!countdownFinished) return;
+
+    document.getElementById("bottomSection").scrollIntoView({
+        behavior: "smooth"
+    });
+
+    const verifyBtn = document.getElementById("verifyBtn");
+
+    verifyBtn.disabled = false;
+    verifyBtn.style.opacity = "1";
+    verifyBtn.style.cursor = "pointer";
+    verifyBtn.innerHTML = "✅ BUKA VERIFIKASI";
+
 }
-},1000);
+
+
+function startVerification() {
+
+    const verifyBtn = document.getElementById("verifyBtn");
+
+    verifyBtn.disabled = true;
+
+    const loadingBox = document.getElementById("loadingBox");
+    const loadingTimer = document.getElementById("loadingTimer");
+
+    loadingBox.style.display = "block";
+
+    let count = 5;
+
+    loadingTimer.textContent = count;
+
+    const interval = setInterval(() => {
+
+        count--;
+
+        loadingTimer.textContent = count;
+
+        if (count <= 0) {
+
+            clearInterval(interval);
+
+            loadingBox.innerHTML = "✅ Verifikasi Berhasil";
+
+            document.getElementById("downloadBox").style.display = "block";
+
+        }
+
+    }, 1000);
+
+}
+
+
+// =========================
+// FLOATING ADS
+// =========================
+
+function minimizeAd() {
+
+    document
+        .getElementById("floatingAd")
+        .classList
+        .toggle("minimized");
+
+}
+
+function closeFloatingAd() {
+
+    document.getElementById("floatingAd").style.display = "none";
+
 }
 </script>
-<script>
-function minimizeAd(){
 
-document
-.getElementById("floatingAd")
-.classList
-.toggle("minimized");
-
-}
-
-function closeAd(){
-
-document
-.getElementById("floatingAd")
-.style.display="none";
-
-}
-</script>
 </body>
 </html>
