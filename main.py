@@ -4,63 +4,92 @@ import secrets
 from datetime import datetime
 
 from fastapi import FastAPI, Request, Form
-from fastapi.responses import HTMLResponse, RedirectResponse, Response
+from fastapi.responses import (
+    HTMLResponse,
+    RedirectResponse,
+    Response
+)
 from fastapi.templating import Jinja2Templates
 
 from database import supabase
 from auth import hash_password, verify_password
 
+
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 
 
-# =========================
+# ======================================================
 # HOME
-# =========================
+# ======================================================
+
 @app.get("/")
 async def home(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+    return templates.TemplateResponse(
+        "index.html",
+        {"request": request}
+    )
 
 
-# =========================
+# ======================================================
 # LOGIN
-# =========================
+# ======================================================
+
 @app.get("/login")
 async def login_page(request: Request):
-    return templates.TemplateResponse("login.html", {"request": request})
+    return templates.TemplateResponse(
+        "login.html",
+        {"request": request}
+    )
 
 
 @app.post("/login")
-async def login_post(login: str = Form(...), password: str = Form(...)):
+async def login_post(
+    login: str = Form(...),
+    password: str = Form(...)
+):
 
-    res = supabase.table("users") \
-        .select("username,password,is_banned") \
-        .or_(f"username.eq.{login},gmail.eq.{login}") \
-        .limit(1) \
+    result = (
+        supabase.table("users")
+        .select("username,password,is_banned")
+        .or_(f"username.eq.{login},gmail.eq.{login}")
+        .limit(1)
         .execute()
+    )
 
-    if not res.data:
-        return RedirectResponse("/login?error=notfound", 303)
+    if not result.data:
+        return RedirectResponse(
+            "/login?error=notfound",
+            status_code=303
+        )
 
-    user = res.data[0]
+    user = result.data[0]
 
-    if user.get("is_banned"):
-        return RedirectResponse("/login?error=banned", 303)
+    if user.get("is_banned", False):
+        return RedirectResponse(
+            "/login?error=banned",
+            status_code=303
+        )
 
     if not verify_password(password, user["password"]):
-        return RedirectResponse("/login?error=wrongpass", 303)
+        return RedirectResponse(
+            "/login?error=wrongpass",
+            status_code=303
+        )
 
-    return RedirectResponse(f"/dashboard?login={user['username']}", 303)
-
-
-# =========================
+    return RedirectResponse(
+        url=f"/dashboard?login={user['username']}",
+        status_code=303
+    )
+# ======================================================
 # REGISTER
-# =========================
+# ======================================================
 @app.get("/register")
 async def register_page(request: Request):
-    return templates.TemplateResponse("register.html", {"request": request})
-
-
+    return templates.TemplateResponse(
+        "register.html",
+        {"request": request}
+    )
 @app.post("/register")
 async def register_post(
     gmail: str = Form(...),
@@ -68,10 +97,26 @@ async def register_post(
     password: str = Form(...),
     confirm_password: str = Form(...)
 ):
-
+    # Password tidak sama
     if password != confirm_password:
-        return RedirectResponse("/register?error=nomatch", 303)
-
+        return RedirectResponse(
+            "/register?error=nomatch",
+            status_code=303
+        )
+    # Cek username / gmail sudah digunakan
+    check = (
+        supabase.table("users")
+        .select("id")
+        .or_(f"username.eq.{username},gmail.eq.{gmail}")
+        .limit(1)
+        .execute()
+    )
+    if check.data:
+        return RedirectResponse(
+            "/register?error=exists",
+            status_code=303
+        )
+    # Simpan user baru
     supabase.table("users").insert({
         "gmail": gmail,
         "username": username,
@@ -81,39 +126,49 @@ async def register_post(
         "referrals": 0,
         "is_banned": False
     }).execute()
-
-    return RedirectResponse(f"/dashboard?login={username}", 303)
-
-
-# =========================
+    return RedirectResponse(
+        url=f"/dashboard?login={username}",
+        status_code=303
+    )
+# ======================================================
 # DASHBOARD
-# =========================
+# ======================================================
 @app.get("/dashboard")
-async def dashboard(request: Request, login: str = None):
-
+async def dashboard(
+    request: Request,
+    login: str | None = None
+):
     if not login:
-        return RedirectResponse("/login")
-
-    user_res = supabase.table("users") \
-        .select("*") \
-        .or_(f"username.eq.{login},gmail.eq.{login}") \
-        .limit(1) \
+        return RedirectResponse(
+            "/login",
+            status_code=303
+        )
+    result = (
+        supabase.table("users")
+        .select("*")
+        .or_(f"username.eq.{login},gmail.eq.{login}")
+        .limit(1)
         .execute()
-
-    if not user_res.data:
-        return RedirectResponse("/login")
-
-    user = user_res.data[0]
-
-    if user.get("is_banned"):
-        return HTMLResponse("Banned", status_code=403)
-
-    return templates.TemplateResponse("dashboard.html", {
-        "request": request,
-        "user": user
-    })
-
-
+    )
+    if not result.data:
+        return RedirectResponse(
+            "/login",
+            status_code=303
+        )
+    user = result.data[0]
+    if user.get("is_banned", False):
+        return HTMLResponse(
+            "Your account has been banned.",
+            status_code=403
+        )
+    return templates.TemplateResponse(
+        "dashboard.html",
+        {
+            "request": request,
+            "user": user,
+            "username": user["username"]
+        }
+    )
 # =========================
 # CREATE LINK
 # =========================
@@ -149,16 +204,18 @@ async def create_link(request: Request):
 
 
 # =========================
-# SHORTLINK -> TASK FLOW START
+# SHORTLINK
 # =========================
 @app.get("/s/{short_code}")
 async def shortlink(request: Request, short_code: str):
 
-    res = supabase.table("links") \
-        .select("*") \
-        .eq("short_code", short_code) \
-        .limit(1) \
+    res = (
+        supabase.table("links")
+        .select("*")
+        .eq("short_code", short_code)
+        .limit(1)
         .execute()
+    )
 
     if not res.data:
         return HTMLResponse("Not found", 404)
@@ -169,13 +226,14 @@ async def shortlink(request: Request, short_code: str):
         "clicks": (link.get("clicks") or 0) + 1
     }).eq("short_code", short_code).execute()
 
-    token = secrets.token_urlsafe(24)
+    token = secrets.token_urlsafe(32)
 
     supabase.table("download_tokens").insert({
         "token": token,
         "short_code": short_code,
         "step": 1,
-        "used": False
+        "used": False,
+        "created_at": datetime.utcnow().isoformat()
     }).execute()
 
     return templates.TemplateResponse(
@@ -187,125 +245,141 @@ async def shortlink(request: Request, short_code: str):
         }
     )
 # =========================
-# TASK 2 (LOCKED)
+# TASK2
 # =========================
 @app.get("/task2/{token}")
 async def task2(request: Request, token: str):
 
-    data = supabase.table("download_tokens") \
-        .select("*") \
-        .eq("token", token) \
-        .eq("step", 1) \
-        .eq("used", False) \
-        .limit(1) \
+    token_data = (
+        supabase.table("download_tokens")
+        .select("*")
+        .eq("token", token)
+        .eq("step", 1)
+        .eq("used", False)
+        .limit(1)
         .execute()
+    )
 
-    if not data.data:
-        return HTMLResponse("Invalid access", 403)
+    if not token_data.data:
+        return HTMLResponse("Access denied", 403)
 
-    return templates.TemplateResponse("task2.html", {
-        "request": request,
-        "token": token
-    })
+    return templates.TemplateResponse(
+        "task2.html",
+        {
+            "request": request,
+            "token": token
+        }
+    )
 # =========================
-# TASK 2 COMPLETE
+# COMPLETE TASK2
 # =========================
 @app.post("/complete-task2")
-async def complete_task2(request: Request):
+async def complete_task2(token: str = Form(...)):
 
-    form = await request.form()
-    token = form.get("token")
-
-    data = supabase.table("download_tokens") \
-        .select("step") \
-        .eq("token", token) \
-        .eq("step", 1) \
-        .eq("used", False) \
-        .limit(1) \
+    data = (
+        supabase.table("download_tokens")
+        .select("*")
+        .eq("token", token)
+        .eq("step", 1)
+        .eq("used", False)
+        .limit(1)
         .execute()
+    )
 
     if not data.data:
-        return RedirectResponse("/dashboard", 303)
+        return HTMLResponse("Invalid Token", 403)
 
-    supabase.table("download_tokens") \
-        .update({"step": 2}) \
-        .eq("token", token) \
-        .execute()
+    supabase.table("download_tokens").update({
+        "step": 2
+    }).eq("token", token).execute()
 
-    return RedirectResponse(f"/task3/{token}", 303)
+    return RedirectResponse(
+        f"/task3/{token}",
+        303
+    )
 # =========================
-# TASK 3 (FINAL STEP)
+# TASK3
 # =========================
 @app.get("/task3/{token}")
 async def task3(request: Request, token: str):
 
-    data = supabase.table("download_tokens") \
-        .select("*") \
-        .eq("token", token) \
-        .eq("step", 2) \
-        .eq("used", False) \
-        .limit(1) \
+    data = (
+        supabase.table("download_tokens")
+        .select("*")
+        .eq("token", token)
+        .eq("step", 2)
+        .eq("used", False)
+        .limit(1)
         .execute()
+    )
 
     if not data.data:
-        return HTMLResponse("Invalid access", 403)
+        return HTMLResponse("Access denied", 403)
 
-    return templates.TemplateResponse("task3.html", {
-        "request": request,
-        "token": token
-    })
+    return templates.TemplateResponse(
+        "task3.html",
+        {
+            "request": request,
+            "token": token
+        }
+    )
 # =========================
-# FINAL REWARD (FIXED REAL OWNER PAYMENT)
+# FINAL REWARD
 # =========================
 @app.post("/final-reward")
-async def final_reward(request: Request):
+async def final_reward(token: str = Form(...)):
 
-    form = await request.form()
-    token = form.get("token")
-
-    token_res = supabase.table("download_tokens") \
-        .select("short_code, used") \
-        .eq("token", token) \
-        .eq("step", 2) \
-        .eq("used", False) \
-        .limit(1) \
+    token_res = (
+        supabase.table("download_tokens")
+        .select("*")
+        .eq("token", token)
+        .eq("step", 2)
+        .eq("used", False)
+        .limit(1)
         .execute()
+    )
 
     if not token_res.data:
-        return RedirectResponse("/dashboard", 303)
+        return HTMLResponse("Invalid Token", 403)
 
     short_code = token_res.data[0]["short_code"]
 
-    link_res = supabase.table("links") \
-        .select("user_id") \
-        .eq("short_code", short_code) \
-        .limit(1) \
+    link = (
+        supabase.table("links")
+        .select("*")
+        .eq("short_code", short_code)
+        .limit(1)
         .execute()
+    )
 
-    if not link_res.data:
-        return RedirectResponse("/dashboard", 303)
+    if not link.data:
+        return HTMLResponse("Link not found", 404)
 
-    user_id = link_res.data[0]["user_id"]
+    owner_id = link.data[0]["user_id"]
 
-    user_res = supabase.table("users") \
-        .select("saldo") \
-        .eq("id", user_id) \
-        .limit(1) \
+    owner = (
+        supabase.table("users")
+        .select("*")
+        .eq("id", owner_id)
+        .limit(1)
         .execute()
+    )
 
-    saldo = user_res.data[0].get("saldo") or 0
+    saldo = owner.data[0].get("saldo") or 0
+    total = owner.data[0].get("total_earn") or 0
 
-    supabase.table("users") \
-        .update({"saldo": saldo + 300}) \
-        .eq("id", user_id) \
-        .execute()
+    reward = 300
 
-    supabase.table("download_tokens") \
-        .update({"used": True}) \
-        .eq("token", token) \
-        .execute()
+    supabase.table("users").update({
+        "saldo": saldo + reward,
+        "total_earn": total + reward
+    }).eq("id", owner_id).execute()
 
-    return RedirectResponse("/dashboard", 303)
+    supabase.table("download_tokens").update({
+        "used": True
+    }).eq("token", token).execute()
+
+    return RedirectResponse("/", 303)
 
 
 # =========================
