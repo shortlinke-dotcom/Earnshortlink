@@ -31,6 +31,20 @@ height:100%;
 background:#111827;
 border-right:1px solid rgba(255,255,255,.05);
 padding-top:20px;
+transition:.3s ease;
+z-index:9999;
+}
+
+.menu-toggle{
+display:none;
+width:42px;
+height:42px;
+border:none;
+border-radius:10px;
+background:#1e293b;
+color:#fff;
+font-size:18px;
+cursor:pointer;
 }
 
 .logo{
@@ -95,6 +109,21 @@ gap:10px;
 .main{
 margin-left:260px;
 padding:90px 25px 25px;
+}
+
+.overlay{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.45);
+display:none;
+z-index:9000;
+}
+
+.overlay.show{
+display:block;
 }
 
 /* CARDS */
@@ -174,16 +203,38 @@ margin-right:5px;
 .delete{background:#dc2626;}
 
 /* RESPONSIVE */
-@media(max-width:900px){
-.sidebar{left:-260px;}
-.topbar{left:0;}
-.main{margin-left:0;}
+@media (max-width:900px){
+
+.sidebar{
+left:-260px;
+}
+
+.sidebar.show{
+left:0;
+}
+
+.topbar{
+left:0;
+padding:0 15px;
+}
+
+.main{
+margin-left:0;
+padding:85px 15px 20px;
+}
+
+.menu-toggle{
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
 }
 </style>
 </head>
 
 <body>
-
+<div class="overlay" onclick="toggleSidebar()"></div>
 <!-- SIDEBAR -->
 <div class="sidebar">
 <div class="logo">EARN<span>SHORTLINK</span></div>
@@ -202,12 +253,24 @@ margin-right:5px;
 
 <!-- TOPBAR (SUDAH SAMA DASHBOARD STYLE) -->
 <div class="topbar">
-<div class="top-title">Kelola Tautan</div>
+
+<div style="display:flex;align-items:center;gap:15px;">
+
+<button class="menu-toggle" onclick="toggleSidebar()">
+<i class="fa-solid fa-bars"></i>
+</button>
+
+<div class="top-title">
+Kelola Tautan
+</div>
+
+</div>
+
 <div class="user">
 <i class="fa-solid fa-user"></i>
 </div>
-</div>
 
+</div>
 <!-- MAIN -->
 <div class="main">
 
@@ -306,6 +369,32 @@ btn.innerHTML = '<i class="fa-solid fa-check"></i>';
 setTimeout(()=>btn.innerHTML = old,1200);
 }
 </script>
+function toggleSidebar(){
+
+document.querySelector(".sidebar").classList.toggle("show");
+document.querySelector(".overlay").classList.toggle("show");
+
+}
+
+document.addEventListener("click",function(e){
+
+const sidebar=document.querySelector(".sidebar");
+const button=document.querySelector(".menu-toggle");
+const overlay=document.querySelector(".overlay");
+
+if(window.innerWidth<=900){
+
+if(
+!sidebar.contains(e.target) &&
+!button.contains(e.target)
+){
+sidebar.classList.remove("show");
+overlay.classList.remove("show");
+}
+
+}
+
+});
 
 </body>
 </html>
