@@ -21,7 +21,7 @@ background:#081120;
 color:#fff;
 }
 
-/* SIDEBAR (FIX) */
+/* SIDEBAR */
 .sidebar{
 position:fixed;
 left:0;
@@ -30,18 +30,17 @@ width:260px;
 height:100%;
 background:#111827;
 border-right:1px solid rgba(255,255,255,.05);
+padding-top:20px;
 }
 
 .logo{
-padding:25px;
+text-align:center;
 font-size:22px;
 font-weight:800;
-text-align:center;
+padding:10px 0 20px;
 }
 
 .logo span{color:#3b82f6;}
-
-.menu{padding:10px;}
 
 .menu a{
 display:flex;
@@ -51,7 +50,7 @@ padding:14px 18px;
 color:#d1d5db;
 text-decoration:none;
 border-radius:12px;
-margin-bottom:6px;
+margin:6px 10px;
 transition:.2s;
 }
 
@@ -65,17 +64,37 @@ background:#2563eb;
 color:#fff;
 }
 
+/* TOPBAR */
+.topbar{
+position:fixed;
+top:0;
+left:260px;
+right:0;
+height:65px;
+background:#0f172a;
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:0 20px;
+border-bottom:1px solid rgba(255,255,255,.08);
+z-index:1000;
+}
+
+.top-title{
+font-size:18px;
+font-weight:700;
+}
+
+.user{
+display:flex;
+align-items:center;
+gap:10px;
+}
+
 /* MAIN */
 .main{
 margin-left:260px;
-padding:30px;
-}
-
-/* TITLE */
-.title{
-font-size:30px;
-font-weight:800;
-margin-bottom:20px;
+padding:90px 25px 25px;
 }
 
 /* CARDS */
@@ -93,13 +112,9 @@ padding:20px;
 }
 
 .card small{color:#94a3b8;}
-.card h2{font-size:26px;margin-top:8px;}
+.card h2{font-size:26px;margin-top:6px;}
 
 /* SEARCH */
-.search-box{
-margin-bottom:20px;
-}
-
 .search-box input{
 width:100%;
 padding:14px;
@@ -108,6 +123,7 @@ border-radius:12px;
 background:#1e293b;
 color:#fff;
 outline:none;
+margin-bottom:20px;
 }
 
 /* TABLE */
@@ -134,7 +150,7 @@ border-top:1px solid rgba(255,255,255,.05);
 }
 
 .status{
-padding:5px 10px;
+padding:4px 10px;
 border-radius:20px;
 font-size:12px;
 font-weight:700;
@@ -157,71 +173,17 @@ margin-right:5px;
 .edit{background:#f59e0b;}
 .delete{background:#dc2626;}
 
-/* FOOTER INFO */
-.footer-info{
-display:flex;
-justify-content:space-between;
-margin-top:20px;
-color:#94a3b8;
-font-size:14px;
-}
-
 /* RESPONSIVE */
 @media(max-width:900px){
-.sidebar{
-left:-260px;
-}
-.main{
-margin-left:0;
-}
-}
-.topbar{
-position:fixed;
-top:0;
-left:260px;
-right:0;
-height:65px;
-background:#0f172a;
-display:flex;
-align-items:center;
-justify-content:space-between;
-padding:0 20px;
-border-bottom:1px solid rgba(255,255,255,.08);
-z-index:1000;
-}
-
-.top-title{
-font-weight:700;
-font-size:18px;
-}
-
-.menu-icon,.user-icon{
-font-size:20px;
-cursor:pointer;
-color:#fff;
-}
-.main{
-margin-left:260px;
-padding:90px 30px 30px 30px;
+.sidebar{left:-260px;}
+.topbar{left:0;}
+.main{margin-left:0;}
 }
 </style>
 </head>
 
 <body>
-<!-- TOPBAR -->
-<div class="topbar">
-    <div class="menu-icon">
-        <i class="fa-solid fa-bars"></i>
-    </div>
 
-    <div class="top-title">
-        Kelola Tautan
-    </div>
-
-    <div class="user-icon">
-        <i class="fa-solid fa-user"></i>
-    </div>
-</div>
 <!-- SIDEBAR -->
 <div class="sidebar">
 <div class="logo">EARN<span>SHORTLINK</span></div>
@@ -238,10 +200,16 @@ padding:90px 30px 30px 30px;
 </div>
 </div>
 
+<!-- TOPBAR -->
+<div class="topbar">
+<div class="top-title">Kelola Tautan</div>
+<div class="user">
+<i class="fa-solid fa-user"></i>
+</div>
+</div>
+
 <!-- MAIN -->
 <div class="main">
-
-<div class="title">Kelola Tautan</div>
 
 <!-- CARDS -->
 <div class="cards">
@@ -283,22 +251,13 @@ padding:90px 30px 30px 30px;
 <tbody>
 {% for link in links %}
 <tr>
-
 <td>
-<div style="font-weight:600;">
-{{ base_url }}/s/{{ link.short_code }}
-</div>
+<b>{{ base_url }}/s/{{ link.short_code }}</b><br>
 <small style="color:#94a3b8">{{ link.short_code }}</small>
 </td>
 
-<td>
-<div style="max-width:250px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
-{{ link.destination_url }}
-</div>
-</td>
-
+<td>{{ link.destination_url }}</td>
 <td>{{ link.clicks or 0 }}</td>
-
 <td>Rp {{ "{:,}".format(link.earnings or 0).replace(",", ".") }}</td>
 
 <td>
@@ -315,7 +274,7 @@ onclick="copyLink('{{ base_url }}/s/{{ link.short_code }}', this)">
 <i class="fa-solid fa-copy"></i>
 </button>
 
-<a href="/s/{{ link.short_code }}" target="_blank">
+<a href="/s/{{ link.short_code }}">
 <button class="btn edit"><i class="fa-solid fa-eye"></i></button>
 </a>
 
@@ -331,18 +290,10 @@ onclick="copyLink('{{ base_url }}/s/{{ link.short_code }}', this)">
 </button>
 </form>
 </td>
-
 </tr>
 {% endfor %}
 </tbody>
 </table>
-</div>
-
-<!-- FOOTER INFO -->
-<div class="footer-info">
-<div>Total Link: <b>{{ total_links }}</b></div>
-<div>Total Klik: <b>{{ total_clicks }}</b></div>
-<div>Total Pendapatan: <b>Rp {{ total_earn }}</b></div>
 </div>
 
 </div>
@@ -352,7 +303,7 @@ function copyLink(url, btn){
 navigator.clipboard.writeText(url);
 const old = btn.innerHTML;
 btn.innerHTML = '<i class="fa-solid fa-check"></i>';
-setTimeout(()=>btn.innerHTML = old, 1200);
+setTimeout(()=>btn.innerHTML = old,1200);
 }
 </script>
 
