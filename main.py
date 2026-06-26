@@ -30,7 +30,15 @@ async def home(request: Request):
         {"request": request}
     )
 
-
+# ======================================================
+# LOGIN PAGE
+# ======================================================
+@app.get("/login")
+async def login_page(request: Request):
+    return templates.TemplateResponse(
+        "login.html",
+        {"request": request}
+    )
 # ======================================================
 # LOGIN
 # ======================================================
