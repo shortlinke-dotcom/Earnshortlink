@@ -178,10 +178,14 @@ async def shortlink(request: Request, short_code: str):
         "used": False
     }).execute()
 
-    return templates.TemplateResponse("task1.html", {
-        "request": request,
-        "token": token
-    })
+    return templates.TemplateResponse(
+        "task1.html",
+        {
+            "request": request,
+            "token": token,
+            "destination_url": link["destination_url"]
+        }
+    )
 # =========================
 # TASK 2 (LOCKED)
 # =========================
