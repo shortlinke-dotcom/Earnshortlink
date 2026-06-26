@@ -115,9 +115,13 @@ async def auth_callback(request: Request):
     code = request.query_params.get("code")
 
     if not code:
+        print("❌ NO CODE FROM GOOGLE CALLBACK")
         return RedirectResponse("/login", 303)
 
     import requests
+
+    print("\n========== OAUTH CALLBACK START ==========")
+    print("CODE:", code)
 
     res = requests.post(
         f"{SUPABASE_URL}/auth/v1/token?grant_type=authorization_code",
@@ -128,26 +132,45 @@ async def auth_callback(request: Request):
         json={"code": code}
     )
 
-    data = res.json()
-    print("DEBUG SUPABASE:", data)
+    # 🔥 DEBUG RAW RESPONSE
+    print("\n========== SUPABASE RESPONSE ==========")
+    print("STATUS CODE:", res.status_code)
+    print("HEADERS:", dict(res.headers))
+    print("RAW TEXT:", res.text)
+    print("======================================\n")
+
+    # parsing JSON aman
+    try:
+        data = res.json()
+    except Exception as e:
+        print("❌ JSON PARSE ERROR:", e)
+        return RedirectResponse("/login", 303)
+
+    print("PARSED JSON:", data)
 
     # =========================
-    # CEK ERROR DULU
+    # CEK ERROR SUPABASE
     # =========================
     if data.get("error"):
+        print("❌ SUPABASE ERROR:", data.get("error"))
         return RedirectResponse("/login", 303)
 
     # =========================
-    # AMBIL EMAIL DENGAN AMAN
+    # AMBIL USER
     # =========================
     user = data.get("user")
+
     if not user:
+        print("❌ USER NOT FOUND IN RESPONSE")
         return RedirectResponse("/login", 303)
 
     email = user.get("email")
 
     if not email:
+        print("❌ EMAIL NOT FOUND")
         return RedirectResponse("/login", 303)
+
+    print("✅ LOGIN EMAIL:", email)
 
     # =========================
     # CEK DATABASE
@@ -160,14 +183,18 @@ async def auth_callback(request: Request):
         .execute()
     )
 
+    print("DB RESULT:", result.data)
+
     # SUDAH ADA → LOGIN
     if result.data:
+        print("✅ USER EXISTS → DASHBOARD")
         return RedirectResponse(
             f"/dashboard?login={result.data[0]['username']}",
             303
         )
 
     # BELUM ADA → SETUP USERNAME
+    print("⚠️ USER NOT FOUND → REDIRECT SETUP USERNAME")
     return RedirectResponse(
         f"/setup-username?email={email}",
         303
