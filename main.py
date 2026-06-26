@@ -86,15 +86,6 @@ async def auth_google():
         )
     )
 
-@app.get("/auth/facebook")
-async def auth_facebook():
-    return RedirectResponse(
-        url=(
-            f"{SUPABASE_URL}/auth/v1/authorize"
-            "?provider=facebook"
-            "&redirect_to=https://earnshortlink.up.railway.app/auth/callback"
-        )
-    )
 @app.get("/auth/callback")
 async def auth_callback():
 
