@@ -115,36 +115,29 @@ async def auth_callback(request: Request):
     code = request.query_params.get("code")
 
     if not code:
-        return RedirectResponse("/login?error=google_not_registered", 303)
+        return RedirectResponse("/login?error=wrongpass", 303)
 
     import requests
-    import os
-
-    SUPABASE_KEY = os.getenv("SUPABASE_KEY")
-
-    if not SUPABASE_KEY:
-        return RedirectResponse("/login?error=google_not_registered", 303)
 
     res = requests.post(
         f"{SUPABASE_URL}/auth/v1/token?grant_type=authorization_code",
         headers={
-            "apikey": SUPABASE_KEY,
+            "apikey": os.getenv("SUPABASE_KEY"),
             "Content-Type": "application/json"
         },
-        json={
-            "code": code
-        }
+        json={"code": code}
     )
 
     data = res.json()
 
-    # VALIDASI RESPONSE
-    if "user" not in data:
-        return RedirectResponse("/login?error=google_not_registered", 303)
+    user_data = data.get("user")
 
-    email = data["user"]["email"]
+    if not user_data:
+        return RedirectResponse("/login?error=wrongpass", 303)
 
-    # CEK DATABASE
+    email = user_data.get("email")
+
+    # cek user di database kamu
     result = (
         supabase.table("users")
         .select("*")
@@ -153,10 +146,47 @@ async def auth_callback(request: Request):
         .execute()
     )
 
-    # JIKA BELUM TERDAFTAR
+    # =========================
+    # AUTO REGISTER GOOGLE
+    # =========================
     if not result.data:
-        return RedirectResponse("/login?error=google_not_registered", 303)
 
+        base_username = email.split("@")[0]
+        username = base_username
+
+        # biar tidak tabrakan username
+        i = 1
+        while True:
+            check = (
+                supabase.table("users")
+                .select("id")
+                .eq("username", username)
+                .limit(1)
+                .execute()
+            )
+            if not check.data:
+                break
+            username = f"{base_username}{i}"
+            i += 1
+
+        supabase.table("users").insert({
+            "gmail": email,
+            "username": username,
+            "password": "",  # google user
+            "saldo": 0,
+            "total_earn": 0,
+            "referrals": 0,
+            "is_banned": False
+        }).execute()
+
+        return RedirectResponse(
+            f"/dashboard?login={username}",
+            303
+        )
+
+    # =========================
+    # LOGIN USER LAMA
+    # =========================
     user = result.data[0]
 
     return RedirectResponse(
