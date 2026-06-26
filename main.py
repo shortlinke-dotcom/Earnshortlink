@@ -104,22 +104,17 @@ async def login_post(
 @app.get("/auth/google")
 async def auth_google():
     return RedirectResponse(
-        f"{SUPABASE_URL}/auth/v1/authorize"
-        f"?provider=google"
-        f"&redirect_to={SUPABASE_URL}/auth/callback",
-        status_code=303
+        f"{SUPABASE_URL}/auth/v1/authorize?provider=google&redirect_to={SUPABASE_URL}/auth/v1/callback"
     )
     
 @app.get("/auth/callback")
 async def auth_callback(request: Request):
 
-    print("\n🔥 OAUTH CALLBACK HIT")
-    print("URL:", request.url)
+    print("🔥 CALLBACK HIT:", request.url)
 
     code = request.query_params.get("code")
 
     if not code:
-        print("❌ NO CODE")
         return RedirectResponse("/login?error=google_failed", 303)
 
     import requests
@@ -130,27 +125,25 @@ async def auth_callback(request: Request):
             "apikey": os.getenv("SUPABASE_KEY"),
             "Content-Type": "application/json"
         },
-        json={"code": code}
+        json={
+            "code": code
+        }
     )
 
     data = res.json()
 
     print("SUPABASE RESPONSE:", data)
 
-    user = data.get("user")
-
-    if not user:
+    session = data.get("user")
+    if not session:
         return RedirectResponse("/login?error=google_failed", 303)
 
-    email = user.get("email")
+    email = session.get("email")
 
     if not email:
         return RedirectResponse("/login?error=google_failed", 303)
 
-    # =========================
-    # CEK USER DI DATABASE
-    # =========================
-    result = (
+    user = (
         supabase.table("users")
         .select("*")
         .eq("gmail", email)
@@ -159,50 +152,35 @@ async def auth_callback(request: Request):
     )
 
     # =========================
-    # JIKA SUDAH ADA → LOGIN
+    # AUTO REGISTER
     # =========================
-    if result.data:
-        return RedirectResponse(
-            f"/dashboard?login={result.data[0]['username']}",
-            303
-        )
+    if not user.data:
 
-    # =========================
-    # JIKA BELUM ADA → AUTO REGISTER + SETUP USERNAME
-    # =========================
-    base = email.split("@")[0]
-    username = base
-    i = 1
+        base = email.split("@")[0]
+        username = base
+        i = 1
 
-    while True:
-        check = (
-            supabase.table("users")
-            .select("id")
-            .eq("username", username)
-            .limit(1)
-            .execute()
-        )
+        while True:
+            check = supabase.table("users").select("id").eq("username", username).execute()
+            if not check.data:
+                break
+            username = f"{base}{i}"
+            i += 1
 
-        if not check.data:
-            break
+        supabase.table("users").insert({
+            "gmail": email,
+            "username": username,
+            "password": "",
+            "saldo": 0,
+            "total_earn": 0,
+            "referrals": 0,
+            "is_banned": False
+        }).execute()
 
-        username = f"{base}{i}"
-        i += 1
+        return RedirectResponse(f"/dashboard?login={username}", 303)
 
-    supabase.table("users").insert({
-        "gmail": email,
-        "username": username,
-        "password": "",  # google user
-        "saldo": 0,
-        "total_earn": 0,
-        "referrals": 0,
-        "is_banned": False
-    }).execute()
-
-    return RedirectResponse(
-        f"/dashboard?login={username}",
-        303
-    )
+    # LOGIN EXISTING USER
+    return RedirectResponse(f"/dashboard?login={user.data[0]['username']}", 303)
 
 # ===============
 @app.get("/setup-username")
