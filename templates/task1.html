@@ -380,6 +380,100 @@ body{
     margin:auto;
     overflow:hidden;
 }
+
+/* =========================
+   FLOATING LOGIN REGISTER
+========================= */
+
+.side-auth{
+    position:fixed;
+    right:15px;
+    top:50%;
+    transform:translateY(-50%);
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    z-index:9998;
+}
+
+.auth-btn{
+    width:120px;
+    padding:14px 16px;
+    text-align:center;
+    text-decoration:none;
+    color:#fff;
+    font-weight:700;
+    border-radius:14px;
+    box-shadow:0 10px 25px rgba(0,0,0,.35);
+    transition:.25s;
+    animation:authPulse 2s infinite;
+}
+
+.auth-btn:hover{
+    transform:translateX(-6px);
+}
+
+.login-btn{
+    background:linear-gradient(135deg,#3b82f6,#2563eb);
+}
+
+.register-btn{
+    background:linear-gradient(135deg,#22c55e,#16a34a);
+}
+
+@keyframes authPulse{
+    0%{
+        transform:scale(1);
+    }
+    50%{
+        transform:scale(1.05);
+    }
+    100%{
+        transform:scale(1);
+    }
+}
+
+@media(max-width:768px){
+
+    .side-auth{
+        right:10px;
+    }
+
+    .auth-btn{
+        width:95px;
+        padding:12px;
+        font-size:13px;
+    }
+
+}
+
+.auth-info{
+    width:180px;
+    padding:12px;
+    margin-bottom:10px;
+    background:rgba(17,24,39,.95);
+    border:1px solid rgba(34,197,94,.35);
+    border-radius:14px;
+    color:#fff;
+    font-size:12px;
+    line-height:1.5;
+    text-align:center;
+    box-shadow:0 10px 25px rgba(0,0,0,.35);
+}
+
+.auth-info strong{
+    color:#22c55e;
+}
+
+@media(max-width:768px){
+
+    .auth-info{
+        width:140px;
+        font-size:11px;
+        padding:10px;
+    }
+
+}
 </style>
 </head>
 <body>
@@ -632,6 +726,24 @@ body{
 <!-- FOOTER -->
 <div class="footer">
     © 2026 EarnShortlink
+</div>
+
+<!-- FLOATING LOGIN & REGISTER -->
+<div class="side-auth">
+
+    <div class="auth-info">
+        💰 <strong>Mau Saldo Tambahan?</strong><br>
+        Daftar sekarang dan jadilah <b>Top Player</b> berpenghasilan nomor 1 di website <b>EARNSHORTLINK</b>.
+    </div>
+
+    <a href="login.html" class="auth-btn login-btn">
+        🔑 Login
+    </a>
+
+    <a href="register.html" class="auth-btn register-btn">
+        📝 Register
+    </a>
+
 </div>
 <!-- FLOATING BANNER -->
 <div id="floatingAd">
