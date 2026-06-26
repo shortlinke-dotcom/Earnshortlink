@@ -978,26 +978,8 @@ body{
 // OPEN TASK2 VIA BACKEND
 // =========================
 
-async function openTask2() {
-
-    try {
-
-        const res = await fetch("/api/create-access", {
-            method: "POST"
-        });
-
-        const data = await res.json();
-
-        if (!data.success) {
-            alert("Verifikasi gagal.");
-            return;
-        }
-
-        window.location.href = "/task2/" + encodeURIComponent(data.token);
-
-    } catch (err) {
-        alert("Server sedang bermasalah.");
-    }
+function openTask2() {
+    window.location.href = "/task2/{{ token }}";
 }
 // =========================
 // POPUP ADS
