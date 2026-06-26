@@ -171,6 +171,101 @@ a.btn{
     from{transform:rotate(0deg);}
     to{transform:rotate(360deg);}
 }
+
+.hand-anim{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:64px;
+    margin-bottom:12px;
+    animation:handBounce .8s ease-in-out infinite;
+    user-select:none;
+    filter:
+        drop-shadow(0 0 6px #00e5ff)
+        drop-shadow(0 0 12px #00e5ff)
+        drop-shadow(0 0 20px #00e5ff);
+}
+
+@keyframes handBounce{
+
+    0%{
+        transform:translateY(-8px);
+    }
+
+    50%{
+        transform:translateY(10px);
+    }
+
+    100%{
+        transform:translateY(-8px);
+    }
+
+}
+
+.btn-download{
+    background:linear-gradient(45deg,#22c55e,#16a34a);
+    color:#fff;
+    border:none;
+    padding:14px 24px;
+    border-radius:12px;
+    font-size:16px;
+    font-weight:700;
+    cursor:pointer;
+    box-shadow:0 0 20px rgba(34,197,94,.35);
+    transition:.25s;
+}
+
+.btn-download:hover{
+    transform:scale(1.05);
+}
+.rainbow-btn{
+    background:linear-gradient(
+        90deg,
+        #ff0000,
+        #ff8800,
+        #ffee00,
+        #00ff00,
+        #00ffff,
+        #0066ff,
+        #8a2be2,
+        #ff1493,
+        #ff0000
+    );
+    background-size:400% 100%;
+    color:#fff;
+    font-weight:800;
+    border:none;
+    border-radius:12px;
+    padding:14px 28px;
+    cursor:pointer;
+    animation:
+        rainbowMove 3s linear infinite,
+        pulseGlow 1s ease-in-out infinite;
+    box-shadow:
+        0 0 10px #ff0000,
+        0 0 20px #00ff00,
+        0 0 30px #0066ff;
+}
+
+@keyframes rainbowMove{
+    0%{
+        background-position:0% 50%;
+    }
+    100%{
+        background-position:100% 50%;
+    }
+}
+
+@keyframes pulseGlow{
+    0%,100%{
+        transform:scale(1);
+        filter:brightness(1);
+    }
+    50%{
+        transform:scale(1.08);
+        filter:brightness(1.4);
+    }
+}
 </style>
 </head>
 
@@ -212,6 +307,36 @@ a.btn{
     <script src="https://nooseamazingbatch.com/ccf15142f738c1098b148a5b80b9d570/invoke.js"></script>
 </div>
 
+<div style="text-align:center;margin-top:25px">
+
+    <!-- Tangan Animasi -->
+    <div class="hand-anim">
+        ☟
+    </div>
+
+    <button
+        id="downloadBtn"
+        class="btn btn-download"
+        onclick="startFirstTimer()">
+        ⬇ Download Link
+    </button>
+
+    <div
+        id="timerBox"
+        style="display:none;margin-top:20px;font-size:32px;font-weight:bold;color:#22c55e;">
+        10
+    </div>
+
+    <button
+        id="downloadNow"
+        class="btn btn-download rainbow-btn"
+        style="display:none"
+        onclick="showVerifyButton()">
+        🚀 DOWNLOAD NOW
+    </button>
+
+</div>
+
 <a class="btn btn-sponsor" href="#">🎁 Sponsor Offer</a>
 
 <!-- ARTIKEL 2 -->
@@ -239,31 +364,6 @@ a.btn{
     </script>
     <script src="https://nooseamazingbatch.com/5737a07c4a33cf9a6e8fc68028ae5b82/invoke.js"></script>
 </div>
-
-
-
-<div style="text-align:center;margin-top:25px">
-
-    <button
-        id="downloadBtn"
-        class="btn btn-download"
-        onclick="startFirstTimer()">
-        ⬇ Download Link
-    </button>
-
-    <div
-        id="timerBox"
-        style="display:none;margin-top:20px;font-size:32px;font-weight:bold;">
-        10
-    </div>
-
-    <button
-        id="downloadNow"
-        class="btn btn-download"
-        style="display:none"
-        onclick="showVerifyButton()">
-        DOWNLOAD NOW
-    </button>
 
     <button
         id="verifyBtn"
