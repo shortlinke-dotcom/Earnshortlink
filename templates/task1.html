@@ -383,105 +383,6 @@ body{
     overflow:hidden;
 }
 
-/* =========================
-   FLOATING LOGIN REGISTER
-========================= */
-
-/* FLOATING LEFT PANEL */
-.auth-panel{
-    position:fixed;
-    left:0;
-    top:50%;
-    transform:translateY(-50%);
-    width:260px;
-    background:rgba(17,24,39,.95);
-    border-right:2px solid #22c55e;
-    border-radius:0 16px 16px 0;
-    box-shadow:0 10px 30px rgba(0,0,0,.5);
-    z-index:99999;
-    transition:.3s;
-}
-
-/* HEADER */
-.auth-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:10px;
-    background:#111827;
-    font-weight:700;
-    color:#fff;
-}
-
-.auth-close{
-    background:#ef4444;
-    border:none;
-    color:#fff;
-    width:28px;
-    height:28px;
-    border-radius:6px;
-    cursor:pointer;
-}
-
-/* BODY */
-.auth-body{
-    padding:15px;
-    color:#fff;
-}
-
-.auth-body h3{
-    margin-bottom:10px;
-}
-
-.auth-body p{
-    font-size:13px;
-    color:#cbd5e1;
-    margin-bottom:15px;
-}
-
-/* BUTTON */
-.auth-btn{
-    width:100%;
-    padding:10px;
-    margin-bottom:10px;
-    border:none;
-    border-radius:10px;
-    cursor:pointer;
-    font-weight:700;
-}
-
-.auth-btn.login{
-    background:#3b82f6;
-    color:#fff;
-}
-
-.auth-btn.register{
-    background:#22c55e;
-    color:#fff;
-}
-
-/* OPEN BUTTON */
-.open-auth{
-    position:fixed;
-    left:10px;
-    top:50%;
-    transform:translateY(-50%);
-    width:50px;
-    height:50px;
-    border-radius:50%;
-    border:none;
-    background:#22c55e;
-    color:#fff;
-    font-size:22px;
-    cursor:pointer;
-    display:none;
-    z-index:99999;
-}
-
-/* HIDDEN STATE */
-.auth-hidden{
-    transform:translate(-110%, -50%);
-}
 </style>
 </head>
 <body>
@@ -496,12 +397,41 @@ body{
 </div>
 
 <!-- NAVBAR -->
-<div class="navbar">
+<div class="navbar" style="display:flex;justify-content:space-between;align-items:center;">
+
     <div class="logo">
         EARN<span>SHORTLINK</span>
     </div>
-</div>
 
+    <div style="display:flex;gap:10px;">
+
+        <a href="/login" style="
+            padding:10px 16px;
+            border-radius:10px;
+            text-decoration:none;
+            font-weight:700;
+            color:#fff;
+            background:linear-gradient(135deg,#3b82f6,#2563eb);
+            box-shadow:0 8px 20px rgba(0,0,0,.3);
+        ">
+            🔑 Login
+        </a>
+
+        <a href="/register" style="
+            padding:10px 16px;
+            border-radius:10px;
+            text-decoration:none;
+            font-weight:700;
+            color:#fff;
+            background:linear-gradient(135deg,#22c55e,#16a34a);
+            box-shadow:0 8px 20px rgba(0,0,0,.3);
+        ">
+            📝 Register
+        </a>
+
+    </div>
+
+</div>
 <div class="container">
 
     <!-- NOTIFIKASI -->
@@ -832,41 +762,6 @@ body{
     © 2026 EarnShortlink
 </div>
 
-<!-- FLOATING AUTH LEFT PANEL -->
-<div id="authPanel" class="auth-panel">
-
-    <div class="auth-header">
-        <span>💰 EarnShortlink</span>
-
-        <button onclick="toggleAuth()" class="auth-close">
-            ✕
-        </button>
-    </div>
-
-    <div class="auth-body">
-
-        <h3>Mau Saldo Tambahan?</h3>
-
-        <p>
-            Daftar sekarang dan jadi Top Player penghasilan nomor 1.
-        </p>
-
-        <button onclick="location.href='/login'" class="auth-btn login">
-            🔑 Masuk
-        </button>
-
-        <button onclick="location.href='/register'" class="auth-btn register">
-            📝 Daftar
-        </button>
-
-    </div>
-
-</div>
-
-<!-- TOGGLE BUTTON (muncul saat panel ditutup) -->
-<button id="openAuthBtn" onclick="toggleAuth()" class="open-auth">
-    💰
-</button>
 <!-- FLOATING BANNER -->
 <div id="floatingAd">
     <div class="ad-header">
