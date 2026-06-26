@@ -129,14 +129,29 @@ async def auth_callback(request: Request):
     )
 
     data = res.json()
-    user_data = data.get("user")
+    print("DEBUG SUPABASE:", data)
 
-    if not user_data:
+    # =========================
+    # CEK ERROR DULU
+    # =========================
+    if data.get("error"):
         return RedirectResponse("/login", 303)
 
-    email = user_data["email"]
+    # =========================
+    # AMBIL EMAIL DENGAN AMAN
+    # =========================
+    user = data.get("user")
+    if not user:
+        return RedirectResponse("/login", 303)
 
-    # cek user di database
+    email = user.get("email")
+
+    if not email:
+        return RedirectResponse("/login", 303)
+
+    # =========================
+    # CEK DATABASE
+    # =========================
     result = (
         supabase.table("users")
         .select("*")
@@ -145,17 +160,18 @@ async def auth_callback(request: Request):
         .execute()
     )
 
-    # =========================
-    # JIKA SUDAH ADA → DASHBOARD
-    # =========================
+    # SUDAH ADA → LOGIN
     if result.data:
-        user = result.data[0]
-        return RedirectResponse(f"/dashboard?login={user['username']}", 303)
+        return RedirectResponse(
+            f"/dashboard?login={result.data[0]['username']}",
+            303
+        )
 
-    # =========================
-    # JIKA BELUM ADA → FORM USERNAME
-    # =========================
-    return RedirectResponse(f"/setup-username?email={email}", 303)
+    # BELUM ADA → SETUP USERNAME
+    return RedirectResponse(
+        f"/setup-username?email={email}",
+        303
+    )
 
 # ===============
 @app.get("/setup-username")
