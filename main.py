@@ -69,16 +69,13 @@ async def login_post(
     password: str = Form(...)
 ):
 
-    print("Login yang dimasukkan:", repr(login))
-
     result = (
         supabase.table("users")
         .select("*")
-        .eq("username", login)
+        .eq("gmail", login)
+        .limit(1)
         .execute()
     )
-
-    print("Hasil query:", result.data)
 
     if not result.data:
         return RedirectResponse(
@@ -107,17 +104,65 @@ async def login_post(
 @app.get("/auth/google")
 async def auth_google():
     return RedirectResponse(
-        url=(
-            f"{SUPABASE_URL}/auth/v1/authorize"
-            "?provider=google"
-            "&redirect_to=https://earnshortlink.up.railway.app/auth/callback"
-        )
+        f"{SUPABASE_URL}/auth/v1/authorize"
+        "?provider=google"
+        "&redirect_to=https://earnshortlink.up.railway.app/auth/callback"
+    )
+    
+@app.get("/auth/callback")
+async def auth_callback(request: Request):
+
+    code = request.query_params.get("code")
+
+    if not code:
+        return RedirectResponse("/login?error=google_not_registered", 303)
+
+    import requests
+    import os
+
+    SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+
+    if not SUPABASE_KEY:
+        return RedirectResponse("/login?error=google_not_registered", 303)
+
+    res = requests.post(
+        f"{SUPABASE_URL}/auth/v1/token?grant_type=authorization_code",
+        headers={
+            "apikey": SUPABASE_KEY,
+            "Content-Type": "application/json"
+        },
+        json={
+            "code": code
+        }
     )
 
-@app.get("/auth/callback")
-async def auth_callback():
+    data = res.json()
 
-    return RedirectResponse("/dashboard")
+    # VALIDASI RESPONSE
+    if "user" not in data:
+        return RedirectResponse("/login?error=google_not_registered", 303)
+
+    email = data["user"]["email"]
+
+    # CEK DATABASE
+    result = (
+        supabase.table("users")
+        .select("*")
+        .eq("gmail", email)
+        .limit(1)
+        .execute()
+    )
+
+    # JIKA BELUM TERDAFTAR
+    if not result.data:
+        return RedirectResponse("/login?error=google_not_registered", 303)
+
+    user = result.data[0]
+
+    return RedirectResponse(
+        f"/dashboard?login={user['username']}",
+        303
+    )
 # ======================================================
 # REGISTER
 # ======================================================
