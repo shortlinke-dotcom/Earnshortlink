@@ -115,7 +115,7 @@ async def auth_callback(request: Request):
     code = request.query_params.get("code")
 
     if not code:
-        return RedirectResponse("/login?error=wrongpass", 303)
+        return RedirectResponse("/login", 303)
 
     import requests
 
@@ -129,15 +129,14 @@ async def auth_callback(request: Request):
     )
 
     data = res.json()
-
     user_data = data.get("user")
 
     if not user_data:
-        return RedirectResponse("/login?error=wrongpass", 303)
+        return RedirectResponse("/login", 303)
 
-    email = user_data.get("email")
+    email = user_data["email"]
 
-    # cek user di database kamu
+    # cek user di database
     result = (
         supabase.table("users")
         .select("*")
@@ -147,50 +146,63 @@ async def auth_callback(request: Request):
     )
 
     # =========================
-    # AUTO REGISTER GOOGLE
+    # JIKA SUDAH ADA → DASHBOARD
     # =========================
-    if not result.data:
+    if result.data:
+        user = result.data[0]
+        return RedirectResponse(f"/dashboard?login={user['username']}", 303)
 
-        base_username = email.split("@")[0]
-        username = base_username
+    # =========================
+    # JIKA BELUM ADA → FORM USERNAME
+    # =========================
+    return RedirectResponse(f"/setup-username?email={email}", 303)
 
-        # biar tidak tabrakan username
-        i = 1
-        while True:
-            check = (
-                supabase.table("users")
-                .select("id")
-                .eq("username", username)
-                .limit(1)
-                .execute()
-            )
-            if not check.data:
-                break
-            username = f"{base_username}{i}"
-            i += 1
+# ===============
+@app.get("/setup-username")
+async def setup_username(request: Request, email: str):
 
-        supabase.table("users").insert({
-            "gmail": email,
-            "username": username,
-            "password": "",  # google user
-            "saldo": 0,
-            "total_earn": 0,
-            "referrals": 0,
-            "is_banned": False
-        }).execute()
+    return templates.TemplateResponse(
+        "setup_username.html",
+        {
+            "request": request,
+            "email": email
+        }
+    )
 
+@app.post("/setup-username")
+async def setup_username_post(
+    email: str = Form(...),
+    username: str = Form(...)
+):
+
+    # cek username dipakai
+    check = (
+        supabase.table("users")
+        .select("id")
+        .eq("username", username)
+        .limit(1)
+        .execute()
+    )
+
+    if check.data:
         return RedirectResponse(
-            f"/dashboard?login={username}",
+            f"/setup-username?email={email}&error=exists",
             303
         )
 
-    # =========================
-    # LOGIN USER LAMA
-    # =========================
-    user = result.data[0]
+    # insert user baru
+    supabase.table("users").insert({
+        "gmail": email,
+        "username": username,
+        "password": "",
+        "saldo": 0,
+        "total_earn": 0,
+        "referrals": 0,
+        "is_banned": False
+    }).execute()
 
     return RedirectResponse(
-        f"/dashboard?login={user['username']}",
+        f"/dashboard?login={username}",
         303
     )
 # ======================================================
