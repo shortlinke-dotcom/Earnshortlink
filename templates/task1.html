@@ -382,7 +382,46 @@ body{
     margin:auto;
     overflow:hidden;
 }
+.login-btn{
+    padding:6px 12px;
+    border-radius:8px;
+    font-size:13px;
+    font-weight:600;
+    text-decoration:none;
+    color:#fff;
+    background:rgba(59,130,246,.85);
+    border:1px solid rgba(59,130,246,.3);
+    animation: blinkGlow 2s infinite;
+}
 
+.register-btn{
+    padding:6px 12px;
+    border-radius:8px;
+    font-size:13px;
+    font-weight:600;
+    text-decoration:none;
+    color:#fff;
+    background:rgba(34,197,94,.85);
+    border:1px solid rgba(34,197,94,.3);
+    animation: shakePulse 2.5s infinite;
+}
+
+/* LOGIN KEDIP */
+@keyframes blinkGlow {
+    0% {opacity:1;}
+    50% {opacity:0.5; box-shadow:0 0 10px rgba(59,130,246,.6);}
+    100% {opacity:1;}
+}
+
+/* REGISTER GETAR */
+@keyframes shakePulse {
+    0% {transform:rotate(0);}
+    20% {transform:rotate(2deg);}
+    40% {transform:rotate(-2deg);}
+    60% {transform:rotate(1deg);}
+    80% {transform:rotate(-1deg);}
+    100% {transform:rotate(0);}
+}
 </style>
 </head>
 <body>
@@ -933,6 +972,8 @@ body{
     }
 
 }
+</script>
+<script>
 // =========================
 // OPEN TASK2 VIA BACKEND
 // =========================
