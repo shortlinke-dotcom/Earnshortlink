@@ -175,11 +175,53 @@ left:-260px;
 margin-left:0;
 }
 }
+.topbar{
+position:fixed;
+top:0;
+left:260px;
+right:0;
+height:65px;
+background:#0f172a;
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:0 20px;
+border-bottom:1px solid rgba(255,255,255,.08);
+z-index:1000;
+}
+
+.top-title{
+font-weight:700;
+font-size:18px;
+}
+
+.menu-icon,.user-icon{
+font-size:20px;
+cursor:pointer;
+color:#fff;
+}
+.main{
+margin-left:260px;
+padding:90px 30px 30px 30px;
+}
 </style>
 </head>
 
 <body>
+<!-- TOPBAR -->
+<div class="topbar">
+    <div class="menu-icon">
+        <i class="fa-solid fa-bars"></i>
+    </div>
 
+    <div class="top-title">
+        Kelola Tautan
+    </div>
+
+    <div class="user-icon">
+        <i class="fa-solid fa-user"></i>
+    </div>
+</div>
 <!-- SIDEBAR -->
 <div class="sidebar">
 <div class="logo">EARN<span>SHORTLINK</span></div>
