@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kelola Tautan • EarnShortlink</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css">
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Poppins,sans-serif;
+}
+body{
+background:#081120;
+color:#fff;
+overflow-x:hidden;
+}
+.sidebar{
+position:fixed;
+left:0;
+top:0;
+width:260px;
+height:100%;
+background:#111827;
+border-right:1px solid rgba(255,255,255,.05);
+}
+.logo{
+padding:25px;
+font-size:24px;
+font-weight:800;
+text-align:center;
+}
+.logo span{
+color:#3b82f6;
+}
+.menu{
+padding:10px;
+}
+.menu a{
+display:flex;
+align-items:center;
+gap:12px;
+padding:14px 18px;
+color:#d1d5db;
+text-decoration:none;
+border-radius:12px;
+margin-bottom:6px;
+transition:.25s;
+}
+.menu a:hover{
+background:#1e293b;
+color:#fff;
+}
+.menu a.active{
+background:#2563eb;
+color:#fff;
+}
+.main{
+margin-left:260px;
+padding:30px;
+}
+.topbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:25px;
+}
+.title{
+font-size:30px;
+font-weight:800;
+}
+.cards{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:18px;
+margin-bottom:30px;
+}
+.card{
+background:#111827;
+border-radius:18px;
+padding:20px;
+}
+.card small{
+color:#94a3b8;
+display:block;
+margin-bottom:8px;
+}
+.card h2{
+font-size:28px;
+}
+.search-box{
+margin-bottom:25px;
+}
+.search-box input{
+width:100%;
+padding:14px;
+border:none;
+outline:none;
+border-radius:14px;
+background:#1e293b;
+color:#fff;
+font-size:15px;
+}
+.table-box{
+background:#111827;
+border-radius:18px;
+overflow:hidden;
+}
+table{
+width:100%;
+border-collapse:collapse;
+}
+thead{
+background:#1e293b;
+}
+th{
+padding:16px;
+text-align:left;
+font-size:14px;
+}
+td{
+padding:16px;
+border-top:1px solid rgba(255,255,255,.05);
+font-size:14px;
+}
+.status{
+padding:5px 12px;
+border-radius:30px;
+font-size:12px;
+font-weight:700;
+}
+.active{
+background:#16a34a;
+}
+.inactive{
+background:#dc2626;
+}
+.btn{
+padding:8px 12px;
+border:none;
+border-radius:10px;
+cursor:pointer;
+color:white;
+margin-right:5px;
+}
+.copy{
+background:#2563eb;
+}
+.edit{
+background:#f59e0b;
+}
+.delete{
+background:#dc2626;
+}
+@media(max-width:900px){
+.sidebar{
+left:-260px;
+}
+.main{
+margin-left:0;
+}
+}
+</style>
+</head>
+<body>
+<div class="sidebar">
+<div class="logo">
+EARN<span>SHORTLINK</span>
+</div>
+<div class="menu">
+<a href="/dashboard">
+<i class="fa-solid fa-house"></i>
+Dashboard
+</a>
+<a href="/links" class="active">
+<i class="fa-solid fa-link"></i>
+Kelola Tautan
+</a>
+<a href="/sell-link">
+<i class="fa-solid fa-plus"></i>
+Sell Link
+</a>
+<a href="/payments">
+<i class="fa-solid fa-wallet"></i>
+Payments
+</a>
+<a href="/referrals">
+<i class="fa-solid fa-users"></i>
+Referrals
+</a>
+<a href="/invoices">
+<i class="fa-solid fa-file-invoice"></i>
+Invoices
+</a>
+<a href="/settings">
+<i class="fa-solid fa-gear"></i>
+Pengaturan
+</a>
+<a href="/support">
+<i class="fa-solid fa-headset"></i>
+Support
+</a>
+</div>
+</div>
+<div class="main">
+<div class="topbar">
+<div class="title">
+Kelola Tautan
+</div>
+</div>
+<div class="cards">
+<div class="card">
+<small>Total Link</small>
+<h2>{{ total_links }}</h2>
+</div>
+<div class="card">
+<small>Total Klik</small>
+<h2>{{ total_clicks }}</h2>
+</div>
+<div class="card">
+<small>Total Pendapatan</small>
+<h2>Rp {{ total_earn }}</h2>
+</div>
+</div>
+<div class="search-box">
+<input
+id="searchInput"
+type="text"
+placeholder="Cari shortlink...">
+</div>
+<div class="table-box">
+<table>
+<thead>
+<tr>
+<th>Shortlink</th>
+<th>Tujuan</th>
+<th>Klik</th>
+<th>Pendapatan</th>
+<th>Status</th>
+<th>Aksi</th>
+</tr>
+</thead>
+<tbody id="tableBody">
+{% for link in links %}
+<tr>
+    <!-- SHORTLINK -->
+    <td>
+        <div style="font-weight:600;">
+            {{ base_url }}/s/{{ link.short_code }}
+        </div>
+        <small style="color:#94a3b8;">
+            {{ link.short_code }}
+        </small>
+    </td>
+    <!-- URL TUJUAN -->
+    <td>
+        <div style="
+            max-width:280px;
+            white-space:nowrap;
+            overflow:hidden;
+            text-overflow:ellipsis;
+        ">
+            {{ link.destination_url }}
+        </div>
+    </td>
+    <!-- TOTAL CLICK -->
+    <td>
+        {{ link.clicks }}
+    </td>
+    <!-- EARNINGS -->
+    <td>
+        Rp {{ "{:,}".format(link.earnings).replace(",", ".") }}
+    </td>
+    <!-- STATUS -->
+    <td>
+        {% if link.is_active %}
+        <span class="status active">
+            Aktif
+        </span>
+        {% else %}
+        <span class="status inactive">
+            Nonaktif
+        </span>
+        {% endif %}
+    </td>
+    <!-- ACTION -->
+    <td>
+        <!-- COPY -->
+        <button
+            class="btn copy"
+            onclick="copyLink('{{ base_url }}/s/{{ link.short_code }}')">
+            <i class="fa-solid fa-copy"></i>
+        </button>
+        <!-- BUKA LINK -->
+        <a
+            href="/s/{{ link.short_code }}"
+            target="_blank">
+            <button class="btn edit">
+                <i class="fa-solid fa-eye"></i>
+            </button>
+        </a>
+        <!-- EDIT -->
+        <a
+            href="/edit-link/{{ link.id }}">
+            <button
+                class="btn"
+                style="background:#0ea5e9;">
+                <i class="fa-solid fa-pen"></i>
+            </button>
+        </a>
+        <!-- DELETE -->
+        <form
+            action="/delete-link/{{ link.id }}"
+            method="post"
+            style="display:inline;"
+            onsubmit="return confirm('Hapus shortlink ini?')">
+            <button
+                class="btn delete">
+                <i class="fa-solid fa-trash"></i>
+            </button>
+        </form>
+    </td>
+</tr>
+{% else %}
+<tr>
+<td
+colspan="6"
+style="
+padding:40px;
+text-align:center;
+color:#94a3b8;
+">
+<i
+class="fa-solid fa-link-slash"
+style="font-size:50px;margin-bottom:15px;display:block;">
+</i>
+Belum ada shortlink yang dibuat.
+<br><br>
+<a
+href="/dashboard"
+style="
+background:#2563eb;
+padding:10px 20px;
+border-radius:10px;
+color:white;
+text-decoration:none;
+">
++ Buat Shortlink
+</a>
+</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+<br>
+<div
+style="
+display:flex;
+justify-content:space-between;
+align-items:center;
+color:#94a3b8;
+font-size:14px;
+">
+<div>
+Total Link :
+<b>{{ total_links }}</b>
+</div>
+<div>
+Total Klik :
+<b>{{ total_clicks }}</b>
+</div>
+<div>
+Total Pendapatan :
+<b>Rp {{ total_earn }}</b>
+</div>
+</div>
+            </tbody>
+        </table>
+    </div>
+
+    {% else %}
+
+    <div class="empty-box">
+        <i class="fa-solid fa-link-slash"></i>
+        <h2>Belum Ada Shortlink</h2>
+        <p>
+            Kamu belum membuat shortlink satupun.
+            Silakan kembali ke Dashboard lalu buat shortlink pertama.
+        </p>
+
+        <a href="/dashboard?login={{ username }}" class="back-btn">
+            <i class="fa-solid fa-arrow-left"></i>
+            Kembali ke Dashboard
+        </a>
+    </div>
+
+    {% endif %}
+
+</div>
+
+<script>
+
+function copyLink(btn){
+
+    const input = btn.parentElement.querySelector(".copy-input");
+
+    navigator.clipboard.writeText(input.value);
+
+    const old = btn.innerHTML;
+
+    btn.innerHTML =
+        '<i class="fa-solid fa-check"></i> Copied';
+
+    setTimeout(()=>{
+        btn.innerHTML = old;
+    },1500);
+
+}
+
+</script>
+
+</body>
+</html>
