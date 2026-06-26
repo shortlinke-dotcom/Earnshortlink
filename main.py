@@ -180,11 +180,8 @@ async def shortlink(request: Request, short_code: str):
 
     return templates.TemplateResponse("task1.html", {
         "request": request,
-        "token": token,
-        "destination_url": link["destination_url"]
+        "token": token
     })
-
-
 # =========================
 # TASK 2 (LOCKED)
 # =========================
@@ -206,8 +203,6 @@ async def task2(request: Request, token: str):
         "request": request,
         "token": token
     })
-
-
 # =========================
 # TASK 2 COMPLETE
 # =========================
@@ -217,14 +212,23 @@ async def complete_task2(request: Request):
     form = await request.form()
     token = form.get("token")
 
+    data = supabase.table("download_tokens") \
+        .select("step") \
+        .eq("token", token) \
+        .eq("step", 1) \
+        .eq("used", False) \
+        .limit(1) \
+        .execute()
+
+    if not data.data:
+        return RedirectResponse("/dashboard", 303)
+
     supabase.table("download_tokens") \
         .update({"step": 2}) \
         .eq("token", token) \
         .execute()
 
     return RedirectResponse(f"/task3/{token}", 303)
-
-
 # =========================
 # TASK 3 (FINAL STEP)
 # =========================
@@ -246,8 +250,6 @@ async def task3(request: Request, token: str):
         "request": request,
         "token": token
     })
-
-
 # =========================
 # FINAL REWARD (FIXED REAL OWNER PAYMENT)
 # =========================
@@ -255,14 +257,10 @@ async def task3(request: Request, token: str):
 async def final_reward(request: Request):
 
     form = await request.form()
-    token = (form.get("token") or "").strip()
+    token = form.get("token")
 
-    if not token:
-        return RedirectResponse("/dashboard", status_code=303)
-
-    # 1. VALIDASI TOKEN
     token_res = supabase.table("download_tokens") \
-        .select("short_code, used, step") \
+        .select("short_code, used") \
         .eq("token", token) \
         .eq("step", 2) \
         .eq("used", False) \
@@ -270,11 +268,10 @@ async def final_reward(request: Request):
         .execute()
 
     if not token_res.data:
-        return RedirectResponse("/dashboard", status_code=303)
+        return RedirectResponse("/dashboard", 303)
 
     short_code = token_res.data[0]["short_code"]
 
-    # 2. AMBIL OWNER LINK
     link_res = supabase.table("links") \
         .select("user_id") \
         .eq("short_code", short_code) \
@@ -282,53 +279,29 @@ async def final_reward(request: Request):
         .execute()
 
     if not link_res.data:
-        return RedirectResponse("/dashboard", status_code=303)
+        return RedirectResponse("/dashboard", 303)
 
     user_id = link_res.data[0]["user_id"]
 
-    # 3. AMBIL SALDO CURRENT
     user_res = supabase.table("users") \
         .select("saldo") \
         .eq("id", user_id) \
         .limit(1) \
         .execute()
 
-    if not user_res.data:
-        return RedirectResponse("/dashboard", status_code=303)
+    saldo = user_res.data[0].get("saldo") or 0
 
-    current_saldo = user_res.data[0].get("saldo") or 0
-
-    # 4. UPDATE SALDO OWNER LINK
     supabase.table("users") \
-        .update({
-            "saldo": current_saldo + 300
-        }) \
+        .update({"saldo": saldo + 300}) \
         .eq("id", user_id) \
         .execute()
 
-    # 5. LOCK TOKEN (ANTI DOUBLE CLAIM)
     supabase.table("download_tokens") \
-        .update({
-            "used": True
-        }) \
+        .update({"used": True}) \
         .eq("token", token) \
         .execute()
 
-    return RedirectResponse("/dashboard", status_code=303)
-# =========================
-# CHECK ACCESS API
-# =========================
-@app.get("/api/check-access")
-async def check_access(token: str):
-
-    res = supabase.table("download_tokens") \
-        .select("*") \
-        .eq("token", token) \
-        .eq("used", False) \
-        .limit(1) \
-        .execute()
-
-    return {"valid": bool(res.data)}
+    return RedirectResponse("/dashboard", 303)
 
 
 # =========================
