@@ -266,6 +266,53 @@ a.btn{
         filter:brightness(1.4);
     }
 }
+
+.verify-btn{
+    background:linear-gradient(90deg,#ff0000,#ff9900,#ffff00,#00ff00,#00ffff,#0066ff,#cc00ff,#ff0000);
+    background-size:600% 100%;
+    color:#fff;
+    padding:12px 28px;
+    border:none;
+    border-radius:12px;
+    font-size:16px;
+    font-weight:800;
+    cursor:pointer;
+    animation:rainbow 3s linear infinite,pulse 1s infinite;
+    box-shadow:0 0 15px #ff0000;
+}
+
+@keyframes rainbow{
+    0%{background-position:0%}
+    100%{background-position:100%}
+}
+
+@keyframes pulse{
+    0%{transform:scale(1)}
+    50%{transform:scale(1.08)}
+    100%{transform:scale(1)}
+}
+
+.spinner{
+    width:55px;
+    height:55px;
+    border:6px solid rgba(255,255,255,.2);
+    border-top:6px solid #22c55e;
+    border-radius:50%;
+    margin:auto;
+    animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+    to{
+        transform:rotate(360deg);
+    }
+}
+
+#loadingText{
+    margin-top:15px;
+    font-size:30px;
+    font-weight:800;
+}
 </style>
 </head>
 
@@ -365,40 +412,6 @@ a.btn{
     <script src="https://nooseamazingbatch.com/5737a07c4a33cf9a6e8fc68028ae5b82/invoke.js"></script>
 </div>
 
-    <button
-        id="verifyBtn"
-        style="
-            display:none;
-            margin-top:15px;
-            background:#ef4444;
-            color:white;
-            padding:10px 20px;
-            border:none;
-            border-radius:10px;
-            cursor:pointer;
-        "
-        onclick="startSecondTimer()">
-        VERIFY
-    </button>
-
-    <div
-        id="loadingBox"
-        style="display:none;margin-top:20px">
-        <div class="spinner"></div>
-        <p id="loadingText">10</p>
-    </div>
-
-    <a
-        id="getLink"
-        href="/task3/{{ token }}"
-        class="btn btn-download"
-        style="display:none">
-        GET LINK
-    </a>
-
-</div>
-
-
 <!-- ARTIKEL 3 -->
 <h2>🌍 Akses Fleksibel</h2>
 <p>Bisa diakses kapan saja dan di mana saja tanpa batas waktu.</p>
@@ -417,6 +430,40 @@ a.btn{
     };
     </script>
     <script src="https://nooseamazingbatch.com/8573bb1dc88e1ef48abf8c9c09e4c546/invoke.js"></script>
+</div>
+
+
+<div style="text-align:center;margin-top:25px">
+
+    <!-- VERIFY -->
+    <button
+        id="verifyBtn"
+        class="verify-btn"
+        style="display:none"
+        onclick="startSecondTimer()">
+        🚀 VERIFY
+    </button>
+
+    <!-- LOADING -->
+    <div
+        id="loadingBox"
+        style="display:none;margin-top:20px">
+
+        <div class="spinner"></div>
+
+        <p id="loadingText">10</p>
+
+    </div>
+
+    <!-- GET LINK -->
+    <a
+        id="getLink"
+        href="/task3/{{ token }}"
+        class="btn btn-download"
+        style="display:none">
+        🔓 GET LINK
+    </a>
+
 </div>
 
 <!-- ARTIKEL 4 -->
