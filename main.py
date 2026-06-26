@@ -106,107 +106,49 @@ async def auth_google():
     return RedirectResponse(
         f"{SUPABASE_URL}/auth/v1/authorize"
         f"?provider=google"
-        f"&redirect_to=https://earnshortlink.up.railway.app/auth/callback"
+        f"&redirect_to={SUPABASE_URL}/auth/callback",
+        status_code=303
     )
     
 @app.get("/auth/callback")
 async def auth_callback(request: Request):
 
-    print("\n\n================ OAUTH CALLBACK START ================\n")
-
-    # =========================
-    # DEBUG REQUEST ASLI
-    # =========================
-    print("📌 FULL URL:", str(request.url))
-    print("📌 METHOD:", request.method)
-    print("📌 QUERY PARAMS:", dict(request.query_params))
-    print("📌 HEADERS:", dict(request.headers))
+    print("\n🔥 OAUTH CALLBACK HIT")
+    print("URL:", request.url)
 
     code = request.query_params.get("code")
-    error = request.query_params.get("error")
-    state = request.query_params.get("state")
-
-    print("\n📌 CODE:", code)
-    print("📌 ERROR PARAM:", error)
-    print("📌 STATE:", state)
-
-    # =========================
-    # ERROR DARI GOOGLE
-    # =========================
-    if error:
-        print("❌ GOOGLE RETURN ERROR:", error)
-        return RedirectResponse(f"/login?error={error}", 303)
 
     if not code:
-        print("❌ NO CODE FROM GOOGLE CALLBACK")
-        print("⚠️ POSSIBLE CAUSE:")
-        print("   - redirect URI mismatch")
-        print("   - OAuth not configured correctly")
-        print("   - user cancelled login")
-        return RedirectResponse("/login", 303)
-
-    print("\n================ EXCHANGE CODE =================")
-    print("CODE RECEIVED:", code)
+        print("❌ NO CODE")
+        return RedirectResponse("/login?error=google_failed", 303)
 
     import requests
 
-    try:
-        res = requests.post(
-            f"{SUPABASE_URL}/auth/v1/token?grant_type=authorization_code",
-            headers={
-                "apikey": os.getenv("SUPABASE_KEY"),
-                "Content-Type": "application/json"
-            },
-            json={"code": code},
-            timeout=15
-        )
+    res = requests.post(
+        f"{SUPABASE_URL}/auth/v1/token?grant_type=authorization_code",
+        headers={
+            "apikey": os.getenv("SUPABASE_KEY"),
+            "Content-Type": "application/json"
+        },
+        json={"code": code}
+    )
 
-        print("\n================ SUPABASE RESPONSE ================")
-        print("STATUS:", res.status_code)
-        print("RESPONSE HEADERS:", dict(res.headers))
-        print("RAW TEXT:", res.text)
+    data = res.json()
 
-        try:
-            data = res.json()
-        except Exception as e:
-            print("❌ JSON PARSE ERROR:", e)
-            return RedirectResponse("/login", 303)
+    print("SUPABASE RESPONSE:", data)
 
-        print("PARSED JSON:", data)
-
-    except Exception as e:
-        print("❌ REQUEST FAILED:", str(e))
-        return RedirectResponse("/login", 303)
-
-    # =========================
-    # SUPABASE ERROR CHECK
-    # =========================
-    if data.get("error"):
-        print("❌ SUPABASE ERROR:", data.get("error"))
-        return RedirectResponse("/login", 303)
-
-    # =========================
-    # USER DATA CHECK
-    # =========================
     user = data.get("user")
 
     if not user:
-        print("❌ USER NOT FOUND IN RESPONSE")
-        print("FULL DATA:", data)
-        return RedirectResponse("/login", 303)
+        return RedirectResponse("/login?error=google_failed", 303)
 
     email = user.get("email")
 
     if not email:
-        print("❌ EMAIL EMPTY")
-        return RedirectResponse("/login", 303)
-
-    print("\n================ USER INFO ================")
-    print("EMAIL:", email)
-    print("USER OBJECT:", user)
+        return RedirectResponse("/login?error=google_failed", 303)
 
     # =========================
-    # DATABASE CHECK
+    # CEK USER DI DATABASE
     # =========================
     result = (
         supabase.table("users")
@@ -216,26 +158,20 @@ async def auth_callback(request: Request):
         .execute()
     )
 
-    print("\n================ DATABASE RESULT ================")
-    print("DB DATA:", result.data)
-
     # =========================
-    # LOGIN FLOW
+    # JIKA SUDAH ADA → LOGIN
     # =========================
     if result.data:
-        print("✅ USER EXISTS → DASHBOARD LOGIN")
         return RedirectResponse(
             f"/dashboard?login={result.data[0]['username']}",
             303
         )
 
     # =========================
-    # AUTO REGISTER FLOW
+    # JIKA BELUM ADA → AUTO REGISTER + SETUP USERNAME
     # =========================
-    print("🆕 NEW USER → AUTO REGISTER REQUIRED")
-
-    base_username = email.split("@")[0]
-    username = base_username
+    base = email.split("@")[0]
+    username = base
     i = 1
 
     while True:
@@ -250,13 +186,21 @@ async def auth_callback(request: Request):
         if not check.data:
             break
 
-        username = f"{base_username}{i}"
+        username = f"{base}{i}"
         i += 1
 
-    print("GENERATED USERNAME:", username)
+    supabase.table("users").insert({
+        "gmail": email,
+        "username": username,
+        "password": "",  # google user
+        "saldo": 0,
+        "total_earn": 0,
+        "referrals": 0,
+        "is_banned": False
+    }).execute()
 
     return RedirectResponse(
-        f"/setup-username?email={email}&username={username}",
+        f"/dashboard?login={username}",
         303
     )
 
