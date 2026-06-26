@@ -103,9 +103,15 @@ async def login_post(
     )
 @app.get("/auth/google")
 async def auth_google():
-    return RedirectResponse(
-        f"{SUPABASE_URL}/auth/v1/authorize?provider=google&redirect_to={SUPABASE_URL}/auth/v1/callback"
+    url = (
+        f"{SUPABASE_URL}/auth/v1/authorize"
+        f"?provider=google"
+        f"&redirect_to=https://earnshortlink.up.railway.app/auth/callback"
     )
+
+    print("🔥 AUTH URL:", url)
+
+    return RedirectResponse(url)
     
 @app.get("/auth/callback")
 async def auth_callback(request: Request):
