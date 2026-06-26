@@ -381,7 +381,44 @@ async def final_reward(token: str = Form(...)):
 
     return RedirectResponse("/", 303)
 
+# =========================
+# KELOLA TAUTAN
+# =========================
+@app.get("/links")
+async def links(request: Request, login: str = None):
 
+    if not login:
+        return RedirectResponse("/login")
+
+    user = (
+        supabase.table("users")
+        .select("id,username")
+        .eq("username", login)
+        .limit(1)
+        .execute()
+    )
+
+    if not user.data:
+        return RedirectResponse("/login")
+
+    user_id = user.data[0]["id"]
+
+    links = (
+        supabase.table("links")
+        .select("*")
+        .eq("user_id", user_id)
+        .order("id", desc=True)
+        .execute()
+    )
+
+    return templates.TemplateResponse(
+        "links.html",
+        {
+            "request": request,
+            "username": login,
+            "links": links.data
+        }
+    )
 # =========================
 # FAVICON
 # =========================
