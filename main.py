@@ -112,68 +112,101 @@ async def auth_google():
 @app.get("/auth/callback")
 async def auth_callback(request: Request):
 
+    print("\n\n================ OAUTH CALLBACK START ================\n")
+
+    # =========================
+    # DEBUG REQUEST ASLI
+    # =========================
+    print("📌 FULL URL:", str(request.url))
+    print("📌 METHOD:", request.method)
+    print("📌 QUERY PARAMS:", dict(request.query_params))
+    print("📌 HEADERS:", dict(request.headers))
+
     code = request.query_params.get("code")
+    error = request.query_params.get("error")
+    state = request.query_params.get("state")
+
+    print("\n📌 CODE:", code)
+    print("📌 ERROR PARAM:", error)
+    print("📌 STATE:", state)
+
+    # =========================
+    # ERROR DARI GOOGLE
+    # =========================
+    if error:
+        print("❌ GOOGLE RETURN ERROR:", error)
+        return RedirectResponse(f"/login?error={error}", 303)
 
     if not code:
         print("❌ NO CODE FROM GOOGLE CALLBACK")
+        print("⚠️ POSSIBLE CAUSE:")
+        print("   - redirect URI mismatch")
+        print("   - OAuth not configured correctly")
+        print("   - user cancelled login")
         return RedirectResponse("/login", 303)
+
+    print("\n================ EXCHANGE CODE =================")
+    print("CODE RECEIVED:", code)
 
     import requests
 
-    print("\n========== OAUTH CALLBACK START ==========")
-    print("CODE:", code)
-
-    res = requests.post(
-        f"{SUPABASE_URL}/auth/v1/token?grant_type=authorization_code",
-        headers={
-            "apikey": os.getenv("SUPABASE_KEY"),
-            "Content-Type": "application/json"
-        },
-        json={"code": code}
-    )
-
-    # 🔥 DEBUG RAW RESPONSE
-    print("\n========== SUPABASE RESPONSE ==========")
-    print("STATUS CODE:", res.status_code)
-    print("HEADERS:", dict(res.headers))
-    print("RAW TEXT:", res.text)
-    print("======================================\n")
-
-    # parsing JSON aman
     try:
-        data = res.json()
+        res = requests.post(
+            f"{SUPABASE_URL}/auth/v1/token?grant_type=authorization_code",
+            headers={
+                "apikey": os.getenv("SUPABASE_KEY"),
+                "Content-Type": "application/json"
+            },
+            json={"code": code},
+            timeout=15
+        )
+
+        print("\n================ SUPABASE RESPONSE ================")
+        print("STATUS:", res.status_code)
+        print("RESPONSE HEADERS:", dict(res.headers))
+        print("RAW TEXT:", res.text)
+
+        try:
+            data = res.json()
+        except Exception as e:
+            print("❌ JSON PARSE ERROR:", e)
+            return RedirectResponse("/login", 303)
+
+        print("PARSED JSON:", data)
+
     except Exception as e:
-        print("❌ JSON PARSE ERROR:", e)
+        print("❌ REQUEST FAILED:", str(e))
         return RedirectResponse("/login", 303)
 
-    print("PARSED JSON:", data)
-
     # =========================
-    # CEK ERROR SUPABASE
+    # SUPABASE ERROR CHECK
     # =========================
     if data.get("error"):
         print("❌ SUPABASE ERROR:", data.get("error"))
         return RedirectResponse("/login", 303)
 
     # =========================
-    # AMBIL USER
+    # USER DATA CHECK
     # =========================
     user = data.get("user")
 
     if not user:
         print("❌ USER NOT FOUND IN RESPONSE")
+        print("FULL DATA:", data)
         return RedirectResponse("/login", 303)
 
     email = user.get("email")
 
     if not email:
-        print("❌ EMAIL NOT FOUND")
+        print("❌ EMAIL EMPTY")
         return RedirectResponse("/login", 303)
 
-    print("✅ LOGIN EMAIL:", email)
+    print("\n================ USER INFO ================")
+    print("EMAIL:", email)
+    print("USER OBJECT:", user)
 
     # =========================
-    # CEK DATABASE
+    # DATABASE CHECK
     # =========================
     result = (
         supabase.table("users")
@@ -183,20 +216,47 @@ async def auth_callback(request: Request):
         .execute()
     )
 
-    print("DB RESULT:", result.data)
+    print("\n================ DATABASE RESULT ================")
+    print("DB DATA:", result.data)
 
-    # SUDAH ADA → LOGIN
+    # =========================
+    # LOGIN FLOW
+    # =========================
     if result.data:
-        print("✅ USER EXISTS → DASHBOARD")
+        print("✅ USER EXISTS → DASHBOARD LOGIN")
         return RedirectResponse(
             f"/dashboard?login={result.data[0]['username']}",
             303
         )
 
-    # BELUM ADA → SETUP USERNAME
-    print("⚠️ USER NOT FOUND → REDIRECT SETUP USERNAME")
+    # =========================
+    # AUTO REGISTER FLOW
+    # =========================
+    print("🆕 NEW USER → AUTO REGISTER REQUIRED")
+
+    base_username = email.split("@")[0]
+    username = base_username
+    i = 1
+
+    while True:
+        check = (
+            supabase.table("users")
+            .select("id")
+            .eq("username", username)
+            .limit(1)
+            .execute()
+        )
+
+        if not check.data:
+            break
+
+        username = f"{base_username}{i}"
+        i += 1
+
+    print("GENERATED USERNAME:", username)
+
     return RedirectResponse(
-        f"/setup-username?email={email}",
+        f"/setup-username?email={email}&username={username}",
         303
     )
 
