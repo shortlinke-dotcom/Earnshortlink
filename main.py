@@ -1,6 +1,7 @@
 import random
 import string
 import secrets
+import os
 from datetime import datetime
 
 from fastapi import FastAPI, Request, Form
@@ -10,7 +11,6 @@ from fastapi.responses import (
     Response
 )
 from fastapi.templating import Jinja2Templates
-
 from database import supabase
 from auth import hash_password, verify_password
 
@@ -76,6 +76,29 @@ async def login_post(
         url=f"/dashboard?login={user['username']}",
         status_code=303
     )
+@app.get("/auth/google")
+async def auth_google():
+    return RedirectResponse(
+        url=(
+            f"{SUPABASE_URL}/auth/v1/authorize"
+            "?provider=google"
+            "&redirect_to=https://earnshortlink.up.railway.app/auth/callback"
+        )
+    )
+
+@app.get("/auth/facebook")
+async def auth_facebook():
+    return RedirectResponse(
+        url=(
+            f"{SUPABASE_URL}/auth/v1/authorize"
+            "?provider=facebook"
+            "&redirect_to=https://earnshortlink.up.railway.app/auth/callback"
+        )
+    )
+@app.get("/auth/callback")
+async def auth_callback():
+
+    return RedirectResponse("/dashboard")
 # ======================================================
 # REGISTER
 # ======================================================
