@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Setup Username</title>
+<style>
+body{
+    font-family:Poppins;
+    background:#0b1220;
+    color:white;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+.card{
+    background:#111827;
+    padding:30px;
+    border-radius:15px;
+    width:350px;
+}
+input,button{
+    width:100%;
+    padding:12px;
+    margin-top:10px;
+    border-radius:8px;
+}
+button{
+    background:#2196f3;
+    color:white;
+    border:none;
+    cursor:pointer;
+}
+</style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Buat Username</h2>
+
+    {% if error %}
+    <p style="color:red;">Username sudah dipakai</p>
+    {% endif %}
+
+    <form method="POST" action="/setup-username">
+        <input type="hidden" name="email" value="{{ email }}">
+        <input type="text" name="username" placeholder="Username" required>
+        <button type="submit">Lanjut</button>
+    </form>
+</div>
+
+</body>
+</html>
