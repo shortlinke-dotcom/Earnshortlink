@@ -500,6 +500,67 @@ async def reset_password(request: Request):
         status_code=200
     )
 # =========================
+# DOWNLOAD ACCESS
+# =========================
+
+import secrets
+from datetime import datetime, timedelta
+
+
+@app.post("/api/create-access")
+async def create_access():
+
+    token = secrets.token_urlsafe(32)
+
+    expired = (
+        datetime.utcnow() +
+        timedelta(minutes=5)
+    ).isoformat()
+
+    supabase.table("download_tokens").insert({
+        "token": token,
+        "expired_at": expired
+    }).execute()
+
+    return {
+        "success": True,
+        "token": token
+    }
+
+
+@app.get("/api/check-access")
+async def check_access(token: str):
+
+    res = (
+        supabase.table("download_tokens")
+        .select("*")
+        .eq("token", token)
+        .limit(1)
+        .execute()
+    )
+
+    if not res.data:
+        return {
+            "valid": False
+        }
+
+    data = res.data[0]
+
+    if datetime.fromisoformat(data["expired_at"]) < datetime.utcnow():
+
+        supabase.table("download_tokens").delete().eq(
+            "token",
+            token
+        ).execute()
+
+        return {
+            "valid": False
+        }
+
+    return {
+        "valid": True
+    }
+# =========================
 # FAVICON
 # =========================
 @app.get("/favicon.ico")
