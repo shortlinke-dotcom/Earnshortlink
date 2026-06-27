@@ -107,10 +107,10 @@ async def auth_google():
         f"{SUPABASE_URL}/auth/v1/authorize"
         f"?provider=google"
         f"&redirect_to=https://earnshortlink.up.railway.app/auth/callback"
+        f"&flow_type=pkce"
     )
 
     print("🔥 AUTH URL:", url)
-
     return RedirectResponse(url)
     
 @app.get("/auth/callback")
