@@ -301,7 +301,7 @@ async def register_post(
     if check.data:
         return RedirectResponse("/register?error=exists", 303)
 
-    # simpan referral sebelum insert user
+    # referral dari session
     referral = request.session.get("referral")
 
     # buat akun baru
@@ -315,32 +315,54 @@ async def register_post(
         "is_banned": False
     }).execute()
 
-    # kalau daftar dari referral
+    # ambil id user yang baru dibuat
+    new_user = (
+        supabase.table("users")
+        .select("id")
+        .eq("username", username)
+        .single()
+        .execute()
+    )
+
+    new_user_id = new_user.data["id"]
+
+    # ==========================
+    # REFERRAL
+    # ==========================
     if referral:
 
         ref = (
             supabase.table("users")
             .select("id,saldo,referrals")
             .eq("username", referral)
-            .limit(1)
+            .single()
             .execute()
         )
 
         if ref.data:
 
-            data = ref.data[0]
+            referrer = ref.data
+            referrer_id = referrer["id"]
 
+            # simpan relasi referral
+            supabase.table("referrals").insert({
+                "user_id": referrer_id,
+                "referred_user_id": new_user_id,
+                "referral_paid": False
+            }).execute()
+
+            # bonus pendaftar
             supabase.table("users").update({
-                "saldo": (data["saldo"] or 0) + 500,
-                "referrals": (data["referrals"] or 0) + 1
-            }).eq("id", data["id"]).execute()
+                "saldo": (referrer["saldo"] or 0) + 500,
+                "referrals": (referrer["referrals"] or 0) + 1
+            }).eq("id", referrer_id).execute()
 
         request.session.pop("referral", None)
 
     # login otomatis
     request.session["username"] = username
 
-    return RedirectResponse("/dashboard", 303)
+    return RedirectResponse("/dashboard", status_code=303)
 
 # =========================
 # DASHBOARD
