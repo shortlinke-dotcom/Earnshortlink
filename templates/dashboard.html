@@ -1357,10 +1357,37 @@ canvas{
     opacity: 1;
     transform: translateY(0);
 }
+.toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #222;
+    color: #fff;
+    padding: 12px 18px;
+    border-radius: 10px;
+    font-size: 14px;
+    opacity: 0;
+    pointer-events: none;
+    transition: 0.3s;
+    z-index: 9999;
+}
+
+.toast.show {
+    opacity: 1;
+}
+
+.toast.success {
+    background: #1db954;
+}
+
+.toast.error {
+    background: #e53935;
+}
 </style>
 </head>
 <body>
-
+<div id="toast" class="toast"></div>
 <div class="bg"></div>
 
 <div class="container">
@@ -1812,39 +1839,59 @@ canvas{
     EarnShortlink Best CPM
 </footer>
 <script>
-document.getElementById("createForm").addEventListener("submit", async function(e) {
+document.getElementById("createForm").addEventListener("submit", async function (e) {
     e.preventDefault();
 
     const formData = new FormData(this);
 
-    const res = await fetch("/create-link", {
-        method: "POST",
-        body: formData
-    });
-
-    const data = await res.json();
-
-    if (!data.ok) {
-        alert("Gagal membuat link!");
+    let res;
+    try {
+        res = await fetch("/create-link", {
+            method: "POST",
+            body: formData
+        });
+    } catch (err) {
+        showToast("❌ Koneksi error!", false);
         return;
     }
 
+    const data = await res.json();
+
+    // ❌ gagal create link
+    if (!data.ok) {
+        showToast("❌ Link tidak ada / gagal dibuat", false);
+        hideResultBox();
+        return;
+    }
+
+    // ✅ sukses create link
     const box = document.getElementById("resultBox");
     const input = document.getElementById("createdLink");
 
     input.value = data.short_link;
     box.style.display = "block";
 
-    // auto copy + popup
-    try {
-        await navigator.clipboard.writeText(data.short_link);
-        alert("Link berhasil dibuat & sudah dicopy!");
-    } catch {
-        input.select();
-        document.execCommand("copy");
-        alert("Link berhasil dibuat!");
-    }
+    showToast("✅ Link berhasil dibuat", true);
+
+    // ❌ HAPUS AUTO COPY (sesuai request kamu)
 });
+function showToast(message, success = true) {
+    const toast = document.getElementById("toast");
+
+    toast.textContent = message;
+    toast.className = "toast show " + (success ? "success" : "error");
+
+    setTimeout(() => {
+        toast.classList.remove("show");
+    }, 2500);
+}
+function hideResultBox() {
+    const box = document.getElementById("resultBox");
+    if (box) {
+        box.style.display = "none";
+    }
+}
+
 // =========================
 // SIDEBAR
 // =========================
