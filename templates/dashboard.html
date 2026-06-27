@@ -1845,6 +1845,7 @@ document.getElementById("createForm").addEventListener("submit", async function 
     const formData = new FormData(this);
 
     let res;
+
     try {
         res = await fetch("/create-link", {
             method: "POST",
@@ -1852,28 +1853,37 @@ document.getElementById("createForm").addEventListener("submit", async function 
         });
     } catch (err) {
         showToast("❌ Koneksi error!", false);
+        hideResultBox();
         return;
     }
 
-    const data = await res.json();
+    let data;
 
-    // ❌ gagal create link
-    if (!data.ok) {
+    try {
+        data = await res.json();
+    } catch (err) {
+        showToast("❌ Server tidak mengirim JSON!", false);
+        hideResultBox();
+        return;
+    }
+
+    // ❌ gagal
+    if (!data.ok || !data.short_link) {
         showToast("❌ Link tidak ada / gagal dibuat", false);
         hideResultBox();
         return;
     }
 
-    // ✅ sukses create link
+    // ✅ sukses
     const box = document.getElementById("resultBox");
     const input = document.getElementById("createdLink");
 
     input.value = data.short_link;
+
     box.style.display = "block";
+    box.classList.add("show");
 
     showToast("✅ Link berhasil dibuat", true);
-
-    // ❌ HAPUS AUTO COPY (sesuai request kamu)
 });
 function showToast(message, success = true) {
     const toast = document.getElementById("toast");
@@ -1887,7 +1897,9 @@ function showToast(message, success = true) {
 }
 function hideResultBox() {
     const box = document.getElementById("resultBox");
+
     if (box) {
+        box.classList.remove("show");
         box.style.display = "none";
     }
 }
