@@ -153,9 +153,26 @@ table tr{
     </table>
 </div>
 <div class="card">
-    <h2>Referral</h2>
-    <p>
-        https://yourdomain.com/ref/{{ referral_code }}
-    </p>
+    <h2>Link Referral</h2>
+
+    <input
+        type="text"
+        value="https://esl.my.id/ref/{{ username }}"
+        readonly
+        id="refLink">
+
+    <button onclick="copyReferral()">
+        Copy Link
+    </button>
 </div>
+
+<script>
+function copyReferral(){
+    const input = document.getElementById("refLink");
+    input.select();
+    input.setSelectionRange(0,99999);
+    navigator.clipboard.writeText(input.value);
+    alert("Referral berhasil disalin!");
+}
+</script>
 {% endblock %}
