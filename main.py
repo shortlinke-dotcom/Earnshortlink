@@ -115,18 +115,17 @@ async def auth_google():
     
 @app.get("/auth/callback")
 async def auth_callback(request: Request):
-
     print("🔥 CALLBACK HIT:", request.url)
     print("📌 PARAMS:", dict(request.query_params))
-
-    # Supabase implicit flow biasanya pakai access_token di fragment (#)
-    # jadi kadang server TIDAK bisa lihat itu
 
     code = request.query_params.get("code")
 
     if not code:
-        print("❌ NO CODE → CHECK SUPABASE FLOW SETTINGS")
-        return RedirectResponse("/login?error=google_failed", 303)
+        print("❌ NO CODE")
+        return RedirectResponse(
+            "/login?error=google_failed",
+            status_code=303
+        )
 
     import requests
 
@@ -147,9 +146,43 @@ async def auth_callback(request: Request):
 
     user = data.get("user")
     if not user:
-        return RedirectResponse("/login?error=google_failed", 303)
+        return RedirectResponse(
+            "/login?error=google_failed",
+            status_code=303
+        )
 
     email = user.get("email")
+
+    # cek user sudah terdaftar atau belum
+    result = (
+        supabase.table("users")
+        .select("*")
+        .eq("gmail", email)
+        .limit(1)
+        .execute()
+    )
+
+    # jika belum terdaftar
+    if not result.data:
+        return RedirectResponse(
+            f"/setup-username?email={email}",
+            status_code=303
+        )
+
+    db_user = result.data[0]
+
+    # jika dibanned
+    if db_user.get("is_banned", False):
+        return RedirectResponse(
+            "/login?error=banned",
+            status_code=303
+        )
+
+    # login ke dashboard
+    return RedirectResponse(
+        f"/dashboard?login={db_user['username']}",
+        status_code=303
+    )
 # ===============
 @app.get("/setup-username")
 async def setup_username(request: Request, email: str):
