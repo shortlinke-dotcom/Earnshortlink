@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}EarnShortlink{% endblock %}</title>
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+rel="stylesheet">
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+:root{
+    --primary:#2196f3;
+    --bg:#020817;
+    --bg2:#0f172a;
+    --text:#fff;
+    --muted:#94a3b8;
+    --danger:#ef4444;
+}
+body{
+    background:var(--bg);
+    color:#fff;
+    min-height:100vh;
+    overflow-x:hidden;
+}
+.bg{
+    position:fixed;
+    inset:0;
+    z-index:-1;
+    background:
+        radial-gradient(
+            circle at top,
+            rgba(33,150,243,.18),
+            transparent 45%
+        ),
+        linear-gradient(
+            180deg,
+            #020617,
+            #0f172a
+        );
+}
+/* TOPBAR */
+.topbar{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:70px;
+    display:grid;
+    grid-template-columns:60px 1fr 60px;
+    align-items:center;
+    padding:0 18px;
+    background:rgba(2,8,23,.65);
+    backdrop-filter:blur(15px);
+    border-bottom:1px solid rgba(33,150,243,.25);
+    z-index:9999;
+}
+/* LOGO */
+.logo{
+    text-align:center;
+    font-size:28px;
+    font-weight:800;
+    letter-spacing:1px;
+    user-select:none;
+    animation:glow 2.5s infinite alternate;
+}
+.logo span{
+    color:#2196f3;
+}
+@keyframes glow{
+    from{
+        text-shadow:
+            0 0 8px rgba(33,150,243,.4),
+            0 0 15px rgba(33,150,243,.2);
+    }
+    to{
+        text-shadow:
+            0 0 15px rgba(33,150,243,.9),
+            0 0 35px rgba(33,150,243,.7),
+            0 0 55px rgba(33,150,243,.5);
+    }
+}
+/* MENU BUTTON */
+.menu-btn{
+    background:none;
+    border:none;
+    color:#fff;
+    font-size:28px;
+    cursor:pointer;
+}
+/* SIDEBAR */
+.sidebar{
+    position:fixed;
+    top:0;
+    left:-320px;
+    width:290px;
+    max-width:85%;
+    height:100vh;
+    background:#071120;
+    border-right:1px solid rgba(255,255,255,.05);
+    padding:20px;
+    overflow-y:auto;
+    transition:.35s;
+    z-index:10000;
+}
+.sidebar.active{
+    left:0;
+}
+.sidebar-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:25px;
+    padding-bottom:15px;
+    border-bottom:1px solid rgba(255,255,255,.08);
+}
+.sidebar-header h2{
+    color:#2196f3;
+}
+.close-btn{
+    background:none;
+    border:none;
+    color:#fff;
+    font-size:24px;
+    cursor:pointer;
+}
+.sidebar a{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:14px;
+    margin-bottom:8px;
+    border-radius:12px;
+    color:#fff;
+    text-decoration:none;
+    transition:.25s;
+}
+.sidebar a i{
+    width:20px;
+    color:#2196f3;
+}
+.sidebar a:hover{
+    background:rgba(33,150,243,.1);
+    transform:translateX(5px);
+}
+.sidebar-footer{
+    margin-top:40px;
+    padding-top:20px;
+    border-top:1px solid rgba(255,255,255,.08);
+    color:#94a3b8;
+    text-align:center;
+    font-size:13px;
+}
+/* OVERLAY */
+.overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.6);
+    backdrop-filter:blur(3px);
+    opacity:0;
+    visibility:hidden;
+    transition:.3s;
+    z-index:9998;
+}
+.overlay.active{
+    opacity:1;
+    visibility:visible;
+}
+/* USER MENU */
+.user-menu{
+    position:relative;
+    justify-self:end;
+}
+.account-btn{
+    width:45px;
+    height:45px;
+    border:none;
+    border-radius:50%;
+    background:#2196f3;
+    color:#fff;
+    font-size:18px;
+    cursor:pointer;
+}
+.account-dropdown{
+    position:absolute;
+    right:0;
+    top:55px;
+    width:220px;
+    padding:15px;
+    background:#071120;
+    border:1px solid rgba(33,150,243,.35);
+    border-radius:15px;
+    box-shadow:
+        0 0 20px rgba(33,150,243,.2);
+    opacity:0;
+    visibility:hidden;
+    transform:translateY(10px);
+    transition:.25s;
+    z-index:9999;
+}
+.account-dropdown.show{
+    opacity:1;
+    visibility:visible;
+    transform:translateY(0);
+}
+.saldo-box{
+    margin:12px 0;
+    padding:12px;
+    border-radius:10px;
+    background:rgba(33,150,243,.1);
+}
+.logout-btn{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:10px;
+    background:#ef4444;
+    color:#fff;
+    cursor:pointer;
+}
+/* CONTENT */
+.container{
+    width:100%;
+    max-width:1250px;
+    margin:auto;
+    padding:90px 20px 30px;
+}
+/* FOOTER */
+.dashboard-footer{
+    margin-top:40px;
+    padding:20px;
+    text-align:center;
+    color:#94a3b8;
+    border-top:1px solid rgba(255,255,255,.08);
+}
+/* MOBILE */
+@media(max-width:768px){
+    .logo{
+        font-size:20px;
+    }
+    .topbar{
+        padding:0 12px;
+    }
+    .container{
+        padding:85px 15px 20px;
+    }
+}
+</style>
+{% block extra_css %}{% endblock %}
+</head>
+<body>
+<div class="bg"></div>
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <h2>MENU</h2>
+        <button class="close-btn"
+        onclick="closeMenu()">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+    </div>
+    <nav>
+        <a href="/dashboard">
+            <i class="fa-solid fa-chart-line"></i>
+            Dashboard
+        </a>
+        <a href="/links">
+            <i class="fa-solid fa-link"></i>
+            Kelola Tautan
+        </a>
+        <a href="/sell-link">
+            <i class="fa-solid fa-plus"></i>
+            Sell Link
+        </a>
+        <a href="/payments">
+            <i class="fa-solid fa-wallet"></i>
+            Payments
+        </a>
+        <a href="/referrals">
+            <i class="fa-solid fa-users"></i>
+            Referrals
+        </a>
+        <a href="/invoices">
+            <i class="fa-solid fa-file-invoice"></i>
+            Invoices
+        </a>
+        <a href="/settings">
+            <i class="fa-solid fa-gear"></i>
+            Pengaturan
+        </a>
+        <a href="/support">
+            <i class="fa-solid fa-headset"></i>
+            Support
+        </a>
+    </nav>
+    <div class="sidebar-footer">
+        © <span id="year"></span><br>
+        EarnShortlink Best CPM
+    </div>
+</aside>
+<div class="overlay"
+id="overlay"
+onclick="closeMenu()"></div>
+<header class="topbar">
+    <button class="menu-btn"
+    onclick="openMenu()">
+        <i class="fa-solid fa-bars"></i>
+    </button>
+    <div class="logo">
+        EARN<span>SHORTLINK</span>
+    </div>
+    <div class="user-menu">
+        <button class="account-btn"
+        onclick="toggleUserMenu()">
+            <i class="fa-solid fa-user"></i>
+        </button>
+        <div class="account-dropdown"
+        id="accountDropdown">
+            <h4>{{ username }}</h4>
+            <div class="saldo-box">
+                Saldo:
+                <b>Rp {{ saldo }}</b>
+            </div>
+            <button
+            class="logout-btn"
+            onclick="window.location.href='/logout'">
+                Logout
+            </button>
+        </div>
+    </div>
+</header>
+<div class="container">
+    {% block content %}{% endblock %}
+</div>
+<footer class="dashboard-footer">
+    © <span id="footerYear"></span>
+    EarnShortlink Best CPM
+</footer>
+<script>
+function openMenu(){
+    document.getElementById("sidebar")
+        .classList.add("active");
+    document.getElementById("overlay")
+        .classList.add("active");
+}
+function closeMenu(){
+    document.getElementById("sidebar")
+        .classList.remove("active");
+    document.getElementById("overlay")
+        .classList.remove("active");
+}
+function toggleUserMenu(){
+    document.getElementById("accountDropdown")
+        .classList.toggle("show");
+}
+document.getElementById("year").textContent =
+new Date().getFullYear();
+document.getElementById("footerYear").textContent =
+new Date().getFullYear();
+</script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>
