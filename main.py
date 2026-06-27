@@ -412,6 +412,7 @@ async def create_link(request: Request, destination_url: str = Form(...)):
 @app.get("/s/{short_code}")
 async def shortlink(request: Request, short_code: str):
 
+    # 1. ambil link
     res = (
         supabase.table("links")
         .select("*")
@@ -425,21 +426,31 @@ async def shortlink(request: Request, short_code: str):
 
     link = res.data[0]
 
-    supabase.table("links").update({
-        "clicks": (link.get("clicks") or 0) + 1
-    }).eq("short_code", short_code).execute()
+    # 2. update klik (aman dari null)
+    try:
+        supabase.table("links").update({
+            "clicks": (link.get("clicks") or 0) + 1
+        }).eq("short_code", short_code).execute()
+    except Exception as e:
+        print("Click update error:", e)
 
+    # 3. generate token
     token = secrets.token_urlsafe(32)
 
-    supabase.table("download_tokens").insert({
-        "token": token,
-        "short_code": short_code,
-        "step": 1,
-        "used": False,
-        "created_at": datetime.utcnow().isoformat(),
-        "expires_at": datetime.utcnow().isoformat()
-    }).execute()
+    # 4. insert download token (SAFE MODE)
+    try:
+        supabase.table("download_tokens").insert({
+            "token": token,
+            "short_code": short_code,
+            "step": 1,
+            "used": False,
+            "created_at": datetime.utcnow().isoformat()
+        }).execute()
+    except Exception as e:
+        print("Token insert error:", e)
+        return HTMLResponse("Server error", 500)
 
+    # 5. render task
     return templates.TemplateResponse(
         "task1.html",
         {
@@ -448,7 +459,6 @@ async def shortlink(request: Request, short_code: str):
             "destination_url": link["destination_url"]
         }
     )
-
 
 # =========================
 # TASK2
