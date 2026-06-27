@@ -1,21 +1,16 @@
-import calendar
 import os
 import random
-import secrets
 import string
+import secrets
+import calendar
 from datetime import datetime, timezone
 
-from fastapi import (
-    Body,
-    FastAPI,
-    Form,
-    Request,
-)
+from fastapi import FastAPI, Request, Form, Body
 from fastapi.responses import (
     HTMLResponse,
     JSONResponse,
     RedirectResponse,
-    Response,
+    Response
 )
 from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
@@ -23,6 +18,10 @@ from starlette.middleware.sessions import SessionMiddleware
 from auth import hash_password, verify_password
 from database import supabase
 
+
+# =========================
+# APP INIT (ONLY ONCE)
+# =========================
 app = FastAPI()
 
 app.add_middleware(
@@ -565,95 +564,173 @@ async def dashboard(request: Request):
             "current_month_name": calendar.month_name[current_month],
         },
     )
+    
 # =========================
-# SHORTEN LINK PAGE
+# SELL PAGE
 # =========================
-@app.get("/shorten")
-async def shorten_page(request: Request):
+@app.get("/sell")
+async def sell_page(request: Request):
 
     username = request.session.get("username")
-
     if not username:
         return RedirectResponse("/login", 303)
 
-    user = (
+    user_res = (
         supabase.table("users")
-        .select("username,saldo")
+        .select("id, username, saldo")
         .eq("username", username)
         .single()
         .execute()
     )
 
-    if not user.data:
+    if not user_res.data:
         return RedirectResponse("/login", 303)
 
-    return templates.TemplateResponse(
-        "shortenlink.html",
-        {
-            "request": request,
-            "username": user.data["username"],
-            "saldo": user.data.get("saldo") or 0
-        }
-    )
-# =========================
-# CREATE LINK
-# =========================
-from fastapi.responses import JSONResponse
+    user = user_res.data
+    user_id = user["id"]
 
-@app.post("/create-link")
-async def create_link(request: Request, destination_url: str = Form(...)):
-
-    username = request.session.get("username")
-
-    if not username:
-        return JSONResponse({"ok": False, "error": "unauthorized"}, status_code=401)
-
-    user = (
-        supabase.table("users")
-        .select("id")
-        .eq("username", username)
-        .limit(1)
+    sell_links_res = (
+        supabase.table("sell_links")
+        .select("*")
+        .eq("user_id", user_id)
+        .order("id", desc=True)
         .execute()
     )
 
-    if not user.data:
+    sell_links = sell_links_res.data or []
+
+    return templates.TemplateResponse("selllink.html", {
+        "request": request,
+        "username": username,
+        "saldo": user.get("saldo") or 0,
+        "sell_links": sell_links,
+        "total_links": len(sell_links),
+        "total_sold": 0,
+        "total_income": 0
+    })
+
+
+# =========================
+# CREATE SELL LINK
+# =========================
+@app.post("/create-sell-link")
+async def create_sell_link(
+    request: Request,
+    destination_url: str = Form(...),
+    title: str = Form(...),
+    price: int = Form(...)
+):
+
+    username = request.session.get("username")
+    if not username:
+        return JSONResponse({"ok": False, "error": "unauthorized"}, status_code=401)
+
+    user_res = (
+        supabase.table("users")
+        .select("id")
+        .eq("username", username)
+        .single()
+        .execute()
+    )
+
+    if not user_res.data:
         return JSONResponse({"ok": False, "error": "user_not_found"}, status_code=404)
 
-    user_id = user.data[0]["id"]
+    user_id = user_res.data["id"]
 
-    if not destination_url.startswith(("http://", "https://")):
-        return JSONResponse({"ok": False, "error": "invalid_url"}, status_code=400)
+    code = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
 
-    while True:
-        short_code = ''.join(random.choices(string.ascii_letters + string.digits, k=6))
-
-        check = (
-            supabase.table("links")
-            .select("id")
-            .eq("short_code", short_code)
-            .limit(1)
-            .execute()
-        )
-
-        if not check.data:
-            break
-
-    supabase.table("links").insert({
+    supabase.table("sell_links").insert({
         "user_id": user_id,
+        "code": code,
+        "title": title,
         "destination_url": destination_url,
-        "short_code": short_code,
-        "clicks": 0,
-        "earnings": 0
+        "price": int(price),
+        "sold": 0,
+        "income": 0
     }).execute()
-
-    short_link = f"{request.base_url}s/{short_code}"
 
     return JSONResponse({
         "ok": True,
-        "short_link": short_link,
-        "short_code": short_code
+        "link": f"{request.base_url}pay/{code}"
     })
 
+
+# =========================
+# PAY PAGE
+# =========================
+@app.get("/pay/{code}")
+async def pay_page(request: Request, code: str):
+
+    link_res = (
+        supabase.table("sell_links")
+        .select("*")
+        .eq("code", code)
+        .single()
+        .execute()
+    )
+
+    if not link_res.data:
+        return HTMLResponse("Not found", 404)
+
+    return templates.TemplateResponse("pay.html", {
+        "request": request,
+        "link": link_res.data
+    })
+
+
+# =========================
+# DELETE SELL LINK
+# =========================
+@app.delete("/delete-sell-link/{code}")
+async def delete_sell_link(request: Request, code: str):
+
+    username = request.session.get("username")
+    if not username:
+        return JSONResponse({"ok": False}, status_code=401)
+
+    user_res = (
+        supabase.table("users")
+        .select("id")
+        .eq("username", username)
+        .single()
+        .execute()
+    )
+
+    if not user_res.data:
+        return JSONResponse({"ok": False}, status_code=404)
+
+    user_id = user_res.data["id"]
+
+    supabase.table("sell_links") \
+        .delete() \
+        .eq("code", code) \
+        .eq("user_id", user_id) \
+        .execute()
+
+    return {"ok": True}
+
+
+# =========================
+# EDIT SELL LINK
+# =========================
+@app.post("/edit-sell-link")
+async def edit_sell_link(request: Request, data: dict = Body(...)):
+
+    username = request.session.get("username")
+    if not username:
+        return JSONResponse({"ok": False}, status_code=401)
+
+    code = data.get("code")
+    title = data.get("title")
+    price = data.get("price")
+
+    supabase.table("sell_links").update({
+        "title": title,
+        "price": int(price)
+    }).eq("code", code).execute()
+
+    return {"ok": True}
 # =========================
 # SHORTLINK
 # =========================
