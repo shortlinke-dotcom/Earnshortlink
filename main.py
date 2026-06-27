@@ -426,38 +426,42 @@ async def dashboard(request: Request):
     total_earnings = sum(link.get("earnings") or 0 for link in links)
 
     # ================= REFERRAL SYSTEM =================
-ref_res = (
-    supabase.table("referrals")
-    .select("referred_user_id")
-    .eq("user_id", user_id)
-    .execute()
-)
-
-referrals = ref_res.data or []
-
-referred_ids = list(set(
-    r.get("referred_user_id") for r in referrals if r.get("referred_user_id")
-))
-
-active_referrals = 0
-
-if referred_ids:
-    users_res = (
-        supabase.table("users")
-        .select("id, clicks")
-        .in_("id", referred_ids)
+    ref_res = (
+        supabase.table("referrals")
+        .select("referred_user_id")
+        .eq("user_id", user_id)
         .execute()
     )
 
-    for u in (users_res.data or []):
-        if (u.get("clicks") or 0) > 0:
-            active_referrals += 1
+    referrals = ref_res.data or []
 
-REF_BONUS = 10000
-referral_earnings = active_referrals * REF_BONUS
-supabase.table("users").update({
-    "referral_earnings": referral_earnings
-}).eq("id", user_id).execute()
+    referred_ids = list(set(
+        r.get("referred_user_id")
+        for r in referrals
+        if r.get("referred_user_id")
+    ))
+
+    active_referrals = 0
+
+    if referred_ids:
+        users_res = (
+            supabase.table("users")
+            .select("id,clicks")
+            .in_("id", referred_ids)
+            .execute()
+        )
+
+        for u in (users_res.data or []):
+            if (u.get("clicks") or 0) > 0:
+                active_referrals += 1
+
+    REF_BONUS = 10000
+
+    referral_earnings = active_referrals * REF_BONUS
+
+    supabase.table("users").update({
+        "referral_earnings": referral_earnings
+    }).eq("id", user_id).execute()
     # ================= RENDER =================
     return templates.TemplateResponse(
         "dashboard.html",
@@ -711,10 +715,13 @@ async def final_reward(request: Request, token: str = Form(...)):
 
     if not token_res.data:
         return HTMLResponse("Invalid Token", 403)
-        if token_res.data[0].get("used"):
-    return HTMLResponse("Already claimed", 403)
 
-    short_code = token_res.data[0]["short_code"]
+    token_data = token_res.data[0]
+
+    if token_data.get("used"):
+        return HTMLResponse("Already claimed", 403)
+
+    short_code = token_data["short_code"]
 
     link = (
         supabase.table("links")
@@ -723,6 +730,9 @@ async def final_reward(request: Request, token: str = Form(...)):
         .limit(1)
         .execute()
     )
+
+    if not link.data:
+        return HTMLResponse("Link not found", 404)
 
     owner_id = link.data[0]["user_id"]
 
@@ -734,10 +744,13 @@ async def final_reward(request: Request, token: str = Form(...)):
         .execute()
     )
 
+    if not owner.data:
+        return HTMLResponse("User not found", 404)
+
     reward = 300
 
-    saldo = owner.data[0]["saldo"] or 0
-    total = owner.data[0]["total_earn"] or 0
+    saldo = owner.data[0].get("saldo") or 0
+    total = owner.data[0].get("total_earn") or 0
 
     supabase.table("users").update({
         "saldo": saldo + reward,
@@ -748,9 +761,7 @@ async def final_reward(request: Request, token: str = Form(...)):
         "used": True
     }).eq("token", token).execute()
 
-    return RedirectResponse("/", 303)
-
-
+    return RedirectResponse("/", status_code=303)
 # =========================
 # LINKS
 # =========================
