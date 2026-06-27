@@ -1,23 +1,27 @@
-import random
-import string
-import secrets
+import calendar
 import os
-from datetime import datetime
+import random
+import secrets
+import string
+from datetime import datetime, timezone
 
-from fastapi import FastAPI, Request, Form, Body
+from fastapi import (
+    Body,
+    FastAPI,
+    Form,
+    Request,
+)
 from fastapi.responses import (
     HTMLResponse,
+    JSONResponse,
     RedirectResponse,
     Response,
-    JSONResponse
 )
 from fastapi.templating import Jinja2Templates
-
 from starlette.middleware.sessions import SessionMiddleware
 
-from database import supabase
 from auth import hash_password, verify_password
-
+from database import supabase
 
 app = FastAPI()
 
@@ -367,19 +371,12 @@ async def register_post(
 # =========================
 # DASHBOARD
 # =========================
-from fastapi import Request
-from fastapi.responses import RedirectResponse
-from datetime import datetime, timezone
-import calendar
 
 @app.get("/dashboard")
 async def dashboard(request: Request):
-
     username = request.session.get("username")
-
     if not username:
         return RedirectResponse("/login", status_code=303)
-
     # ================= USER =================
     result = (
         supabase.table("users")
@@ -388,19 +385,14 @@ async def dashboard(request: Request):
         .single()
         .execute()
     )
-
     if not result.data:
         request.session.clear()
         return RedirectResponse("/login", status_code=303)
-
     user = result.data
-
     if user.get("is_banned"):
         request.session.clear()
         return RedirectResponse("/login?error=banned", status_code=303)
-
     user_id = user["id"]
-
     # ================= LINKS =================
     links_res = (
         supabase.table("links")
@@ -409,17 +401,15 @@ async def dashboard(request: Request):
         .order("id", desc=True)
         .execute()
     )
-
     links = links_res.data or []
-
     # ================= TIME =================
     today = datetime.now(timezone.utc).date()
     current_month = today.month
     current_year = today.year
-
-    today_clicks = today_earnings = 0
-    month_clicks = month_earnings = 0
-
+    today_clicks = 0
+    today_earnings = 0
+    month_clicks = 0
+    month_earnings = 0
     def parse_date(ts):
         if not ts:
             return None
@@ -427,44 +417,38 @@ async def dashboard(request: Request):
             return datetime.fromisoformat(ts.replace("Z", "+00:00"))
         except:
             return None
-
-    # ================= LOOP LINKS =================
+    # ================= HITUNG DATA =================
     for link in links:
         clicks = link.get("clicks") or 0
         earnings = link.get("earnings") or 0
-        created_dt = parse_date(link.get("created_at"))
-
-        if created_dt:
-            if created_dt.date() == today:
+        created = parse_date(link.get("created_at"))
+        if created:
+            if created.date() == today:
                 today_clicks += clicks
                 today_earnings += earnings
-
-            if created_dt.month == current_month and created_dt.year == current_year:
+            if (
+                created.month == current_month
+                and created.year == current_year
+            ):
                 month_clicks += clicks
                 month_earnings += earnings
-
     total_links = len(links)
     total_clicks = sum(link.get("clicks") or 0 for link in links)
     total_earnings = sum(link.get("earnings") or 0 for link in links)
-
-    # ================= REFERRAL SYSTEM =================
+    # ================= REFERRAL =================
     ref_res = (
         supabase.table("referrals")
         .select("referred_user_id")
         .eq("user_id", user_id)
         .execute()
     )
-
     referrals = ref_res.data or []
-
-    referred_ids = list(set(
-        r.get("referred_user_id")
+    referred_ids = list({
+        r["referred_user_id"]
         for r in referrals
         if r.get("referred_user_id")
-    ))
-
+    })
     active_referrals = 0
-
     if referred_ids:
         users_res = (
             supabase.table("users")
@@ -472,51 +456,85 @@ async def dashboard(request: Request):
             .in_("id", referred_ids)
             .execute()
         )
-
         for u in (users_res.data or []):
             if (u.get("clicks") or 0) > 0:
                 active_referrals += 1
-
     REF_BONUS = 10000
-
     referral_earnings = active_referrals * REF_BONUS
-
-    supabase.table("users").update({
-        "referral_earnings": referral_earnings
-    }).eq("id", user_id).execute()
+    supabase.table("users").update(
+        {
+            "referral_earnings": referral_earnings
+        }
+    ).eq("id", user_id).execute()
+    # ================= REPORT =================
+    today_growth = 0
+    earning_growth = 0
+    month_growth = 0
+    month_earning_growth = 0
+    today_referrals = active_referrals
+    month_referrals = active_referrals
+    average_cpm = (
+        round(today_earnings / today_clicks, 2)
+        if today_clicks else 0
+    )
+    month_cpm = (
+        round(month_earnings / month_clicks, 2)
+        if month_clicks else 0
+    )
+    cpm_growth = 0
+    month_cpm_growth = 0
+    # ================= CHART =================
+    chart_labels = []
+    chart_clicks = []
+    chart_earnings = []
+    recent_links = sorted(
+        links,
+        key=lambda x: x.get("created_at") or ""
+    )[-7:]
+    for link in recent_links:
+        created = parse_date(link.get("created_at"))
+        if created:
+            chart_labels.append(created.strftime("%d/%m"))
+        else:
+            chart_labels.append("-")
+        chart_clicks.append(link.get("clicks") or 0)
+        chart_earnings.append(link.get("earnings") or 0)
     # ================= RENDER =================
     return templates.TemplateResponse(
         "dashboard.html",
         {
             "request": request,
-
             "user": user,
             "username": user["username"],
-
-            # saldo + referral bonus
             "saldo": user.get("saldo") or 0,
-
             "total_links": total_links,
             "total_clicks": total_clicks,
             "total_earnings": total_earnings,
-
+            "today": today.strftime("%d %B %Y"),
             "today_clicks": today_clicks,
             "today_earnings": today_earnings,
-
+            "today_growth": today_growth,
+            "today_referrals": today_referrals,
+            "earning_growth": earning_growth,
+            "average_cpm": average_cpm,
+            "cpm_growth": cpm_growth,
             "month_clicks": month_clicks,
             "month_earnings": month_earnings,
-
+            "month_growth": month_growth,
+            "month_earning_growth": month_earning_growth,
+            "month_referrals": month_referrals,
+            "month_cpm": month_cpm,
+            "month_cpm_growth": month_cpm_growth,
+            "chart_labels": chart_labels,
+            "chart_clicks": chart_clicks,
+            "chart_earnings": chart_earnings,
             "latest_links": links[:5],
-            "referral_code": user["username"],
-
-            # referral
+            "links": links,
             "active_referrals": active_referrals,
             "referral_earnings": referral_earnings,
-
-            "links": links,
-
+            "referral_code": user["username"],
             "current_month_name": calendar.month_name[current_month],
-        }
+        },
     )
 # =========================
 # CREATE LINK
