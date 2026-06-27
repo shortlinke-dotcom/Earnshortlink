@@ -570,28 +570,29 @@ async def dashboard(request: Request):
 # =========================
 @app.get("/shorten")
 async def shorten_page(request: Request):
+
     username = request.session.get("username")
+
     if not username:
-        return RedirectResponse("/login", status_code=303)
+        return RedirectResponse("/login", 303)
 
     user = (
         supabase.table("users")
-        .select("*")
+        .select("username,saldo")
         .eq("username", username)
         .single()
         .execute()
     )
 
     if not user.data:
-        request.session.clear()
-        return RedirectResponse("/login", status_code=303)
+        return RedirectResponse("/login", 303)
 
     return templates.TemplateResponse(
         "shortenlink.html",
         {
             "request": request,
-            "user": user.data,
-            "username": username,
+            "username": user.data["username"],
+            "saldo": user.data.get("saldo") or 0
         }
     )
 # =========================
