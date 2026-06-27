@@ -1380,7 +1380,7 @@ canvas{
                     <span>Dashboard</span>
                 </a>
 
-                <a href="/links?login={{ user.username }}" onclick="closeMenu()">
+                <a href="/links" onclick="closeMenu()">
                     <i class="fa-solid fa-link"></i>
                     <span>Kelola Tautan</span>
                 </a>
@@ -1522,12 +1522,6 @@ canvas{
         method="post"
         class="create-form"
     >
-
-        <input
-            type="hidden"
-            name="login"
-            value="{{ user.username }}"
-        >
 
         <input
             type="url"
