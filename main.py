@@ -2,78 +2,70 @@ import random
 import string
 import secrets
 import os
-import requests
 from datetime import datetime
 
-from fastapi import FastAPI, Request, Form
+from fastapi import FastAPI, Request, Form, Body
 from fastapi.responses import (
     HTMLResponse,
     RedirectResponse,
-    Response
+    Response,
+    JSONResponse
 )
 from fastapi.templating import Jinja2Templates
-from database import supabase
-from auth import hash_password, verify_password
+
 from starlette.middleware.sessions import SessionMiddleware
 
+from database import supabase
+from auth import hash_password, verify_password
+
+
 app = FastAPI()
+
 app.add_middleware(
     SessionMiddleware,
     secret_key="RAHASIA_PANJANG_123"
 )
+
 templates = Jinja2Templates(directory="templates")
 
 SUPABASE_URL = os.getenv("SUPABASE_URL")
-# ======================================================
-# HOME
-# ======================================================
 
+
+# =========================
+# HOME
+# =========================
 @app.get("/")
 async def home(request: Request):
-    return templates.TemplateResponse(
-        "index.html",
-        {"request": request}
-    )
+    return templates.TemplateResponse("index.html", {"request": request})
 
-# ======================================================
+
+# =========================
 # LOGIN PAGE
-# ======================================================
+# =========================
 @app.get("/login")
-async def login_page(
-    request: Request,
-    error: str | None = None
-):
+async def login_page(request: Request, error: str | None = None):
+
     message = None
 
-    if error == "google_not_registered":
-        message = "❌ Akun Google ini belum terdaftar. Silakan daftar terlebih dahulu."
-
-    elif error == "notfound":
+    if error == "notfound":
         message = "❌ Username atau Gmail tidak ditemukan."
-
     elif error == "wrongpass":
-        message = "❌ Password yang Anda masukkan salah."
-
+        message = "❌ Password salah."
     elif error == "banned":
-        message = "🚫 Akun Anda telah diblokir."
+        message = "🚫 Akun diblokir."
 
     return templates.TemplateResponse(
         "login.html",
-        {
-            "request": request,
-            "error": message
-        }
+        {"request": request, "error": message}
     )
-# ======================================================
-# LOGIN
-# ======================================================
 
+
+# =========================
+# LOGIN
+# =========================
 @app.post("/login")
-async def login_post(
-    request: Request,
-    login: str = Form(...),
-    password: str = Form(...)
-):
+async def login_post(request: Request, login: str = Form(...), password: str = Form(...)):
+
     result = (
         supabase.table("users")
         .select("*")
@@ -83,68 +75,50 @@ async def login_post(
     )
 
     if not result.data:
-        return RedirectResponse(
-            "/login?error=notfound",
-            status_code=303
-        )
+        return RedirectResponse("/login?error=notfound", 303)
 
     user = result.data[0]
 
-    if user.get("is_banned", False):
-        return RedirectResponse(
-            "/login?error=banned",
-            status_code=303
-        )
+    if user.get("is_banned"):
+        return RedirectResponse("/login?error=banned", 303)
 
-    if not verify_password(password, user["password"]):
-        return RedirectResponse(
-            "/login?error=wrongpass",
-            status_code=303
-        )
+    if not verify_password(password, user.get("password", "")):
+        return RedirectResponse("/login?error=wrongpass", 303)
 
-    # simpan login ke session
     request.session["username"] = user["username"]
 
-    return RedirectResponse(
-        "/dashboard",
-        status_code=303
-    )
-
-from fastapi import Body
+    return RedirectResponse("/dashboard", 303)
 
 
+# =========================
+# GOOGLE LOGIN
+# =========================
 @app.get("/auth/google")
 async def auth_google():
     url = (
         f"{SUPABASE_URL}/auth/v1/authorize"
         f"?provider=google"
-        f"&redirect_to=https://earnshortlink.up.railway.app/login"
+        f"&redirect_to=https://earnshortlink.up.railway.app/auth/callback"
     )
-
-    print("🔥 AUTH URL:", url)
     return RedirectResponse(url)
 
 
 @app.post("/auth/google-session")
-async def google_session(
-    request: Request,
-    data: dict = Body(...)
-):
+async def google_session(request: Request, data: dict = Body(...)):
+
     access_token = data.get("access_token")
 
     if not access_token:
-        return {
-            "redirect": "/login?error=google_failed"
-        }
+        return JSONResponse({"redirect": "/login?error=google_failed"})
 
     try:
         user_data = supabase.auth.get_user(access_token)
-        email = user_data.user.email
-    except Exception as e:
-        print("GOOGLE SESSION ERROR:", e)
-        return {
-            "redirect": "/login?error=google_failed"
-        }
+        email = user_data.user.email if user_data and user_data.user else None
+    except:
+        return JSONResponse({"redirect": "/login?error=google_failed"})
+
+    if not email:
+        return JSONResponse({"redirect": "/login?error=google_failed"})
 
     result = (
         supabase.table("users")
@@ -155,42 +129,52 @@ async def google_session(
     )
 
     if not result.data:
-        return {
-            "redirect": f"/setup-username?email={email}"
-        }
+        request.session["pending_email"] = email
+        return JSONResponse({"redirect": "/setup-username"})
 
-    db_user = result.data[0]
+    user = result.data[0]
 
-    if db_user.get("is_banned", False):
-        return {
-            "redirect": "/login?error=banned"
-        }
+    if user.get("is_banned"):
+        return JSONResponse({"redirect": "/login?error=banned"})
 
-    # simpan login ke session
-    request.session["username"] = db_user["username"]
+    request.session["username"] = user["username"]
 
-    return {
-        "redirect": "/dashboard"
-    }
-# ===============
+    return JSONResponse({"redirect": "/dashboard"})
+
+
+# =========================
+# SETUP USERNAME
+# =========================
 @app.get("/setup-username")
-async def setup_username(request: Request, email: str):
+async def setup_username(request: Request):
+
+    email = request.session.get("pending_email")
+
+    if not email:
+        return RedirectResponse("/login", 303)
 
     return templates.TemplateResponse(
         "setup_username.html",
-        {
-            "request": request,
-            "email": email
-        }
+        {"request": request, "email": email}
     )
 
-@app.post("/setup-username")
-async def setup_username_post(
-    email: str = Form(...),
-    username: str = Form(...)
-):
 
-    # cek username dipakai
+@app.post("/setup-username")
+async def setup_username_post(request: Request, username: str = Form(...)):
+
+    email = request.session.get("pending_email")
+
+    if not email:
+        return RedirectResponse("/login", 303)
+
+    username = username.strip().lower()
+
+    if len(username) < 3:
+        return RedirectResponse("/setup-username?error=short", 303)
+
+    if " " in username:
+        return RedirectResponse("/setup-username?error=space", 303)
+
     check = (
         supabase.table("users")
         .select("id")
@@ -200,12 +184,8 @@ async def setup_username_post(
     )
 
     if check.data:
-        return RedirectResponse(
-            f"/setup-username?email={email}&error=exists",
-            303
-        )
+        return RedirectResponse("/setup-username?error=exists", 303)
 
-    # insert user baru
     supabase.table("users").insert({
         "gmail": email,
         "username": username,
@@ -216,33 +196,35 @@ async def setup_username_post(
         "is_banned": False
     }).execute()
 
-    return RedirectResponse(
-        f"/dashboard?login={username}",
-        303
-    )
-# ======================================================
+    request.session["username"] = username
+    request.session.pop("pending_email", None)
+
+    return RedirectResponse("/dashboard", 303)
+
+
+# =========================
 # REGISTER
-# ======================================================
+# =========================
 @app.get("/register")
 async def register_page(request: Request):
-    return templates.TemplateResponse(
-        "register.html",
-        {"request": request}
-    )
+    return templates.TemplateResponse("register.html", {"request": request})
+
+
 @app.post("/register")
 async def register_post(
+    request: Request,
     gmail: str = Form(...),
     username: str = Form(...),
     password: str = Form(...),
     confirm_password: str = Form(...)
 ):
-    # Password tidak sama
+
+    gmail = gmail.strip().lower()
+    username = username.strip().lower()
+
     if password != confirm_password:
-        return RedirectResponse(
-            "/register?error=nomatch",
-            status_code=303
-        )
-    # Cek username / gmail sudah digunakan
+        return RedirectResponse("/register?error=nomatch", 303)
+
     check = (
         supabase.table("users")
         .select("id")
@@ -250,12 +232,10 @@ async def register_post(
         .limit(1)
         .execute()
     )
+
     if check.data:
-        return RedirectResponse(
-            "/register?error=exists",
-            status_code=303
-        )
-    # Simpan user baru
+        return RedirectResponse("/register?error=exists", 303)
+
     supabase.table("users").insert({
         "gmail": gmail,
         "username": username,
@@ -265,22 +245,22 @@ async def register_post(
         "referrals": 0,
         "is_banned": False
     }).execute()
-    return RedirectResponse(
-        url=f"/dashboard?login={username}",
-        status_code=303
-    )
-# ======================================================
+
+    request.session["username"] = username
+
+    return RedirectResponse("/dashboard", 303)
+
+
+# =========================
 # DASHBOARD
-# ======================================================
+# =========================
 @app.get("/dashboard")
 async def dashboard(request: Request):
+
     username = request.session.get("username")
 
     if not username:
-        return RedirectResponse(
-            "/login",
-            status_code=303
-        )
+        return RedirectResponse("/login", 303)
 
     result = (
         supabase.table("users")
@@ -292,50 +272,60 @@ async def dashboard(request: Request):
 
     if not result.data:
         request.session.clear()
-        return RedirectResponse(
-            "/login",
-            status_code=303
-        )
+        return RedirectResponse("/login", 303)
 
     user = result.data[0]
 
-    if user.get("is_banned", False):
+    if user.get("is_banned"):
         request.session.clear()
-        return HTMLResponse(
-            "Your account has been banned.",
-            status_code=403
-        )
+        return RedirectResponse("/login?error=banned", 303)
 
     return templates.TemplateResponse(
         "dashboard.html",
-        {
-            "request": request,
-            "user": user,
-            "username": user["username"]
-        }
+        {"request": request, "user": user}
     )
+
+
 # =========================
 # CREATE LINK
 # =========================
 @app.post("/create-link")
-async def create_link(request: Request):
+async def create_link(request: Request, destination_url: str = Form(...)):
 
-    form = await request.form()
-    login = form.get("login")
-    destination_url = form.get("destination_url")
+    username = request.session.get("username")
 
-    user = supabase.table("users") \
-        .select("id") \
-        .eq("username", login) \
-        .limit(1) \
+    if not username:
+        return RedirectResponse("/login", 303)
+
+    user = (
+        supabase.table("users")
+        .select("id")
+        .eq("username", username)
+        .limit(1)
         .execute()
+    )
 
     if not user.data:
         return RedirectResponse("/login", 303)
 
     user_id = user.data[0]["id"]
 
-    short_code = ''.join(random.choices(string.ascii_letters + string.digits, k=6))
+    if not destination_url.startswith(("http://", "https://")):
+        return RedirectResponse("/dashboard?error=invalid_url", 303)
+
+    while True:
+        short_code = ''.join(random.choices(string.ascii_letters + string.digits, k=6))
+
+        check = (
+            supabase.table("links")
+            .select("id")
+            .eq("short_code", short_code)
+            .limit(1)
+            .execute()
+        )
+
+        if not check.data:
+            break
 
     supabase.table("links").insert({
         "user_id": user_id,
@@ -345,7 +335,7 @@ async def create_link(request: Request):
         "earnings": 0
     }).execute()
 
-    return RedirectResponse(f"/dashboard?login={login}", 303)
+    return RedirectResponse("/dashboard", 303)
 
 
 # =========================
@@ -378,7 +368,8 @@ async def shortlink(request: Request, short_code: str):
         "short_code": short_code,
         "step": 1,
         "used": False,
-        "created_at": datetime.utcnow().isoformat()
+        "created_at": datetime.utcnow().isoformat(),
+        "expires_at": datetime.utcnow().isoformat()
     }).execute()
 
     return templates.TemplateResponse(
@@ -389,6 +380,8 @@ async def shortlink(request: Request, short_code: str):
             "destination_url": link["destination_url"]
         }
     )
+
+
 # =========================
 # TASK2
 # =========================
@@ -408,18 +401,23 @@ async def task2(request: Request, token: str):
     if not token_data.data:
         return HTMLResponse("Access denied", 403)
 
+    if not request.session.get("username"):
+        return HTMLResponse("Unauthorized", 401)
+
     return templates.TemplateResponse(
         "task2.html",
-        {
-            "request": request,
-            "token": token
-        }
+        {"request": request, "token": token}
     )
+
+
 # =========================
 # COMPLETE TASK2
 # =========================
 @app.post("/complete-task2")
-async def complete_task2(token: str = Form(...)):
+async def complete_task2(request: Request, token: str = Form(...)):
+
+    if not request.session.get("username"):
+        return HTMLResponse("Unauthorized", 401)
 
     data = (
         supabase.table("download_tokens")
@@ -438,15 +436,17 @@ async def complete_task2(token: str = Form(...)):
         "step": 2
     }).eq("token", token).execute()
 
-    return RedirectResponse(
-        f"/task3/{token}",
-        303
-    )
+    return RedirectResponse(f"/task3/{token}", 303)
+
+
 # =========================
 # TASK3
 # =========================
 @app.get("/task3/{token}")
 async def task3(request: Request, token: str):
+
+    if not request.session.get("username"):
+        return HTMLResponse("Unauthorized", 401)
 
     data = (
         supabase.table("download_tokens")
@@ -463,16 +463,18 @@ async def task3(request: Request, token: str):
 
     return templates.TemplateResponse(
         "task3.html",
-        {
-            "request": request,
-            "token": token
-        }
+        {"request": request, "token": token}
     )
+
+
 # =========================
 # FINAL REWARD
 # =========================
 @app.post("/final-reward")
-async def final_reward(token: str = Form(...)):
+async def final_reward(request: Request, token: str = Form(...)):
+
+    if not request.session.get("username"):
+        return HTMLResponse("Unauthorized", 401)
 
     token_res = (
         supabase.table("download_tokens")
@@ -497,23 +499,20 @@ async def final_reward(token: str = Form(...)):
         .execute()
     )
 
-    if not link.data:
-        return HTMLResponse("Link not found", 404)
-
     owner_id = link.data[0]["user_id"]
 
     owner = (
         supabase.table("users")
-        .select("*")
+        .select("saldo,total_earn")
         .eq("id", owner_id)
         .limit(1)
         .execute()
     )
 
-    saldo = owner.data[0].get("saldo") or 0
-    total = owner.data[0].get("total_earn") or 0
-
     reward = 300
+
+    saldo = owner.data[0]["saldo"] or 0
+    total = owner.data[0]["total_earn"] or 0
 
     supabase.table("users").update({
         "saldo": saldo + reward,
@@ -526,11 +525,13 @@ async def final_reward(token: str = Form(...)):
 
     return RedirectResponse("/", 303)
 
+
 # =========================
-# KELOLA TAUTAN
+# LINKS
 # =========================
 @app.get("/links")
 async def links(request: Request):
+
     username = request.session.get("username")
 
     if not username:
@@ -538,18 +539,15 @@ async def links(request: Request):
 
     user = (
         supabase.table("users")
-        .select("id,username")
+        .select("id")
         .eq("username", username)
         .limit(1)
         .execute()
     )
 
-    if not user.data:
-        return RedirectResponse("/login", 303)
-
     user_id = user.data[0]["id"]
 
-    links = (
+    links_res = (
         supabase.table("links")
         .select("*")
         .eq("user_id", user_id)
@@ -562,27 +560,20 @@ async def links(request: Request):
         {
             "request": request,
             "username": username,
-            "links": links.data
+            "links": links_res.data or []
         }
     )
+
+
+# =========================
+# LOGOUT
+# =========================
 @app.get("/logout")
 async def logout(request: Request):
-    try:
-        request.session.clear()
-    except:
-        pass
+    request.session.clear()
+    return RedirectResponse("/", 303)
 
-    response = RedirectResponse(
-        url="/",
-        status_code=303
-    )
 
-    response.delete_cookie("access_token")
-    response.delete_cookie("refresh_token")
-    response.delete_cookie("sb-access-token")
-    response.delete_cookie("sb-refresh-token")
-
-    return response
 # =========================
 # FAVICON
 # =========================
