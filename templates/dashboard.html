@@ -137,11 +137,57 @@
 
 .report-grid{
     display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-    gap:16px;
-    margin-bottom:24px;
+    grid-template-columns:repeat(4,1fr);
+    gap:15px;
 }
 
+/* TABLET */
+@media (max-width:1024px){
+    .report-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+}
+
+/* MOBILE FIX (INI PENTING: JANGAN 1 KOLOM) */
+@media (max-width:768px){
+    .report-grid{
+        grid-template-columns:repeat(2,1fr);
+        gap:10px;
+    }
+
+    .stats-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .report-card{
+        padding:12px;
+    }
+
+    .stat-card{
+        padding:12px;
+    }
+
+    .report-card h2,
+    .stat-card h2{
+        font-size:18px;
+    }
+
+    .report-top i{
+        width:40px;
+        height:40px;
+        font-size:16px;
+    }
+
+    .dashboard-header h1{
+        font-size:22px;
+    }
+
+    .dashboard-header p{
+        font-size:13px;
+    }
+}
+
+/* CARD REPORT */
 .report-card{
     background:#111827;
     border:1px solid rgba(255,255,255,.06);
@@ -181,21 +227,10 @@
     font-size:18px;
 }
 
-.icon-green{
-    background:#14b8a6;
-}
-
-.icon-blue{
-    background:#2563eb;
-}
-
-.icon-orange{
-    background:#f97316;
-}
-
-.icon-purple{
-    background:#8b5cf6;
-}
+.icon-green{background:#14b8a6;}
+.icon-blue{background:#2563eb;}
+.icon-orange{background:#f97316;}
+.icon-purple{background:#8b5cf6;}
 
 .change{
     margin-top:12px;
@@ -300,75 +335,14 @@ table tbody tr:hover{
     border-radius:12px;
     padding:0 20px;
     cursor:pointer;
-    transition:.25s;
 }
 
-.copy-btn:hover{
-    background:#1d4ed8;
-}
+/* ================= EFFECT ================= */
 
-/* ================= MOBILE ================= */
-
-@media (max-width:768px){
-
-.dashboard-header h1{
-    font-size:22px;
-}
-
-.dashboard-header p{
-    font-size:13px;
-}
-
-.stats-grid,
-.report-grid{
-    grid-template-columns:1fr;
-}
-
-.chart-grid{
-    grid-template-columns:1fr;
-}
-
-.chart-card canvas{
-    height:220px!important;
-}
-
-.referral-box{
-    flex-direction:column;
-}
-
-.copy-btn{
-    width:100%;
-    height:46px;
-}
-
-table{
-    font-size:13px;
-}
-
-.card{
-    padding:15px;
-}
-
-.stat-card,
-.report-card{
-    padding:15px;
-}
-
-.report-card h2,
-.stat-card h2{
-    font-size:21px;
-}
-
-.action-btn{
-    padding:12px;
-}
-
-}
 .success-effect{
     position:fixed;
     inset:0;
     pointer-events:none;
-    overflow:hidden;
     z-index:99999;
 }
 
@@ -391,46 +365,10 @@ table{
     animation:popup .9s forwards;
 }
 
-.money{
-    position:fixed;
-    top:-80px;
-    font-size:34px;
-    animation:fall linear forwards;
-    pointer-events:none;
-    z-index:99999;
-}
-
 @keyframes popup{
-
-0%{
-opacity:0;
-transform:translate(-50%,-50%) scale(.4);
-}
-
-60%{
-opacity:1;
-transform:translate(-50%,-50%) scale(1.15);
-}
-
-100%{
-opacity:1;
-transform:translate(-50%,-50%) scale(1);
-}
-
-}
-
-@keyframes fall{
-
-0%{
-transform:translateY(-100px) rotate(0deg);
-opacity:1;
-}
-
-100%{
-transform:translateY(120vh) rotate(720deg);
-opacity:0;
-}
-
+    0%{opacity:0;transform:translate(-50%,-50%) scale(.4);}
+    60%{opacity:1;transform:translate(-50%,-50%) scale(1.15);}
+    100%{opacity:1;transform:translate(-50%,-50%) scale(1);}
 }
 </style>
 {% endblock %}
