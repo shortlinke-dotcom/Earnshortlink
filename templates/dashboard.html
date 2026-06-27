@@ -96,6 +96,75 @@ table tr{
         font-size:14px;
     }
 }
+.referral-card{
+    background:linear-gradient(135deg,#0f172a,#1e293b);
+    border:1px solid rgba(33,150,243,.3);
+}
+
+.referral-header{
+    margin-bottom:20px;
+}
+
+.referral-header h2{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:8px;
+    color:#fff;
+}
+
+.referral-header h2 i{
+    color:#2196f3;
+}
+
+.referral-header p{
+    color:#94a3b8;
+    font-size:14px;
+}
+
+.referral-box{
+    display:flex;
+    gap:12px;
+}
+
+.referral-box input{
+    flex:1;
+    background:#020817;
+    border:1px solid rgba(255,255,255,.08);
+    color:#fff;
+    padding:14px;
+    border-radius:12px;
+    outline:none;
+}
+
+.copy-btn{
+    padding:0 22px;
+    border:none;
+    border-radius:12px;
+    background:#2196f3;
+    color:#fff;
+    font-weight:600;
+    cursor:pointer;
+    transition:.25s;
+}
+
+.copy-btn:hover{
+    transform:translateY(-2px);
+    background:#1976d2;
+}
+
+@media(max-width:768px){
+
+    .referral-box{
+        flex-direction:column;
+    }
+
+    .copy-btn{
+        width:100%;
+        padding:14px;
+    }
+
+}
 </style>
 {% endblock %}
 {% block content %}
@@ -151,6 +220,51 @@ table tr{
     </div>
 </div>
 <div class="stats-grid">
+
+    <div class="stat-card">
+
+        <i class="fa-solid fa-calendar-day"></i>
+
+        <h3>Klik Hari Ini</h3>
+
+        <h2>{{ today_clicks }}</h2>
+
+    </div>
+
+    <div class="stat-card">
+
+        <i class="fa-solid fa-chart-line"></i>
+
+        <h3>Klik Bulan Ini</h3>
+
+        <h2>{{ month_clicks }}</h2>
+
+    </div>
+
+    <div class="stat-card">
+
+        <i class="fa-solid fa-sack-dollar"></i>
+
+        <h3>Pendapatan Bulan Ini</h3>
+
+        <h2>
+            Rp {{ "{:,.0f}".format(month_earnings).replace(",",".") }}
+        </h2>
+
+    </div>
+
+    <div class="stat-card">
+
+        <i class="fa-solid fa-users"></i>
+
+        <h3>Total Pengunjung</h3>
+
+        <h2>{{ total_clicks }}</h2>
+
+    </div>
+
+</div>
+<div class="stats-grid">
     <div class="stat-card">
         <i class="fa-solid fa-wallet"></i>
         <h3>Saldo</h3>
@@ -189,27 +303,56 @@ table tr{
         {% endfor %}
     </table>
 </div>
-<div class="card">
-    <h2>Link Referral</h2>
+<div class="card referral-card">
 
-    <input
-        type="text"
-        value="https://eslink.up.railway.app/ref/{{ username }}"
-        readonly
-        id="refLink">
+    <div class="referral-header">
+        <div>
+            <h2>
+                <i class="fa-solid fa-user-plus"></i>
+                Referral Program
+            </h2>
+            <p>Undang teman dan dapatkan bonus Rp20.000 setiap referral berhasil.</p>
+        </div>
+    </div>
 
-    <button onclick="copyReferral()">
-        Copy Link
-    </button>
+    <div class="referral-box">
+
+        <input
+            type="text"
+            id="refLink"
+            value="https://eslink.up.railway.app/ref/{{ username }}"
+            readonly>
+
+        <button
+            class="copy-btn"
+            onclick="copyReferral()">
+
+            <i class="fa-solid fa-copy"></i>
+            Copy
+
+        </button>
+
+    </div>
+
 </div>
 
 <script>
 function copyReferral(){
+
     const input = document.getElementById("refLink");
-    input.select();
-    input.setSelectionRange(0,99999);
+
     navigator.clipboard.writeText(input.value);
-    alert("Referral berhasil disalin!");
+
+    const btn = document.querySelector(".copy-btn");
+
+    btn.innerHTML = '<i class="fa-solid fa-check"></i> Tersalin';
+
+    setTimeout(function(){
+
+        btn.innerHTML = '<i class="fa-solid fa-copy"></i> Copy';
+
+    },2000);
+
 }
 </script>
 <script>
