@@ -323,16 +323,30 @@ async def dashboard(request: Request):
 
     user = result.data[0]
 
-    if user.get("is_banned"):
+    # ❗ FIX: ambil semua link user
+    links_res = (
+        supabase.table("links")
+        .select("*")
+        .eq("user_id", user["id"])
+        .order("id", desc=True)
+        .execute()
+    )
+
+    links = links_res.data or []
+
+    # banned check (lebih aman)
+    if user.get("is_banned", False):
         request.session.clear()
         return RedirectResponse("/login?error=banned", 303)
 
     return templates.TemplateResponse(
         "dashboard.html",
-        {"request": request, "user": user}
+        {
+            "request": request,
+            "user": user,
+            "links": links
+        }
     )
-
-
 # =========================
 # CREATE LINK
 # =========================
@@ -360,6 +374,7 @@ async def create_link(request: Request, destination_url: str = Form(...)):
     if not destination_url.startswith(("http://", "https://")):
         return RedirectResponse("/dashboard?error=invalid_url", 303)
 
+    # generate short code
     while True:
         short_code = ''.join(random.choices(string.ascii_letters + string.digits, k=6))
 
@@ -374,6 +389,7 @@ async def create_link(request: Request, destination_url: str = Form(...)):
         if not check.data:
             break
 
+    # insert link
     supabase.table("links").insert({
         "user_id": user_id,
         "destination_url": destination_url,
@@ -382,8 +398,8 @@ async def create_link(request: Request, destination_url: str = Form(...)):
         "earnings": 0
     }).execute()
 
-    return RedirectResponse("/dashboard", 303)
-
+    # 🔥 IMPORTANT: kirim hasil ke dashboard
+    return RedirectResponse(f"/dashboard?created={short_code}", 303)
 
 # =========================
 # SHORTLINK
