@@ -307,7 +307,7 @@ async def dashboard(request: Request):
     username = request.session.get("username")
 
     if not username:
-        return RedirectResponse("/login", 303)
+        return RedirectResponse("/login", status_code=303)
 
     result = (
         supabase.table("users")
@@ -319,11 +319,14 @@ async def dashboard(request: Request):
 
     if not result.data:
         request.session.clear()
-        return RedirectResponse("/login", 303)
+        return RedirectResponse("/login", status_code=303)
 
     user = result.data[0]
 
-    # ❗ FIX: ambil semua link user
+    if user.get("is_banned"):
+        request.session.clear()
+        return RedirectResponse("/login?error=banned", status_code=303)
+
     links_res = (
         supabase.table("links")
         .select("*")
@@ -334,16 +337,28 @@ async def dashboard(request: Request):
 
     links = links_res.data or []
 
-    # banned check (lebih aman)
-    if user.get("is_banned", False):
-        request.session.clear()
-        return RedirectResponse("/login?error=banned", 303)
+    total_links = len(links)
+    total_clicks = sum(link["clicks"] for link in links)
+    total_earnings = sum(link["earnings"] for link in links)
 
     return templates.TemplateResponse(
         "dashboard.html",
         {
             "request": request,
+
             "user": user,
+
+            "username": user["username"],
+            "saldo": user["saldo"],
+
+            "total_links": total_links,
+            "total_clicks": total_clicks,
+            "today_earnings": total_earnings,
+
+            "latest_links": links[:5],
+
+            "referral_code": user["username"],
+
             "links": links
         }
     )
