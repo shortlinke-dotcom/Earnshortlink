@@ -345,6 +345,11 @@ async def register_post(
 # =========================
 # DASHBOARD
 # =========================
+from fastapi import Request
+from fastapi.responses import RedirectResponse
+from datetime import datetime, timezone
+import calendar
+
 @app.get("/dashboard")
 async def dashboard(request: Request):
 
@@ -353,11 +358,12 @@ async def dashboard(request: Request):
     if not username:
         return RedirectResponse("/login", status_code=303)
 
+    # ================= USER =================
     result = (
         supabase.table("users")
         .select("*")
         .eq("username", username)
-        .limit(1)
+        .single()
         .execute()
     )
 
@@ -365,55 +371,104 @@ async def dashboard(request: Request):
         request.session.clear()
         return RedirectResponse("/login", status_code=303)
 
-    user = result.data[0]
+    user = result.data
 
     if user.get("is_banned"):
         request.session.clear()
         return RedirectResponse("/login?error=banned", status_code=303)
 
+    user_id = user["id"]
+
+    # ================= LINKS =================
     links_res = (
         supabase.table("links")
         .select("*")
-        .eq("user_id", user["id"])
+        .eq("user_id", user_id)
         .order("id", desc=True)
         .execute()
     )
 
     links = links_res.data or []
 
-    today = datetime.utcnow().date()
+    # ================= TIME =================
+    today = datetime.now(timezone.utc).date()
     current_month = today.month
     current_year = today.year
 
-    today_clicks = 0
-    today_earnings = 0
+    today_clicks = today_earnings = 0
+    month_clicks = month_earnings = 0
 
-    month_clicks = 0
-    month_earnings = 0
+    def parse_date(ts):
+        if not ts:
+            return None
+        try:
+            return datetime.fromisoformat(ts.replace("Z", "+00:00"))
+        except:
+            return None
 
+    # ================= LOOP LINKS =================
     for link in links:
+        clicks = link.get("clicks") or 0
+        earnings = link.get("earnings") or 0
+        created_dt = parse_date(link.get("created_at"))
 
-        created = datetime.fromisoformat(str(link["created_at"]))
+        if created_dt:
+            if created_dt.date() == today:
+                today_clicks += clicks
+                today_earnings += earnings
 
-        if created.date() == today:
-            today_clicks += link.get("clicks", 0) or 0
-            today_earnings += link.get("earnings", 0) or 0
-
-        if created.month == current_month and created.year == current_year:
-            month_clicks += link.get("clicks", 0) or 0
-            month_earnings += link.get("earnings", 0) or 0
+            if created_dt.month == current_month and created_dt.year == current_year:
+                month_clicks += clicks
+                month_earnings += earnings
 
     total_links = len(links)
-    total_clicks = sum(link.get("clicks", 0) or 0 for link in links)
-    total_earnings = sum(link.get("earnings", 0) or 0 for link in links)
+    total_clicks = sum(link.get("clicks") or 0 for link in links)
+    total_earnings = sum(link.get("earnings") or 0 for link in links)
 
+    # ================= REFERRAL SYSTEM =================
+ref_res = (
+    supabase.table("referrals")
+    .select("referred_user_id")
+    .eq("user_id", user_id)
+    .execute()
+)
+
+referrals = ref_res.data or []
+
+referred_ids = list(set(
+    r.get("referred_user_id") for r in referrals if r.get("referred_user_id")
+))
+
+active_referrals = 0
+
+if referred_ids:
+    users_res = (
+        supabase.table("users")
+        .select("id, clicks")
+        .in_("id", referred_ids)
+        .execute()
+    )
+
+    for u in (users_res.data or []):
+        if (u.get("clicks") or 0) > 0:
+            active_referrals += 1
+
+REF_BONUS = 10000
+referral_earnings = active_referrals * REF_BONUS
+supabase.table("users").update({
+    "referral_earnings": referral_earnings
+}).eq("id", user_id).execute()
+    # ================= RENDER =================
     return templates.TemplateResponse(
         "dashboard.html",
         {
             "request": request,
+
             "user": user,
             "username": user["username"],
-            "saldo": user["saldo"],
+
+            # saldo + referral bonus
+            "saldo": user.get("saldo") or 0,
 
             "total_links": total_links,
             "total_clicks": total_clicks,
@@ -427,7 +482,14 @@ async def dashboard(request: Request):
 
             "latest_links": links[:5],
             "referral_code": user["username"],
-            "links": links
+
+            # referral
+            "active_referrals": active_referrals,
+            "referral_earnings": referral_earnings,
+
+            "links": links,
+
+            "current_month_name": calendar.month_name[current_month],
         }
     )
 # =========================
@@ -527,7 +589,7 @@ async def shortlink(request: Request, short_code: str):
             "short_code": short_code,
             "step": 1,
             "used": False,
-            "created_at": datetime.utcnow().isoformat()
+            "created_at": datetime.now(timezone.utc).isoformat()
         }).execute()
     except Exception as e:
         print("Token insert error:", e)
@@ -649,6 +711,8 @@ async def final_reward(request: Request, token: str = Form(...)):
 
     if not token_res.data:
         return HTMLResponse("Invalid Token", 403)
+        if token_res.data[0].get("used"):
+    return HTMLResponse("Already claimed", 403)
 
     short_code = token_res.data[0]["short_code"]
 
