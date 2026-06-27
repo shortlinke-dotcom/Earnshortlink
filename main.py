@@ -14,9 +14,13 @@ from fastapi.responses import (
 from fastapi.templating import Jinja2Templates
 from database import supabase
 from auth import hash_password, verify_password
-
+from starlette.middleware.sessions import SessionMiddleware
 
 app = FastAPI()
+app.add_middleware(
+    SessionMiddleware,
+    secret_key="RAHASIA_PANJANG_123"
+)
 templates = Jinja2Templates(directory="templates")
 
 SUPABASE_URL = os.getenv("SUPABASE_URL")
@@ -66,10 +70,10 @@ async def login_page(
 
 @app.post("/login")
 async def login_post(
+    request: Request,
     login: str = Form(...),
     password: str = Form(...)
 ):
-
     result = (
         supabase.table("users")
         .select("*")
@@ -98,8 +102,11 @@ async def login_post(
             status_code=303
         )
 
+    # simpan login ke session
+    request.session["username"] = user["username"]
+
     return RedirectResponse(
-        url=f"/dashboard?login={user['username']}",
+        "/dashboard",
         status_code=303
     )
 
@@ -119,7 +126,10 @@ async def auth_google():
 
 
 @app.post("/auth/google-session")
-async def google_session(data: dict = Body(...)):
+async def google_session(
+    request: Request,
+    data: dict = Body(...)
+):
     access_token = data.get("access_token")
 
     if not access_token:
@@ -144,7 +154,6 @@ async def google_session(data: dict = Body(...)):
         .execute()
     )
 
-    # belum terdaftar
     if not result.data:
         return {
             "redirect": f"/setup-username?email={email}"
@@ -152,15 +161,16 @@ async def google_session(data: dict = Body(...)):
 
     db_user = result.data[0]
 
-    # dibanned
     if db_user.get("is_banned", False):
         return {
             "redirect": "/login?error=banned"
         }
 
-    # login berhasil
+    # simpan login ke session
+    request.session["username"] = db_user["username"]
+
     return {
-        "redirect": f"/dashboard?login={db_user['username']}"
+        "redirect": "/dashboard"
     }
 # ===============
 @app.get("/setup-username")
@@ -263,33 +273,39 @@ async def register_post(
 # DASHBOARD
 # ======================================================
 @app.get("/dashboard")
-async def dashboard(
-    request: Request,
-    login: str | None = None
-):
-    if not login:
+async def dashboard(request: Request):
+    username = request.session.get("username")
+
+    if not username:
         return RedirectResponse(
             "/login",
             status_code=303
         )
+
     result = (
         supabase.table("users")
         .select("*")
-        .or_(f"username.eq.{login},gmail.eq.{login}")
+        .eq("username", username)
         .limit(1)
         .execute()
     )
+
     if not result.data:
+        request.session.clear()
         return RedirectResponse(
             "/login",
             status_code=303
         )
+
     user = result.data[0]
+
     if user.get("is_banned", False):
+        request.session.clear()
         return HTMLResponse(
             "Your account has been banned.",
             status_code=403
         )
+
     return templates.TemplateResponse(
         "dashboard.html",
         {
@@ -514,21 +530,22 @@ async def final_reward(token: str = Form(...)):
 # KELOLA TAUTAN
 # =========================
 @app.get("/links")
-async def links(request: Request, login: str = None):
+async def links(request: Request):
+    username = request.session.get("username")
 
-    if not login:
-        return RedirectResponse("/login")
+    if not username:
+        return RedirectResponse("/login", 303)
 
     user = (
         supabase.table("users")
         .select("id,username")
-        .eq("username", login)
+        .eq("username", username)
         .limit(1)
         .execute()
     )
 
     if not user.data:
-        return RedirectResponse("/login")
+        return RedirectResponse("/login", 303)
 
     user_id = user.data[0]["id"]
 
@@ -544,7 +561,7 @@ async def links(request: Request, login: str = None):
         "links.html",
         {
             "request": request,
-            "username": login,
+            "username": username,
             "links": links.data
         }
     )
