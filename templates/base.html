@@ -231,24 +231,91 @@ body{
     margin:auto;
     padding:90px 20px 30px;
 }
-/* FOOTER */
-.dashboard-footer{
-    margin-top:40px;
-    padding:20px;
-    text-align:center;
-    color:#94a3b8;
-    border-top:1px solid rgba(255,255,255,.08);
-}
+
 /* MOBILE */
 @media(max-width:768px){
     .logo{
         font-size:20px;
     }
+
     .topbar{
         padding:0 12px;
     }
+
     .container{
         padding:85px 15px 20px;
+    }
+}
+
+/* FOOTER */
+.dashboard-footer{
+    margin-top:50px;
+    padding:25px 20px;
+    border-top:1px solid rgba(255,255,255,.08);
+    background:rgba(255,255,255,.03);
+    backdrop-filter:blur(12px);
+}
+
+.footer-content{
+    max-width:1200px;
+    margin:auto;
+    display:grid;
+    grid-template-columns:1fr auto 1fr;
+    align-items:center;
+    gap:20px;
+}
+
+.footer-logo{
+    font-size:22px;
+    font-weight:800;
+    color:#fff;
+}
+
+.footer-logo span{
+    color:#2196f3;
+    animation:glow 2.5s infinite alternate;
+}
+
+.footer-links{
+    display:flex;
+    justify-content:center;
+    gap:25px;
+    flex-wrap:wrap;
+}
+
+.footer-links a{
+    color:#94a3b8;
+    text-decoration:none;
+    font-size:14px;
+    transition:.3s;
+}
+
+.footer-links a:hover{
+    color:#2196f3;
+}
+
+.footer-text{
+    text-align:right;
+    color:#94a3b8;
+    font-size:14px;
+    line-height:1.7;
+}
+
+@media(max-width:768px){
+    .footer-content{
+        grid-template-columns:1fr;
+        text-align:center;
+        gap:15px;
+    }
+
+    .footer-logo,
+    .footer-text{
+        text-align:center;
+    }
+
+    .footer-links{
+        gap:18px;
+        justify-content:center;
     }
 }
 </style>
@@ -338,8 +405,24 @@ onclick="closeMenu()"></div>
     {% block content %}{% endblock %}
 </div>
 <footer class="dashboard-footer">
-    © <span id="footerYear"></span>
-    EarnShortlink Best CPM
+    <div class="footer-content">
+
+        <div class="footer-logo">
+            EARN<span>SHORTLINK</span>
+        </div>
+
+        <div class="footer-links">
+            <a href="/support">Support</a>
+            <a href="/terms">Terms</a>
+            <a href="/privacy">Privacy</a>
+        </div>
+
+        <div class="footer-text">
+            © <span id="footerYear"></span><br>
+            EarnShortlink Best CPM
+        </div>
+
+    </div>
 </footer>
 <script>
 function openMenu(){
