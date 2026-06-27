@@ -381,28 +381,52 @@ async def dashboard(request: Request):
 
     links = links_res.data or []
 
+    today = datetime.utcnow().date()
+    current_month = today.month
+    current_year = today.year
+
+    today_clicks = 0
+    today_earnings = 0
+
+    month_clicks = 0
+    month_earnings = 0
+
+    for link in links:
+
+        created = datetime.fromisoformat(str(link["created_at"]))
+
+        if created.date() == today:
+            today_clicks += link.get("clicks", 0) or 0
+            today_earnings += link.get("earnings", 0) or 0
+
+        if created.month == current_month and created.year == current_year:
+            month_clicks += link.get("clicks", 0) or 0
+            month_earnings += link.get("earnings", 0) or 0
+
     total_links = len(links)
-    total_clicks = sum(link["clicks"] for link in links)
-    total_earnings = sum(link["earnings"] for link in links)
+    total_clicks = sum(link.get("clicks", 0) or 0 for link in links)
+    total_earnings = sum(link.get("earnings", 0) or 0 for link in links)
 
     return templates.TemplateResponse(
         "dashboard.html",
         {
             "request": request,
-
             "user": user,
-
             "username": user["username"],
             "saldo": user["saldo"],
 
             "total_links": total_links,
             "total_clicks": total_clicks,
-            "today_earnings": total_earnings,
+            "total_earnings": total_earnings,
+
+            "today_clicks": today_clicks,
+            "today_earnings": today_earnings,
+
+            "month_clicks": month_clicks,
+            "month_earnings": month_earnings,
 
             "latest_links": links[:5],
-
             "referral_code": user["username"],
-
             "links": links
         }
     )
