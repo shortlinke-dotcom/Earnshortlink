@@ -364,6 +364,74 @@ table{
 }
 
 }
+.success-effect{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    overflow:hidden;
+    z-index:99999;
+}
+
+.success-text{
+    position:absolute;
+    top:45%;
+    left:50%;
+    transform:translate(-50%,-50%) scale(.5);
+    background:linear-gradient(45deg,#22c55e,#16a34a);
+    color:#fff;
+    padding:18px 35px;
+    border-radius:16px;
+    font-size:28px;
+    font-weight:bold;
+    opacity:0;
+    box-shadow:0 0 40px rgba(34,197,94,.6);
+}
+
+.success-show{
+    animation:popup .9s forwards;
+}
+
+.money{
+    position:fixed;
+    top:-80px;
+    font-size:34px;
+    animation:fall linear forwards;
+    pointer-events:none;
+    z-index:99999;
+}
+
+@keyframes popup{
+
+0%{
+opacity:0;
+transform:translate(-50%,-50%) scale(.4);
+}
+
+60%{
+opacity:1;
+transform:translate(-50%,-50%) scale(1.15);
+}
+
+100%{
+opacity:1;
+transform:translate(-50%,-50%) scale(1);
+}
+
+}
+
+@keyframes fall{
+
+0%{
+transform:translateY(-100px) rotate(0deg);
+opacity:1;
+}
+
+100%{
+transform:translateY(120vh) rotate(720deg);
+opacity:0;
+}
+
+}
 </style>
 {% endblock %}
 {% block content %}
@@ -403,7 +471,7 @@ table{
 
     </form>
 
-    <div id="result" class="create-result">
+    <div id="result" class="create-result" hidden>
 
         <h3>
             <i class="fa-solid fa-circle-check"></i>
@@ -818,8 +886,15 @@ table{
     </div>
 
 </div>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<div id="successEffect" class="success-effect">
 
+    <div class="success-text">
+        🎉 LINK BERHASIL DIBUAT 🎉
+    </div>
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 <script>
 new Chart(document.getElementById("visitorChart"),{
 
@@ -893,6 +968,67 @@ function copyReferral(){
 }
 </script>
 <script>
+function moneyExplosion(){
+
+    const effect = document.getElementById("successEffect");
+    const text = effect.querySelector(".success-text");
+
+    text.classList.remove("success-show");
+    void text.offsetWidth; // restart animation
+    text.classList.add("success-show");
+
+    // 🎉 Ledakan confetti
+    confetti({
+        particleCount:180,
+        spread:120,
+        startVelocity:45,
+        origin:{ y:0.6 }
+    });
+
+    setTimeout(()=>{
+        confetti({
+            particleCount:120,
+            angle:60,
+            spread:80,
+            origin:{x:0}
+        });
+
+        confetti({
+            particleCount:120,
+            angle:120,
+            spread:80,
+            origin:{x:1}
+        });
+    },250);
+
+    setTimeout(()=>{
+        text.classList.remove("success-show");
+        text.style.opacity="0";
+    },2500);
+
+    const money=["💵","💸","💰","🪙"];
+
+    for(let i=0;i<80;i++){
+
+        const el=document.createElement("div");
+
+        el.className="money";
+        el.innerHTML=money[Math.floor(Math.random()*money.length)];
+
+        el.style.left=Math.random()*100+"vw";
+        el.style.animationDuration=(3+Math.random()*2)+"s";
+        el.style.fontSize=(24+Math.random()*18)+"px";
+        el.style.transform=`rotate(${Math.random()*360}deg)`;
+
+        effect.appendChild(el);
+
+        setTimeout(()=>{
+            el.remove();
+        },5000);
+
+    }
+
+}
 document.getElementById("createForm").addEventListener("submit", async function(e){
 
     e.preventDefault();
@@ -909,13 +1045,24 @@ document.getElementById("createForm").addEventListener("submit", async function(
 
     const data = await res.json();
 
-    if(data.ok){
+if(data.ok){
 
-        document.getElementById("result").style.display="block";
+    const result = document.getElementById("result");
 
-        document.getElementById("shortLink").value=data.short_link;
+    result.hidden = false;
 
-    }else{
+    document.getElementById("shortLink").value=data.short_link;
+
+    moneyExplosion();
+
+    document.getElementById("destination_url").value="";
+
+    result.scrollIntoView({
+        behavior:"smooth",
+        block:"center"
+    });
+
+}else{
 
         alert("Gagal membuat link.");
 
@@ -925,11 +1072,19 @@ document.getElementById("createForm").addEventListener("submit", async function(
 
 function copyShortLink(){
 
-    const input=document.getElementById("shortLink");
+    const input = document.getElementById("shortLink");
 
     navigator.clipboard.writeText(input.value);
 
-    alert("Link berhasil disalin.");
+    const btn = document.querySelector("#result button");
+
+    btn.innerHTML = '<i class="fa-solid fa-check"></i> Tersalin';
+
+    setTimeout(function(){
+
+        btn.innerHTML = '<i class="fa-solid fa-copy"></i> Copy Link';
+
+    }, 2000);
 
 }
 </script>
