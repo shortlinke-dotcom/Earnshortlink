@@ -566,6 +566,35 @@ async def dashboard(request: Request):
         },
     )
 # =========================
+# SHORTEN LINK PAGE
+# =========================
+@app.get("/shorten")
+async def shorten_page(request: Request):
+    username = request.session.get("username")
+    if not username:
+        return RedirectResponse("/login", status_code=303)
+
+    user = (
+        supabase.table("users")
+        .select("*")
+        .eq("username", username)
+        .single()
+        .execute()
+    )
+
+    if not user.data:
+        request.session.clear()
+        return RedirectResponse("/login", status_code=303)
+
+    return templates.TemplateResponse(
+        "shortenlink.html",
+        {
+            "request": request,
+            "user": user.data,
+            "username": username,
+        }
+    )
+# =========================
 # CREATE LINK
 # =========================
 from fastapi.responses import JSONResponse
