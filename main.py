@@ -350,13 +350,15 @@ async def dashboard(request: Request):
 # =========================
 # CREATE LINK
 # =========================
+from fastapi.responses import JSONResponse
+
 @app.post("/create-link")
 async def create_link(request: Request, destination_url: str = Form(...)):
 
     username = request.session.get("username")
 
     if not username:
-        return RedirectResponse("/login", 303)
+        return JSONResponse({"ok": False, "error": "unauthorized"}, status_code=401)
 
     user = (
         supabase.table("users")
@@ -367,14 +369,13 @@ async def create_link(request: Request, destination_url: str = Form(...)):
     )
 
     if not user.data:
-        return RedirectResponse("/login", 303)
+        return JSONResponse({"ok": False, "error": "user_not_found"}, status_code=404)
 
     user_id = user.data[0]["id"]
 
     if not destination_url.startswith(("http://", "https://")):
-        return RedirectResponse("/dashboard?error=invalid_url", 303)
+        return JSONResponse({"ok": False, "error": "invalid_url"}, status_code=400)
 
-    # generate short code
     while True:
         short_code = ''.join(random.choices(string.ascii_letters + string.digits, k=6))
 
@@ -389,7 +390,6 @@ async def create_link(request: Request, destination_url: str = Form(...)):
         if not check.data:
             break
 
-    # insert link
     supabase.table("links").insert({
         "user_id": user_id,
         "destination_url": destination_url,
@@ -398,8 +398,13 @@ async def create_link(request: Request, destination_url: str = Form(...)):
         "earnings": 0
     }).execute()
 
-    # 🔥 IMPORTANT: kirim hasil ke dashboard
-    return RedirectResponse(f"/dashboard?created={short_code}", 303)
+    short_link = f"{request.base_url}s/{short_code}"
+
+    return JSONResponse({
+        "ok": True,
+        "short_link": short_link,
+        "short_code": short_code
+    })
 
 # =========================
 # SHORTLINK
