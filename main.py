@@ -252,6 +252,24 @@ async def setup_username_post(request: Request, username: str = Form(...)):
 # =========================
 # REGISTER
 # =========================
+@app.get("/ref/{username}")
+async def referral(request: Request, username: str):
+
+    user = (
+        supabase.table("users")
+        .select("id")
+        .eq("username", username)
+        .limit(1)
+        .execute()
+    )
+
+    if not user.data:
+        return HTMLResponse("Referral tidak ditemukan", 404)
+
+    request.session["referral"] = username
+
+    return RedirectResponse("/register", status_code=303)
+    
 @app.get("/register")
 async def register_page(request: Request):
     return templates.TemplateResponse("register.html", {"request": request})
