@@ -101,17 +101,49 @@ async def login_post(
         url=f"/dashboard?login={user['username']}",
         status_code=303
     )
-@app.get("/auth/google")
-async def auth_google():
-    url = (
-        f"{SUPABASE_URL}/auth/v1/authorize"
-        f"?provider=google"
-        f"&redirect_to=https://earnshortlink.up.railway.app/auth/callback"
-        f"&flow_type=pkce"
+from fastapi import Body
+
+@app.post("/auth/google-session")
+async def google_session(data: dict = Body(...)):
+    access_token = data["access_token"]
+
+    res = requests.get(
+        f"{SUPABASE_URL}/auth/v1/user",
+        headers={
+            "apikey": os.getenv("SUPABASE_KEY"),
+            "Authorization": f"Bearer {access_token}"
+        }
     )
 
-    print("🔥 AUTH URL:", url)
-    return RedirectResponse(url)
+    user = res.json()
+    email = user.get("email")
+
+    if not email:
+        return {"redirect": "/login?error=google_failed"}
+
+    result = (
+        supabase.table("users")
+        .select("*")
+        .eq("gmail", email)
+        .limit(1)
+        .execute()
+    )
+
+    if not result.data:
+        return {
+            "redirect": f"/setup-username?email={email}"
+        }
+
+    db_user = result.data[0]
+
+    if db_user.get("is_banned", False):
+        return {
+            "redirect": "/login?error=banned"
+        }
+
+    return {
+        "redirect": f"/dashboard?login={db_user['username']}"
+    }
     
 @app.get("/auth/callback")
 async def auth_callback(request: Request):
