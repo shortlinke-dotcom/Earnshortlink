@@ -549,17 +549,14 @@ async def links(request: Request, login: str = None):
         }
     )
 @app.get("/logout")
-async def logout(request: Request):
-    try:
-        request.session.clear()
-    except:
-        pass
-
+async def logout():
     response = RedirectResponse(
         f"{SUPABASE_URL}/auth/v1/logout?redirect_to=https://earnshortlink.up.railway.app/",
         status_code=303
     )
 
+    response.delete_cookie("sb-access-token")
+    response.delete_cookie("sb-refresh-token")
     response.delete_cookie("access_token")
     response.delete_cookie("refresh_token")
 
