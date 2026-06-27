@@ -1347,6 +1347,16 @@ canvas{
     }
 
 }
+#resultBox {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: 0.3s ease;
+}
+
+#resultBox.show {
+    opacity: 1;
+    transform: translateY(0);
+}
 </style>
 </head>
 <body>
@@ -1537,31 +1547,30 @@ canvas{
 
     </form>
 
-    <!-- RESULT BOX (muncul setelah create sukses) -->
-    <div id="resultBox" class="panel success-panel" style="display:none;">
+<!-- RESULT BOX (muncul setelah create sukses) -->
+<div id="resultBox" class="panel success-panel" style="display:none;">
 
-        <div class="panel-header success-title">
-            <i class="fa-solid fa-circle-check"></i>
-            Link Berhasil Dibuat
-        </div>
-
-        <input
-            type="text"
-            id="createdLink"
-            class="success-input"
-            readonly
-        >
-
-        <button
-            type="button"
-            class="copy-btn"
-            onclick="copyLink(this)"
-        >
-            <i class="fa-solid fa-copy"></i>
-            Copy Link
-        </button>
-
+    <div class="panel-header success-title">
+        <i class="fa-solid fa-circle-check"></i>
+        Link Berhasil Dibuat
     </div>
+
+    <input
+        type="text"
+        id="createdLink"
+        class="success-input"
+        readonly
+        placeholder="Shortlink akan muncul di sini..."
+    >
+
+    <button
+        type="button"
+        class="copy-btn"
+        id="copyBtn"
+    >
+        <i class="fa-solid fa-copy"></i>
+        Copy Link
+    </button>
 
 </div>
 
