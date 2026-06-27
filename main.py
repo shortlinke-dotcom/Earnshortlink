@@ -103,6 +103,9 @@ async def login_post(
         status_code=303
     )
 
+from fastapi import Body
+
+
 @app.get("/auth/google")
 async def auth_google():
     url = (
@@ -114,25 +117,24 @@ async def auth_google():
     print("🔥 AUTH URL:", url)
     return RedirectResponse(url)
 
-from fastapi import Body
 
 @app.post("/auth/google-session")
 async def google_session(data: dict = Body(...)):
-    access_token = data["access_token"]
+    access_token = data.get("access_token")
 
-    res = requests.get(
-        f"{SUPABASE_URL}/auth/v1/user",
-        headers={
-            "apikey": os.getenv("SUPABASE_KEY"),
-            "Authorization": f"Bearer {access_token}"
+    if not access_token:
+        return {
+            "redirect": "/login?error=google_failed"
         }
-    )
 
-    user = res.json()
-    email = user.get("email")
-
-    if not email:
-        return {"redirect": "/login?error=google_failed"}
+    try:
+        user_data = supabase.auth.get_user(access_token)
+        email = user_data.user.email
+    except Exception as e:
+        print("GOOGLE SESSION ERROR:", e)
+        return {
+            "redirect": "/login?error=google_failed"
+        }
 
     result = (
         supabase.table("users")
@@ -142,6 +144,7 @@ async def google_session(data: dict = Body(...)):
         .execute()
     )
 
+    # belum terdaftar
     if not result.data:
         return {
             "redirect": f"/setup-username?email={email}"
@@ -149,85 +152,16 @@ async def google_session(data: dict = Body(...)):
 
     db_user = result.data[0]
 
+    # dibanned
     if db_user.get("is_banned", False):
         return {
             "redirect": "/login?error=banned"
         }
 
+    # login berhasil
     return {
         "redirect": f"/dashboard?login={db_user['username']}"
     }
-    
-@app.get("/auth/callback")
-async def auth_callback(request: Request):
-    print("🔥 CALLBACK HIT:", request.url)
-    print("📌 PARAMS:", dict(request.query_params))
-
-    code = request.query_params.get("code")
-
-    if not code:
-        print("❌ NO CODE")
-        return RedirectResponse(
-            "/login?error=google_failed",
-            status_code=303
-        )
-
-    import requests
-
-    res = requests.post(
-        f"{SUPABASE_URL}/auth/v1/token?grant_type=authorization_code",
-        headers={
-            "apikey": os.getenv("SUPABASE_KEY"),
-            "Content-Type": "application/json"
-        },
-        json={
-            "code": code,
-            "redirect_uri": "https://earnshortlink.up.railway.app/auth/callback"
-        }
-    )
-
-    data = res.json()
-    print("SUPABASE RESPONSE:", data)
-
-    user = data.get("user")
-    if not user:
-        return RedirectResponse(
-            "/login?error=google_failed",
-            status_code=303
-        )
-
-    email = user.get("email")
-
-    # cek user sudah terdaftar atau belum
-    result = (
-        supabase.table("users")
-        .select("*")
-        .eq("gmail", email)
-        .limit(1)
-        .execute()
-    )
-
-    # jika belum terdaftar
-    if not result.data:
-        return RedirectResponse(
-            f"/setup-username?email={email}",
-            status_code=303
-        )
-
-    db_user = result.data[0]
-
-    # jika dibanned
-    if db_user.get("is_banned", False):
-        return RedirectResponse(
-            "/login?error=banned",
-            status_code=303
-        )
-
-    # login ke dashboard
-    return RedirectResponse(
-        f"/dashboard?login={db_user['username']}",
-        status_code=303
-    )
 # ===============
 @app.get("/setup-username")
 async def setup_username(request: Request, email: str):
