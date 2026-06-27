@@ -141,7 +141,54 @@ async def google_session(request: Request, data: dict = Body(...)):
 
     return JSONResponse({"redirect": "/dashboard"})
 
+from fastapi import Request
+from fastapi.responses import RedirectResponse
 
+@app.get("/auth/callback")
+async def auth_callback(request: Request, code: str | None = None, error: str | None = None):
+
+    if error:
+        return RedirectResponse("/login?error=google_failed")
+
+    if not code:
+        return RedirectResponse("/login?error=google_failed")
+
+    try:
+        # tukar code jadi session dari supabase
+        session = supabase.auth.exchange_code_for_session(code)
+
+        user = session.user
+        email = user.email
+
+    except Exception as e:
+        print("OAuth callback error:", e)
+        return RedirectResponse("/login?error=google_failed")
+
+    # cek user di database kamu
+    result = (
+        supabase.table("users")
+        .select("*")
+        .eq("gmail", email)
+        .limit(1)
+        .execute()
+    )
+
+    # kalau belum ada → setup username
+    if not result.data:
+        request.session["pending_email"] = email
+        return RedirectResponse("/setup-username")
+
+    db_user = result.data[0]
+
+    # banned check
+    if db_user.get("is_banned"):
+        return RedirectResponse("/login?error=banned")
+
+    # login session
+    request.session["username"] = db_user["username"]
+
+    return RedirectResponse("/dashboard")
+    
 # =========================
 # SETUP USERNAME
 # =========================
