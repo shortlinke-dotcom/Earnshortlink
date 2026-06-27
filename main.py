@@ -2,6 +2,7 @@ import random
 import string
 import secrets
 import os
+import requests
 from datetime import datetime
 
 from fastapi import FastAPI, Request, Form
@@ -101,6 +102,18 @@ async def login_post(
         url=f"/dashboard?login={user['username']}",
         status_code=303
     )
+
+@app.get("/auth/google")
+async def auth_google():
+    url = (
+        f"{SUPABASE_URL}/auth/v1/authorize"
+        f"?provider=google"
+        f"&redirect_to=https://earnshortlink.up.railway.app/login"
+    )
+
+    print("🔥 AUTH URL:", url)
+    return RedirectResponse(url)
+
 from fastapi import Body
 
 @app.post("/auth/google-session")
