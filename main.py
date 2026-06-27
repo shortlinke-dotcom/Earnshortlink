@@ -548,6 +548,17 @@ async def links(request: Request, login: str = None):
             "links": links.data
         }
     )
+@app.get("/logout")
+async def logout():
+    response = RedirectResponse(
+        url="/",
+        status_code=303
+    )
+
+    response.delete_cookie("user")
+    response.delete_cookie("access_token")
+
+    return response
 # =========================
 # FAVICON
 # =========================
