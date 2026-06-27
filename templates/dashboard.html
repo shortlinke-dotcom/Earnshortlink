@@ -135,6 +135,7 @@
     margin:24px 0 16px;
 }
 
+/* DEFAULT DESKTOP */
 .report-grid{
     display:grid;
     grid-template-columns:repeat(4,1fr);
@@ -148,21 +149,18 @@
     }
 }
 
-/* MOBILE FIX (INI PENTING: JANGAN 1 KOLOM) */
+/* MOBILE FIX (PAKSA 2 KOLOM) */
 @media (max-width:768px){
     .report-grid{
-        grid-template-columns:repeat(2,1fr);
+        grid-template-columns:repeat(2,1fr) !important;
         gap:10px;
     }
 
     .stats-grid{
-        grid-template-columns:repeat(2,1fr);
+        grid-template-columns:repeat(2,1fr) !important;
     }
 
-    .report-card{
-        padding:12px;
-    }
-
+    .report-card,
     .stat-card{
         padding:12px;
     }
@@ -170,6 +168,11 @@
     .report-card h2,
     .stat-card h2{
         font-size:18px;
+    }
+
+    .report-card h3,
+    .stat-card h3{
+        font-size:12px;
     }
 
     .report-top i{
@@ -187,7 +190,15 @@
     }
 }
 
-/* CARD REPORT */
+/* HP kecil banget tetap 2 kolom */
+@media (max-width:480px){
+    .report-grid{
+        grid-template-columns:repeat(2,1fr) !important;
+    }
+}
+
+/* ================= CARD REPORT ================= */
+
 .report-card{
     background:#111827;
     border:1px solid rgba(255,255,255,.06);
@@ -265,8 +276,8 @@
 }
 
 .chart-card canvas{
-    width:100%!important;
-    height:260px!important;
+    width:100% !important;
+    height:260px !important;
 }
 
 /* ================= TABLE ================= */
