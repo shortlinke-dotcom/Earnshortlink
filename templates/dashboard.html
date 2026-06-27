@@ -103,6 +103,53 @@ table tr{
     <h1>Halo, {{ username }} 👋</h1>
     <p>Selamat datang kembali di EarnShortlink.</p>
 </div>
+<div class="card">
+    <h2>Create Short Link</h2>
+
+    <form id="createForm">
+        <input
+            type="url"
+            id="destination_url"
+            placeholder="https://example.com"
+            required
+            style="
+                width:100%;
+                padding:14px;
+                border-radius:12px;
+                border:none;
+                margin-bottom:15px;
+            ">
+
+        <button
+            type="submit"
+            class="action-btn"
+            style="width:100%;border:none;cursor:pointer;">
+            <i class="fa-solid fa-plus"></i>
+            Create Link
+        </button>
+    </form>
+
+    <div id="result" style="display:none;margin-top:20px;">
+        <h3>Short Link Berhasil Dibuat</h3>
+
+        <input
+            id="shortLink"
+            readonly
+            style="
+                width:100%;
+                padding:14px;
+                border-radius:12px;
+                margin:12px 0;
+            ">
+
+        <button
+            onclick="copyShortLink()"
+            class="action-btn"
+            style="width:100%;border:none;cursor:pointer;">
+            Copy Link
+        </button>
+    </div>
+</div>
 <div class="stats-grid">
     <div class="stat-card">
         <i class="fa-solid fa-wallet"></i>
@@ -124,16 +171,6 @@ table tr{
         <h3>Pendapatan Hari Ini</h3>
         <h2>Rp {{ "{:,.0f}".format(today_earnings).replace(",",".") }}</h2>
     </div>
-</div>
-<div class="action-grid">
-    <a href="/shorten" class="action-btn">
-        <i class="fa-solid fa-scissors"></i>
-        Shorten Link
-    </a>
-    <a href="/withdraw" class="action-btn">
-        <i class="fa-solid fa-money-bill-wave"></i>
-        Withdraw
-    </a>
 </div>
 <div class="card">
     <h2>Link Terbaru</h2>
@@ -157,7 +194,7 @@ table tr{
 
     <input
         type="text"
-        value="https://esl.my.id/ref/{{ username }}"
+        value="https://eslink.up.railway.app/ref/{{ username }}"
         readonly
         id="refLink">
 
@@ -173,6 +210,47 @@ function copyReferral(){
     input.setSelectionRange(0,99999);
     navigator.clipboard.writeText(input.value);
     alert("Referral berhasil disalin!");
+}
+</script>
+<script>
+document.getElementById("createForm").addEventListener("submit", async function(e){
+
+    e.preventDefault();
+
+    const url = document.getElementById("destination_url").value;
+
+    const form = new FormData();
+    form.append("destination_url", url);
+
+    const res = await fetch("/create-link",{
+        method:"POST",
+        body:form
+    });
+
+    const data = await res.json();
+
+    if(data.ok){
+
+        document.getElementById("result").style.display="block";
+
+        document.getElementById("shortLink").value=data.short_link;
+
+    }else{
+
+        alert("Gagal membuat link.");
+
+    }
+
+});
+
+function copyShortLink(){
+
+    const input=document.getElementById("shortLink");
+
+    navigator.clipboard.writeText(input.value);
+
+    alert("Link berhasil disalin.");
+
 }
 </script>
 {% endblock %}
