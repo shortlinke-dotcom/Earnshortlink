@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+<link rel="icon" href="/static/favicon.ico">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{% block title %}EarnShortlink{% endblock %}</title>
@@ -318,55 +319,143 @@ body{
         justify-content:center;
     }
 }
+.sidebar{
+    box-shadow:
+    10px 0 40px rgba(0,0,0,.35);
+}
+#loader{
+    position:fixed;
+    inset:0;
+    background:#020817;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:999999;
+    transition:opacity .4s ease, visibility .4s ease;
+}
+
+#loader.hide{
+    opacity:0;
+    visibility:hidden;
+    pointer-events:none;
+    transition:opacity .4s ease, visibility .4s ease;
+}
+.loader-spinner{
+    width:55px;
+    height:55px;
+    border:4px solid rgba(255,255,255,.15);
+    border-top:4px solid #2196f3;
+    border-radius:50%;
+    animation:spin .8s linear infinite;
+}
+
+@keyframes spin{
+    to{
+        transform:rotate(360deg);
+    }
+}
+.sidebar a.active{
+    background:linear-gradient(90deg,#2196f3,#1976d2);
+    color:#fff;
+    font-weight:600;
+    box-shadow:0 8px 20px rgba(33,150,243,.25);
+}
+
+.sidebar a.active i{
+    color:#fff;
+}
+
+.sidebar a span{
+    flex:1;
+}
 </style>
 {% block extra_css %}{% endblock %}
 </head>
 <body>
+<div id="loader">
+    <div class="loader-spinner"></div>
+</div>
 <div class="bg"></div>
 <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
-        <h2>MENU</h2>
-        <button class="close-btn"
-        onclick="closeMenu()">
+        <h2>EARNSHORTLINK</h2>
+        <button class="close-btn" onclick="closeMenu()">
             <i class="fa-solid fa-xmark"></i>
         </button>
     </div>
+
     <nav>
-        <a href="/dashboard">
-            <i class="fa-solid fa-chart-line"></i>
-            Dashboard
+
+        <a href="/dashboard"
+           class="{% if request.path=='/dashboard' %}active{% endif %}">
+            <i class="fa-solid fa-house"></i>
+            <span>Dashboard</span>
         </a>
-        <a href="/links">
+
+        <a href="/shorten"
+           class="{% if request.path=='/shorten' %}active{% endif %}">
+            <i class="fa-solid fa-scissors"></i>
+            <span>Shorten Link</span>
+        </a>
+
+        <a href="/links"
+           class="{% if request.path=='/links' %}active{% endif %}">
             <i class="fa-solid fa-link"></i>
-            Kelola Tautan
+            <span>My Links</span>
         </a>
-        <a href="/sell-link">
-            <i class="fa-solid fa-plus"></i>
-            Sell Link
+
+        <a href="/analytics"
+           class="{% if request.path=='/analytics' %}active{% endif %}">
+            <i class="fa-solid fa-chart-simple"></i>
+            <span>Analytics</span>
         </a>
-        <a href="/payments">
-            <i class="fa-solid fa-wallet"></i>
-            Payments
+
+        <a href="/withdraw"
+           class="{% if request.path=='/withdraw' %}active{% endif %}">
+            <i class="fa-solid fa-money-bill-wave"></i>
+            <span>Withdraw</span>
         </a>
-        <a href="/referrals">
-            <i class="fa-solid fa-users"></i>
-            Referrals
+
+        <a href="/history"
+           class="{% if request.path=='/history' %}active{% endif %}">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+            <span>Riwayat</span>
         </a>
-        <a href="/invoices">
-            <i class="fa-solid fa-file-invoice"></i>
-            Invoices
+
+        <a href="/referrals"
+           class="{% if request.path=='/referrals' %}active{% endif %}">
+            <i class="fa-solid fa-user-group"></i>
+            <span>Referral</span>
         </a>
-        <a href="/settings">
+
+        <a href="/leaderboard"
+           class="{% if request.path=='/leaderboard' %}active{% endif %}">
+            <i class="fa-solid fa-trophy"></i>
+            <span>Leaderboard</span>
+        </a>
+
+        <a href="/announcements"
+           class="{% if request.path=='/announcements' %}active{% endif %}">
+            <i class="fa-solid fa-bullhorn"></i>
+            <span>Pengumuman</span>
+        </a>
+
+        <a href="/settings"
+           class="{% if request.path=='/settings' %}active{% endif %}">
             <i class="fa-solid fa-gear"></i>
-            Pengaturan
+            <span>Pengaturan</span>
         </a>
-        <a href="/support">
+
+        <a href="/support"
+           class="{% if request.path=='/support' %}active{% endif %}">
             <i class="fa-solid fa-headset"></i>
-            Support
+            <span>Bantuan</span>
         </a>
+
     </nav>
+
     <div class="sidebar-footer">
-        © <span id="year"></span><br>
+        <small>© <span id="year"></span></small><br>
         EarnShortlink Best CPM
     </div>
 </aside>
@@ -388,10 +477,10 @@ onclick="closeMenu()"></div>
         </button>
         <div class="account-dropdown"
         id="accountDropdown">
-            <h4>{{ username }}</h4>
+            <h4>{{ username|e }}</h4>
             <div class="saldo-box">
                 Saldo:
-                <b>Rp {{ saldo }}</b>
+                <b>Rp {{ "{:,.0f}".format(saldo).replace(",",".") }}</b>
             </div>
             <button
             class="logout-btn"
@@ -441,6 +530,34 @@ function toggleUserMenu(){
     document.getElementById("accountDropdown")
         .classList.toggle("show");
 }
+document.addEventListener("click", function(e){
+    const menu = document.querySelector(".user-menu");
+
+    if(!menu.contains(e.target)){
+        document
+        .getElementById("accountDropdown")
+        .classList.remove("show");
+    }
+});
+document.addEventListener("keydown",function(e){
+    if(e.key==="Escape"){
+        closeMenu();
+        document.getElementById("accountDropdown").classList.remove("show");
+    }
+});window.addEventListener("resize",function(){
+    if(window.innerWidth>768){
+        closeMenu();
+    }
+});
+window.addEventListener("load",function(){
+    const loader = document.getElementById("loader");
+
+    loader.classList.add("hide");
+
+    setTimeout(function(){
+        loader.remove();
+    },400);
+});
 document.getElementById("year").textContent =
 new Date().getFullYear();
 document.getElementById("footerYear").textContent =
