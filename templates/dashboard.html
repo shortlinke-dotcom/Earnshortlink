@@ -280,22 +280,52 @@ height:250px!important;
 }
 
 }
+.create-form{
+    margin-top:20px;
+}
+
+.input-field{
+    width:100%;
+    padding:15px;
+    border-radius:14px;
+    border:1px solid rgba(255,255,255,.08);
+    background:#0f172a;
+    color:#fff;
+    outline:none;
+    transition:.25s;
+    margin-bottom:18px;
+}
+
+.input-field:focus{
+    border-color:#2196f3;
+}
+
+.full-btn{
+    width:100%;
+    border:none;
+    cursor:pointer;
+}
+
+.create-result{
+    display:none;
+    margin-top:25px;
+}
+
+.create-result h3{
+    margin-bottom:15px;
+}
 </style>
 {% endblock %}
 {% block content %}
 <!-- ================= DASHBOARD HEADER ================= -->
-
 <div class="dashboard-header">
-
     <div>
         <h1>Halo, {{ username }} 👋</h1>
         <p>Selamat datang kembali di EarnShortlink.</p>
     </div>
-
 </div>
 
 <!-- ================= CREATE LINK ================= -->
-
 <div class="card">
 
     <h2>
@@ -303,61 +333,44 @@ height:250px!important;
         Create Short Link
     </h2>
 
-    <form id="createForm">
+    <form id="createForm" class="create-form">
 
         <input
             type="url"
             id="destination_url"
+            class="input-field"
             placeholder="https://example.com"
-            required
-            style="
-                width:100%;
-                padding:15px;
-                border-radius:14px;
-                border:1px solid rgba(255,255,255,.08);
-                background:#0f172a;
-                color:#fff;
-                margin-top:18px;
-                margin-bottom:18px;
-            ">
+            required>
 
         <button
             type="submit"
-            class="action-btn"
-            style="width:100%;border:none;cursor:pointer;">
+            class="action-btn full-btn">
 
             <i class="fa-solid fa-wand-magic-sparkles"></i>
-
             Create Link
 
         </button>
 
     </form>
 
-    <div id="result" style="display:none;margin-top:25px;">
+    <div id="result" class="create-result">
 
-        <h3>✅ Short Link Berhasil Dibuat</h3>
+        <h3>
+            <i class="fa-solid fa-circle-check"></i>
+            Short Link Berhasil Dibuat
+        </h3>
 
         <input
             id="shortLink"
-            readonly
-            style="
-                width:100%;
-                padding:14px;
-                margin:15px 0;
-                border-radius:12px;
-                background:#0f172a;
-                color:#fff;
-                border:1px solid rgba(255,255,255,.08);
-            ">
+            class="input-field"
+            readonly>
 
         <button
+            type="button"
             onclick="copyShortLink()"
-            class="action-btn"
-            style="width:100%;border:none;cursor:pointer;">
+            class="action-btn full-btn">
 
             <i class="fa-solid fa-copy"></i>
-
             Copy Link
 
         </button>
@@ -370,214 +383,161 @@ height:250px!important;
 
 <div class="stats-grid">
 
-<div class="stat-card">
+    <div class="stat-card">
+        <i class="fa-solid fa-wallet"></i>
+        <h3>Total Saldo</h3>
+        <h2>Rp {{ "{:,.0f}".format(saldo).replace(",",".") }}</h2>
+    </div>
 
-<i class="fa-solid fa-wallet"></i>
+    <div class="stat-card">
+        <i class="fa-solid fa-link"></i>
+        <h3>Total Link</h3>
+        <h2>{{ total_links }}</h2>
+    </div>
 
-<h3>Total Saldo</h3>
+    <div class="stat-card">
+        <i class="fa-solid fa-mouse-pointer"></i>
+        <h3>Total Klik</h3>
+        <h2>{{ total_clicks }}</h2>
+    </div>
 
-<h2>
-Rp {{ "{:,.0f}".format(saldo).replace(",",".") }}
-</h2>
-
-</div>
-
-<div class="stat-card">
-
-<i class="fa-solid fa-link"></i>
-
-<h3>Total Link</h3>
-
-<h2>{{ total_links }}</h2>
-
-</div>
-
-<div class="stat-card">
-
-<i class="fa-solid fa-mouse-pointer"></i>
-
-<h3>Total Klik</h3>
-
-<h2>{{ total_clicks }}</h2>
-
-</div>
-
-<div class="stat-card">
-
-<i class="fa-solid fa-money-bill-wave"></i>
-
-<h3>Pendapatan Hari Ini</h3>
-
-<h2>
-Rp {{ "{:,.0f}".format(today_earnings).replace(",",".") }}
-</h2>
-
-</div>
+    <div class="stat-card">
+        <i class="fa-solid fa-money-bill-wave"></i>
+        <h3>Pendapatan Hari Ini</h3>
+        <h2>Rp {{ "{:,.0f}".format(today_earnings).replace(",",".") }}</h2>
+    </div>
 
 </div>
 
 <!-- ================= DAILY REPORT ================= -->
 
 <div class="report-title">
-
-<i class="fa-solid fa-chart-line"></i>
-
-&nbsp;
-
-Report Harian • {{ today }}
-
+    <i class="fa-solid fa-chart-line"></i>
+    &nbsp;
+    Report Harian • {{ today }}
 </div>
 
 <div class="report-grid">
 
-<div class="report-card">
+    <div class="report-card">
 
-<div class="report-top">
+        <div class="report-top">
 
-<div>
+            <div>
 
-<h3>Visitors</h3>
+                <h3>Visitors</h3>
 
-<h2>{{ today_clicks }}</h2>
+                <h2>{{ today_clicks }}</h2>
 
-<div class="change {% if today_growth < 0 %}down{% endif %}">
+                <div class="change {% if today_growth < 0 %}down{% endif %}">
+                    {% if today_growth >= 0 %}
+                        <i class="fa-solid fa-arrow-trend-up"></i>
+                    {% else %}
+                        <i class="fa-solid fa-arrow-trend-down"></i>
+                    {% endif %}
 
-{% if today_growth >= 0 %}
+                    {{ today_growth }}%
+                </div>
 
-<i class="fa-solid fa-arrow-trend-up"></i>
+            </div>
 
-{% else %}
+            <i class="fa-solid fa-eye icon-green"></i>
 
-<i class="fa-solid fa-arrow-trend-down"></i>
+        </div>
 
-{% endif %}
+    </div>
 
-{{ today_growth }}%
+    <div class="report-card">
 
-</div>
+        <div class="report-top">
 
-</div>
+            <div>
 
-<i class="fa-solid fa-eye icon-green"></i>
+                <h3>Earnings</h3>
 
-</div>
+                <h2>
+                    Rp {{ "{:,.0f}".format(today_earnings).replace(",",".") }}
+                </h2>
 
-</div>
+                <div class="change {% if earning_growth < 0 %}down{% endif %}">
+                    {% if earning_growth >= 0 %}
+                        <i class="fa-solid fa-arrow-trend-up"></i>
+                    {% else %}
+                        <i class="fa-solid fa-arrow-trend-down"></i>
+                    {% endif %}
 
-<div class="report-card">
+                    {{ earning_growth }}%
+                </div>
 
-<div class="report-top">
+            </div>
 
-<div>
+            <i class="fa-solid fa-wallet icon-blue"></i>
 
-<h3>Earnings</h3>
+        </div>
 
-<h2>
+    </div>
 
-Rp {{ "{:,.0f}".format(today_earnings).replace(",",".") }}
+    <div class="report-card">
 
-</h2>
+        <div class="report-top">
 
-<div class="change {% if earning_growth < 0 %}down{% endif %}">
+            <div>
 
-{% if earning_growth >= 0 %}
+                <h3>Referral</h3>
 
-<i class="fa-solid fa-arrow-trend-up"></i>
+                <h2>{{ today_referrals }}</h2>
 
-{% else %}
+                <div class="change">
+                    <i class="fa-solid fa-user-plus"></i>
+                    Referral
+                </div>
 
-<i class="fa-solid fa-arrow-trend-down"></i>
+            </div>
 
-{% endif %}
+            <i class="fa-solid fa-users icon-orange"></i>
 
-{{ earning_growth }}%
+        </div>
 
-</div>
+    </div>
 
-</div>
+    <div class="report-card">
 
-<i class="fa-solid fa-wallet icon-blue"></i>
+        <div class="report-top">
 
-</div>
+            <div>
 
-</div>
+                <h3>Average CPM</h3>
 
-<div class="report-card">
+                <h2>
+                    Rp {{ "{:,.0f}".format(average_cpm).replace(",",".") }}
+                </h2>
 
-<div class="report-top">
+                <div class="change {% if cpm_growth < 0 %}down{% endif %}">
+                    {% if cpm_growth >= 0 %}
+                        <i class="fa-solid fa-arrow-trend-up"></i>
+                    {% else %}
+                        <i class="fa-solid fa-arrow-trend-down"></i>
+                    {% endif %}
 
-<div>
+                    {{ cpm_growth }}%
+                </div>
 
-<h3>Referral</h3>
+            </div>
 
-<h2>{{ today_referrals }}</h2>
+            <i class="fa-solid fa-percent icon-purple"></i>
 
-<div class="change">
+        </div>
 
-<i class="fa-solid fa-user-plus"></i>
-
-Referral
-
-</div>
-
-</div>
-
-<i class="fa-solid fa-users icon-orange"></i>
-
-</div>
-
-</div>
-
-<div class="report-card">
-
-<div class="report-top">
-
-<div>
-
-<h3>Average CPM</h3>
-
-<h2>
-
-Rp {{ "{:,.0f}".format(average_cpm).replace(",",".") }}
-
-</h2>
-
-<div class="change {% if cpm_growth < 0 %}down{% endif %}">
-
-{% if cpm_growth >= 0 %}
-
-<i class="fa-solid fa-arrow-trend-up"></i>
-
-{% else %}
-
-<i class="fa-solid fa-arrow-trend-down"></i>
-
-{% endif %}
-
-{{ cpm_growth }}%
+    </div>
 
 </div>
 
-</div>
-
-<i class="fa-solid fa-percent icon-purple"></i>
-
-</div>
-
-</div>
-
-</div>
-
-<!-- ================= REPORT BULANAN ================= -->
+<!-- ================= MONTHLY REPORT ================= -->
 
 <div class="report-title">
-
     <i class="fa-solid fa-calendar-days"></i>
-
     &nbsp;
-
     Report Bulanan • {{ current_month_name }}
-
 </div>
 
 <div class="report-grid">
@@ -593,15 +553,13 @@ Rp {{ "{:,.0f}".format(average_cpm).replace(",",".") }}
                 <h2>{{ month_clicks }}</h2>
 
                 <div class="change {% if month_growth < 0 %}down{% endif %}">
-
                     {% if month_growth >= 0 %}
-                    <i class="fa-solid fa-arrow-trend-up"></i>
+                        <i class="fa-solid fa-arrow-trend-up"></i>
                     {% else %}
-                    <i class="fa-solid fa-arrow-trend-down"></i>
+                        <i class="fa-solid fa-arrow-trend-down"></i>
                     {% endif %}
 
                     {{ month_growth }}%
-
                 </div>
 
             </div>
@@ -621,21 +579,17 @@ Rp {{ "{:,.0f}".format(average_cpm).replace(",",".") }}
                 <h3>Earnings</h3>
 
                 <h2>
-
                     Rp {{ "{:,.0f}".format(month_earnings).replace(",",".") }}
-
                 </h2>
 
                 <div class="change {% if month_earning_growth < 0 %}down{% endif %}">
-
                     {% if month_earning_growth >= 0 %}
-                    <i class="fa-solid fa-arrow-trend-up"></i>
+                        <i class="fa-solid fa-arrow-trend-up"></i>
                     {% else %}
-                    <i class="fa-solid fa-arrow-trend-down"></i>
+                        <i class="fa-solid fa-arrow-trend-down"></i>
                     {% endif %}
 
                     {{ month_earning_growth }}%
-
                 </div>
 
             </div>
@@ -657,11 +611,8 @@ Rp {{ "{:,.0f}".format(average_cpm).replace(",",".") }}
                 <h2>{{ month_referrals }}</h2>
 
                 <div class="change">
-
                     <i class="fa-solid fa-users"></i>
-
                     Active
-
                 </div>
 
             </div>
@@ -681,21 +632,17 @@ Rp {{ "{:,.0f}".format(average_cpm).replace(",",".") }}
                 <h3>Average CPM</h3>
 
                 <h2>
-
                     Rp {{ "{:,.0f}".format(month_cpm).replace(",",".") }}
-
                 </h2>
 
                 <div class="change {% if month_cpm_growth < 0 %}down{% endif %}">
-
                     {% if month_cpm_growth >= 0 %}
-                    <i class="fa-solid fa-arrow-trend-up"></i>
+                        <i class="fa-solid fa-arrow-trend-up"></i>
                     {% else %}
-                    <i class="fa-solid fa-arrow-trend-down"></i>
+                        <i class="fa-solid fa-arrow-trend-down"></i>
                     {% endif %}
 
                     {{ month_cpm_growth }}%
-
                 </div>
 
             </div>
@@ -715,11 +662,8 @@ Rp {{ "{:,.0f}".format(average_cpm).replace(",",".") }}
     <div class="chart-card">
 
         <h2>
-
             <i class="fa-solid fa-chart-line"></i>
-
             Statistik Pengunjung
-
         </h2>
 
         <canvas id="visitorChart"></canvas>
@@ -729,11 +673,8 @@ Rp {{ "{:,.0f}".format(average_cpm).replace(",",".") }}
     <div class="chart-card">
 
         <h2>
-
             <i class="fa-solid fa-sack-dollar"></i>
-
             Statistik Pendapatan
-
         </h2>
 
         <canvas id="earningChart"></canvas>
@@ -747,11 +688,8 @@ Rp {{ "{:,.0f}".format(average_cpm).replace(",",".") }}
 <div class="card">
 
     <h2>
-
         <i class="fa-solid fa-clock-rotate-left"></i>
-
         Link Terbaru
-
     </h2>
 
     <table>
@@ -759,44 +697,34 @@ Rp {{ "{:,.0f}".format(average_cpm).replace(",",".") }}
         <thead>
 
             <tr>
-
                 <th>Short URL</th>
-
                 <th>Total Klik</th>
-
                 <th>Pendapatan</th>
-
             </tr>
 
         </thead>
 
         <tbody>
 
-        {% for link in latest_links %}
+            {% for link in latest_links %}
 
             <tr>
 
                 <td>
-
                     <strong>{{ link.short }}</strong>
-
                 </td>
 
                 <td>
-
                     {{ link.clicks }}
-
                 </td>
 
                 <td>
-
                     Rp {{ "{:,.0f}".format(link.earnings).replace(",",".") }}
-
                 </td>
 
             </tr>
 
-        {% endfor %}
+            {% endfor %}
 
         </tbody>
 
@@ -804,190 +732,8 @@ Rp {{ "{:,.0f}".format(average_cpm).replace(",",".") }}
 
 </div>
 
-<!-- REPORT HARIAN -->
-<div class="report-title">
-    Report Harian | {{ today }}
-</div>
+<!-- ================= REFERRAL ================= -->
 
-<div class="report-grid">
-
-    <div class="report-card">
-        <div class="report-top">
-            <div>
-                <h3>Pengunjung Hari Ini</h3>
-                <h2>{{ today_clicks }}</h2>
-
-                {% if today_growth >= 0 %}
-                <div class="change">
-                    <i class="fa-solid fa-arrow-trend-up"></i>
-                    {{ today_growth }}%
-                </div>
-                {% else %}
-                <div class="change down">
-                    <i class="fa-solid fa-arrow-trend-down"></i>
-                    {{ today_growth|abs }}%
-                </div>
-                {% endif %}
-
-            </div>
-
-            <i class="fa-solid fa-eye icon-green"></i>
-        </div>
-    </div>
-
-    <div class="report-card">
-        <div class="report-top">
-            <div>
-                <h3>Pendapatan Hari Ini</h3>
-
-                <h2>
-                    Rp {{ "{:,.0f}".format(today_earnings).replace(",",".") }}
-                </h2>
-
-                {% if earning_growth >= 0 %}
-                <div class="change">
-                    <i class="fa-solid fa-arrow-trend-up"></i>
-                    {{ earning_growth }}%
-                </div>
-                {% else %}
-                <div class="change down">
-                    <i class="fa-solid fa-arrow-trend-down"></i>
-                    {{ earning_growth|abs }}%
-                </div>
-                {% endif %}
-
-            </div>
-
-            <i class="fa-solid fa-wallet icon-blue"></i>
-        </div>
-    </div>
-
-    <div class="report-card">
-        <div class="report-top">
-            <div>
-                <h3>Average CPM</h3>
-
-                <h2>
-                    Rp {{ "{:,.0f}".format(average_cpm).replace(",",".") }}
-                </h2>
-
-                {% if cpm_growth >= 0 %}
-                <div class="change">
-                    <i class="fa-solid fa-arrow-trend-up"></i>
-                    {{ cpm_growth }}%
-                </div>
-                {% else %}
-                <div class="change down">
-                    <i class="fa-solid fa-arrow-trend-down"></i>
-                    {{ cpm_growth|abs }}%
-                </div>
-                {% endif %}
-
-            </div>
-
-            <i class="fa-solid fa-percent icon-purple"></i>
-        </div>
-    </div>
-
-</div>
-
-
-<!-- REPORT BULANAN -->
-<div class="report-title">
-    Report Bulanan | {{ current_month_name }}
-</div>
-
-<div class="report-grid">
-
-    <div class="report-card">
-        <div class="report-top">
-            <div>
-
-                <h3>Pengunjung Bulan Ini</h3>
-
-                <h2>{{ month_clicks }}</h2>
-
-                {% if month_growth >= 0 %}
-                <div class="change">
-                    <i class="fa-solid fa-arrow-trend-up"></i>
-                    {{ month_growth }}%
-                </div>
-                {% else %}
-                <div class="change down">
-                    <i class="fa-solid fa-arrow-trend-down"></i>
-                    {{ month_growth|abs }}%
-                </div>
-                {% endif %}
-
-            </div>
-
-            <i class="fa-solid fa-chart-line icon-green"></i>
-
-        </div>
-    </div>
-
-    <div class="report-card">
-        <div class="report-top">
-            <div>
-
-                <h3>Pendapatan Bulan Ini</h3>
-
-                <h2>
-                    Rp {{ "{:,.0f}".format(month_earnings).replace(",",".") }}
-                </h2>
-
-                {% if month_earning_growth >= 0 %}
-                <div class="change">
-                    <i class="fa-solid fa-arrow-trend-up"></i>
-                    {{ month_earning_growth }}%
-                </div>
-                {% else %}
-                <div class="change down">
-                    <i class="fa-solid fa-arrow-trend-down"></i>
-                    {{ month_earning_growth|abs }}%
-                </div>
-                {% endif %}
-
-            </div>
-
-            <i class="fa-solid fa-sack-dollar icon-orange"></i>
-
-        </div>
-    </div>
-
-    <div class="report-card">
-        <div class="report-top">
-            <div>
-
-                <h3>Average CPM</h3>
-
-                <h2>
-                    Rp {{ "{:,.0f}".format(month_cpm).replace(",",".") }}
-                </h2>
-
-                {% if month_cpm_growth >= 0 %}
-                <div class="change">
-                    <i class="fa-solid fa-arrow-trend-up"></i>
-                    {{ month_cpm_growth }}%
-                </div>
-                {% else %}
-                <div class="change down">
-                    <i class="fa-solid fa-arrow-trend-down"></i>
-                    {{ month_cpm_growth|abs }}%
-                </div>
-                {% endif %}
-
-            </div>
-
-            <i class="fa-solid fa-percent icon-purple"></i>
-
-        </div>
-    </div>
-
-</div>
-
-
-<!-- REFERRAL -->
 <div class="card referral-card">
 
     <div class="referral-header">
