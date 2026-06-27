@@ -306,5 +306,33 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 </script>
+<script>
+(async () => {
+    const hash = window.location.hash.substring(1);
+
+    if (!hash.includes("access_token")) {
+        return;
+    }
+
+    const params = new URLSearchParams(hash);
+    const accessToken = params.get("access_token");
+
+    const res = await fetch("/auth/google-session", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            access_token: accessToken
+        })
+    });
+
+    const data = await res.json();
+
+    if (data.redirect) {
+        window.location.href = data.redirect;
+    }
+})();
+</script>
 </body>
 </html>
