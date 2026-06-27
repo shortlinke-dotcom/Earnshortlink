@@ -98,7 +98,7 @@ async def auth_google():
     url = (
         f"{SUPABASE_URL}/auth/v1/authorize"
         f"?provider=google"
-        f"&redirect_to=https://earnshortlink.up.railway.app/auth/callback"
+        f"&redirect_to=https://eslink.up.railway.app/auth/callback"
     )
     return RedirectResponse(url)
 
