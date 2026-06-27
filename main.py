@@ -434,38 +434,54 @@ async def dashboard(request: Request):
                 month_earnings += earnings
     total_links = len(links)
     total_clicks = sum(link.get("clicks") or 0 for link in links)
-    total_earnings = sum(link.get("earnings") or 0 for link in links)
-    # ================= REFERRAL =================
-    ref_res = (
-        supabase.table("referrals")
-        .select("referred_user_id")
-        .eq("user_id", user_id)
+    total_earnings = sum(link.get("earnings") or 0 for link in links)# ================= REFERRAL =================
+
+ref_res = (
+    supabase.table("referrals")
+    .select("referred_user_id")
+    .eq("user_id", user_id)
+    .execute()
+)
+
+referrals = ref_res.data or []
+
+referred_ids = list({
+    r["referred_user_id"]
+    for r in referrals
+    if r.get("referred_user_id")
+})
+
+active_referrals = 0
+
+if referred_ids:
+    users_res = (
+        supabase.table("users")
+        .select("id,clicks")
+        .in_("id", referred_ids)
         .execute()
     )
-    referrals = ref_res.data or []
-    referred_ids = list({
-        r["referred_user_id"]
-        for r in referrals
-        if r.get("referred_user_id")
-    })
-    active_referrals = 0
-    if referred_ids:
-        users_res = (
-            supabase.table("users")
-            .select("id,clicks")
-            .in_("id", referred_ids)
-            .execute()
-        )
-        for u in (users_res.data or []):
-            if (u.get("clicks") or 0) > 0:
-                active_referrals += 1
-    REF_BONUS = 10000
-    referral_earnings = active_referrals * REF_BONUS
-    supabase.table("users").update(
-        {
-            "referral_earnings": referral_earnings
-        }
-    ).eq("id", user_id).execute()
+
+    for u in (users_res.data or []):
+        if (u.get("clicks") or 0) > 0:
+            active_referrals += 1
+
+
+# ================= REFERRAL EARNINGS (REAL VALUE) =================
+
+ref_data = (
+    supabase.table("users")
+    .select("referral_earnings")
+    .eq("id", user_id)
+    .single()
+    .execute()
+)
+
+referral_earnings = ref_data.data.get("referral_earnings") or 0
+
+# OPTIONAL: update ke database (kalau kolom ini masih kamu pakai)
+supabase.table("users").update({
+    "referral_earnings": referral_earnings
+}).eq("id", user_id).execute()
     # ================= REPORT =================
     today_growth = 0
     earning_growth = 0
@@ -758,44 +774,83 @@ async def final_reward(request: Request, token: str = Form(...)):
 
     token_data = token_res.data[0]
 
-    if token_data.get("used"):
-        return HTMLResponse("Already claimed", 403)
-
     short_code = token_data["short_code"]
 
     link = (
         supabase.table("links")
-        .select("*")
+        .select("user_id")
         .eq("short_code", short_code)
-        .limit(1)
+        .single()
         .execute()
     )
 
     if not link.data:
         return HTMLResponse("Link not found", 404)
 
-    owner_id = link.data[0]["user_id"]
+    owner_id = link.data["user_id"]
 
     owner = (
         supabase.table("users")
         .select("saldo,total_earn")
         .eq("id", owner_id)
-        .limit(1)
+        .single()
         .execute()
     )
 
     if not owner.data:
         return HTMLResponse("User not found", 404)
 
+    # =========================
+    # REWARD PEMILIK LINK
+    # =========================
+
     reward = 300
 
-    saldo = owner.data[0].get("saldo") or 0
-    total = owner.data[0].get("total_earn") or 0
+    saldo = owner.data.get("saldo") or 0
+    total = owner.data.get("total_earn") or 0
 
     supabase.table("users").update({
         "saldo": saldo + reward,
         "total_earn": total + reward
     }).eq("id", owner_id).execute()
+
+    # =========================
+    # KOMISI REFERRAL (10%)
+    # =========================
+
+    commission = int(reward * 0.10)
+
+    ref = (
+        supabase.table("referrals")
+        .select("user_id")
+        .eq("referred_user_id", owner_id)
+        .limit(1)
+        .execute()
+    )
+
+    if ref.data:
+
+        referrer_id = ref.data[0]["user_id"]
+
+        referrer = (
+            supabase.table("users")
+            .select("saldo")
+            .eq("id", referrer_id)
+            .single()
+            .execute()
+        )
+
+        if referrer.data:
+
+            ref_saldo = referrer.data.get("saldo") or 0
+
+            supabase.table("users").update({
+                "saldo": ref_saldo + commission
+            }).eq("id", referrer_id).execute()
+
+    # =========================
+    # TOKEN SELESAI
+    # =========================
 
     supabase.table("download_tokens").update({
         "used": True
