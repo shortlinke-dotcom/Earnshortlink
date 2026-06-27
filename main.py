@@ -301,6 +301,10 @@ async def register_post(
     if check.data:
         return RedirectResponse("/register?error=exists", 303)
 
+    # simpan referral sebelum insert user
+    referral = request.session.get("referral")
+
+    # buat akun baru
     supabase.table("users").insert({
         "gmail": gmail,
         "username": username,
@@ -311,10 +315,32 @@ async def register_post(
         "is_banned": False
     }).execute()
 
+    # kalau daftar dari referral
+    if referral:
+
+        ref = (
+            supabase.table("users")
+            .select("id,saldo,referrals")
+            .eq("username", referral)
+            .limit(1)
+            .execute()
+        )
+
+        if ref.data:
+
+            data = ref.data[0]
+
+            supabase.table("users").update({
+                "saldo": (data["saldo"] or 0) + 500,
+                "referrals": (data["referrals"] or 0) + 1
+            }).eq("id", data["id"]).execute()
+
+        request.session.pop("referral", None)
+
+    # login otomatis
     request.session["username"] = username
 
     return RedirectResponse("/dashboard", 303)
-
 
 # =========================
 # DASHBOARD
