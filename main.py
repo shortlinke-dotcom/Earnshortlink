@@ -5,7 +5,7 @@ import secrets
 import calendar
 import bcrypt
 import traceback
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 
 from fastapi import FastAPI, Request, Form, Body
 from fastapi.responses import (
@@ -481,7 +481,7 @@ async def dashboard(request: Request):
         return RedirectResponse("/login", status_code=303)
 
     # ================= USER =================
-    result = (
+    user_res = (
         supabase.table("users")
         .select("*")
         .eq("id", user_id)
@@ -489,7 +489,7 @@ async def dashboard(request: Request):
         .execute()
     )
 
-    user = (result.data or [None])[0]
+    user = (user_res.data or [None])[0]
 
     if not user:
         request.session.clear()
@@ -502,7 +502,7 @@ async def dashboard(request: Request):
     # ================= LINKS =================
     links_res = (
         supabase.table("links")
-        .select("id, clicks, earnings, created_at")
+        .select("*")
         .eq("user_id", user_id)
         .order("created_at", desc=True)
         .execute()
@@ -513,18 +513,25 @@ async def dashboard(request: Request):
     # ================= TIME =================
     now = datetime.now(timezone.utc)
     today = now.date()
+    yesterday = today - timedelta(days=1)
+
     current_month = now.month
     current_year = now.year
 
     # ================= INIT =================
     today_clicks = 0
     today_earnings = 0
+
     month_clicks = 0
     month_earnings = 0
+
     total_clicks = 0
     total_earnings = 0
 
-    # ================= PARSE DATE =================
+    yesterday_clicks = 0
+    yesterday_earnings = 0
+
+    # ================= SAFE DATE PARSER =================
     def parse_date(ts):
         if not ts:
             return None
@@ -533,11 +540,11 @@ async def dashboard(request: Request):
         except:
             return None
 
-    # ================= CALC =================
-    for link in links:
-        clicks = link.get("clicks") or 0
-        earnings = link.get("earnings") or 0
-        created = parse_date(link.get("created_at"))
+    # ================= CALC MAIN STATS =================
+    for l in links:
+        clicks = l.get("clicks") or 0
+        earnings = l.get("earnings") or 0
+        created = parse_date(l.get("created_at"))
 
         total_clicks += clicks
         total_earnings += earnings
@@ -545,9 +552,15 @@ async def dashboard(request: Request):
         if not created:
             continue
 
-        if created.date() == today:
+        d = created.date()
+
+        if d == today:
             today_clicks += clicks
             today_earnings += earnings
+
+        if d == yesterday:
+            yesterday_clicks += clicks
+            yesterday_earnings += earnings
 
         if created.month == current_month and created.year == current_year:
             month_clicks += clicks
@@ -588,31 +601,71 @@ async def dashboard(request: Request):
     average_cpm = round(today_earnings / today_clicks, 2) if today_clicks else 0
     month_cpm = round(month_earnings / month_clicks, 2) if month_clicks else 0
 
-    # 🔥 TAMBAHAN YANG KAMU LUPA (INI YANG ERROR)
-    cpm_growth = average_cpm - (yesterday_earnings or 0)
+    prev_cpm = (yesterday_earnings / yesterday_clicks) if yesterday_clicks else 0
+    cpm_growth = round(average_cpm - prev_cpm, 2)
 
-    # ================= CHART =================
+    # ================= GROWTH SAFE DEFAULT =================
+    today_growth = today_earnings
+    earning_growth = today_earnings
+
+    month_growth = month_earnings
+    month_earning_growth = month_earnings
+    month_cpm_growth = month_cpm
+
+    # ================= 30 HARI CHART (REAL TIME READY) =================
     chart_labels = []
     chart_clicks = []
     chart_earnings = []
 
-    recent_links = sorted(
-        links,
-        key=lambda x: x.get("created_at") or "",
-        reverse=False
-    )[-7:]
+    for i in range(29, -1, -1):
+        day = today - timedelta(days=i)
 
-    for link in recent_links:
-        created = parse_date(link.get("created_at"))
-        chart_labels.append(created.strftime("%d/%m") if created else "-")
-        chart_clicks.append(link.get("clicks") or 0)
-        chart_earnings.append(link.get("earnings") or 0)
+        dc = 0
+        de = 0
 
-    # ================= SAFE METRICS =================
-    earning_growth = today_earnings or 0
-    today_growth = today_earnings or 0
-    revenue_today = today_earnings or 0
-    total_users = supabase.table("users").select("id", count="exact").execute().count or 0
+        for l in links:
+            created = parse_date(l.get("created_at"))
+            if created and created.date() == day:
+                dc += l.get("clicks") or 0
+                de += l.get("earnings") or 0
+
+        chart_labels.append(day.strftime("%d/%m"))
+        chart_clicks.append(dc)
+        chart_earnings.append(de)
+
+    # ================= TOTAL USERS =================
+    users_res = supabase.table("users").select("id", count="exact").execute()
+    total_users = users_res.count or 0
+
+    # ================= CPM BY COUNTRY (SAFE + REAL) =================
+    cpm_by_country = {}
+
+    try:
+        geo_res = (
+            supabase.table("clicks_log")
+            .select("country, earnings")
+            .eq("user_id", user_id)
+            .execute()
+        )
+
+        geo_map = {}
+
+        for r in geo_res.data or []:
+            country = r.get("country") or "Unknown"
+
+            if country not in geo_map:
+                geo_map[country] = {"clicks": 0, "earnings": 0}
+
+            geo_map[country]["clicks"] += 1
+            geo_map[country]["earnings"] += r.get("earnings") or 0
+
+        cpm_by_country = {
+            k: (v["earnings"] / v["clicks"] if v["clicks"] else 0)
+            for k, v in geo_map.items()
+        }
+
+    except:
+        cpm_by_country = {}
 
     # ================= RENDER =================
     return templates.TemplateResponse(
@@ -636,26 +689,32 @@ async def dashboard(request: Request):
 
             "average_cpm": average_cpm,
             "month_cpm": month_cpm,
-            "cpm_growth": cpm_growth,  # 🔥 FIX UTAMA
 
+            # FIX NO ERROR JINJA
+            "cpm_growth": cpm_growth,
+            "today_growth": today_growth,
+            "earning_growth": earning_growth,
+            "month_growth": month_growth,
+            "month_earning_growth": month_earning_growth,
+            "month_cpm_growth": month_cpm_growth,
+
+            # CHART 30 HARI
             "chart_labels": chart_labels,
             "chart_clicks": chart_clicks,
             "chart_earnings": chart_earnings,
 
+            # REF + USERS
+            "active_referrals": active_referrals,
+            "total_users": total_users,
+
+            # CPM COUNTRY
+            "cpm_by_country": cpm_by_country,
+
+            # LINKS
             "latest_links": links[:5],
             "links": links,
 
-            "active_referrals": active_referrals,
-            "referral_earnings": user.get("referral_earnings", 0),
-            "referral_code": user.get("username", ""),
-
             "current_month_name": calendar.month_name[current_month],
-
-            # SAFE METRICS
-            "earning_growth": earning_growth,
-            "today_growth": today_growth,
-            "revenue_today": revenue_today,
-            "total_users": total_users,
         },
     )
     
