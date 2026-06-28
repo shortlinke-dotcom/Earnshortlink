@@ -485,11 +485,11 @@ async def dashboard(request: Request):
         supabase.table("users")
         .select("*")
         .eq("id", user_id)
-        .single()
+        .limit(1)
         .execute()
     )
 
-    user = result.data
+    user = (result.data or [None])[0]
 
     if not user:
         request.session.clear()
@@ -518,9 +518,12 @@ async def dashboard(request: Request):
     current_year = now.year
 
     # ================= INIT =================
-    today_clicks = today_earnings = 0
-    month_clicks = month_earnings = 0
-    total_clicks = total_earnings = 0
+    today_clicks = 0
+    today_earnings = 0
+    month_clicks = 0
+    month_earnings = 0
+    total_clicks = 0
+    total_earnings = 0
 
     # ================= PARSE DATE =================
     def parse_date(ts):
@@ -528,13 +531,13 @@ async def dashboard(request: Request):
             return None
         try:
             return datetime.fromisoformat(ts.replace("Z", "+00:00"))
-        except Exception:
+        except:
             return None
 
-    # ================= HITUNG =================
+    # ================= CALC =================
     for link in links:
-        clicks = link.get("clicks", 0)
-        earnings = link.get("earnings", 0)
+        clicks = link.get("clicks") or 0
+        earnings = link.get("earnings") or 0
         created = parse_date(link.get("created_at"))
 
         total_clicks += clicks
@@ -562,7 +565,7 @@ async def dashboard(request: Request):
     )
 
     referred_ids = [
-        r["referred_user_id"]
+        r.get("referred_user_id")
         for r in (ref_res.data or [])
         if r.get("referred_user_id")
     ]
@@ -593,17 +596,21 @@ async def dashboard(request: Request):
 
     recent_links = sorted(
         links,
-        key=lambda x: x.get("created_at") or ""
+        key=lambda x: x.get("created_at") or "",
+        reverse=False
     )[-7:]
 
     for link in recent_links:
         created = parse_date(link.get("created_at"))
 
-        chart_labels.append(
-            created.strftime("%d/%m") if created else "-"
-        )
-        chart_clicks.append(link.get("clicks", 0))
-        chart_earnings.append(link.get("earnings", 0))
+        chart_labels.append(created.strftime("%d/%m") if created else "-")
+        chart_clicks.append(link.get("clicks") or 0)
+        chart_earnings.append(link.get("earnings") or 0)
+
+    # ================= SAFE DEFAULTS (FIX JINJA ERROR) =================
+    today_growth = today_earnings
+    total_users = 0
+    revenue_today = today_earnings
 
     # ================= RENDER =================
     return templates.TemplateResponse(
@@ -611,7 +618,7 @@ async def dashboard(request: Request):
         {
             "request": request,
             "user": user,
-            "username": user.get("username"),
+            "username": user.get("username", ""),
             "saldo": user.get("saldo", 0),
 
             "total_links": total_links,
@@ -637,9 +644,14 @@ async def dashboard(request: Request):
 
             "active_referrals": active_referrals,
             "referral_earnings": user.get("referral_earnings", 0),
-            "referral_code": user.get("username"),
+            "referral_code": user.get("username", ""),
 
             "current_month_name": calendar.month_name[current_month],
+
+            # FIX JINJA
+            "today_growth": today_growth,
+            "total_users": total_users,
+            "revenue_today": revenue_today,
         },
     )
     
