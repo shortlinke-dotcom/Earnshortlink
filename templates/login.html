@@ -82,34 +82,36 @@ z-index:2;
 
 /* ================= LOGO ANIMATION FIX ================= */
 
+/* LOGO WRAP */
 .logo-wrap{
 position: relative;
 overflow: hidden;
 margin-bottom: 25px;
-height: 50px;
+height: 60px;
 }
 
-/* TRACK LOOP */
+/* TEXT TRACK */
 .logo-track{
 display: flex;
 width: max-content;
-gap: 60px;
-animation: slideLoop 6s linear infinite;
+gap: 80px;
+animation: slideLoop 5s linear infinite;
 }
 
 /* TEXT */
 .logo-text{
 display: flex;
-gap: 8px;
-font-size: 32px;
-font-weight: 800;
+gap: 10px;
+font-size: 34px;
+font-weight: 900;
 white-space: nowrap;
-text-shadow:0 0 20px rgba(59,130,246,0.8);
+text-shadow:0 0 25px rgba(59,130,246,0.9);
+animation: textFlicker 2s infinite;
 }
 
-/* COLOR */
+/* WARNA */
 .logo-text span:first-child{
-color: #fff;
+color:#fff;
 }
 .logo-text span:last-child{
 background: linear-gradient(90deg,#3b82f6,#00e0ff);
@@ -117,10 +119,19 @@ background: linear-gradient(90deg,#3b82f6,#00e0ff);
 color: transparent;
 }
 
-/* LOOP SMOOTH */
+/* GERAK */
 @keyframes slideLoop{
-from{transform: translateX(0);}
-to{transform: translateX(-50%);}
+from{transform:translateX(0);}
+to{transform:translateX(-50%);}
+}
+
+/* FLICKER (KENA PETIR) */
+@keyframes textFlicker{
+0%,100%{opacity:1;}
+45%{opacity:0.6;}
+48%{opacity:1;}
+50%{opacity:0.2;}
+55%{opacity:1;}
 }
 
 /* SMOKE */
@@ -128,20 +139,57 @@ to{transform: translateX(-50%);}
 position:absolute;
 width:200%;
 height:100%;
-background: radial-gradient(circle, rgba(255,255,255,0.2), transparent 60%);
-filter: blur(25px);
-animation: slideLoop 6s linear infinite;
-opacity:0.6;
+background: radial-gradient(circle, rgba(255,255,255,0.25), transparent 70%);
+filter: blur(30px);
+animation: slideLoop 5s linear infinite;
+opacity:0.7;
 }
 
-/* LIGHTNING */
+/* LIGHTNING FLASH */
 .lightning{
 position:absolute;
-width:200%;
+width:100%;
 height:100%;
-background: linear-gradient(120deg, transparent, rgba(59,130,246,0.9), transparent);
-animation: slideLoop 3s linear infinite;
-opacity:0.8;
+pointer-events:none;
+}
+
+/* PETIR NYAMBAR */
+.lightning::before{
+content:””;
+position:absolute;
+top:0;
+left:50%;
+width:2px;
+height:100%;
+background: linear-gradient(#fff,#3b82f6,transparent);
+opacity:0;
+filter: drop-shadow(0 0 15px #3b82f6);
+animation: strike 2.5s infinite;
+}
+
+/* FLASH SCREEN */
+.lightning::after{
+content:””;
+position:absolute;
+inset:0;
+background:rgba(255,255,255,0.15);
+opacity:0;
+animation: flash 2.5s infinite;
+}
+
+/* ANIMASI PETIR */
+@keyframes strike{
+0%,90%,100%{opacity:0;}
+92%{opacity:1;}
+94%{opacity:0.3;}
+96%{opacity:1;}
+}
+
+/* FLASH */
+@keyframes flash{
+0%,90%,100%{opacity:0;}
+92%{opacity:0.4;}
+95%{opacity:0;}
 }
 
 /* ================= UI ================= */
