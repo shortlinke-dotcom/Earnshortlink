@@ -1154,6 +1154,160 @@ async def settings(request: Request):
         }
     )
 
+
+@app.post("/settings/profile")
+async def update_profile(request: Request, username: str = Form(...)):
+    user_id = request.session.get("user_id")
+
+    supabase.table("users")\
+        .update({"username": username})\
+        .eq("id", user_id)\
+        .execute()
+
+    return RedirectResponse("/settings", status_code=303)
+
+@app.post("/settings/password")
+async def update_password(
+    request: Request,
+    old_password: str = Form(...),
+    new_password: str = Form(...),
+    confirm_password: str = Form(...)
+):
+    user_id = request.session.get("user_id")
+
+    user = supabase.table("users")\
+        .select("*")\
+        .eq("id", user_id)\
+        .single()\
+        .execute().data
+
+    if not verify_password(old_password, user["password"]):
+        return RedirectResponse("/settings?error=wrong_password", 303)
+
+    if new_password != confirm_password:
+        return RedirectResponse("/settings?error=not_match", 303)
+
+    supabase.table("users")\
+        .update({"password": hash_password(new_password)})\
+        .eq("id", user_id)\
+        .execute()
+
+    return RedirectResponse("/settings?success=password", 303)
+
+@app.post("/settings/payment")
+async def update_payment(
+    request: Request,
+    payment_name: str = Form(None),
+    payment_method: str = Form(None),
+    payment_number: str = Form(None),
+):
+    user_id = request.session.get("user_id")
+
+    supabase.table("users").update({
+        "payment_name": payment_name,
+        "payment_method": payment_method,
+        "payment_number": payment_number
+    }).eq("id", user_id).execute()
+
+    return RedirectResponse("/settings?success=payment", 303)
+
+@app.post("/settings/payment")
+async def update_payment(
+    request: Request,
+    payment_name: str = Form(None),
+    payment_method: str = Form(None),
+    payment_number: str = Form(None),
+):
+    user_id = request.session.get("user_id")
+
+    supabase.table("users").update({
+        "payment_name": payment_name,
+        "payment_method": payment_method,
+        "payment_number": payment_number
+    }).eq("id", user_id).execute()
+
+    return RedirectResponse("/settings?success=payment", 303)
+
+@app.post("/settings/shortlink")
+async def update_shortlink(
+    request: Request,
+    default_title: str = Form(None),
+    monetization: str = Form(None)
+):
+    user_id = request.session.get("user_id")
+
+    supabase.table("users").update({
+        "default_title": default_title,
+        "monetization": monetization
+    }).eq("id", user_id).execute()
+
+    return RedirectResponse("/settings?success=shortlink", 303)
+
+@app.post("/settings/notification")
+async def update_notification(
+    request: Request,
+    email_notification: str = Form(...),
+    withdraw_notification: str = Form(...),
+    referral_notification: str = Form(...),
+    announcement_notification: str = Form(...)
+):
+    user_id = request.session.get("user_id")
+
+    supabase.table("users").update({
+        "email_notification": email_notification,
+        "withdraw_notification": withdraw_notification,
+        "referral_notification": referral_notification,
+        "announcement_notification": announcement_notification
+    }).eq("id", user_id).execute()
+
+    return RedirectResponse("/settings?success=notif", 303)
+
+import secrets
+
+@app.post("/settings/regenerate-api")
+async def regenerate_api(request: Request):
+    user_id = request.session.get("user_id")
+
+    new_key = secrets.token_hex(24)
+
+    supabase.table("users")\
+        .update({"api_key": new_key})\
+        .eq("id", user_id)\
+        .execute()
+
+    return RedirectResponse("/settings?success=api", 303)
+
+@app.post("/logout-all")
+async def logout_all(request: Request):
+    request.session.clear()
+    return RedirectResponse("/login", 303)
+
+@app.post("/delete-account")
+async def delete_account(request: Request):
+    user_id = request.session.get("user_id")
+
+    supabase.table("users")\
+        .delete()\
+        .eq("id", user_id)\
+        .execute()
+
+    request.session.clear()
+    return RedirectResponse("/", 303)
+
+@app.get("/settings", response_class=HTMLResponse)
+async def settings_page(request: Request):
+    user_id = request.session.get("user_id")
+
+    user = supabase.table("users")\
+        .select("*")\
+        .eq("id", user_id)\
+        .single()\
+        .execute().data
+
+    return templates.TemplateResponse("settings.html", {
+        "request": request,
+        "user": user
+    })
 # =========================
 # LOGOUT
 # =========================
