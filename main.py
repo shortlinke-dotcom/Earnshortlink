@@ -100,64 +100,14 @@ async def login_post(request: Request, login: str = Form(...), password: str = F
 # =========================
 @app.get("/auth/google")
 async def auth_google():
-    url = (
-        f"{SUPABASE_URL}/auth/v1/authorize"
-        f"?provider=google"
-        f"&redirect_to=https://eslink.up.railway.app/auth/callback"
-    )
-    return RedirectResponse(url)
-
-from google.oauth2 import id_token
-from google.auth.transport import requests as grequests
-
-@app.post("/auth/google-session")
-async def google_session(request: Request):
-    data = await request.json()
-    token = data.get("credential")
-
-    try:
-        idinfo = id_token.verify_oauth2_token(
-            token,
-            grequests.Request(),
-            "420662327098-is0d5aqfi4al2s69o6v0d6cu1i97ltok.apps.googleusercontent.com"
-        )
-
-        email = idinfo.get("email")
-
-    except Exception as e:
-        print("ERROR:", e)
-        return JSONResponse({"ok": False, "error": "invalid_token"}, status_code=400)
-
-    # =========================
-    # LANJUT KODE KAMU
-    # =========================
-
-    user_res = (
-        supabase.table("users")
-        .select("*")
-        .eq("gmail", email)
-        .limit(1)
-        .execute()
-    )
-
-    if user_res.data:
-        user = user_res.data[0]
-
-        if user.get("is_banned"):
-            return JSONResponse({"ok": False, "error": "banned"}, status_code=403)
-
-        request.session["user_id"] = user["id"]
-        request.session["username"] = user["username"]
-
-        return JSONResponse({"ok": True, "redirect": "/dashboard"})
-
-    request.session["pending_email"] = email
-
-    return JSONResponse({
-        "ok": True,
-        "new_user": True,
-        "redirect": "/setup-username"
+    res = supabase.auth.sign_in_with_oauth({
+        "provider": "google",
+        "options": {
+            "redirect_to": "https://eslink.up.railway.app/auth/callback"
+        }
     })
+
+    return RedirectResponse(res.url)
     
 # =========================
 # GOOGLE CALLBACK (FINAL)
