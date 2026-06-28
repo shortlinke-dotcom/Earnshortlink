@@ -106,16 +106,31 @@ async def auth_google():
     )
     return RedirectResponse(url)
 
+from google.oauth2 import id_token
+from google.auth.transport import requests as grequests
+
 @app.post("/auth/google-session")
 async def google_session(request: Request):
     data = await request.json()
+    token = data.get("credential")
 
-    email = data.get("email")
+    try:
+        idinfo = id_token.verify_oauth2_token(
+            token,
+            grequests.Request(),
+            "420662327098-is0d5aqfi4al2s69o6v0d6cu1i97ltok.apps.googleusercontent.com"
+        )
 
-    if not email:
-        return JSONResponse({"ok": False, "error": "no_email"}, status_code=400)
+        email = idinfo.get("email")
 
-    # cek user di DB
+    except Exception as e:
+        print("ERROR:", e)
+        return JSONResponse({"ok": False, "error": "invalid_token"}, status_code=400)
+
+    # =========================
+    # LANJUT KODE KAMU
+    # =========================
+
     user_res = (
         supabase.table("users")
         .select("*")
@@ -124,9 +139,6 @@ async def google_session(request: Request):
         .execute()
     )
 
-    # =========================
-    # USER SUDAH ADA → LOGIN
-    # =========================
     if user_res.data:
         user = user_res.data[0]
 
@@ -136,19 +148,15 @@ async def google_session(request: Request):
         request.session["user_id"] = user["id"]
         request.session["username"] = user["username"]
 
-        return JSONResponse({"ok": True})
+        return JSONResponse({"ok": True, "redirect": "/dashboard"})
 
-    # =========================
-    # USER BARU → SETUP USERNAME
-    # =========================
     request.session["pending_email"] = email
 
     return JSONResponse({
         "ok": True,
-        "new_user": True
+        "new_user": True,
+        "redirect": "/setup-username"
     })
-
-
     
 # =========================
 # GOOGLE CALLBACK (FINAL)
