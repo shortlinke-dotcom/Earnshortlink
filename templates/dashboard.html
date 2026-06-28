@@ -2,384 +2,319 @@
 {% block title %}Dashboard - EarnShortlink{% endblock %}
 {% block extra_css %}
 <style>
-/* ================= DASHBOARD ================= */
-
-.dashboard-header{
-    margin-bottom:20px;
+/* ================= GLOBAL ================= */
+body {
+    background: linear-gradient(135deg, #f8fafc, #e2e8f0) !important;
+    color: #0f172a;
+    font-family: system-ui, sans-serif;
 }
 
-.dashboard-header h1{
-    font-size:26px;
-    font-weight:700;
-    margin-bottom:4px;
-    line-height:1.2;
+/* ================= HEADER ================= */
+.dashboard-header h1 {
+    font-size: 26px;
+    font-weight: 800;
+    margin-bottom: 4px;
+    color: #0f172a;
 }
 
-.dashboard-header p{
-    color:#94a3b8;
-    font-size:14px;
+.dashboard-header p {
+    color: #64748b;
+    font-size: 14px;
 }
 
-/* ================= CARD ================= */
-
-.card{
-    background:#111827;
-    border:1px solid rgba(255,255,255,.06);
-    border-radius:14px;
-    padding:18px;
-    margin-bottom:18px;
+/* ================= GLASS CARD BASE ================= */
+.card,
+.stat-card,
+.report-card,
+.chart-card {
+    background: rgba(255, 255, 255, 0.65);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 16px;
+    padding: 18px;
+    margin-bottom: 18px;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+    color: #0f172a;
 }
 
-.card h2{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    font-size:18px;
-    margin-bottom:18px;
+/* ================= CARD TITLE ================= */
+.card h2,
+.chart-card h2 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 18px;
+    margin-bottom: 18px;
+    color: #0f172a;
 }
 
 /* ================= STATS ================= */
-
-.stats-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
-    gap:16px;
-    margin-bottom:22px;
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 16px;
+    margin-bottom: 22px;
 }
 
-.stat-card{
-    background:#111827;
-    border:1px solid rgba(255,255,255,.06);
-    border-radius:14px;
-    padding:18px;
-    transition:.25s;
+.stat-card {
+    transition: 0.3s;
 }
 
-.stat-card:hover{
-    transform:translateY(-3px);
-    border-color:#2196f3;
+.stat-card:hover,
+.report-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.12);
 }
 
-.stat-card i{
-    font-size:22px;
-    color:#2196f3;
-    margin-bottom:12px;
+.stat-card i {
+    font-size: 22px;
+    color: #2563eb;
+    margin-bottom: 12px;
 }
 
-.stat-card h3{
-    font-size:13px;
-    color:#94a3b8;
-    margin-bottom:6px;
+.stat-card h3 {
+    font-size: 13px;
+    color: #64748b;
+    margin-bottom: 6px;
 }
 
-.stat-card h2{
-    font-size:24px;
-    font-weight:700;
+.stat-card h2 {
+    font-size: 24px;
+    font-weight: 800;
 }
 
 /* ================= BUTTON ================= */
-
-.action-btn{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:8px;
-    background:#2563eb;
-    color:#fff;
-    border:none;
-    border-radius:12px;
-    padding:13px;
-    font-size:15px;
-    font-weight:600;
-    cursor:pointer;
-    text-decoration:none;
-    transition:.25s;
+.action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 13px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: 0.25s;
+    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.25);
 }
 
-.action-btn:hover{
-    background:#1d4ed8;
-    transform:translateY(-2px);
+.action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(37, 99, 235, 0.35);
 }
 
-.full-btn{
-    width:100%;
+.full-btn {
+    width: 100%;
 }
 
 /* ================= INPUT ================= */
-
-.input-field{
-    width:100%;
-    padding:13px 15px;
-    border-radius:12px;
-    border:1px solid rgba(255,255,255,.08);
-    background:#0f172a;
-    color:#fff;
-    outline:none;
-    font-size:15px;
-    margin-bottom:14px;
+.input-field {
+    width: 100%;
+    padding: 13px 15px;
+    border-radius: 12px;
+    border: 1px solid rgba(148, 163, 184, 0.3);
+    background: rgba(255, 255, 255, 0.8);
+    color: #0f172a;
+    outline: none;
+    font-size: 15px;
+    margin-bottom: 14px;
+    backdrop-filter: blur(10px);
 }
 
-.input-field:focus{
-    border-color:#2196f3;
+.input-field:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
 }
 
-/* ================= REPORT ================= */
-
-.report-title{
-    background:#2563eb;
-    color:#fff;
-    border-radius:12px;
-    padding:12px 18px;
-    font-size:17px;
-    font-weight:700;
-    margin:24px 0 16px;
+/* ================= REPORT TITLE ================= */
+.report-title {
+    background: linear-gradient(135deg, #3b82f6, #60a5fa);
+    color: #fff;
+    border-radius: 14px;
+    padding: 12px 18px;
+    font-size: 17px;
+    font-weight: 700;
+    margin: 24px 0 16px;
 }
 
-/* DEFAULT DESKTOP */
-.report-grid{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:15px;
+/* ================= GRID ================= */
+.report-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
 }
 
-/* TABLET */
-@media (max-width:1024px){
-    .report-grid{
-        grid-template-columns:repeat(2,1fr);
-    }
+/* ================= CARD CONTENT ================= */
+.report-card h3 {
+    font-size: 13px;
+    color: #64748b;
 }
 
-/* MOBILE FIX (PAKSA 2 KOLOM) */
-@media (max-width:768px){
-    .report-grid{
-        grid-template-columns:repeat(2,1fr) !important;
-        gap:10px;
-    }
-
-    .stats-grid{
-        grid-template-columns:repeat(2,1fr) !important;
-    }
-
-    .report-card,
-    .stat-card{
-        padding:12px;
-    }
-
-    .report-card h2,
-    .stat-card h2{
-        font-size:18px;
-    }
-
-    .report-card h3,
-    .stat-card h3{
-        font-size:12px;
-    }
-
-    .report-top i{
-        width:40px;
-        height:40px;
-        font-size:16px;
-    }
-
-    .dashboard-header h1{
-        font-size:22px;
-    }
-
-    .dashboard-header p{
-        font-size:13px;
-    }
+.report-card h2 {
+    font-size: 24px;
+    margin-top: 8px;
+    color: #0f172a;
 }
 
-/* HP kecil banget tetap 2 kolom */
-@media (max-width:480px){
-    .report-grid{
-        grid-template-columns:repeat(2,1fr) !important;
-    }
+.report-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
 }
 
-/* ================= CARD REPORT ================= */
-
-.report-card{
-    background:#111827;
-    border:1px solid rgba(255,255,255,.06);
-    border-radius:14px;
-    padding:18px;
-    transition:.25s;
+.report-top i {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    font-size: 18px;
 }
 
-.report-card:hover{
-    transform:translateY(-3px);
+/* ICON COLORS */
+.icon-green { background: #10b981; }
+.icon-blue { background: #3b82f6; }
+.icon-orange { background: #f59e0b; }
+.icon-purple { background: #8b5cf6; }
+
+/* ================= CHANGE ================= */
+.change {
+    margin-top: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #16a34a;
 }
 
-.report-top{
-    display:flex;
-    justify-content:space-between;
-    align-items:flex-start;
-}
-
-.report-card h3{
-    font-size:13px;
-    color:#94a3b8;
-}
-
-.report-card h2{
-    font-size:24px;
-    margin-top:8px;
-}
-
-.report-top i{
-    width:46px;
-    height:46px;
-    border-radius:50%;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    color:#fff;
-    font-size:18px;
-}
-
-.icon-green{background:#14b8a6;}
-.icon-blue{background:#2563eb;}
-.icon-orange{background:#f97316;}
-.icon-purple{background:#8b5cf6;}
-
-.change{
-    margin-top:12px;
-    font-size:13px;
-    font-weight:600;
-    color:#22c55e;
-}
-
-.change.down{
-    color:#ef4444;
+.change.down {
+    color: #ef4444;
 }
 
 /* ================= CHART ================= */
-
-.chart-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
-    gap:18px;
-    margin:24px 0;
+.chart-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 18px;
+    margin: 24px 0;
 }
 
-.chart-card{
-    background:#111827;
-    border:1px solid rgba(255,255,255,.06);
-    border-radius:14px;
-    padding:18px;
-}
-
-.chart-card h2{
-    font-size:17px;
-    margin-bottom:16px;
-}
-
-.chart-card canvas{
-    width:100% !important;
-    height:260px !important;
+.chart-card canvas {
+    width: 100% !important;
+    height: 260px !important;
 }
 
 /* ================= TABLE ================= */
-
-table{
-    width:100%;
-    border-collapse:collapse;
-    font-size:14px;
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
 }
 
-table th{
-    color:#94a3b8;
-    font-size:13px;
-    font-weight:600;
-    padding:12px;
+table th {
+    color: #64748b;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 12px;
 }
 
-table td{
-    padding:12px;
+table td {
+    padding: 12px;
+    color: #0f172a;
 }
 
-table tr{
-    border-bottom:1px solid rgba(255,255,255,.06);
+table tr {
+    border-bottom: 1px solid rgba(148,163,184,0.2);
 }
 
-table tbody tr:hover{
-    background:rgba(255,255,255,.03);
+table tbody tr:hover {
+    background: rgba(59,130,246,0.06);
 }
 
 /* ================= REFERRAL ================= */
-
-.referral-card{
-    background:linear-gradient(135deg,#0f172a,#1e293b);
-    border:1px solid rgba(37,99,235,.25);
+.referral-card {
+    background: rgba(255,255,255,0.6);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(59,130,246,0.25);
 }
 
-.referral-header{
-    margin-bottom:16px;
+.referral-header h2 {
+    font-size: 18px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
 }
 
-.referral-header h2{
-    font-size:18px;
-    display:flex;
-    gap:10px;
-    align-items:center;
+.referral-header p {
+    color: #64748b;
+    font-size: 13px;
 }
 
-.referral-header p{
-    color:#94a3b8;
-    font-size:13px;
+.referral-box {
+    display: flex;
+    gap: 10px;
 }
 
-.referral-box{
-    display:flex;
-    gap:10px;
+.referral-box input {
+    flex: 1;
 }
 
-.referral-box input{
-    flex:1;
+.copy-btn {
+    background: #2563eb;
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 0 20px;
+    cursor: pointer;
 }
 
-.copy-btn{
-    background:#2563eb;
-    color:#fff;
-    border:none;
-    border-radius:12px;
-    padding:0 20px;
-    cursor:pointer;
+/* ================= MOBILE ================= */
+@media (max-width: 768px) {
+    .report-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
 /* ================= EFFECT ================= */
-
-.success-effect{
-    position:fixed;
-    inset:0;
-    pointer-events:none;
-    z-index:99999;
+.success-effect {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 99999;
 }
 
-.success-text{
-    position:absolute;
-    top:45%;
-    left:50%;
-    transform:translate(-50%,-50%) scale(.5);
-    background:linear-gradient(45deg,#22c55e,#16a34a);
-    color:#fff;
-    padding:18px 35px;
-    border-radius:16px;
-    font-size:28px;
-    font-weight:bold;
-    opacity:0;
-    box-shadow:0 0 40px rgba(34,197,94,.6);
+.success-text {
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%,-50%) scale(.5);
+    background: linear-gradient(45deg,#22c55e,#16a34a);
+    color: #fff;
+    padding: 18px 35px;
+    border-radius: 16px;
+    font-size: 28px;
+    font-weight: bold;
+    opacity: 0;
+    box-shadow: 0 0 40px rgba(34,197,94,.4);
 }
 
-.success-show{
-    animation:popup .9s forwards;
+.success-show {
+    animation: popup .9s forwards;
 }
 
-@keyframes popup{
-    0%{opacity:0;transform:translate(-50%,-50%) scale(.4);}
-    60%{opacity:1;transform:translate(-50%,-50%) scale(1.15);}
-    100%{opacity:1;transform:translate(-50%,-50%) scale(1);}
+@keyframes popup {
+    0% {opacity:0; transform:translate(-50%,-50%) scale(.4);}
+    60% {opacity:1; transform:translate(-50%,-50%) scale(1.15);}
+    100% {opacity:1; transform:translate(-50%,-50%) scale(1);}
 }
 </style>
 {% endblock %}
