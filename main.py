@@ -1462,6 +1462,9 @@ async def delete_account(request: Request):
     request.session.clear()
     return RedirectResponse("/", 303)
 
+@app.get("/privacy")
+def privacy():
+    return FileResponse("templates/privacy.html")
 
 # =========================
 # LOGOUT
