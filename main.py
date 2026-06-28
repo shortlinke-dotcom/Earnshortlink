@@ -3,6 +3,7 @@ import random
 import string
 import secrets
 import calendar
+import traceback
 from datetime import datetime, timezone
 
 from fastapi import FastAPI, Request, Form, Body
@@ -161,33 +162,47 @@ async def google_session(request: Request):
 # =========================
 # GOOGLE CALLBACK (FINAL)
 # =========================
+
 @app.get("/auth/callback")
-async def auth_callback(request: Request, code: str | None = None, error: str | None = None):
+async def auth_callback(
+    request: Request,
+    code: str | None = None,
+    error: str | None = None
+):
 
     # =========================
     # HANDLE ERROR
     # =========================
-    if error:
-        return RedirectResponse("/login?error=google_failed")
-
-    if not code:
+    if error or not code:
         return RedirectResponse("/login?error=google_failed")
 
     try:
-        # tukar code → session supabase
-        session = supabase.auth.exchange_code_for_session(code)
+        # =========================
+        # EXCHANGE CODE → SESSION
+        # =========================
+        res = supabase.auth.exchange_code_for_session({
+            "auth_code": code
+        })
 
-        if not session or not session.user:
+        # adaptasi berbagai versi SDK
+        session = getattr(res, "session", None)
+
+        if not session:
             return RedirectResponse("/login?error=google_failed")
 
-        email = session.user.email
+        user = getattr(session, "user", None)
+
+        if not user:
+            return RedirectResponse("/login?error=google_failed")
+
+        email = user.email
+
+        if not email:
+            return RedirectResponse("/login?error=google_failed")
 
     except Exception as e:
-        import traceback
-
         traceback.print_exc()
-
-        return HTMLResponse(str(e), status_code=500)
+        return HTMLResponse(f"OAuth Error: {str(e)}", status_code=500)
 
     # =========================
     # CEK USER DI DATABASE
@@ -205,6 +220,7 @@ async def auth_callback(request: Request, code: str | None = None, error: str | 
     # =========================
     if not result.data:
         request.session["pending_email"] = email
+        request.session["oauth_email"] = email  # extra safety
         return RedirectResponse("/setup-username")
 
     user = result.data[0]
@@ -221,6 +237,10 @@ async def auth_callback(request: Request, code: str | None = None, error: str | 
     request.session["username"] = user.get("username")
     request.session["user_id"] = user.get("id")
     request.session["logged_in"] = True
+    request.session["email"] = email
+
+    # penting biar session tidak delay di beberapa server
+    request.session.modified = True if hasattr(request.session, "modified") else None
 
     return RedirectResponse("/dashboard")
     
