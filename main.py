@@ -183,8 +183,11 @@ async def auth_callback(request: Request, code: str | None = None, error: str | 
         email = session.user.email
 
     except Exception as e:
-        print("OAuth callback error:", e)
-        return RedirectResponse(f"/login?error={str(e)}")
+        import traceback
+
+        traceback.print_exc()
+
+        return HTMLResponse(str(e), status_code=500)
 
     # =========================
     # CEK USER DI DATABASE
@@ -213,15 +216,12 @@ async def auth_callback(request: Request, code: str | None = None, error: str | 
         return RedirectResponse("/login?error=banned")
 
     # =========================
-    # SET SESSION (PENTING)
+    # SET SESSION
     # =========================
     request.session["username"] = user.get("username")
     request.session["user_id"] = user.get("id")
     request.session["logged_in"] = True
 
-    # =========================
-    # REDIRECT DASHBOARD
-    # =========================
     return RedirectResponse("/dashboard")
     
 # =========================
