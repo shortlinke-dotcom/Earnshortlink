@@ -226,7 +226,10 @@ async def setup_username_post(
     email = request.session.get("pending_email")
 
     if not email:
-        return JSONResponse({"ok": False, "error": "session_expired"}, status_code=401)
+        return JSONResponse(
+            {"ok": False, "error": "session_expired"},
+            status_code=401
+        )
 
     username = username.strip().lower()
     password = password.strip()
@@ -241,13 +244,38 @@ async def setup_username_post(
         return JSONResponse({"ok": False, "error": "username_no_space"})
 
     # =========================
-    # VALIDASI PASSWORD (IMPORTANT)
+    # VALIDASI PASSWORD
     # =========================
     if len(password) < 6:
         return JSONResponse({"ok": False, "error": "password_too_short"})
 
     if len(password) > 72:
         return JSONResponse({"ok": False, "error": "password_too_long"})
+
+    # =========================
+    # CEK EMAIL (ANTI DUPLICATE FIX 🔥)
+    # =========================
+    existing_email = (
+        supabase.table("users")
+        .select("id", "username")
+        .eq("gmail", email)
+        .limit(1)
+        .execute()
+    )
+
+    if existing_email.data:
+        user = existing_email.data[0]
+
+        request.session["username"] = user.get("username")
+        request.session["user_id"] = user.get("id")
+        request.session["logged_in"] = True
+
+        request.session.pop("pending_email", None)
+
+        return JSONResponse({
+            "ok": True,
+            "redirect": "/dashboard"
+        })
 
     # =========================
     # CEK USERNAME
@@ -264,12 +292,12 @@ async def setup_username_post(
         return JSONResponse({"ok": False, "error": "username_exists"})
 
     # =========================
-    # HASH PASSWORD (FIXED)
+    # HASH PASSWORD (SAFE BCRYPT)
     # =========================
     hashed_password = bcrypt.hashpw(
-        password.encode(),
+        password.encode("utf-8"),
         bcrypt.gensalt()
-    ).decode()
+    ).decode("utf-8")
 
     # =========================
     # INSERT USER
