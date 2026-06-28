@@ -298,89 +298,61 @@ pointer-events:none;
 =========================== */
 
 .group{
-
-position:relative;
-
-margin-bottom:18px;
-
-}
-
-.group i{
-
-position:absolute;
-
-left:18px;
-top:50%;
-
-transform:translateY(-50%);
-
-color:#7ea8ff;
-
-font-size:15px;
-
+    position:relative;
+    margin-bottom:18px;
 }
 
 .group input{
-
-width:100%;
-
-height:54px;
-
-padding-left:48px;
-padding-right:48px;
-
-border-radius:15px;
-
-border:1px solid rgba(255,255,255,.08);
-
-background:var(--card2);
-
-color:#fff;
-
-font-size:14px;
-
-transition:.25s;
-
-outline:none;
-
+    width:100%;
+    height:54px;
+    padding:0 50px 0 48px;
+    border-radius:15px;
+    border:1px solid rgba(255,255,255,.08);
+    background:var(--card2);
+    color:#fff;
+    font-size:14px;
+    outline:none;
+    transition:.25s;
 }
 
 .group input::placeholder{
-
-color:#93a4c8;
-
+    color:#93a4c8;
 }
 
 .group input:focus{
-
-border-color:#3b82f6;
-
-background:rgba(255,255,255,.05);
-
-box-shadow:
-
-0 0 0 4px rgba(59,130,246,.12),
-
-0 0 20px rgba(59,130,246,.18);
-
+    border-color:#3b82f6;
+    background:rgba(255,255,255,.05);
+    box-shadow:
+        0 0 0 4px rgba(59,130,246,.12),
+        0 0 20px rgba(59,130,246,.18);
 }
 
-.toggle{
-
-position:absolute;
-
-right:18px;
-
-top:50%;
-
-transform:translateY(-50%);
-
-cursor:pointer;
-
-color:#8da4cb;
-
+.group .fa-user,
+.group .fa-lock{
+    position:absolute;
+    left:18px;
+    top:50%;
+    transform:translateY(-50%);
+    color:#7ea8ff;
+    font-size:15px;
+    pointer-events:none;
+    z-index:2;
 }
 
+.group .toggle{
+    position:absolute;
+    right:18px;
+    top:50%;
+    transform:translateY(-50%);
+    color:#8da4cb;
+    cursor:pointer;
+    font-size:16px;
+    z-index:3;
+}
+
+.group .toggle:hover{
+    color:#3b82f6;
+}
 /* ===========================
    BUTTON
 =========================== */
