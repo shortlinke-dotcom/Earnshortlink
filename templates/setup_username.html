@@ -3,48 +3,115 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Setup Akun</title>
+<title>Setup Akun • EarnShortlink</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
+
+:root{
+    --primary:#2563eb;
+    --primary2:#00b8ff;
+    --bg:#0b1220;
+    --card:#0f172a;
+    --border:#1f2937;
+    --text:#fff;
+    --sub:#94a3b8;
+}
+
 *{
     margin:0;
     padding:0;
     box-sizing:border-box;
-    font-family:system-ui,-apple-system,Segoe UI,Roboto,Poppins;
+    font-family:'Poppins',sans-serif;
 }
 
 body{
-    background:#0b1220;
-    color:#fff;
+    min-height:100vh;
     display:flex;
     justify-content:center;
     align-items:center;
-    min-height:100vh;
+    background:var(--bg);
+    overflow:hidden;
+    color:var(--text);
     padding:20px;
 }
 
+/* GRID */
+body::before{
+    content:"";
+    position:absolute;
+    inset:-100%;
+    background-image:
+        linear-gradient(rgba(148,163,184,.06) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(148,163,184,.06) 1px,transparent 1px);
+    background-size:45px 45px;
+    animation:gridMove 18s linear infinite;
+}
+
+@keyframes gridMove{
+    from{transform:translate(0,0);}
+    to{transform:translate(-45px,-45px);}
+}
+
+/* GLOW */
+.glow{
+    position:absolute;
+    border-radius:50%;
+    filter:blur(120px);
+}
+
+.glow.one{
+    width:320px;
+    height:320px;
+    top:-100px;
+    left:-100px;
+    background:#2563eb;
+    opacity:.15;
+}
+
+.glow.two{
+    width:300px;
+    height:300px;
+    right:-120px;
+    bottom:-120px;
+    background:#00b8ff;
+    opacity:.12;
+}
+
+/* CARD */
 .card{
+    position:relative;
     width:100%;
     max-width:420px;
-    background:#111827;
-    border-radius:16px;
-    padding:28px;
-    box-shadow:0 10px 30px rgba(0,0,0,0.45);
+    background:rgba(15,23,42,.92);
+    border:1px solid var(--border);
+    border-radius:20px;
+    padding:30px;
+    box-shadow:0 20px 60px rgba(0,0,0,.4);
+    backdrop-filter:blur(10px);
+    animation:fade .6s ease;
+}
+
+@keyframes fade{
+    from{opacity:0;transform:translateY(20px);}
+    to{opacity:1;transform:none;}
 }
 
 h2{
     text-align:center;
     font-size:22px;
-    margin-bottom:6px;
 }
 
-p.desc{
+p{
     text-align:center;
     font-size:13px;
-    color:#9ca3af;
-    margin-bottom:18px;
+    color:var(--sub);
+    margin-top:5px;
+    margin-bottom:20px;
 }
 
+/* INPUT */
 label{
     font-size:13px;
     color:#cbd5e1;
@@ -56,18 +123,24 @@ input{
     width:100%;
     padding:12px 14px;
     margin-top:6px;
-    border-radius:10px;
-    border:1px solid #1f2937;
+    border-radius:12px;
+    border:1px solid var(--border);
     background:#0b1220;
     color:#fff;
     outline:none;
-    transition:0.2s;
 }
 
 input:focus{
-    border-color:#2563eb;
+    border-color:var(--primary);
+    box-shadow:0 0 0 3px rgba(37,99,235,.2);
 }
 
+small{
+    font-size:12px;
+    color:var(--sub);
+}
+
+/* PASSWORD */
 .input-box{
     position:relative;
 }
@@ -75,47 +148,16 @@ input:focus{
 .eye{
     position:absolute;
     right:12px;
-    top:40px;
+    top:38px;
     cursor:pointer;
-    opacity:0.7;
-    transition:0.2s;
+    opacity:.7;
 }
 
 .eye:hover{
     opacity:1;
 }
 
-button{
-    width:100%;
-    margin-top:18px;
-    padding:12px;
-    border:none;
-    border-radius:10px;
-    background:#2563eb;
-    color:#fff;
-    font-weight:600;
-    cursor:pointer;
-    transition:0.2s;
-}
-
-button:hover{
-    background:#1d4ed8;
-}
-
-button:disabled{
-    background:#374151;
-    cursor:not-allowed;
-}
-
-.error{
-    background:#7f1d1d;
-    color:#fecaca;
-    padding:10px;
-    border-radius:10px;
-    font-size:13px;
-    margin-bottom:10px;
-}
-
+/* STRENGTH */
 .strength{
     height:6px;
     background:#1f2937;
@@ -127,61 +169,99 @@ button:disabled{
 .strength-bar{
     height:100%;
     width:0%;
-    transition:0.3s;
+    transition:.3s;
 }
 
-small{
-    font-size:12px;
-    color:#9ca3af;
+/* BUTTON */
+button{
+    width:100%;
+    margin-top:18px;
+    padding:12px;
+    border:none;
+    border-radius:12px;
+    background:linear-gradient(90deg,var(--primary),var(--primary2));
+    color:white;
+    font-weight:600;
+    cursor:pointer;
 }
+
+button:disabled{
+    background:#374151;
+    cursor:not-allowed;
+}
+
+/* particles */
+.particles span{
+    position:absolute;
+    width:4px;
+    height:4px;
+    background:#60a5fa;
+    border-radius:50%;
+    opacity:.3;
+    animation:float 10s linear infinite;
+}
+
+@keyframes float{
+    from{transform:translateY(100vh);}
+    to{transform:translateY(-20vh);}
+}
+
 </style>
 
 </head>
+
 <body>
+
+<div class="glow one"></div>
+<div class="glow two"></div>
 
 <div class="card">
 
-    <h2>Buat Akun</h2>
-    <p class="desc">Lengkapi data untuk melanjutkan</p>
+<h2>Buat Akun</h2>
+<p>Lengkapi username & password untuk melanjutkan</p>
 
-    {% if error %}
-    <div class="error">Username sudah digunakan</div>
-    {% endif %}
+{% if error %}
+<div style="background:#7f1d1d;color:#fecaca;padding:10px;border-radius:10px;font-size:13px;margin-bottom:10px;">
+Username sudah digunakan
+</div>
+{% endif %}
 
-    <form id="setupForm" method="POST" action="/setup-username">
+<form id="setupForm" method="POST" action="/setup-username">
 
-        <input type="hidden" name="email" value="{{ email }}">
+<input type="hidden" name="email" value="{{ email }}">
 
-        <!-- USERNAME -->
-        <label>Username</label>
-        <input type="text" id="username" name="username" placeholder="username kamu" required>
-        <small id="userMsg"></small>
+<!-- USERNAME -->
+<label>Username</label>
+<input type="text" id="username" name="username" required>
+<small id="userMsg"></small>
 
-        <!-- PASSWORD -->
-        <label>Password</label>
+<!-- PASSWORD -->
+<label>Password</label>
 
-        <div class="input-box">
-            <input type="password" id="password" name="password" placeholder="••••••••" required>
+<div class="input-box">
+<input type="password" id="password" name="password" required>
 
-            <!-- ICON EYE (SVG) -->
-            <svg class="eye" onclick="togglePassword()" width="18" height="18" viewBox="0 0 24 24" fill="none">
-                <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z" stroke="#9ca3af" stroke-width="2"/>
-                <circle cx="12" cy="12" r="3" stroke="#9ca3af" stroke-width="2"/>
-            </svg>
-        </div>
+<svg class="eye" onclick="togglePassword()" width="18" height="18" viewBox="0 0 24 24" fill="none">
+<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z" stroke="#94a3b8" stroke-width="2"/>
+<circle cx="12" cy="12" r="3" stroke="#94a3b8" stroke-width="2"/>
+</svg>
 
-        <div class="strength">
-            <div id="strengthBar" class="strength-bar"></div>
-        </div>
-        <small id="strengthText"></small>
+</div>
 
-        <button id="submitBtn" type="submit" disabled>Lanjutkan</button>
+<div class="strength">
+<div id="strengthBar" class="strength-bar"></div>
+</div>
 
-    </form>
+<small id="strengthText"></small>
+
+<button id="submitBtn" type="submit" disabled>Lanjutkan</button>
+
+</form>
 
 </div>
 
 <script>
+
 const username=document.getElementById("username");
 const password=document.getElementById("password");
 const bar=document.getElementById("strengthBar");
@@ -192,9 +272,9 @@ const userMsg=document.getElementById("userMsg");
 let usernameValid=false;
 let passwordValid=false;
 
-/* PASSWORD TOGGLE */
+/* TOGGLE PASSWORD */
 function togglePassword(){
-    password.type = password.type==="password"?"text":"password";
+    password.type=password.type==="password"?"text":"password";
 }
 
 /* STRENGTH */
@@ -281,6 +361,7 @@ document.getElementById("setupForm").addEventListener("submit",async(e)=>{
         alert(d.error||"error");
     }
 });
+
 </script>
 
 </body>
