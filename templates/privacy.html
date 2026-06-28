@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #0b1220;
+            color: #e5e7eb;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            padding: 40px 20px;
+        }
+        .box {
+            background: #111827;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+        h1, h2 {
+            color: white;
+        }
+        .lang {
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+        .active {
+            background: #3b82f6;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Privacy Policy / Kebijakan Privasi</h1>
+
+    <div class="lang">
+        <button onclick="setLang('id')" id="btn-id" class="active">Indonesia</button>
+        <button onclick="setLang('en')" id="btn-en">English</button>
+    </div>
+
+    <!-- INDONESIA -->
+    <div id="id">
+
+        <div class="box">
+            <h2>1. Pengumpulan Data</h2>
+            <p>Kami mengumpulkan data seperti email, username, dan aktivitas pengguna untuk meningkatkan layanan.</p>
+        </div>
+
+        <div class="box">
+            <h2>2. Penggunaan Data</h2>
+            <p>Data digunakan untuk login, keamanan akun, dan pengembangan layanan.</p>
+        </div>
+
+        <div class="box">
+            <h2>3. Keamanan</h2>
+            <p>Kami menjaga data pengguna dengan sistem yang aman dan tidak menjual data ke pihak lain.</p>
+        </div>
+
+        <div class="box">
+            <h2>4. Cookies</h2>
+            <p>Kami menggunakan cookies untuk menjaga sesi login dan pengalaman pengguna.</p>
+        </div>
+
+    </div>
+
+    <!-- ENGLISH -->
+    <div id="en" style="display:none">
+
+        <div class="box">
+            <h2>1. Data Collection</h2>
+            <p>We collect data such as email, username, and user activity to improve our services.</p>
+        </div>
+
+        <div class="box">
+            <h2>2. Data Usage</h2>
+            <p>Data is used for authentication, account security, and service improvement.</p>
+        </div>
+
+        <div class="box">
+            <h2>3. Security</h2>
+            <p>We protect user data and do not sell it to third parties.</p>
+        </div>
+
+        <div class="box">
+            <h2>4. Cookies</h2>
+            <p>We use cookies to maintain login sessions and improve user experience.</p>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+function setLang(lang) {
+    document.getElementById("id").style.display = lang === "id" ? "block" : "none";
+    document.getElementById("en").style.display = lang === "en" ? "block" : "none";
+
+    document.getElementById("btn-id").classList.remove("active");
+    document.getElementById("btn-en").classList.remove("active");
+
+    document.getElementById("btn-" + lang).classList.add("active");
+}
+</script>
+
+</body>
+</html>
