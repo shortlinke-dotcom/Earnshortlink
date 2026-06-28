@@ -1462,10 +1462,21 @@ async def delete_account(request: Request):
     request.session.clear()
     return RedirectResponse("/", 303)
 
-@app.get("/privacy")
-def privacy():
-    return FileResponse("templates/privacy.html")
+from fastapi import Request
 
+@app.get("/privacy")
+async def privacy(request: Request):
+    return templates.TemplateResponse(
+        "privacy.html",
+        {"request": request}
+    )
+
+@app.get("/terms")
+async def terms(request: Request):
+    return templates.TemplateResponse(
+        "terms.html",
+        {"request": request}
+    )
 # =========================
 # LOGOUT
 # =========================
