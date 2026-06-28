@@ -4,7 +4,7 @@ jinja2==3.1.4
 starlette==0.36.3
 python-multipart
 supabase
-bcrypt==4.0.1
+passlib[bcrypt]
 requests==2.32.3
 itsdangerous
 google-auth
