@@ -1,0 +1,303 @@
+{% extends "base.html" %}
+{% block title %}Pengaturan - EarnShortlink{% endblock %}
+{% block extra_css %}
+<style>
+.settings-header{
+    margin-bottom:30px;
+}
+.settings-header h1{
+    font-size:32px;
+    font-weight:800;
+}
+.settings-header p{
+    color:#94a3b8;
+    margin-top:6px;
+}
+.settings-grid{
+    display:grid;
+    gap:25px;
+}
+.settings-card{
+    background:rgba(255,255,255,.04);
+    border:1px solid rgba(255,255,255,.06);
+    border-radius:22px;
+    padding:28px;
+    backdrop-filter:blur(16px);
+    transition:.3s;
+}
+.settings-card:hover{
+    border-color:rgba(33,150,243,.35);
+    box-shadow:0 0 35px rgba(33,150,243,.12);
+}
+.card-title{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:25px;
+}
+.card-title i{
+    width:48px;
+    height:48px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    border-radius:14px;
+    background:rgba(33,150,243,.12);
+    color:#2196f3;
+    font-size:20px;
+}
+.card-title h2{
+    font-size:22px;
+}
+.card-title p{
+    color:#94a3b8;
+    font-size:14px;
+    margin-top:4px;
+}
+.form-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:22px;
+}
+.form-group{
+    display:flex;
+    flex-direction:column;
+}
+.form-group.full{
+    grid-column:1/-1;
+}
+.form-group label{
+    margin-bottom:8px;
+    color:#cbd5e1;
+    font-size:14px;
+    font-weight:500;
+}
+.form-control{
+    width:100%;
+    padding:14px 16px;
+    border-radius:14px;
+    border:1px solid rgba(255,255,255,.08);
+    background:#081321;
+    color:#fff;
+    outline:none;
+    transition:.25s;
+    font-size:15px;
+}
+.form-control:focus{
+    border-color:#2196f3;
+    box-shadow:0 0 0 4px rgba(33,150,243,.15);
+}
+.form-control[readonly]{
+    background:#111827;
+    cursor:not-allowed;
+    color:#94a3b8;
+}
+.password-wrapper{
+    position:relative;
+}
+.password-wrapper input{
+    padding-right:50px;
+}
+.password-toggle{
+    position:absolute;
+    right:15px;
+    top:50%;
+    transform:translateY(-50%);
+    background:none;
+    border:none;
+    color:#94a3b8;
+    cursor:pointer;
+    font-size:17px;
+}
+.card-footer{
+    margin-top:28px;
+    display:flex;
+    justify-content:flex-end;
+}
+.btn-save{
+    border:none;
+    cursor:pointer;
+    background:linear-gradient(135deg,#2196f3,#1976d2);
+    color:#fff;
+    padding:14px 28px;
+    border-radius:14px;
+    font-size:15px;
+    font-weight:700;
+    transition:.25s;
+}
+.btn-save:hover{
+    transform:translateY(-2px);
+    box-shadow:0 10px 25px rgba(33,150,243,.28);
+}
+@media(max-width:768px){
+    .settings-header h1{
+        font-size:25px;
+    }
+    .form-grid{
+        grid-template-columns:1fr;
+    }
+    .settings-card{
+        padding:22px;
+    }
+}
+</style>
+{% endblock %}
+{% block content %}
+<div class="settings-header">
+    <h1>
+        <i class="fa-solid fa-gear"></i>
+        Pengaturan Akun
+    </h1>
+    <p>
+        Kelola profil, keamanan akun dan preferensi EarnShortlink Anda.
+    </p>
+</div>
+<!-- ========================= -->
+<!-- PROFIL -->
+<!-- ========================= -->
+<form
+method="POST"
+action="/settings/profile"
+class="settings-card">
+    <div class="card-title">
+        <i class="fa-solid fa-user"></i>
+        <div>
+            <h2>Profil Akun</h2>
+            <p>Informasi dasar akun Anda.</p>
+        </div>
+    </div>
+    <div class="form-grid">
+        <div class="form-group">
+            <label>Username</label>
+            <input
+            type="text"
+            name="username"
+            class="form-control"
+            value="{{ user.username }}"
+            required>
+        </div>
+        <div class="form-group">
+            <label>Gmail</label>
+            <input
+            type="email"
+            class="form-control"
+            value="{{ user.gmail }}"
+            readonly>
+        </div>
+        <div class="form-group">
+            <label>Tanggal Bergabung</label>
+            <input
+            type="text"
+            class="form-control"
+            value="{{ user.created_at }}"
+            readonly>
+        </div>
+        <div class="form-group">
+            <label>ID Publisher</label>
+            <input
+            type="text"
+            class="form-control"
+            value="{{ user.id }}"
+            readonly>
+        </div>
+    </div>
+    <div class="card-footer">
+        <button
+        class="btn-save">
+            <i class="fa-solid fa-floppy-disk"></i>
+            Simpan Perubahan
+        </button>
+    </div>
+</form>
+<!-- ========================= -->
+<!-- PASSWORD -->
+<!-- ========================= -->
+<form
+method="POST"
+action="/settings/password"
+class="settings-card">
+    <div class="card-title">
+        <i class="fa-solid fa-lock"></i>
+        <div>
+            <h2>Keamanan</h2>
+            <p>
+                Ubah password akun Anda secara berkala.
+            </p>
+        </div>
+    </div>
+    <div class="form-grid">
+        <div class="form-group full">
+            <label>Password Lama</label>
+            <div class="password-wrapper">
+                <input
+                id="oldPassword"
+                type="password"
+                name="old_password"
+                class="form-control"
+                required>
+                <button
+                type="button"
+                class="password-toggle"
+                onclick="togglePassword('oldPassword',this)">
+                    <i class="fa-solid fa-eye"></i>
+                </button>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Password Baru</label>
+            <div class="password-wrapper">
+                <input
+                id="newPassword"
+                type="password"
+                name="new_password"
+                class="form-control"
+                required>
+                <button
+                type="button"
+                class="password-toggle"
+                onclick="togglePassword('newPassword',this)">
+                    <i class="fa-solid fa-eye"></i>
+                </button>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Konfirmasi Password</label>
+            <div class="password-wrapper">
+                <input
+                id="confirmPassword"
+                type="password"
+                name="confirm_password"
+                class="form-control"
+                required>
+                <button
+                type="button"
+                class="password-toggle"
+                onclick="togglePassword('confirmPassword',this)">
+                    <i class="fa-solid fa-eye"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="card-footer">
+        <button class="btn-save">
+            <i class="fa-solid fa-key"></i>
+            Ubah Password
+        </button>
+    </div>
+</form>
+{% endblock %}
+{% block extra_js %}
+<script>
+function togglePassword(id,btn){
+    const input=document.getElementById(id);
+    const icon=btn.querySelector("i");
+    if(input.type==="password"){
+        input.type="text";
+        icon.className="fa-solid fa-eye-slash";
+    }else{
+        input.type="password";
+        icon.className="fa-solid fa-eye";
+    }
+}
+</script>
+{% endblock %}
