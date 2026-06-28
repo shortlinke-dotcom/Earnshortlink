@@ -15,15 +15,11 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
 <style>
 
 :root{
---bg:#040816;
---card:rgba(13,20,38,.78);
---card2:rgba(255,255,255,.03);
---border:rgba(255,255,255,.08);
---primary:#3b82f6;
---primary2:#00c2ff;
---text:#ffffff;
---sub:#97a4c3;
---danger:#ef4444;
+    --card:#ffffff;
+    --card2:#f8fafc;
+    --border:#e2e8f0;
+    --text:#0f172a;
+    --sub:#64748b;
 }
 
 *{
@@ -38,45 +34,29 @@ scroll-behavior:smooth;
 }
 
 body{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    overflow:hidden;
+    position:relative;
 
-background:
-radial-gradient(circle at top,#14315d 0%,#040816 55%),
-#040816;
-
-min-height:100vh;
-
-display:flex;
-justify-content:center;
-align-items:center;
-
-overflow:hidden;
-
-color:var(--text);
-
-position:relative;
-
+    background:#ffffff;
+    color:#0f172a;
 }
 
 /* GRID */
 
 body::before{
-
-content:"";
-
-position:absolute;
-inset:-100%;
-
-background-image:
-
-linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),
-linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);
-
-background-size:45px 45px;
-
-animation:gridMove 18s linear infinite;
-
-opacity:.55;
-
+    content:"";
+    position:absolute;
+    inset:-100%;
+    background-image:
+        linear-gradient(rgba(15,23,42,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15,23,42,.04) 1px, transparent 1px);
+    background-size:45px 45px;
+    animation:gridMove 18s linear infinite;
+    opacity:1;
 }
 
 @keyframes gridMove{
@@ -102,35 +82,13 @@ filter:blur(120px);
 }
 
 .glow.one{
-
-width:320px;
-height:320px;
-
-background:#1d4ed8;
-
-top:-120px;
-left:-120px;
-
-opacity:.35;
-
-animation:float1 8s ease-in-out infinite;
-
+    background:#60a5fa;
+    opacity:.18;
 }
 
 .glow.two{
-
-width:280px;
-height:280px;
-
-background:#00bfff;
-
-right:-100px;
-bottom:-100px;
-
-opacity:.28;
-
-animation:float2 10s ease-in-out infinite;
-
+    background:#38bdf8;
+    opacity:.15;
 }
 
 @keyframes float1{
