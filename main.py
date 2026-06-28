@@ -26,7 +26,7 @@ app = FastAPI()
 
 app.add_middleware(
     SessionMiddleware,
-    secret_key="RAHASIA_PANJANG_123"
+    secret_key=os.getenv("SESSION_SECRET")
 )
 
 templates = Jinja2Templates(directory="templates")
@@ -89,12 +89,13 @@ async def login_post(request: Request, login: str = Form(...), password: str = F
         return RedirectResponse("/login?error=wrongpass", 303)
 
     request.session["username"] = user["username"]
+    request.session["user_id"] = user["id"]
 
     return RedirectResponse("/dashboard", 303)
 
 
 # =========================
-# GOOGLE LOGIN
+# GOOGLE LOGIN (START)
 # =========================
 @app.get("/auth/google")
 async def auth_google():
@@ -106,50 +107,15 @@ async def auth_google():
     return RedirectResponse(url)
 
 
-@app.post("/auth/google-session")
-async def google_session(request: Request, data: dict = Body(...)):
-
-    access_token = data.get("access_token")
-
-    if not access_token:
-        return JSONResponse({"redirect": "/login?error=google_failed"})
-
-    try:
-        user_data = supabase.auth.get_user(access_token)
-        email = user_data.user.email if user_data and user_data.user else None
-    except:
-        return JSONResponse({"redirect": "/login?error=google_failed"})
-
-    if not email:
-        return JSONResponse({"redirect": "/login?error=google_failed"})
-
-    result = (
-        supabase.table("users")
-        .select("*")
-        .eq("gmail", email)
-        .limit(1)
-        .execute()
-    )
-
-    if not result.data:
-        request.session["pending_email"] = email
-        return JSONResponse({"redirect": "/setup-username"})
-
-    user = result.data[0]
-
-    if user.get("is_banned"):
-        return JSONResponse({"redirect": "/login?error=banned"})
-
-    request.session["username"] = user["username"]
-
-    return JSONResponse({"redirect": "/dashboard"})
-
-from fastapi import Request
-from fastapi.responses import RedirectResponse
-
+# =========================
+# GOOGLE CALLBACK (FINAL)
+# =========================
 @app.get("/auth/callback")
 async def auth_callback(request: Request, code: str | None = None, error: str | None = None):
 
+    # =========================
+    # HANDLE ERROR
+    # =========================
     if error:
         return RedirectResponse("/login?error=google_failed")
 
@@ -157,17 +123,21 @@ async def auth_callback(request: Request, code: str | None = None, error: str | 
         return RedirectResponse("/login?error=google_failed")
 
     try:
-        # tukar code jadi session dari supabase
+        # tukar code → session supabase
         session = supabase.auth.exchange_code_for_session(code)
 
-        user = session.user
-        email = user.email
+        if not session or not session.user:
+            return RedirectResponse("/login?error=google_failed")
+
+        email = session.user.email
 
     except Exception as e:
         print("OAuth callback error:", e)
         return RedirectResponse("/login?error=google_failed")
 
-    # cek user di database kamu
+    # =========================
+    # CEK USER DI DATABASE
+    # =========================
     result = (
         supabase.table("users")
         .select("*")
@@ -176,24 +146,35 @@ async def auth_callback(request: Request, code: str | None = None, error: str | 
         .execute()
     )
 
-    # kalau belum ada → setup username
+    # =========================
+    # USER BELUM ADA
+    # =========================
     if not result.data:
         request.session["pending_email"] = email
         return RedirectResponse("/setup-username")
 
-    db_user = result.data[0]
+    user = result.data[0]
 
-    # banned check
-    if db_user.get("is_banned"):
+    # =========================
+    # CEK BANNED
+    # =========================
+    if user.get("is_banned"):
         return RedirectResponse("/login?error=banned")
 
-    # login session
-    request.session["username"] = db_user["username"]
+    # =========================
+    # SET SESSION (PENTING)
+    # =========================
+    request.session["username"] = user.get("username")
+    request.session["user_id"] = user.get("id")
+    request.session["logged_in"] = True
 
+    # =========================
+    # REDIRECT DASHBOARD
+    # =========================
     return RedirectResponse("/dashboard")
     
 # =========================
-# SETUP USERNAME
+# SETUP USERNAME (GET)
 # =========================
 @app.get("/setup-username")
 async def setup_username(request: Request):
@@ -209,6 +190,9 @@ async def setup_username(request: Request):
     )
 
 
+# =========================
+# SETUP USERNAME (POST)
+# =========================
 @app.post("/setup-username")
 async def setup_username_post(request: Request, username: str = Form(...)):
 
@@ -219,12 +203,18 @@ async def setup_username_post(request: Request, username: str = Form(...)):
 
     username = username.strip().lower()
 
+    # =========================
+    # VALIDASI
+    # =========================
     if len(username) < 3:
         return RedirectResponse("/setup-username?error=short", 303)
 
     if " " in username:
         return RedirectResponse("/setup-username?error=space", 303)
 
+    # =========================
+    # CEK USERNAME
+    # =========================
     check = (
         supabase.table("users")
         .select("id")
@@ -236,24 +226,39 @@ async def setup_username_post(request: Request, username: str = Form(...)):
     if check.data:
         return RedirectResponse("/setup-username?error=exists", 303)
 
-    supabase.table("users").insert({
-        "gmail": email,
-        "username": username,
-        "password": "",
-        "saldo": 0,
-        "total_earn": 0,
-        "referrals": 0,
-        "is_banned": False
-    }).execute()
+    # =========================
+    # INSERT USER (AMBIL DATA BALIK)
+    # =========================
+    insert = (
+        supabase.table("users")
+        .insert({
+            "gmail": email,
+            "username": username,
+            "password": "",
+        })
+        .execute()
+    )
 
-    request.session["username"] = username
+    if not insert.data:
+        return RedirectResponse("/setup-username?error=failed", 303)
+
+    new_user = insert.data[0]
+
+    # =========================
+    # SET SESSION (PENTING)
+    # =========================
+    request.session["username"] = new_user.get("username")
+    request.session["user_id"] = new_user.get("id")
+    request.session["logged_in"] = True
+
+    # hapus pending email
     request.session.pop("pending_email", None)
 
     return RedirectResponse("/dashboard", 303)
 
 
 # =========================
-# REGISTER
+# REFERRAL LINK
 # =========================
 @app.get("/ref/{username}")
 async def referral(request: Request, username: str):
@@ -272,12 +277,19 @@ async def referral(request: Request, username: str):
     request.session["referral"] = username
 
     return RedirectResponse("/register", status_code=303)
-    
+
+
+# =========================
+# REGISTER PAGE
+# =========================
 @app.get("/register")
 async def register_page(request: Request):
     return templates.TemplateResponse("register.html", {"request": request})
 
 
+# =========================
+# REGISTER POST
+# =========================
 @app.post("/register")
 async def register_post(
     request: Request,
@@ -290,9 +302,21 @@ async def register_post(
     gmail = gmail.strip().lower()
     username = username.strip().lower()
 
+    # =========================
+    # VALIDASI
+    # =========================
     if password != confirm_password:
         return RedirectResponse("/register?error=nomatch", 303)
 
+    if len(username) < 3:
+        return RedirectResponse("/register?error=short", 303)
+
+    if " " in username:
+        return RedirectResponse("/register?error=space", 303)
+
+    # =========================
+    # CEK USER EXIST
+    # =========================
     check = (
         supabase.table("users")
         .select("id")
@@ -304,84 +328,84 @@ async def register_post(
     if check.data:
         return RedirectResponse("/register?error=exists", 303)
 
-    # referral dari session
-    referral = request.session.get("referral")
-
-    # buat akun baru
-    supabase.table("users").insert({
-        "gmail": gmail,
-        "username": username,
-        "password": hash_password(password),
-        "saldo": 0,
-        "total_earn": 0,
-        "referrals": 0,
-        "is_banned": False
-    }).execute()
-
-    # ambil id user yang baru dibuat
-    new_user = (
+    # =========================
+    # INSERT USER (AMBIL DATA LANGSUNG)
+    # =========================
+    insert = (
         supabase.table("users")
-        .select("id")
-        .eq("username", username)
-        .single()
+        .insert({
+            "gmail": gmail,
+            "username": username,
+            "password": hash_password(password),
+        })
         .execute()
     )
 
-    new_user_id = new_user.data["id"]
+    if not insert.data:
+        return RedirectResponse("/register?error=failed", 303)
 
-    # ==========================
-    # REFERRAL
-    # ==========================
+    new_user = insert.data[0]
+    new_user_id = new_user.get("id")
+
+    # =========================
+    # REFERRAL SYSTEM
+    # =========================
+    referral = request.session.get("referral")
+
     if referral:
-
         ref = (
             supabase.table("users")
-            .select("id,saldo,referrals")
+            .select("id,total_referral,referral_earnings")
             .eq("username", referral)
-            .single()
+            .limit(1)
             .execute()
         )
 
         if ref.data:
-
-            referrer = ref.data
+            referrer = ref.data[0]
             referrer_id = referrer["id"]
 
-            # simpan relasi referral
+            # simpan relasi
             supabase.table("referrals").insert({
                 "user_id": referrer_id,
                 "referred_user_id": new_user_id,
                 "referral_paid": False
             }).execute()
 
-            # bonus pendaftar
+            # update statistik referral
             supabase.table("users").update({
-                "saldo": (referrer["saldo"] or 0) + 500,
-                "referrals": (referrer["referrals"] or 0) + 1
+                "total_referral": (referrer.get("total_referral") or 0) + 1,
+                "referral_earnings": (referrer.get("referral_earnings") or 0) + 500
             }).eq("id", referrer_id).execute()
 
+        # hapus session referral
         request.session.pop("referral", None)
 
-    # login otomatis
+    # =========================
+    # AUTO LOGIN
+    # =========================
     request.session["username"] = username
+    request.session["user_id"] = new_user_id
+    request.session["logged_in"] = True
 
     return RedirectResponse("/dashboard", status_code=303)
 
 # =========================
 # DASHBOARD
 # =========================
-
 @app.get("/dashboard")
 async def dashboard(request: Request):
-    username = request.session.get("username")
-    if not username:
+
+    user_id = request.session.get("user_id")
+
+    if not user_id:
         return RedirectResponse("/login", status_code=303)
 
     # ================= USER =================
     result = (
         supabase.table("users")
         .select("*")
-        .eq("username", username)
+        .eq("id", user_id)
         .single()
         .execute()
     )
@@ -396,12 +420,10 @@ async def dashboard(request: Request):
         request.session.clear()
         return RedirectResponse("/login?error=banned", status_code=303)
 
-    user_id = user["id"]
-
     # ================= LINKS =================
     links_res = (
         supabase.table("links")
-        .select("*")
+        .select("id, clicks, earnings, created_at")
         .eq("user_id", user_id)
         .order("id", desc=True)
         .execute()
@@ -420,18 +442,22 @@ async def dashboard(request: Request):
     month_earnings = 0
 
     def parse_date(ts):
-        if not ts:
-            return None
         try:
-            return datetime.fromisoformat(ts.replace("Z", "+00:00"))
+            return datetime.fromisoformat(ts.replace("Z", "+00:00")) if ts else None
         except:
             return None
 
-    # ================= HITUNG DATA =================
+    # ================= HITUNG =================
+    total_clicks = 0
+    total_earnings = 0
+
     for link in links:
         clicks = link.get("clicks") or 0
         earnings = link.get("earnings") or 0
         created = parse_date(link.get("created_at"))
+
+        total_clicks += clicks
+        total_earnings += earnings
 
         if created:
             if created.date() == today:
@@ -443,8 +469,6 @@ async def dashboard(request: Request):
                 month_earnings += earnings
 
     total_links = len(links)
-    total_clicks = sum(link.get("clicks") or 0 for link in links)
-    total_earnings = sum(link.get("earnings") or 0 for link in links)
 
     # ================= REFERRAL =================
     ref_res = (
@@ -454,57 +478,36 @@ async def dashboard(request: Request):
         .execute()
     )
 
-    referrals = ref_res.data or []
-
-    referred_ids = list({
+    referred_ids = [
         r["referred_user_id"]
-        for r in referrals
+        for r in (ref_res.data or [])
         if r.get("referred_user_id")
-    })
+    ]
 
     active_referrals = 0
 
     if referred_ids:
         users_res = (
             supabase.table("users")
-            .select("id,clicks")
+            .select("id, clicks")
             .in_("id", referred_ids)
             .execute()
         )
 
-        for u in (users_res.data or []):
-            if (u.get("clicks") or 0) > 0:
-                active_referrals += 1
+        active_referrals = sum(
+            1 for u in (users_res.data or [])
+            if (u.get("clicks") or 0) > 0
+        )
 
     # ================= REFERRAL EARNINGS =================
-    ref_data = (
-        supabase.table("users")
-        .select("referral_earnings")
-        .eq("id", user_id)
-        .single()
-        .execute()
-    )
+    referral_earnings = user.get("referral_earnings") or 0
 
-    referral_earnings = ref_data.data.get("referral_earnings") or 0
+    # ❌ HAPUS INI (gak perlu update tiap load)
+    # supabase.table("users").update(...)
 
-    supabase.table("users").update({
-        "referral_earnings": referral_earnings
-    }).eq("id", user_id).execute()
-
-    # ================= REPORT =================
-    today_growth = 0
-    earning_growth = 0
-    month_growth = 0
-    month_earning_growth = 0
-
-    today_referrals = active_referrals
-    month_referrals = active_referrals
-
+    # ================= CPM =================
     average_cpm = round(today_earnings / today_clicks, 2) if today_clicks else 0
     month_cpm = round(month_earnings / month_clicks, 2) if month_clicks else 0
-
-    cpm_growth = 0
-    month_cpm_growth = 0
 
     # ================= CHART =================
     chart_labels = []
@@ -519,10 +522,9 @@ async def dashboard(request: Request):
     for link in recent_links:
         created = parse_date(link.get("created_at"))
 
-        if created:
-            chart_labels.append(created.strftime("%d/%m"))
-        else:
-            chart_labels.append("-")
+        chart_labels.append(
+            created.strftime("%d/%m") if created else "-"
+        )
 
         chart_clicks.append(link.get("clicks") or 0)
         chart_earnings.append(link.get("earnings") or 0)
@@ -533,34 +535,34 @@ async def dashboard(request: Request):
         {
             "request": request,
             "user": user,
-            "username": user["username"],
+            "username": user.get("username"),
             "saldo": user.get("saldo") or 0,
+
             "total_links": total_links,
             "total_clicks": total_clicks,
             "total_earnings": total_earnings,
+
             "today": today.strftime("%d %B %Y"),
             "today_clicks": today_clicks,
             "today_earnings": today_earnings,
-            "today_growth": today_growth,
-            "today_referrals": today_referrals,
-            "earning_growth": earning_growth,
-            "average_cpm": average_cpm,
-            "cpm_growth": cpm_growth,
+
             "month_clicks": month_clicks,
             "month_earnings": month_earnings,
-            "month_growth": month_growth,
-            "month_earning_growth": month_earning_growth,
-            "month_referrals": month_referrals,
+
+            "average_cpm": average_cpm,
             "month_cpm": month_cpm,
-            "month_cpm_growth": month_cpm_growth,
+
             "chart_labels": chart_labels,
             "chart_clicks": chart_clicks,
             "chart_earnings": chart_earnings,
+
             "latest_links": links[:5],
             "links": links,
+
             "active_referrals": active_referrals,
             "referral_earnings": referral_earnings,
-            "referral_code": user["username"],
+            "referral_code": user.get("username"),
+
             "current_month_name": calendar.month_name[current_month],
         },
     )
@@ -571,24 +573,28 @@ async def dashboard(request: Request):
 @app.get("/sell")
 async def sell_page(request: Request):
 
-    username = request.session.get("username")
-    if not username:
+    # ✅ pakai user_id (WAJIB)
+    user_id = request.session.get("user_id")
+    if not user_id:
         return RedirectResponse("/login", 303)
 
+    # ✅ ambil user dari DB pakai ID
     user_res = (
         supabase.table("users")
         .select("id, username, saldo")
-        .eq("username", username)
+        .eq("id", user_id)
         .single()
         .execute()
     )
 
+    # ❗ kalau user hilang → logout paksa
     if not user_res.data:
+        request.session.clear()
         return RedirectResponse("/login", 303)
 
     user = user_res.data
-    user_id = user["id"]
 
+    # ✅ ambil sell links
     sell_links_res = (
         supabase.table("sell_links")
         .select("*")
@@ -599,17 +605,16 @@ async def sell_page(request: Request):
 
     sell_links = sell_links_res.data or []
 
+    # ✅ render
     return templates.TemplateResponse("selllink.html", {
         "request": request,
-        "username": username,
+        "username": user["username"],  # ambil dari DB
         "saldo": user.get("saldo") or 0,
         "sell_links": sell_links,
         "total_links": len(sell_links),
         "total_sold": 0,
         "total_income": 0
     })
-
-
 # =========================
 # CREATE SELL LINK
 # =========================
@@ -655,7 +660,59 @@ async def create_sell_link(
         "link": f"{request.base_url}pay/{code}"
     })
 
+# =========================
+# CREATE SELL LINK
+# =========================
+@app.post("/create-sell-link")
+async def create_sell_link(
+    request: Request,
+    destination_url: str = Form(...),
+    title: str = Form(...),
+    price: int = Form(...)
+):
 
+    # ✅ pakai user_id
+    user_id = request.session.get("user_id")
+    if not user_id:
+        return JSONResponse({"ok": False, "error": "unauthorized"}, status_code=401)
+
+    # ✅ validasi input
+    if not destination_url.startswith("http"):
+        return JSONResponse({"ok": False, "error": "invalid_url"}, status_code=400)
+
+    if int(price) <= 0:
+        return JSONResponse({"ok": False, "error": "invalid_price"}, status_code=400)
+
+    # ✅ generate code unik (anti bentrok)
+    while True:
+        code = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
+
+        check = (
+            supabase.table("sell_links")
+            .select("id")
+            .eq("code", code)
+            .limit(1)
+            .execute()
+        )
+
+        if not check.data:
+            break
+
+    # ✅ insert
+    supabase.table("sell_links").insert({
+        "user_id": user_id,
+        "code": code,
+        "title": title.strip(),
+        "destination_url": destination_url.strip(),
+        "price": int(price),
+        "sold": 0,
+        "income": 0
+    }).execute()
+
+    return JSONResponse({
+        "ok": True,
+        "link": f"{request.base_url}pay/{code}"
+    })
 # =========================
 # PAY PAGE
 # =========================
@@ -673,12 +730,16 @@ async def pay_page(request: Request, code: str):
     if not link_res.data:
         return HTMLResponse("Not found", 404)
 
+    link = link_res.data
+
+    # optional: bisa cek kalau link nonaktif / harga 0 dll
+    if link.get("price", 0) <= 0:
+        return HTMLResponse("Invalid link", 400)
+
     return templates.TemplateResponse("pay.html", {
         "request": request,
-        "link": link_res.data
+        "link": link
     })
-
-
 # =========================
 # DELETE SELL LINK
 # =========================
@@ -1294,20 +1355,7 @@ async def delete_account(request: Request):
     request.session.clear()
     return RedirectResponse("/", 303)
 
-@app.get("/settings", response_class=HTMLResponse)
-async def settings_page(request: Request):
-    user_id = request.session.get("user_id")
 
-    user = supabase.table("users")\
-        .select("*")\
-        .eq("id", user_id)\
-        .single()\
-        .execute().data
-
-    return templates.TemplateResponse("settings.html", {
-        "request": request,
-        "user": user
-    })
 # =========================
 # LOGOUT
 # =========================
