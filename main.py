@@ -214,13 +214,18 @@ async def setup_username(request: Request):
 # =========================
 # SETUP USERNAME (POST)
 # =========================
+
 @app.post("/setup-username")
-async def setup_username_post(request: Request, username: str = Form(...)):
+async def setup_username_post(
+    request: Request,
+    username: str = Form(...),
+    password: str = Form(...)
+):
 
     email = request.session.get("pending_email")
 
     if not email:
-        return RedirectResponse("/login", 303)
+        return JSONResponse({"ok": False, "error": "session_expired"}, status_code=401)
 
     username = username.strip().lower()
 
@@ -228,10 +233,10 @@ async def setup_username_post(request: Request, username: str = Form(...)):
     # VALIDASI
     # =========================
     if len(username) < 3:
-        return RedirectResponse("/setup-username?error=short", 303)
+        return JSONResponse({"ok": False, "error": "username_too_short"})
 
     if " " in username:
-        return RedirectResponse("/setup-username?error=space", 303)
+        return JSONResponse({"ok": False, "error": "username_no_space"})
 
     # =========================
     # CEK USERNAME
@@ -245,37 +250,48 @@ async def setup_username_post(request: Request, username: str = Form(...)):
     )
 
     if check.data:
-        return RedirectResponse("/setup-username?error=exists", 303)
+        return JSONResponse({"ok": False, "error": "username_exists"})
 
     # =========================
-    # INSERT USER (AMBIL DATA BALIK)
+    # HASH PASSWORD (WAJIB)
+    # =========================
+    from passlib.hash import bcrypt
+    hashed_password = bcrypt.hash(password)
+
+    # =========================
+    # INSERT USER
     # =========================
     insert = (
         supabase.table("users")
         .insert({
             "gmail": email,
             "username": username,
-            "password": "",
+            "password": hashed_password,
         })
         .execute()
     )
 
     if not insert.data:
-        return RedirectResponse("/setup-username?error=failed", 303)
+        return JSONResponse({"ok": False, "error": "insert_failed"})
 
     new_user = insert.data[0]
 
     # =========================
-    # SET SESSION (PENTING)
+    # SESSION LOGIN
     # =========================
-    request.session["username"] = new_user.get("username")
-    request.session["user_id"] = new_user.get("id")
+    request.session["username"] = new_user["username"]
+    request.session["user_id"] = new_user["id"]
     request.session["logged_in"] = True
 
-    # hapus pending email
     request.session.pop("pending_email", None)
 
-    return RedirectResponse("/dashboard", 303)
+    # =========================
+    # RESPONSE KE FRONTEND
+    # =========================
+    return JSONResponse({
+        "ok": True,
+        "redirect": "/dashboard"
+    })
 
 
 # =========================
