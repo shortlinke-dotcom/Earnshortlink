@@ -436,11 +436,12 @@ async def register_post(
 # =========================
 # DASHBOARD
 # =========================
+
 @app.get("/dashboard")
 async def dashboard(request: Request):
 
+    # ================= SESSION =================
     user_id = request.session.get("user_id")
-
     if not user_id:
         return RedirectResponse("/login", status_code=303)
 
@@ -453,11 +454,11 @@ async def dashboard(request: Request):
         .execute()
     )
 
-    if not result.data:
+    user = result.data
+
+    if not user:
         request.session.clear()
         return RedirectResponse("/login", status_code=303)
-
-    user = result.data
 
     if user.get("is_banned"):
         request.session.clear()
@@ -468,48 +469,52 @@ async def dashboard(request: Request):
         supabase.table("links")
         .select("id, clicks, earnings, created_at")
         .eq("user_id", user_id)
-        .order("id", desc=True)
+        .order("created_at", desc=True)
         .execute()
     )
 
     links = links_res.data or []
 
     # ================= TIME =================
-    today = datetime.now(timezone.utc).date()
-    current_month = today.month
-    current_year = today.year
+    now = datetime.now(timezone.utc)
+    today = now.date()
 
-    today_clicks = 0
-    today_earnings = 0
-    month_clicks = 0
-    month_earnings = 0
+    current_month = now.month
+    current_year = now.year
 
+    # ================= INIT =================
+    today_clicks = today_earnings = 0
+    month_clicks = month_earnings = 0
+    total_clicks = total_earnings = 0
+
+    # ================= PARSE DATE =================
     def parse_date(ts):
+        if not ts:
+            return None
         try:
-            return datetime.fromisoformat(ts.replace("Z", "+00:00")) if ts else None
-        except:
+            return datetime.fromisoformat(ts.replace("Z", "+00:00"))
+        except Exception:
             return None
 
     # ================= HITUNG =================
-    total_clicks = 0
-    total_earnings = 0
-
     for link in links:
-        clicks = link.get("clicks") or 0
-        earnings = link.get("earnings") or 0
+        clicks = link.get("clicks", 0)
+        earnings = link.get("earnings", 0)
         created = parse_date(link.get("created_at"))
 
         total_clicks += clicks
         total_earnings += earnings
 
-        if created:
-            if created.date() == today:
-                today_clicks += clicks
-                today_earnings += earnings
+        if not created:
+            continue
 
-            if created.month == current_month and created.year == current_year:
-                month_clicks += clicks
-                month_earnings += earnings
+        if created.date() == today:
+            today_clicks += clicks
+            today_earnings += earnings
+
+        if created.month == current_month and created.year == current_year:
+            month_clicks += clicks
+            month_earnings += earnings
 
     total_links = len(links)
 
@@ -532,7 +537,7 @@ async def dashboard(request: Request):
     if referred_ids:
         users_res = (
             supabase.table("users")
-            .select("id, clicks")
+            .select("clicks")
             .in_("id", referred_ids)
             .execute()
         )
@@ -541,12 +546,6 @@ async def dashboard(request: Request):
             1 for u in (users_res.data or [])
             if (u.get("clicks") or 0) > 0
         )
-
-    # ================= REFERRAL EARNINGS =================
-    referral_earnings = user.get("referral_earnings") or 0
-
-    # ❌ HAPUS INI (gak perlu update tiap load)
-    # supabase.table("users").update(...)
 
     # ================= CPM =================
     average_cpm = round(today_earnings / today_clicks, 2) if today_clicks else 0
@@ -568,9 +567,8 @@ async def dashboard(request: Request):
         chart_labels.append(
             created.strftime("%d/%m") if created else "-"
         )
-
-        chart_clicks.append(link.get("clicks") or 0)
-        chart_earnings.append(link.get("earnings") or 0)
+        chart_clicks.append(link.get("clicks", 0))
+        chart_earnings.append(link.get("earnings", 0))
 
     # ================= RENDER =================
     return templates.TemplateResponse(
@@ -579,7 +577,7 @@ async def dashboard(request: Request):
             "request": request,
             "user": user,
             "username": user.get("username"),
-            "saldo": user.get("saldo") or 0,
+            "saldo": user.get("saldo", 0),
 
             "total_links": total_links,
             "total_clicks": total_clicks,
@@ -603,7 +601,7 @@ async def dashboard(request: Request):
             "links": links,
 
             "active_referrals": active_referrals,
-            "referral_earnings": referral_earnings,
+            "referral_earnings": user.get("referral_earnings", 0),
             "referral_code": user.get("username"),
 
             "current_month_name": calendar.month_name[current_month],
