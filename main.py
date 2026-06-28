@@ -106,7 +106,48 @@ async def auth_google():
     )
     return RedirectResponse(url)
 
+@app.post("/auth/google-session")
+async def google_session(request: Request):
+    data = await request.json()
 
+    email = data.get("email")
+
+    if not email:
+        return JSONResponse({"ok": False, "error": "no_email"}, status_code=400)
+
+    # cek user di DB
+    user_res = (
+        supabase.table("users")
+        .select("*")
+        .eq("gmail", email)
+        .limit(1)
+        .execute()
+    )
+
+    # =========================
+    # USER SUDAH ADA → LOGIN
+    # =========================
+    if user_res.data:
+        user = user_res.data[0]
+
+        if user.get("is_banned"):
+            return JSONResponse({"ok": False, "error": "banned"}, status_code=403)
+
+        request.session["user_id"] = user["id"]
+        request.session["username"] = user["username"]
+
+        return JSONResponse({"ok": True})
+
+    # =========================
+    # USER BARU → SETUP USERNAME
+    # =========================
+    request.session["pending_email"] = email
+
+    return JSONResponse({
+        "ok": True,
+        "new_user": True
+    })
+    
 # =========================
 # GOOGLE CALLBACK (FINAL)
 # =========================
