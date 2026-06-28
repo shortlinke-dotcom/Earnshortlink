@@ -334,5 +334,51 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 })();
 </script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+
+<div id="g_id_onload"
+     data-client_id="420662327098-is0d5aqfi4al2s69o6v0d6cu1i97ltok.apps.googleusercontent.com"
+     data-callback="handleCredentialResponse">
+</div>
+
+<div class="g_id_signin"></div>
+
+<script>
+function handleCredentialResponse(response) {
+    const data = parseJwt(response.credential)
+
+    console.log("EMAIL:", data.email)
+
+    fetch("/auth/google-session", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            email: data.email
+        })
+    })
+    .then(res => res.json())
+    .then(res => {
+        if (res.ok && res.new_user) {
+            window.location.href = "/setup-username"
+        } else if (res.ok) {
+            window.location.href = "/dashboard"
+        } else {
+            window.location.href = "/login?error=google_failed"
+        }
+    })
+}
+
+function parseJwt(token) {
+    const base64Url = token.split('.')[1]
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/')
+    const jsonPayload = decodeURIComponent(atob(base64).split('').map(c =>
+        '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+    ).join(''))
+
+    return JSON.parse(jsonPayload)
+}
+</script>
 </body>
 </html>
