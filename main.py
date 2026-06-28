@@ -727,51 +727,7 @@ async def sell_page(request: Request):
         "total_sold": 0,
         "total_income": 0
     })
-# =========================
-# CREATE SELL LINK
-# =========================
-@app.post("/create-sell-link")
-async def create_sell_link(
-    request: Request,
-    destination_url: str = Form(...),
-    title: str = Form(...),
-    price: int = Form(...)
-):
-
-    username = request.session.get("username")
-    if not username:
-        return JSONResponse({"ok": False, "error": "unauthorized"}, status_code=401)
-
-    user_res = (
-        supabase.table("users")
-        .select("id")
-        .eq("username", username)
-        .single()
-        .execute()
-    )
-
-    if not user_res.data:
-        return JSONResponse({"ok": False, "error": "user_not_found"}, status_code=404)
-
-    user_id = user_res.data["id"]
-
-    code = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
-
-    supabase.table("sell_links").insert({
-        "user_id": user_id,
-        "code": code,
-        "title": title,
-        "destination_url": destination_url,
-        "price": int(price),
-        "sold": 0,
-        "income": 0
-    }).execute()
-
-    return JSONResponse({
-        "ok": True,
-        "link": f"{request.base_url}pay/{code}"
-    })
-
+    
 # =========================
 # CREATE SELL LINK
 # =========================
