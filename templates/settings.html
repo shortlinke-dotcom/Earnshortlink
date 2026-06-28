@@ -560,6 +560,194 @@ Simpan Notifikasi
 </div>
 
 </form>
+<!-- ========================= -->
+<!-- REFERRAL -->
+<!-- ========================= -->
+<form class="settings-card">
+
+    <div class="card-title">
+        <i class="fa-solid fa-user-group"></i>
+        <div>
+            <h2>Referral</h2>
+            <p>Bagikan link referral Anda untuk mendapatkan komisi.</p>
+        </div>
+    </div>
+
+    <div class="form-grid">
+
+        <div class="form-group full">
+            <label>Link Referral</label>
+
+            <input
+            id="refLink"
+            type="text"
+            class="form-control"
+            readonly
+            value="https://earnshortlink.com/ref/{{ user.username }}">
+        </div>
+
+        <div class="form-group">
+            <label>Total Referral</label>
+            <input
+            type="text"
+            class="form-control"
+            readonly
+            value="{{ user.total_referral or 0 }} Orang">
+        </div>
+
+        <div class="form-group">
+            <label>Pendapatan Referral</label>
+            <input
+            type="text"
+            class="form-control"
+            readonly
+            value="Rp {{ '{:,.0f}'.format(user.referral_earnings or 0).replace(',','.') }}">
+        </div>
+
+    </div>
+
+    <div class="card-footer">
+        <button
+        type="button"
+        class="btn-save"
+        onclick="copyReferral()">
+            <i class="fa-solid fa-copy"></i>
+            Copy Link
+        </button>
+    </div>
+
+</form>
+
+<!-- ========================= -->
+<!-- API -->
+<!-- ========================= -->
+<form class="settings-card">
+
+    <div class="card-title">
+        <i class="fa-solid fa-code"></i>
+        <div>
+            <h2>API Developer</h2>
+            <p>Gunakan API untuk integrasi aplikasi Anda.</p>
+        </div>
+    </div>
+
+    <div class="form-grid">
+
+        <div class="form-group full">
+
+            <label>API Key</label>
+
+            <input
+            id="apiKey"
+            type="text"
+            readonly
+            class="form-control"
+            value="{{ user.api_key }}">
+
+        </div>
+
+    </div>
+
+    <div class="card-footer"
+         style="justify-content:space-between;">
+
+        <button
+        type="button"
+        class="btn-save"
+        onclick="copyApi()">
+            <i class="fa-solid fa-copy"></i>
+            Salin API
+        </button>
+
+        <button
+        type="submit"
+        formaction="/settings/regenerate-api"
+        class="btn-save">
+            <i class="fa-solid fa-rotate"></i>
+            Regenerate API
+        </button>
+
+    </div>
+
+</form>
+
+<!-- ========================= -->
+<!-- DANGER ZONE -->
+<!-- ========================= -->
+<div class="settings-card">
+
+    <div class="card-title">
+        <i style="background:rgba(239,68,68,.15);color:#ef4444;"
+        class="fa-solid fa-triangle-exclamation"></i>
+
+        <div>
+            <h2>Zona Bahaya</h2>
+            <p>Tindakan berikut tidak dapat dibatalkan.</p>
+        </div>
+    </div>
+
+    <div style="
+        display:flex;
+        flex-direction:column;
+        gap:18px;
+    ">
+
+        <div style="
+            padding:18px;
+            border:1px solid rgba(255,255,255,.08);
+            border-radius:14px;
+        ">
+
+            <h3 style="margin-bottom:8px;">
+                🔴 Logout Semua Perangkat
+            </h3>
+
+            <p style="color:#94a3b8;margin-bottom:14px;">
+                Mengeluarkan akun dari seluruh perangkat yang sedang login.
+            </p>
+
+            <form method="POST" action="/logout-all">
+                <button
+                class="btn-save"
+                style="background:#ef4444;">
+                    Logout Semua
+                </button>
+            </form>
+
+        </div>
+
+        <div style="
+            padding:18px;
+            border:1px solid rgba(239,68,68,.35);
+            border-radius:14px;
+        ">
+
+            <h3 style="margin-bottom:8px;color:#ef4444;">
+                🗑 Hapus Akun
+            </h3>
+
+            <p style="color:#94a3b8;margin-bottom:14px;">
+                Menghapus akun beserta seluruh data secara permanen.
+            </p>
+
+            <form
+            method="POST"
+            action="/delete-account"
+            onsubmit="return confirm('Yakin ingin menghapus akun?')">
+
+                <button
+                class="btn-save"
+                style="background:#ef4444;">
+                    Hapus Akun Permanen
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
 {% endblock %}
 {% block extra_js %}
 <script>
@@ -573,6 +761,21 @@ function togglePassword(id,btn){
         input.type="password";
         icon.className="fa-solid fa-eye";
     }
+}
+</script>
+<script>
+function copyReferral(){
+    navigator.clipboard.writeText(
+        document.getElementById("refLink").value
+    );
+    alert("Link referral berhasil disalin.");
+}
+
+function copyApi(){
+    navigator.clipboard.writeText(
+        document.getElementById("apiKey").value
+    );
+    alert("API Key berhasil disalin.");
 }
 </script>
 {% endblock %}
