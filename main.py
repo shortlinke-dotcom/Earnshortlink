@@ -3,6 +3,7 @@ import random
 import string
 import secrets
 import calendar
+import bcrypt
 import traceback
 from datetime import datetime, timezone
 
@@ -228,15 +229,25 @@ async def setup_username_post(
         return JSONResponse({"ok": False, "error": "session_expired"}, status_code=401)
 
     username = username.strip().lower()
+    password = password.strip()
 
     # =========================
-    # VALIDASI
+    # VALIDASI USERNAME
     # =========================
     if len(username) < 3:
         return JSONResponse({"ok": False, "error": "username_too_short"})
 
     if " " in username:
         return JSONResponse({"ok": False, "error": "username_no_space"})
+
+    # =========================
+    # VALIDASI PASSWORD (IMPORTANT)
+    # =========================
+    if len(password) < 6:
+        return JSONResponse({"ok": False, "error": "password_too_short"})
+
+    if len(password) > 72:
+        return JSONResponse({"ok": False, "error": "password_too_long"})
 
     # =========================
     # CEK USERNAME
@@ -253,10 +264,12 @@ async def setup_username_post(
         return JSONResponse({"ok": False, "error": "username_exists"})
 
     # =========================
-    # HASH PASSWORD (WAJIB)
+    # HASH PASSWORD (FIXED)
     # =========================
-    from passlib.hash import bcrypt
-    hashed_password = bcrypt.hash(password)
+    hashed_password = bcrypt.hashpw(
+        password.encode(),
+        bcrypt.gensalt()
+    ).decode()
 
     # =========================
     # INSERT USER
@@ -286,7 +299,7 @@ async def setup_username_post(
     request.session.pop("pending_email", None)
 
     # =========================
-    # RESPONSE KE FRONTEND
+    # SUCCESS RESPONSE
     # =========================
     return JSONResponse({
         "ok": True,
