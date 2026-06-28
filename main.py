@@ -1125,6 +1125,35 @@ async def links(request: Request):
     )
 
 
+@app.get("/settings")
+async def settings(request: Request):
+
+    username = request.session.get("username")
+
+    if not username:
+        return RedirectResponse("/login", 303)
+
+    result = (
+        supabase.table("users")
+        .select("*")
+        .eq("username", username)
+        .single()
+        .execute()
+    )
+
+    if not result.data:
+        return RedirectResponse("/login", 303)
+
+    return templates.TemplateResponse(
+        "settings.html",
+        {
+            "request": request,
+            "username": username,
+            "saldo": result.data.get("saldo") or 0,
+            "user": result.data
+        }
+    )
+
 # =========================
 # LOGOUT
 # =========================
