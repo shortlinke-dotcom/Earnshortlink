@@ -184,7 +184,7 @@ async def auth_callback(request: Request, code: str | None = None, error: str | 
 
     except Exception as e:
         print("OAuth callback error:", e)
-        return RedirectResponse("/login?error=google_failed")
+        return RedirectResponse(f"/login?error={str(e)}")
 
     # =========================
     # CEK USER DI DATABASE
