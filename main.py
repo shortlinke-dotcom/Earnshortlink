@@ -504,7 +504,6 @@ async def dashboard(request: Request):
         supabase.table("links")
         .select("id, clicks, earnings, created_at")
         .eq("user_id", user_id)
-        .order("created_at", desc=True)
         .execute()
     )
 
@@ -513,6 +512,7 @@ async def dashboard(request: Request):
     # ================= TIME =================
     now = datetime.now(timezone.utc)
     today = now.date()
+    yesterday = today.fromordinal(today.toordinal() - 1)
 
     current_month = now.month
     current_year = now.year
@@ -520,8 +520,13 @@ async def dashboard(request: Request):
     # ================= INIT =================
     today_clicks = 0
     today_earnings = 0
+
+    yesterday_clicks = 0
+    yesterday_earnings = 0
+
     month_clicks = 0
     month_earnings = 0
+
     total_clicks = 0
     total_earnings = 0
 
@@ -546,15 +551,33 @@ async def dashboard(request: Request):
         if not created:
             continue
 
-        if created.date() == today:
+        cdate = created.date()
+
+        # TODAY
+        if cdate == today:
             today_clicks += clicks
             today_earnings += earnings
 
+        # YESTERDAY (REAL GROWTH BASE)
+        if cdate == yesterday:
+            yesterday_clicks += clicks
+            yesterday_earnings += earnings
+
+        # MONTH
         if created.month == current_month and created.year == current_year:
             month_clicks += clicks
             month_earnings += earnings
 
     total_links = len(links)
+
+    # ================= REAL GROWTH (IMPORTANT) =================
+    def safe_growth(today_val, yesterday_val):
+        if yesterday_val == 0:
+            return 100 if today_val > 0 else 0
+        return round(((today_val - yesterday_val) / yesterday_val) * 100, 2)
+
+    earning_growth = safe_growth(today_earnings, yesterday_earnings)
+    click_growth = safe_growth(today_clicks, yesterday_clicks)
 
     # ================= REFERRAL =================
     ref_res = (
@@ -602,15 +625,14 @@ async def dashboard(request: Request):
 
     for link in recent_links:
         created = parse_date(link.get("created_at"))
-
         chart_labels.append(created.strftime("%d/%m") if created else "-")
         chart_clicks.append(link.get("clicks") or 0)
         chart_earnings.append(link.get("earnings") or 0)
 
-    # ================= SAFE DEFAULTS (FIX JINJA ERROR) =================
+    # ================= SAFE DEFAULTS (JINJA FIX) =================
     today_growth = today_earnings
-    total_users = 0
     revenue_today = today_earnings
+    total_users = 0
 
     # ================= RENDER =================
     return templates.TemplateResponse(
@@ -648,10 +670,12 @@ async def dashboard(request: Request):
 
             "current_month_name": calendar.month_name[current_month],
 
-            # FIX JINJA
+            # ================= FIX JINJA SAFE =================
+            "earning_growth": earning_growth,
+            "click_growth": click_growth,
             "today_growth": today_growth,
-            "total_users": total_users,
             "revenue_today": revenue_today,
+            "total_users": total_users,
         },
     )
     
