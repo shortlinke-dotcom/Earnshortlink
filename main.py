@@ -732,6 +732,115 @@ async def edit_sell_link(request: Request, data: dict = Body(...)):
 
     return {"ok": True}
 # =========================
+# CREATE SHORT LINK
+# =========================
+@app.post("/create-link")
+async def create_link(
+    request: Request,
+    destination_url: str = Form(...),
+    title: str = Form(...)
+):
+
+    # =========================
+    # LOGIN CHECK
+    # =========================
+    username = request.session.get("username")
+
+    if not username:
+        return JSONResponse(
+            {"ok": False, "error": "Unauthorized"},
+            status_code=401
+        )
+
+    # =========================
+    # GET USER
+    # =========================
+    user_res = (
+        supabase.table("users")
+        .select("id")
+        .eq("username", username)
+        .single()
+        .execute()
+    )
+
+    if not user_res.data:
+        return JSONResponse(
+            {"ok": False, "error": "User not found"},
+            status_code=404
+        )
+
+    user_id = user_res.data["id"]
+
+    # =========================
+    # VALIDASI URL
+    # =========================
+    destination_url = destination_url.strip()
+
+    if not (
+        destination_url.startswith("http://")
+        or destination_url.startswith("https://")
+    ):
+        destination_url = "https://" + destination_url
+
+    # =========================
+    # GENERATE SHORT CODE
+    # =========================
+    while True:
+
+        short_code = "".join(
+            random.choices(
+                string.ascii_letters + string.digits,
+                k=8
+            )
+        )
+
+        check = (
+            supabase.table("links")
+            .select("id")
+            .eq("short_code", short_code)
+            .limit(1)
+            .execute()
+        )
+
+        if not check.data:
+            break
+
+    # =========================
+    # INSERT DATABASE
+    # =========================
+    insert = (
+        supabase.table("links")
+        .insert({
+            "user_id": user_id,
+            "title": title.strip(),
+            "destination_url": destination_url,
+            "short_code": short_code,
+            "clicks": 0,
+            "earnings": 0,
+            "created_at": datetime.now(timezone.utc).isoformat()
+        })
+        .execute()
+    )
+
+    if not insert.data:
+        return JSONResponse(
+            {
+                "ok": False,
+                "error": "Failed create link"
+            },
+            status_code=500
+        )
+
+    short_url = f"{request.base_url}s/{short_code}"
+
+    return JSONResponse({
+        "ok": True,
+        "title": title,
+        "short_code": short_code,
+        "short_url": short_url,
+        "destination_url": destination_url
+    })
+# =========================
 # SHORTLINK
 # =========================
 @app.get("/s/{short_code}")
