@@ -236,7 +236,7 @@ tbody tr:hover{
                 </td>
 
                 <td>
-                    {% if link.is_active %}
+                    {% if link.get('is_active', True) %}
                         <span class="status active">Aktif</span>
                     {% else %}
                         <span class="status inactive">Nonaktif</span>
