@@ -536,9 +536,19 @@ async def dashboard(request: Request):
         if not ts:
             return None
         try:
-            return datetime.fromisoformat(ts.replace("Z", "+00:00"))
+            return datetime.fromisoformat(
+                ts.replace("Z", "+00:00")
+            )
         except:
             return None
+
+    # ================= JOIN DATE =================
+    join_date = "-"
+
+    if user.get("created_at"):
+        created = parse_date(user.get("created_at"))
+        if created:
+            join_date = created.strftime("%d %B %Y")
 
     # ================= CALC MAIN STATS =================
     for l in links:
@@ -788,6 +798,7 @@ async def dashboard(request: Request):
         {
             "request": request,
             "user": user,
+            "join_date": join_date,
             "username": user.get("username", ""),
             "saldo": user.get("saldo", 0),
 
