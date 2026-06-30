@@ -345,16 +345,34 @@ async def auth_callback(
 @app.get("/setup-username")
 async def setup_username(request: Request):
 
+    # kalau sudah login langsung dashboard
+    if request.session.get("logged_in"):
+        return RedirectResponse("/dashboard", 303)
+
     email = request.session.get("pending_email")
 
     if not email:
         return RedirectResponse("/login", 303)
 
-    return templates.TemplateResponse(
-        "setup_username.html",
-        {"request": request, "email": email}
+    # cek apakah email sudah terdaftar
+    user = (
+        supabase.table("users")
+        .select("id")
+        .eq("gmail", email)
+        .limit(1)
+        .execute()
     )
 
+    if user.data:
+        return RedirectResponse("/dashboard", 303)
+
+    return templates.TemplateResponse(
+        "setup_username.html",
+        {
+            "request": request,
+            "email": email
+        }
+    )
 
 # =========================
 # SETUP USERNAME (POST)
