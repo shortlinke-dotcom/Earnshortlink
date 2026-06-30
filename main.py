@@ -879,6 +879,7 @@ async def dashboard(request: Request):
 
             "current_month_name": calendar.month_name[current_month],
             "announcement": announcement,
+            "unread_count": unread_count,
         },
     )
     
