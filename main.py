@@ -667,84 +667,89 @@ async def dashboard(request: Request):
     except:
         cpm_by_country = {}
 
-# ================= SELLLINK =================
-sell_res = (
-    supabase.table("selllinks")
-    .select("*")
-    .eq("user_id", user_id)
-    .execute()
-)
-
-selllinks = sell_res.data or []
-
-today_sell_orders = 0
-today_sell_income = 0
-
-month_sell_orders = 0
-month_sell_income = 0
-
-yesterday_sell_orders = 0
-yesterday_sell_income = 0
-
-total_sell_products = len(selllinks)
-
-for s in selllinks:
-
-    created = parse_date(s.get("created_at"))
-    if not created:
-        continue
-
-    sold = int(s.get("sold") or 0)
-    earnings = float(s.get("earnings") or 0)
-
-    if created.date() == today:
-        today_sell_orders += sold
-        today_sell_income += earnings
-
-    elif created.date() == yesterday:
-        yesterday_sell_orders += sold
-        yesterday_sell_income += earnings
-
-    if (
-        created.month == current_month
-        and created.year == current_year
-    ):
-        month_sell_orders += sold
-        month_sell_income += earnings
-
-# ================= AVERAGE =================
-avg_sell_value = (
-    round(today_sell_income / today_sell_orders, 2)
-    if today_sell_orders else 0
-)
-
-month_avg_order = (
-    round(month_sell_income / month_sell_orders, 2)
-    if month_sell_orders else 0
-)
-
-month_products_sold = month_sell_orders
-
-# ================= GROWTH =================
-if yesterday_sell_orders:
-    today_sell_growth = round(
-        ((today_sell_orders - yesterday_sell_orders) / yesterday_sell_orders) * 100,
-        2
+    # ================= SELLLINK =================
+    sell_res = (
+        supabase.table("selllinks")
+        .select("user_id,sold,earnings,created_at")
+        .eq("user_id", user_id)
+        .execute()
     )
-else:
-    today_sell_growth = 100 if today_sell_orders else 0
 
-if yesterday_sell_income:
-    today_sell_income_growth = round(
-        ((today_sell_income - yesterday_sell_income) / yesterday_sell_income) * 100,
-        2
+    selllinks = sell_res.data or []
+
+    today_sell_orders = 0
+    today_sell_income = 0.0
+
+    yesterday_sell_orders = 0
+    yesterday_sell_income = 0.0
+
+    month_sell_orders = 0
+    month_sell_income = 0.0
+
+    total_sell_products = len(selllinks)
+
+    for item in selllinks:
+
+        created = parse_date(item.get("created_at"))
+        if created is None:
+            continue
+
+        sold = int(item.get("sold") or 0)
+        earnings = float(item.get("earnings") or 0)
+
+        # Hari ini
+        if created.date() == today:
+            today_sell_orders += sold
+            today_sell_income += earnings
+
+        # Kemarin
+        elif created.date() == yesterday:
+            yesterday_sell_orders += sold
+            yesterday_sell_income += earnings
+
+        # Bulan ini
+        if (
+            created.year == current_year
+            and created.month == current_month
+        ):
+            month_sell_orders += sold
+            month_sell_income += earnings
+
+    # ================= AVERAGE =================
+    avg_sell_value = (
+        round(today_sell_income / today_sell_orders, 2)
+        if today_sell_orders > 0 else 0
     )
-else:
-    today_sell_income_growth = 100 if today_sell_income else 0
 
-# sementara dibanding bulan lalu nanti
-month_sell_growth = 0
-month_sell_income_growth = 0
+    month_avg_order = (
+        round(month_sell_income / month_sell_orders, 2)
+        if month_sell_orders > 0 else 0
+    )
+
+    month_products_sold = month_sell_orders
+
+    # ================= GROWTH HARIAN =================
+    if yesterday_sell_orders > 0:
+        today_sell_growth = round(
+            ((today_sell_orders - yesterday_sell_orders)
+            / yesterday_sell_orders) * 100,
+            2
+        )
+    else:
+        today_sell_growth = 100 if today_sell_orders else 0
+
+    if yesterday_sell_income > 0:
+        today_sell_income_growth = round(
+            ((today_sell_income - yesterday_sell_income)
+            / yesterday_sell_income) * 100,
+            2
+        )
+    else:
+        today_sell_income_growth = 100 if today_sell_income else 0
+
+    # Bulanan (sementara)
+    month_sell_growth = 0
+    month_sell_income_growth = 0
 
 # ================= RENDER =================
 return templates.TemplateResponse(
