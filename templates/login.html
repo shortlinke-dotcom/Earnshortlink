@@ -346,6 +346,56 @@ body{
         font-size:28px;
     }
 }
+.password-box{
+    position:relative;
+    margin-bottom:15px;
+}
+
+.password-input{
+    margin:0;
+    padding-right:50px;
+}
+
+.eye-btn{
+    position:absolute;
+    top:50%;
+    right:15px;
+    transform:translateY(-50%);
+    width:24px;
+    height:24px;
+    border:none;
+    background:transparent;
+    padding:0;
+    cursor:pointer;
+    color:#64748b;
+    font-size:16px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:10;
+}
+
+.eye-btn:hover{
+    color:#2563eb;
+}
+
+.remember-me{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:14px;
+    color:#475569;
+    margin:15px 0;
+    cursor:pointer;
+    user-select:none;
+}
+
+.remember-me input{
+    width:16px;
+    height:16px;
+    margin:0;
+    accent-color:#2563eb;
+}
 </style>
 </head>
 
@@ -375,7 +425,29 @@ body{
 
         <input class="input" type="text" name="login" placeholder="Email / Username" required>
 
-        <input class="input" type="password" name="password" placeholder="Password" required>
+        <div class="password-box">
+    <input
+        type="password"
+        name="password"
+        id="password"
+        class="input password-input"
+        placeholder="Password"
+        required
+    >
+
+    <button
+        type="button"
+        class="eye-btn"
+        onclick="togglePassword()"
+        aria-label="Show Password"
+    >
+        <i id="eyeIcon" class="fa-solid fa-eye"></i>
+    </button>
+</div>
+<label class="remember-me">
+    <input type="checkbox" name="remember_me">
+    Tetap masuk
+</label>
 
         <button class="btn">Masuk</button>
 
@@ -396,6 +468,19 @@ body{
     </div>
 
 </div>
+<script>
+function togglePassword() {
+    const password = document.getElementById("password");
+    const icon = document.getElementById("eyeIcon");
 
+    if (password.type === "password") {
+        password.type = "text";
+        icon.classList.replace("fa-eye", "fa-eye-slash");
+    } else {
+        password.type = "password";
+        icon.classList.replace("fa-eye-slash", "fa-eye");
+    }
+}
+</script>
 </body>
 </html>
