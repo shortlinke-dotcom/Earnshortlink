@@ -255,6 +255,50 @@ body{
     text-decoration:underline;
 }
 
+.success-effect{
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 9999;
+}
+
+.success-text{
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(.8);
+    background: rgba(16,185,129,.95);
+    color: #fff;
+    padding: 18px 30px;
+    border-radius: 18px;
+    font-size: 22px;
+    font-weight: 700;
+    opacity: 0;
+    visibility: hidden;
+    transition: .3s;
+}
+
+.success-text.success-show{
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.money{
+    position: fixed;
+    top: -50px;
+    pointer-events: none;
+    animation: moneyFall linear forwards;
+}
+
+@keyframes moneyFall{
+    to{
+        transform: translateY(120vh) rotate(720deg);
+        opacity: 0;
+    }
+}
+
 /* ================= BADGE ================= */
 .click-badge{
     display:inline-flex;
@@ -1356,10 +1400,9 @@ function moneyExplosion(){
     const text = effect.querySelector(".success-text");
 
     text.classList.remove("success-show");
-    void text.offsetWidth; // restart animation
+    void text.offsetWidth;
     text.classList.add("success-show");
 
-    // 🎉 Ledakan confetti
     confetti({
         particleCount:180,
         spread:120,
@@ -1385,18 +1428,14 @@ function moneyExplosion(){
 
     setTimeout(()=>{
         text.classList.remove("success-show");
-        text.style.opacity="0";
     },2500);
 
     const money=["💵","💸","💰","🪙"];
 
     for(let i=0;i<80;i++){
-
         const el=document.createElement("div");
-
         el.className="money";
         el.innerHTML=money[Math.floor(Math.random()*money.length)];
-
         el.style.left=Math.random()*100+"vw";
         el.style.animationDuration=(3+Math.random()*2)+"s";
         el.style.fontSize=(24+Math.random()*18)+"px";
@@ -1407,9 +1446,7 @@ function moneyExplosion(){
         setTimeout(()=>{
             el.remove();
         },5000);
-
     }
-
 }
 document.getElementById("createForm").addEventListener("submit", async function(e){
 
