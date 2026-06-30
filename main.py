@@ -5,8 +5,6 @@ import secrets
 import calendar
 import bcrypt
 import traceback
-from math import ceil
-from fastapi import Query
 from datetime import datetime, timezone, timedelta
 
 from fastapi import FastAPI, Request, Form, Body
@@ -1427,6 +1425,9 @@ async def final_reward(request: Request, token: str = Form(...)):
 # =========================
 # LINKS
 # =========================
+from math import ceil
+from fastapi import Query
+
 @app.get("/links")
 async def links(request: Request, page: int = Query(1, ge=1)):
 
@@ -1446,10 +1447,8 @@ async def links(request: Request, page: int = Query(1, ge=1)):
 
     user_data = (user.data or [{}])[0]
 
-    # ================= PAGINATION SETTING =================
+    # ================= PAGINATION =================
     per_page = 10
-    start = (page - 1) * per_page
-    end = start + per_page - 1
 
     # ================= TOTAL COUNT =================
     count_res = (
@@ -1462,7 +1461,14 @@ async def links(request: Request, page: int = Query(1, ge=1)):
     total_links_all = count_res.count or 0
     total_pages = max(1, ceil(total_links_all / per_page))
 
-    # ================= DATA LINKS =================
+    # 🔥 CLAMP PAGE BIAR TIDAK OVERFLOW
+    if page > total_pages:
+        page = total_pages
+
+    start = (page - 1) * per_page
+    end = start + per_page - 1
+
+    # ================= DATA =================
     links_res = (
         supabase.table("links")
         .select("*")
@@ -1493,7 +1499,6 @@ async def links(request: Request, page: int = Query(1, ge=1)):
             "saldo": user_data.get("saldo") or 0,
             "username": user_data.get("username") or "",
 
-            # ✅ PAGINATION FIX
             "page": page,
             "total_pages": total_pages,
         }
