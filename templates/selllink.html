@@ -3,6 +3,16 @@
 
 {% block extra_css %}
 <style>
+/* ================= BODY ================= */
+body{
+    font-family:"Poppins",sans-serif;
+    min-height:100vh;
+    color:#0f172a;
+    background:
+        radial-gradient(circle at top left,#dbeafe 0%,transparent 45%),
+        radial-gradient(circle at bottom right,#bfdbfe 0%,transparent 40%),
+        linear-gradient(135deg,#f8fafc,#eef4ff);
+}
 
 /* ================= HEADER ================= */
 .page-header{
@@ -11,12 +21,13 @@
 
 .page-header h1{
     font-size:26px;
-    font-weight:700;
+    font-weight:800;
 }
 
 .page-header p{
-    color:#94a3b8;
+    color:#64748b;
     font-size:14px;
+    margin-top:4px;
 }
 
 /* ================= GRID ================= */
@@ -26,113 +37,234 @@
     gap:18px;
 }
 
-@media(max-width:900px){
-    .grid{grid-template-columns:1fr;}
+/* ================= CARD ================= */
+.card,
+.stat{
+    background:rgba(255,255,255,.55);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+    border:1px solid rgba(255,255,255,.4);
+    border-radius:18px;
+    padding:18px;
+    box-shadow:0 6px 20px rgba(15,23,42,.06);
+    transition:.25s;
 }
 
-/* ================= CARD ================= */
-.card{
-    background:#111827;
-    border:1px solid rgba(255,255,255,.06);
-    border-radius:14px;
-    padding:18px;
+@media (min-width:768px){
+    .card:hover,
+    .stat:hover{
+        transform:translateY(-3px);
+        box-shadow:0 18px 35px rgba(15,23,42,.10);
+    }
+}
+
+.card h3{
+    font-size:18px;
+    font-weight:700;
+    margin-bottom:16px;
 }
 
 /* ================= INPUT ================= */
 .input-field{
     width:100%;
-    padding:13px;
+    height:50px;
+    padding:0 14px;
     border-radius:12px;
-    border:1px solid rgba(255,255,255,.08);
-    background:#0f172a;
-    color:#fff;
+    border:1px solid rgba(148,163,184,.25);
+    background:rgba(255,255,255,.8);
+    color:#0f172a;
+    font-size:14px;
     margin-bottom:12px;
+    outline:none;
+}
+
+.input-field:focus{
+    border-color:#2563eb;
+    box-shadow:0 0 0 4px rgba(37,99,235,.12);
 }
 
 /* ================= BUTTON ================= */
 .btn{
     width:100%;
-    padding:13px;
+    height:50px;
     border:none;
     border-radius:12px;
-    background:#2563eb;
+    background:linear-gradient(135deg,#3b82f6,#2563eb);
     color:#fff;
+    font-size:14px;
     font-weight:600;
     cursor:pointer;
+    transition:.25s;
 }
 
 .btn:hover{
-    background:#1d4ed8;
+    transform:translateY(-2px);
+    box-shadow:0 12px 25px rgba(37,99,235,.25);
 }
 
 /* ================= STATS ================= */
 .stats{
     display:grid;
     grid-template-columns:repeat(3,1fr);
-    gap:12px;
+    gap:14px;
     margin-bottom:18px;
 }
 
 .stat{
-    background:#0f172a;
-    padding:15px;
-    border-radius:12px;
     text-align:center;
-    border:1px solid rgba(255,255,255,.06);
 }
 
 .stat h3{
     font-size:13px;
-    color:#94a3b8;
+    color:#64748b;
 }
 
 .stat h2{
-    font-size:20px;
-    margin-top:5px;
+    font-size:22px;
+    margin-top:6px;
+    font-weight:800;
 }
 
 /* ================= TABLE ================= */
+.table-responsive{
+    width:100%;
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+}
+
 table{
     width:100%;
+    min-width:700px;
     border-collapse:collapse;
     font-size:14px;
 }
 
-th,td{
-    padding:12px;
-    border-bottom:1px solid rgba(255,255,255,.06);
+th,
+td{
+    padding:14px 12px;
+    border-bottom:1px solid rgba(148,163,184,.15);
     text-align:left;
 }
 
 th{
-    color:#94a3b8;
+    color:#64748b;
     font-size:13px;
+    font-weight:600;
 }
 
+tbody tr{
+    transition:.2s;
+}
+
+tbody tr:hover{
+    background:rgba(255,255,255,.45);
+}
+
+/* ================= ACTION BUTTON ================= */
 .action-btn{
-    padding:6px 10px;
+    padding:7px 10px;
     border:none;
     border-radius:8px;
     cursor:pointer;
     font-size:12px;
+    font-weight:600;
 }
 
-.edit{background:#f59e0b;color:#000;}
-.delete{background:#ef4444;color:#fff;}
-.copy{background:#22c55e;color:#000;}
+.edit{
+    background:#f59e0b;
+    color:#fff;
+}
+
+.delete{
+    background:#ef4444;
+    color:#fff;
+}
+
+.copy{
+    background:#10b981;
+    color:#fff;
+}
 
 /* ================= GUIDE ================= */
 .guide{
-    color:#94a3b8;
-    font-size:13px;
-    line-height:1.6;
+    color:#64748b;
+    font-size:14px;
+    line-height:1.8;
 }
 
 .guide h3{
-    color:#fff;
-    margin-bottom:8px;
+    color:#0f172a;
 }
 
+/* ================= TABLET ================= */
+@media (max-width:992px){
+
+    .grid{
+        grid-template-columns:1fr;
+    }
+
+    .stats{
+        grid-template-columns:repeat(2,1fr);
+    }
+}
+
+/* ================= MOBILE ================= */
+@media (max-width:768px){
+
+    body{
+        padding:12px;
+    }
+
+    .page-header h1{
+        font-size:22px;
+    }
+
+    .page-header p{
+        font-size:13px;
+    }
+
+    .card,
+    .stat{
+        padding:14px;
+        border-radius:16px;
+    }
+
+    .stats{
+        gap:10px;
+    }
+
+    table{
+        min-width:650px;
+        font-size:12px;
+    }
+
+    th,
+    td{
+        padding:10px 8px;
+        white-space:nowrap;
+    }
+
+    .action-btn{
+        font-size:11px;
+        padding:6px 8px;
+    }
+}
+
+/* ================= HP KECIL ================= */
+@media (max-width:480px){
+
+    .stats{
+        grid-template-columns:1fr;
+    }
+
+    .page-header h1{
+        font-size:20px;
+    }
+
+    .stat h2{
+        font-size:18px;
+    }
+}
 </style>
 {% endblock %}
 
@@ -210,54 +342,81 @@ th{
 
     <h3>My Sell Links</h3>
 
-    <table>
+    <div class="table-responsive">
 
-        <thead>
-            <tr>
-                <th>Judul</th>
-                <th>Harga</th>
-                <th>Terjual</th>
-                <th>Link</th>
-                <th>Aksi</th>
-            </tr>
-        </thead>
+        <table>
 
-        <tbody>
+            <thead>
+                <tr>
+                    <th>Judul</th>
+                    <th>Harga</th>
+                    <th>Terjual</th>
+                    <th>Link</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
 
-            {% for l in sell_links %}
+            <tbody>
 
-            <tr>
+                {% for l in sell_links %}
 
-                <td>{{ l.title }}</td>
-                <td>Rp {{ "{:,.0f}".format(l.price).replace(",",".") }}</td>
-                <td>{{ l.sold or 0 }}</td>
+                <tr>
 
-                <td>
-                    <button class="action-btn copy"
-                        onclick="copyText('{{ request.base_url }}pay/{{ l.code }}')">
-                        Copy
-                    </button>
-                </td>
+                    <td>{{ l.title }}</td>
 
-                <td>
-                    <button class="action-btn edit"
-                        onclick="editLink('{{ l.code }}')">
-                        Edit
-                    </button>
+                    <td>
+                        Rp {{ "{:,.0f}".format(l.price).replace(",",".") }}
+                    </td>
 
-                    <button class="action-btn delete"
-                        onclick="deleteLink('{{ l.code }}')">
-                        Delete
-                    </button>
-                </td>
+                    <td>{{ l.sold or 0 }}</td>
 
-            </tr>
+                    <td>
+                        <button
+                            class="action-btn copy"
+                            onclick="copyText('{{ request.base_url }}pay/{{ l.code }}')">
 
-            {% endfor %}
+                            <i class="fa-solid fa-copy"></i>
+                            Copy
+                        </button>
+                    </td>
 
-        </tbody>
+                    <td style="white-space:nowrap;">
 
-    </table>
+                        <button
+                            class="action-btn edit"
+                            onclick="editLink('{{ l.code }}')">
+
+                            <i class="fa-solid fa-pen"></i>
+                            Edit
+                        </button>
+
+                        <button
+                            class="action-btn delete"
+                            onclick="deleteLink('{{ l.code }}')">
+
+                            <i class="fa-solid fa-trash"></i>
+                            Delete
+                        </button>
+
+                    </td>
+
+                </tr>
+
+                {% else %}
+
+                <tr>
+                    <td colspan="5" style="text-align:center;color:#64748b;padding:30px;">
+                        Belum ada Sell Link yang dibuat.
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
 
 </div>
 
