@@ -141,6 +141,31 @@ tbody tr:hover{
 .edit{background:#f59e0b;}
 .delete{background:#ef4444;}
 
+.pagination {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+.page-btn {
+    padding: 6px 10px;
+    border-radius: 6px;
+    background: #1f2937;
+    color: #fff;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.page-btn:hover {
+    background: #374151;
+}
+
+.page-btn.active {
+    background: #3b82f6;
+}
+
 /* ================= RESPONSIVE ================= */
 @media (max-width:992px){
     .stats{grid-template-columns:repeat(2,1fr);}
@@ -208,19 +233,30 @@ tbody tr:hover{
             {% for link in links %}
             <tr>
 
+                <!-- SHORTLINK -->
                 <td>
                     <b>{{ base_url }}/s/{{ link.short_code }}</b><br>
-                    <small style="color:#64748b">{{ link.short_code }}</small>
+                    <small style="color:#64748b">
+                        {{ link.short_code or "-" }}
+                    </small>
                 </td>
 
-                <td>{{ link.destination_url }}</td>
+                <!-- DESTINATION -->
+                <td style="word-break: break-all;">
+                    {{ link.destination_url or "-" }}
+                </td>
 
-                <td>{{ link.clicks or 0 }}</td>
-
+                <!-- CLICKS -->
                 <td>
-                    Rp {{ "{:,.0f}".format(link.earnings or 0).replace(",",".") }}
+                    {{ link.clicks | default(0, true) }}
                 </td>
 
+                <!-- EARNINGS -->
+                <td>
+                    Rp {{ "{:,.0f}".format(link.earnings | default(0, true)).replace(",", ".") }}
+                </td>
+
+                <!-- STATUS -->
                 <td>
                     {% if link.is_active %}
                         <span class="status active">Aktif</span>
@@ -229,6 +265,7 @@ tbody tr:hover{
                     {% endif %}
                 </td>
 
+                <!-- ACTIONS -->
                 <td style="white-space:nowrap;">
 
                     <button class="action-btn copy"
@@ -237,11 +274,15 @@ tbody tr:hover{
                     </button>
 
                     <a href="/edit-link/{{ link.id }}">
-                        <button class="action-btn edit">Edit</button>
+                        <button type="button" class="action-btn edit">
+                            Edit
+                        </button>
                     </a>
 
                     <form action="/delete-link/{{ link.id }}" method="post" style="display:inline;">
-                        <button class="action-btn delete" onclick="return confirm('Hapus link?')">
+                        <button type="submit"
+                            class="action-btn delete"
+                            onclick="return confirm('Hapus link ini?')">
                             Delete
                         </button>
                     </form>
