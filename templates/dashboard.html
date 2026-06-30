@@ -580,6 +580,109 @@ body{
         font-size:12px;
     }
 }
+/* ================= CREATE LINK ================= */
+
+.create-card{
+    max-width:700px;
+    margin:auto;
+}
+
+.create-header{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    margin-bottom:20px;
+}
+
+.create-header i{
+    width:50px;
+    height:50px;
+    border-radius:14px;
+    background:#eff6ff;
+    color:#2563eb;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:20px;
+    flex-shrink:0;
+}
+
+.create-header h2{
+    font-size:22px;
+    font-weight:700;
+    margin:0;
+}
+
+.create-header p{
+    margin-top:4px;
+    color:#64748b;
+    font-size:13px;
+}
+
+.input-label{
+    display:block;
+    font-size:13px;
+    font-weight:600;
+    margin-bottom:8px;
+}
+
+.input-wrapper{
+    position:relative;
+    margin-bottom:16px;
+}
+
+.input-wrapper i{
+    position:absolute;
+    left:16px;
+    top:50%;
+    transform:translateY(-50%);
+    color:#94a3b8;
+}
+
+.input-wrapper .input-field{
+    padding-left:46px;
+}
+
+.create-result{
+    margin-top:20px;
+    padding:20px;
+    border-radius:16px;
+    background:rgba(239,246,255,.6);
+    text-align:center;
+    border:1px solid rgba(59,130,246,.12);
+}
+
+.create-result h3{
+    margin-bottom:15px;
+    font-size:16px;
+}
+
+.success-icon{
+    font-size:42px;
+    color:#10b981;
+    margin-bottom:12px;
+}
+
+@media (max-width:768px){
+
+    .create-header h2{
+        font-size:18px;
+    }
+
+    .create-header p{
+        font-size:12px;
+    }
+
+    .create-header i{
+        width:42px;
+        height:42px;
+        font-size:17px;
+    }
+
+    .create-result{
+        padding:16px;
+    }
+}
 </style>
 {% endblock %}
 {% block content %}
@@ -591,22 +694,31 @@ body{
     </div>
 </div>
 
-<!-- ================= CREATE LINK ================= -->
-<div class="card">
+<div class="card create-card">
 
-    <h2>
-        <i class="fa-solid fa-plus-circle"></i>
-        Create Short Link
-    </h2>
+    <div class="create-header">
+        <i class="fa-solid fa-link"></i>
+        <div>
+            <h2>Create Short Link</h2>
+            <p>Buat shortlink baru dan bagikan ke semua sosial media.</p>
+        </div>
+    </div>
 
     <form id="createForm" class="create-form">
 
-        <input
-            type="url"
-            id="destination_url"
-            class="input-field"
-            placeholder="https://example.com"
-            required>
+        <label class="input-label">
+            Destination URL
+        </label>
+
+        <div class="input-wrapper">
+            <i class="fa-solid fa-globe"></i>
+            <input
+                type="url"
+                id="destination_url"
+                class="input-field"
+                placeholder="Paste Your's Links ..."
+                required>
+        </div>
 
         <button
             type="submit"
@@ -621,10 +733,11 @@ body{
 
     <div id="result" class="create-result" hidden>
 
-        <h3>
+        <div class="success-icon">
             <i class="fa-solid fa-circle-check"></i>
-            Short Link Berhasil Dibuat
-        </h3>
+        </div>
+
+        <h3>Short Link Berhasil Dibuat</h3>
 
         <input
             id="shortLink"
