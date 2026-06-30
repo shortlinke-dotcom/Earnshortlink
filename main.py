@@ -1436,15 +1436,24 @@ async def links(request: Request):
         .execute()
     )
 
+    links = links_res.data or []
+
+    total_links = len(links)
+    total_clicks = sum(link.get("clicks", 0) for link in links)
+    total_earn = sum(link.get("earnings", 0) for link in links)
+
     return templates.TemplateResponse(
         "links.html",
         {
             "request": request,
             "username": user.data["username"],
-            "links": links_res.data or []
+            "links": links,
+            "total_links": total_links,
+            "total_clicks": total_clicks,
+            "total_earn": total_earn,
+            "base_url": str(request.base_url).rstrip("/")
         }
     )
-
 
 @app.get("/settings")
 async def settings(request: Request):
