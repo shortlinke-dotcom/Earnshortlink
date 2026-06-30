@@ -709,6 +709,20 @@ async def register_post(
 
     return RedirectResponse("/dashboard", status_code=303)
 
+@app.get("/check-username")
+async def check_username(u: str):
+    user = (
+        supabase.table("users")
+        .select("id")
+        .eq("username", u.lower())
+        .limit(1)
+        .execute()
+    )
+
+    return {
+        "exists": bool(user.data)
+    }
+
 # =========================
 # DASHBOARD
 # =========================
