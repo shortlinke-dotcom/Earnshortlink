@@ -482,6 +482,7 @@ async def dashboard(request: Request):
 
     # ================= PENGUMUMAN =================
     announcement = None
+    unread_count = 0
 
     try:
         res = (
