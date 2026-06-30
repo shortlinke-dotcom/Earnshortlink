@@ -1,402 +1,234 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kelola Tautan • EarnShortlink</title>
+{% extends "base.html" %}
+{% block title %}Kelola Tautan{% endblock %}
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css">
-
+{% block extra_css %}
 <style>
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Poppins,sans-serif;
-}
-
 body{
-background:#081120;
-color:#fff;
+    min-height:100vh;
+    background:
+        radial-gradient(circle at top left,#dbeafe 0%,transparent 45%),
+        radial-gradient(circle at bottom right,#bfdbfe 0%,transparent 40%),
+        linear-gradient(135deg,#f8fafc,#eef4ff);
+    color:#0f172a;
 }
 
-/* SIDEBAR (SAMA PERSIS DASHBOARD) */
-.sidebar{
-position:fixed;
-left:0;
-top:0;
-width:260px;
-height:100%;
-background:#111827;
-border-right:1px solid rgba(255,255,255,.05);
-padding-top:20px;
-transition:.3s ease;
-z-index:9999;
+.main-content{
+    padding:20px;
 }
 
-.menu-toggle{
-display:none;
-width:42px;
-height:42px;
-border:none;
-border-radius:10px;
-background:#1e293b;
-color:#fff;
-font-size:18px;
-cursor:pointer;
-}
-
-.logo{
-text-align:center;
-font-size:22px;
-font-weight:800;
-padding:10px 0 20px;
-}
-
-.logo span{color:#3b82f6;}
-
-.menu a{
-display:flex;
-align-items:center;
-gap:12px;
-padding:14px 18px;
-color:#d1d5db;
-text-decoration:none;
-border-radius:12px;
-margin:6px 10px;
-transition:.2s;
-}
-
-.menu a:hover{
-background:#1e293b;
-color:#fff;
-}
-
-.menu a.active{
-background:#2563eb;
-color:#fff;
-}
-
-/* TOPBAR (SAMA PERSIS DASHBOARD STYLE FIXED) */
-.topbar{
-position:fixed;
-top:0;
-left:260px;
-right:0;
-height:65px;
-background:#0f172a;
-display:flex;
-align-items:center;
-justify-content:space-between;
-padding:0 20px;
-border-bottom:1px solid rgba(255,255,255,.08);
-z-index:1000;
-}
-
-.top-title{
-font-size:18px;
-font-weight:700;
-}
-
-.user{
-display:flex;
-align-items:center;
-gap:10px;
-}
-
-/* MAIN */
-.main{
-margin-left:260px;
-padding:90px 25px 25px;
-}
-
-.overlay{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,.45);
-display:none;
-z-index:9000;
-}
-
-.overlay.show{
-display:block;
-}
-
-/* CARDS */
+/* CARD */
 .cards{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-gap:18px;
-margin-bottom:25px;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:14px;
+    margin-bottom:20px;
 }
 
 .card{
-background:#111827;
-border-radius:16px;
-padding:20px;
+    background:rgba(255,255,255,.55);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+    border:1px solid rgba(255,255,255,.4);
+    border-radius:18px;
+    padding:18px;
+    box-shadow:0 6px 20px rgba(15,23,42,.06);
 }
 
-.card small{color:#94a3b8;}
-.card h2{font-size:26px;margin-top:6px;}
+.card small{
+    color:#64748b;
+}
+
+.card h2{
+    margin-top:8px;
+    font-size:28px;
+    font-weight:800;
+}
 
 /* SEARCH */
 .search-box input{
-width:100%;
-padding:14px;
-border:none;
-border-radius:12px;
-background:#1e293b;
-color:#fff;
-outline:none;
-margin-bottom:20px;
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:14px;
+    background:rgba(255,255,255,.7);
+    border:1px solid rgba(148,163,184,.2);
+    outline:none;
+    margin-bottom:18px;
 }
 
 /* TABLE */
 .table-box{
-background:#111827;
-border-radius:16px;
-overflow:hidden;
+    background:rgba(255,255,255,.55);
+    backdrop-filter:blur(18px);
+    border:1px solid rgba(255,255,255,.4);
+    border-radius:18px;
+    overflow:hidden;
+    box-shadow:0 6px 20px rgba(15,23,42,.06);
 }
 
 table{
-width:100%;
-border-collapse:collapse;
+    width:100%;
+    border-collapse:collapse;
 }
 
 thead{
-background:#1e293b;
+    background:#eff6ff;
+}
+
+th{
+    color:#64748b;
+    font-size:13px;
 }
 
 th,td{
-padding:14px;
-font-size:14px;
-text-align:left;
-border-top:1px solid rgba(255,255,255,.05);
+    padding:14px;
+    border-bottom:1px solid rgba(148,163,184,.12);
+    text-align:left;
+}
+
+tbody tr:hover{
+    background:rgba(255,255,255,.5);
 }
 
 .status{
-padding:4px 10px;
-border-radius:20px;
-font-size:12px;
-font-weight:700;
+    padding:5px 10px;
+    border-radius:999px;
+    font-size:12px;
+    color:#fff;
 }
 
-.active{background:#16a34a;}
-.inactive{background:#dc2626;}
+.active{
+    background:#10b981;
+}
+
+.inactive{
+    background:#ef4444;
+}
 
 /* BUTTON */
 .btn{
-padding:7px 10px;
-border:none;
-border-radius:8px;
-cursor:pointer;
-color:#fff;
-margin-right:5px;
+    width:36px;
+    height:36px;
+    border:none;
+    border-radius:10px;
+    color:#fff;
+    cursor:pointer;
 }
 
 .copy{background:#2563eb;}
-.edit{background:#f59e0b;}
-.delete{background:#dc2626;}
+.edit{background:#0ea5e9;}
+.delete{background:#ef4444;}
 
-/* RESPONSIVE */
-@media (max-width:900px){
+@media(max-width:768px){
 
-.sidebar{
-left:-260px;
-}
+    .cards{
+        grid-template-columns:repeat(2,1fr);
+    }
 
-.sidebar.show{
-left:0;
-}
+    .table-box{
+        overflow:auto;
+    }
 
-.topbar{
-left:0;
-padding:0 15px;
-}
-
-.main{
-margin-left:0;
-padding:85px 15px 20px;
-}
-
-.menu-toggle{
-display:flex;
-align-items:center;
-justify-content:center;
-}
-
+    table{
+        min-width:750px;
+    }
 }
 </style>
-</head>
+{% endblock %}
+{% block content %}
 
-<body>
-<div class="overlay" onclick="toggleSidebar()"></div>
-<!-- SIDEBAR -->
-<div class="sidebar">
-<div class="logo">EARN<span>SHORTLINK</span></div>
-
-<div class="menu">
-<a href="/dashboard"><i class="fa-solid fa-house"></i>Dashboard</a>
-<a href="/links" class="active"><i class="fa-solid fa-link"></i>Kelola Tautan</a>
-<a href="/sell-link"><i class="fa-solid fa-plus"></i>Sell Link</a>
-<a href="/payments"><i class="fa-solid fa-wallet"></i>Payments</a>
-<a href="/referrals"><i class="fa-solid fa-users"></i>Referrals</a>
-<a href="/invoices"><i class="fa-solid fa-file-invoice"></i>Invoices</a>
-<a href="/settings"><i class="fa-solid fa-gear"></i>Pengaturan</a>
-<a href="/support"><i class="fa-solid fa-headset"></i>Support</a>
-</div>
+<div class="dashboard-header">
+    <h1>Kelola Tautan 🔗</h1>
+    <p>Lihat dan kelola seluruh shortlink milik Anda.</p>
 </div>
 
-<!-- TOPBAR (SUDAH SAMA DASHBOARD STYLE) -->
-<div class="topbar">
-
-<div style="display:flex;align-items:center;gap:15px;">
-
-<button class="menu-toggle" onclick="toggleSidebar()">
-<i class="fa-solid fa-bars"></i>
-</button>
-
-<div class="top-title">
-Kelola Tautan
-</div>
-
-</div>
-
-<div class="user">
-<i class="fa-solid fa-user"></i>
-</div>
-
-</div>
-<!-- MAIN -->
-<div class="main">
-
-<!-- CARDS -->
 <div class="cards">
-<div class="card">
-<small>Total Link</small>
-<h2>{{ total_links }}</h2>
+    <div class="card">
+        <small>Total Link</small>
+        <h2>{{ total_links }}</h2>
+    </div>
+
+    <div class="card">
+        <small>Total Klik</small>
+        <h2>{{ total_clicks }}</h2>
+    </div>
+
+    <div class="card">
+        <small>Total Pendapatan</small>
+        <h2>Rp {{ total_earn }}</h2>
+    </div>
 </div>
 
-<div class="card">
-<small>Total Klik</small>
-<h2>{{ total_clicks }}</h2>
-</div>
-
-<div class="card">
-<small>Total Pendapatan</small>
-<h2>Rp {{ total_earn }}</h2>
-</div>
-</div>
-
-<!-- SEARCH -->
 <div class="search-box">
-<input type="text" placeholder="Cari shortlink...">
+    <input type="text" placeholder="Cari shortlink...">
 </div>
 
-<!-- TABLE -->
 <div class="table-box">
-<table>
-<thead>
-<tr>
-<th>Shortlink</th>
-<th>Tujuan</th>
-<th>Klik</th>
-<th>Pendapatan</th>
-<th>Status</th>
-<th>Aksi</th>
-</tr>
-</thead>
+    <table>
+        <thead>
+            <tr>
+                <th>Shortlink</th>
+                <th>Tujuan</th>
+                <th>Klik</th>
+                <th>Pendapatan</th>
+                <th>Status</th>
+                <th>Aksi</th>
+            </tr>
+        </thead>
 
-<tbody>
-{% for link in links %}
-<tr>
-<td>
-<b>{{ base_url }}/s/{{ link.short_code }}</b><br>
-<small style="color:#94a3b8">{{ link.short_code }}</small>
-</td>
+        <tbody>
+        {% for link in links %}
+            <tr>
+                <td>
+                    <b>{{ base_url }}/s/{{ link.short_code }}</b><br>
+                    <small>{{ link.short_code }}</small>
+                </td>
 
-<td>{{ link.destination_url }}</td>
-<td>{{ link.clicks or 0 }}</td>
-<td>Rp {{ "{:,}".format(link.earnings or 0).replace(",", ".") }}</td>
+                <td>{{ link.destination_url }}</td>
+                <td>{{ link.clicks or 0 }}</td>
+                <td>Rp {{ "{:,}".format(link.earnings or 0).replace(",", ".") }}</td>
 
-<td>
-{% if link.is_active %}
-<span class="status active">Aktif</span>
-{% else %}
-<span class="status inactive">Nonaktif</span>
-{% endif %}
-</td>
+                <td>
+                    {% if link.is_active %}
+                        <span class="status active">Aktif</span>
+                    {% else %}
+                        <span class="status inactive">Nonaktif</span>
+                    {% endif %}
+                </td>
 
-<td>
-<button class="btn copy"
-onclick="copyLink('{{ base_url }}/s/{{ link.short_code }}', this)">
-<i class="fa-solid fa-copy"></i>
-</button>
+                <td>
+                    <button class="btn copy"
+                    onclick="copyLink('{{ base_url }}/s/{{ link.short_code }}',this)">
+                        <i class="fa-solid fa-copy"></i>
+                    </button>
 
-<a href="/s/{{ link.short_code }}">
-<button class="btn edit"><i class="fa-solid fa-eye"></i></button>
-</a>
+                    <a href="/edit-link/{{ link.id }}">
+                        <button class="btn edit">
+                            <i class="fa-solid fa-pen"></i>
+                        </button>
+                    </a>
 
-<a href="/edit-link/{{ link.id }}">
-<button class="btn" style="background:#0ea5e9;">
-<i class="fa-solid fa-pen"></i>
-</button>
-</a>
-
-<form action="/delete-link/{{ link.id }}" method="post" style="display:inline;">
-<button class="btn delete" onclick="return confirm('Hapus link?')">
-<i class="fa-solid fa-trash"></i>
-</button>
-</form>
-</td>
-</tr>
-{% endfor %}
-</tbody>
-</table>
-</div>
-
+                    <form action="/delete-link/{{ link.id }}"
+                    method="post"
+                    style="display:inline;">
+                        <button class="btn delete">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 </div>
 
 <script>
 function copyLink(url, btn){
-navigator.clipboard.writeText(url);
-const old = btn.innerHTML;
-btn.innerHTML = '<i class="fa-solid fa-check"></i>';
-setTimeout(()=>btn.innerHTML = old,1200);
+    navigator.clipboard.writeText(url);
+    const old = btn.innerHTML;
+    btn.innerHTML = '<i class="fa-solid fa-check"></i>';
+    setTimeout(()=>btn.innerHTML=old,1500);
 }
 </script>
-<script>
-function toggleSidebar(){
 
-document.querySelector(".sidebar").classList.toggle("show");
-document.querySelector(".overlay").classList.toggle("show");
-
-}
-
-document.addEventListener("click",function(e){
-
-const sidebar=document.querySelector(".sidebar");
-const button=document.querySelector(".menu-toggle");
-const overlay=document.querySelector(".overlay");
-
-if(window.innerWidth<=900){
-
-if(
-!sidebar.contains(e.target) &&
-!button.contains(e.target)
-){
-sidebar.classList.remove("show");
-overlay.classList.remove("show");
-}
-
-}
-
-});
-</script>
-
-</body>
-</html>
+{% endblock %}
