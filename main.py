@@ -36,6 +36,36 @@ templates = Jinja2Templates(directory="templates")
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 
 
+@app.exception_handler(Exception)
+async def global_error_handler(request: Request, exc: Exception):
+    error_text = traceback.format_exc()
+
+    return HTMLResponse(f"""
+    <html>
+    <head>
+        <title>Server Error</title>
+        <style>
+            body {{
+                background:#0f172a;
+                color:#fff;
+                font-family:monospace;
+                padding:20px;
+            }}
+            pre {{
+                background:#111827;
+                padding:15px;
+                border-radius:10px;
+                overflow:auto;
+            }}
+        </style>
+    </head>
+    <body>
+        <h2>🚨 Internal Server Error</h2>
+        <p>Detail error:</p>
+        <pre>{error_text}</pre>
+    </body>
+    </html>
+    """, status_code=500)
 # =========================
 # HOME
 # =========================
