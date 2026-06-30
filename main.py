@@ -351,10 +351,11 @@ async def setup_username(request: Request):
 
     email = request.session.get("pending_email")
 
+    # tidak ada email pending
     if not email:
         return RedirectResponse("/login", 303)
 
-    # cek apakah email sudah terdaftar
+    # pengaman: kalau email ternyata sudah terdaftar
     user = (
         supabase.table("users")
         .select("id")
@@ -364,7 +365,8 @@ async def setup_username(request: Request):
     )
 
     if user.data:
-        return RedirectResponse("/dashboard", 303)
+        request.session.pop("pending_email", None)
+        return RedirectResponse("/login", 303)
 
     return templates.TemplateResponse(
         "setup_username.html",
@@ -409,7 +411,7 @@ async def setup_username_post(
     if len(password) > 72:
         return JSONResponse({"ok": False, "error": "password_too_long"})
 
-    # ANTI DUPLIKAT EMAIL
+    # EMAIL SUDAH TERDAFTAR → LANGSUNG LOGIN
     existing_email = (
         supabase.table("users")
         .select("id,username")
@@ -491,78 +493,6 @@ async def setup_username_post(
 
     new_user = insert.data[0]
 
-    request.session["username"] = new_user["username"]
-    request.session["user_id"] = new_user["id"]
-    request.session["logged_in"] = True
-
-    token = secrets.token_hex(32)
-
-    supabase.table("users").update({
-        "session_token": token,
-        "last_activity": datetime.now(timezone.utc).isoformat()
-    }).eq("id", new_user["id"]).execute()
-
-    request.session["session_token"] = token
-    request.session.pop("pending_email", None)
-
-    response = JSONResponse({
-        "ok": True,
-        "redirect": "/dashboard"
-    })
-
-    response.set_cookie(
-        key="session_token",
-        value=token,
-        max_age=2592000,
-        httponly=True,
-        samesite="lax",
-        secure=True
-    )
-
-    return response
-    # =========================
-    # CEK USERNAME
-    # =========================
-    check = (
-        supabase.table("users")
-        .select("id")
-        .eq("username", username)
-        .limit(1)
-        .execute()
-    )
-
-    if check.data:
-        return JSONResponse({"ok": False, "error": "username_exists"})
-
-    # =========================
-    # HASH PASSWORD (SAFE BCRYPT)
-    # =========================
-    hashed_password = bcrypt.hashpw(
-        password.encode("utf-8"),
-        bcrypt.gensalt()
-    ).decode("utf-8")
-
-    # =========================
-    # INSERT USER
-    # =========================
-    insert = (
-        supabase.table("users")
-        .insert({
-            "gmail": email,
-            "username": username,
-            "password": hashed_password,
-        })
-        .execute()
-    )
-
-    if not insert.data:
-        return JSONResponse({"ok": False, "error": "insert_failed"})
-
-    new_user = insert.data[0]
-
-    # =========================
-
-    # SESSION LOGIN
     request.session["username"] = new_user["username"]
     request.session["user_id"] = new_user["id"]
     request.session["logged_in"] = True
