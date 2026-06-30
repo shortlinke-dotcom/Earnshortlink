@@ -136,23 +136,69 @@ body{
 ========================= */
 
 .logo{
-    text-align:center;
-    font-size:28px;
-    font-weight:800;
-    letter-spacing:.5px;
-    color:var(--text);
-    user-select:none;
+    display:flex;
+    justify-content:center;
+    align-items:center;
 }
 
-.logo span{
+.logo-wrapper{
+    position:relative;
+    display:inline-flex;
+    justify-content:center;
+    align-items:center;
+    font-size:28px;
+    font-weight:800;
+    letter-spacing:1px;
+    padding:10px 20px;
+}
+
+.logo-wrapper span{
     background:linear-gradient(
         90deg,
         #2563eb,
-        #00b8ff
+        #00b8ff,
+        #60a5fa,
+        #2563eb
     );
+    background-size:300% auto;
 
     -webkit-background-clip:text;
     -webkit-text-fill-color:transparent;
+
+    animation:logoGradient 4s linear infinite;
+}
+
+@keyframes logoGradient{
+    0%{
+        background-position:0%;
+    }
+    100%{
+        background-position:300%;
+    }
+}
+
+.orbit-icon{
+    position:absolute;
+    color:#2563eb;
+    font-size:18px;
+    animation:orbit 5s linear infinite;
+    transform-origin:0 0;
+}
+
+@keyframes orbit{
+    0%{
+        transform:
+            rotate(0deg)
+            translateX(95px)
+            rotate(0deg);
+    }
+
+    100%{
+        transform:
+            rotate(360deg)
+            translateX(95px)
+            rotate(-360deg);
+    }
 }
 
 /* =========================
@@ -657,6 +703,54 @@ body{
     }
 
 }
+
+/* ===========================
+   MOBILE RESPONSIVE
+=========================== */
+
+@media (max-width:768px){
+
+    .topbar{
+        height:65px;
+        padding:0 15px;
+    }
+
+    .logo-wrapper{
+        font-size:22px;
+        padding:8px 10px;
+    }
+
+    .orbit-icon{
+        font-size:14px;
+    }
+
+    @keyframes orbit{
+        0%{
+            transform:
+                rotate(0deg)
+                translateX(78px)
+                rotate(0deg);
+        }
+
+        100%{
+            transform:
+                rotate(360deg)
+                translateX(78px)
+                rotate(-360deg);
+        }
+    }
+
+    .container{
+        padding:90px 15px 25px;
+    }
+
+    .sidebar{
+        width:270px;
+    }
+}
+
+</style>
+{% block extra_css %}{% endblock %}
 </style>
 {% block extra_css %}{% endblock %}
 </head>
@@ -757,8 +851,11 @@ onclick="closeMenu()"></div>
         <i class="fa-solid fa-bars"></i>
     </button>
     <div class="logo">
-        EARN<span>SHORTLINK</span>
+    <div class="logo-wrapper">
+        <i class="fa-solid fa-link orbit-icon"></i>
+        <span>EARNSHORTLINK</span>
     </div>
+</div>
     <div class="user-menu">
         <button class="account-btn"
         onclick="toggleUserMenu()">
