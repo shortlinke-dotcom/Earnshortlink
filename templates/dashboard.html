@@ -193,29 +193,120 @@ body{
     cursor:pointer;
 }
 
-/* ================= TABLE ================= */
+/* ================= LINK TERBARU TABLE ================= */
+
 .table-responsive{
-    overflow-x:auto;
+width:100%;
+overflow-x:auto;
+-webkit-overflow-scrolling:touch;
 }
 
 table{
-    width:100%;
-    min-width:500px;
-    border-collapse:collapse;
-    font-size:13px;
+width:100%;
+min-width:100%;
+border-collapse:collapse;
+font-size:13px;
+background:transparent;
 }
 
 table th{
-    text-align:left;
-    padding:10px;
-    color:#64748b;
+padding:12px;
+text-align:left;
+font-size:12px;
+color:#64748b;
+font-weight:600;
+border-bottom:1px solid rgba(148,163,184,.15);
+white-space:nowrap;
 }
 
 table td{
-    padding:10px;
-    border-top:1px solid rgba(148,163,184,.15);
+padding:12px;
+border-bottom:1px solid rgba(148,163,184,.12);
+vertical-align:middle;
 }
 
+table tr:last-child td{
+border-bottom:none;
+}
+
+table tbody tr:hover{
+background:rgba(255,255,255,.4);
+}
+
+/* Mobile */
+@media(max-width:768px){
+
+table{
+    min-width:420px;
+    font-size:12px;
+}
+table th,
+table td{
+    padding:10px 8px;
+}
+
+}
+
+.latest-table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.latest-table th{
+    padding:12px;
+    text-align:left;
+    color:#64748b;
+    font-size:12px;
+    font-weight:600;
+    border-bottom:1px solid rgba(148,163,184,.15);
+    white-space:nowrap;
+}
+
+.latest-table td{
+    padding:14px 12px;
+    border-bottom:1px solid rgba(148,163,184,.12);
+    vertical-align:middle;
+}
+
+.latest-table tr:last-child td{
+    border-bottom:none;
+}
+
+.latest-table tbody tr:hover{
+    background:rgba(255,255,255,.45);
+}
+
+.click-badge{
+    display:inline-block;
+    background:#eff6ff;
+    color:#2563eb;
+    padding:4px 10px;
+    border-radius:999px;
+    font-weight:600;
+    font-size:12px;
+}
+
+.earning-badge{
+    display:inline-block;
+    background:#ecfdf5;
+    color:#059669;
+    padding:4px 10px;
+    border-radius:999px;
+    font-weight:600;
+    font-size:12px;
+}
+
+@media(max-width:768px){
+
+    .table-responsive{
+        overflow-x:auto;
+        -webkit-overflow-scrolling:touch;
+    }
+
+    .latest-table{
+        min-width:450px;
+    }
+}
 /* ================= CHART ================= */
 .chart-card canvas{
     width:100% !important;
@@ -869,52 +960,43 @@ table td{
 </div>
 
 <!-- ================= LINK TERBARU ================= -->
-
 <div class="card">
-
-    <h2>
-        <i class="fa-solid fa-clock-rotate-left"></i>
-        Link Terbaru
-    </h2>
-
-    <table>
-
+<h2 style="margin-bottom:15px;">
+    <i class="fa-solid fa-clock-rotate-left"></i>
+    Link Terbaru
+</h2>
+<div class="table-responsive">
+    <table class="latest-table">
         <thead>
-
             <tr>
                 <th>Short URL</th>
                 <th>Total Klik</th>
                 <th>Pendapatan</th>
             </tr>
-
         </thead>
-
         <tbody>
-
             {% for link in latest_links %}
-
             <tr>
-
                 <td>
-                    <strong>{{ link.short }}</strong>
+                    <strong style="color:#2563eb;">
+                        {{ link.short }}
+                    </strong>
                 </td>
-
                 <td>
-                    {{ link.clicks }}
+                    <span class="click-badge">
+                        {{ link.clicks }}
+                    </span>
                 </td>
-
                 <td>
-                    Rp {{ "{:,.0f}".format(link.earnings).replace(",",".") }}
+                    <span class="earning-badge">
+                        Rp {{ "{:,.0f}".format(link.earnings).replace(",",".") }}
+                    </span>
                 </td>
-
             </tr>
-
             {% endfor %}
-
         </tbody>
-
     </table>
-
+</div>
 </div>
 
 <!-- ================= REFERRAL ================= -->
