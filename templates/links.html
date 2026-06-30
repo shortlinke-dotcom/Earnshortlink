@@ -70,7 +70,7 @@ body{
     margin-bottom:18px;
 }
 
-/* ================= CARD TABLE ================= */
+/* ================= CARD ================= */
 .card{
     background:rgba(255,255,255,.55);
     backdrop-filter:blur(18px);
@@ -85,28 +85,32 @@ body{
     margin-bottom:16px;
 }
 
-/* ================= TABLE ================= */
+/* ================= TABLE WRAP ================= */
 .table-responsive{
     width:100%;
     overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
 }
 
-table{
+/* TABLE */
+.links-table{
     width:100%;
-    min-width:700px;
     border-collapse:collapse;
-    font-size:14px;
-}
-
-th,td{
-    padding:14px 12px;
-    border-bottom:1px solid rgba(148,163,184,.15);
-    text-align:left;
-}
-
-th{
-    color:#64748b;
     font-size:13px;
+    min-width:650px;
+}
+
+.links-table th,
+.links-table td{
+    padding:10px 8px;
+    border-bottom:1px solid rgba(0,0,0,.06);
+    text-align:left;
+    vertical-align:middle;
+}
+
+.links-table th{
+    color:#64748b;
+    font-size:12px;
     font-weight:600;
 }
 
@@ -114,11 +118,18 @@ tbody tr:hover{
     background:rgba(255,255,255,.45);
 }
 
-/* ================= STATUS ================= */
+/* ================= LINK COLUMN ================= */
+.col-link small{
+    color:#64748b;
+    font-size:11px;
+}
+
+/* ================= STATUS (FIX DUPLICATE) ================= */
 .status{
+    display:inline-block;
     padding:4px 10px;
-    border-radius:20px;
-    font-size:12px;
+    border-radius:999px;
+    font-size:11px;
     font-weight:700;
     color:#fff;
 }
@@ -132,13 +143,12 @@ tbody tr:hover{
 }
 
 /* ================= BUTTON ================= */
-.action-btn{
-    padding:7px 10px;
+.btn.small{
+    padding:5px 8px;
+    font-size:11px;
     border:none;
-    border-radius:8px;
+    border-radius:6px;
     cursor:pointer;
-    font-size:12px;
-    font-weight:600;
     color:#fff;
 }
 
@@ -146,29 +156,30 @@ tbody tr:hover{
 .edit{background:#f59e0b;}
 .delete{background:#ef4444;}
 
-.pagination {
-    display: flex;
-    gap: 6px;
-    justify-content: center;
-    margin-top: 20px;
-    flex-wrap: wrap;
+/* ================= PAGINATION ================= */
+.pagination{
+    display:flex;
+    gap:6px;
+    justify-content:center;
+    margin-top:18px;
+    flex-wrap:wrap;
 }
 
-.page-btn {
-    padding: 6px 10px;
-    border-radius: 6px;
-    background: #1f2937;
-    color: #fff;
-    text-decoration: none;
-    font-size: 14px;
+.page-btn{
+    padding:6px 10px;
+    background:#1f2937;
+    color:#fff;
+    border-radius:6px;
+    text-decoration:none;
+    font-size:12px;
 }
 
-.page-btn:hover {
-    background: #374151;
+.page-btn:hover{
+    background:#374151;
 }
 
-.page-btn.active {
-    background: #3b82f6;
+.page-btn.active{
+    background:#3b82f6;
 }
 
 /* ================= CREATE PANEL ================= */
@@ -198,7 +209,6 @@ tbody tr:hover{
     background:rgba(255,255,255,.8);
 }
 
-/* BUTTON */
 .btn-create{
     width:100%;
     padding:12px;
@@ -211,13 +221,6 @@ tbody tr:hover{
     margin-top:6px;
 }
 
-/* MOBILE OPTIMIZED */
-@media (max-width:768px){
-    .create-panel{
-        padding:14px;
-    }
-}
-
 /* ================= RESPONSIVE ================= */
 @media (max-width:992px){
     .stats{grid-template-columns:repeat(2,1fr);}
@@ -225,8 +228,17 @@ tbody tr:hover{
 
 @media (max-width:768px){
     .stats{grid-template-columns:1fr;}
-    table{min-width:650px;font-size:12px;}
-    th,td{padding:10px 8px;}
+
+    .links-table{
+        font-size:12px;
+    }
+
+    .links-table th:nth-child(2),
+    .links-table td:nth-child(2),
+    .links-table th:nth-child(3),
+    .links-table td:nth-child(3){
+        display:none;
+    }
 }
 </style>
 {% endblock %}
@@ -306,15 +318,15 @@ tbody tr:hover{
 
     <h3>My Links</h3>
 
-    <div class="table-responsive">
+    <div class="table-wrap">
 
-        <table>
+        <table class="links-table">
+
             <thead>
                 <tr>
-                    <th>Shortlink</th>
-                    <th>Tujuan</th>
+                    <th>Link</th>
                     <th>Klik</th>
-                    <th>Pendapatan</th>
+                    <th>Rp</th>
                     <th>Status</th>
                     <th>Aksi</th>
                 </tr>
@@ -325,25 +337,16 @@ tbody tr:hover{
             {% for link in links %}
             <tr>
 
-                <!-- SHORTLINK -->
-                <td>
-                    <b>{{ base_url }}/s/{{ link.short_code }}</b><br>
-                    <small style="color:#64748b">
-                        {{ link.short_code or "-" }}
-                    </small>
+                <!-- LINK -->
+                <td class="col-link">
+                    <b>{{ link.short_code }}</b><br>
+                    <small>{{ link.destination_url | truncate(28, True) }}</small>
                 </td>
 
-                <!-- DESTINATION -->
-                <td style="word-break: break-all;">
-                    {{ link.destination_url or "-" }}
-                </td>
+                <!-- CLICK -->
+                <td>{{ link.clicks | default(0, true) }}</td>
 
-                <!-- CLICKS -->
-                <td>
-                    {{ link.clicks | default(0, true) }}
-                </td>
-
-                <!-- EARNINGS -->
+                <!-- EARNING -->
                 <td>
                     Rp {{ "{:,.0f}".format(link.earnings | default(0, true)).replace(",", ".") }}
                 </td>
@@ -351,33 +354,19 @@ tbody tr:hover{
                 <!-- STATUS -->
                 <td>
                     {% if link.is_active %}
-                        <span class="status active">Aktif</span>
+                        <span class="status active">On</span>
                     {% else %}
-                        <span class="status inactive">Nonaktif</span>
+                        <span class="status inactive">Off</span>
                     {% endif %}
                 </td>
 
-                <!-- ACTIONS -->
-                <td style="white-space:nowrap;">
+                <!-- ACTION -->
+                <td class="actions">
 
-                    <button class="action-btn copy"
+                    <button class="btn small copy"
                         onclick="copyText('{{ base_url }}/s/{{ link.short_code }}')">
                         Copy
                     </button>
-
-                    <a href="/edit-link/{{ link.id }}">
-                        <button type="button" class="action-btn edit">
-                            Edit
-                        </button>
-                    </a>
-
-                    <form action="/delete-link/{{ link.id }}" method="post" style="display:inline;">
-                        <button type="submit"
-                            class="action-btn delete"
-                            onclick="return confirm('Hapus link ini?')">
-                            Delete
-                        </button>
-                    </form>
 
                 </td>
 
@@ -385,11 +374,30 @@ tbody tr:hover{
             {% endfor %}
 
             </tbody>
+
         </table>
 
     </div>
+    
 </div>
+<div class="pagination">
 
+    {% if page > 1 %}
+        <a class="page-btn" href="?page={{ page - 1 }}">Prev</a>
+    {% endif %}
+
+    {% for p in range(1, total_pages + 1) %}
+        <a class="page-btn {% if p == page %}active{% endif %}"
+           href="?page={{ p }}">
+            {{ p }}
+        </a>
+    {% endfor %}
+
+    {% if page < total_pages %}
+        <a class="page-btn" href="?page={{ page + 1 }}">Next</a>
+    {% endif %}
+
+</div>
 <script>
 function copyText(text){
     navigator.clipboard.writeText(text);
