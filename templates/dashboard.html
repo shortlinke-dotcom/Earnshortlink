@@ -534,6 +534,88 @@ table tbody tr:hover {
 
 </div>
 
+<div class="report-title">
+    <i class="fa-solid fa-store"></i>
+    &nbsp;
+    Report SellLink Harian • {{ today }}
+</div>
+
+<div class="report-grid">
+
+    <div class="report-card">
+        <div class="report-top">
+            <div>
+                <h3>Produk Terjual</h3>
+                <h2>{{ today_sell_orders }}</h2>
+
+                <div class="change {% if today_sell_growth < 0 %}down{% endif %}">
+                    {% if today_sell_growth >= 0 %}
+                        <i class="fa-solid fa-arrow-trend-up"></i>
+                    {% else %}
+                        <i class="fa-solid fa-arrow-trend-down"></i>
+                    {% endif %}
+                    {{ today_sell_growth }}%
+                </div>
+            </div>
+
+            <i class="fa-solid fa-cart-shopping icon-green"></i>
+        </div>
+    </div>
+
+    <div class="report-card">
+        <div class="report-top">
+            <div>
+                <h3>Pendapatan</h3>
+                <h2>Rp {{ "{:,.0f}".format(today_sell_income).replace(",",".") }}</h2>
+
+                <div class="change {% if today_sell_income_growth < 0 %}down{% endif %}">
+                    {% if today_sell_income_growth >= 0 %}
+                        <i class="fa-solid fa-arrow-trend-up"></i>
+                    {% else %}
+                        <i class="fa-solid fa-arrow-trend-down"></i>
+                    {% endif %}
+                    {{ today_sell_income_growth }}%
+                </div>
+            </div>
+
+            <i class="fa-solid fa-wallet icon-blue"></i>
+        </div>
+    </div>
+
+    <div class="report-card">
+        <div class="report-top">
+            <div>
+                <h3>Produk Aktif</h3>
+                <h2>{{ total_sell_products }}</h2>
+
+                <div class="change">
+                    <i class="fa-solid fa-box"></i>
+                    Active
+                </div>
+            </div>
+
+            <i class="fa-solid fa-box-open icon-orange"></i>
+        </div>
+    </div>
+
+    <div class="report-card">
+        <div class="report-top">
+            <div>
+                <h3>Rata-rata Penjualan</h3>
+                <h2>Rp {{ "{:,.0f}".format(avg_sell_value).replace(",",".") }}</h2>
+
+                <div class="change">
+                    <i class="fa-solid fa-chart-line"></i>
+                    Average
+                </div>
+            </div>
+
+            <i class="fa-solid fa-sack-dollar icon-purple"></i>
+        </div>
+    </div>
+
+</div>
+
 <!-- ================= MONTHLY REPORT ================= -->
 
 <div class="report-title">
@@ -653,6 +735,88 @@ table tbody tr:hover {
 
         </div>
 
+    </div>
+
+</div>
+
+<div class="report-title">
+    <i class="fa-solid fa-calendar-days"></i>
+    &nbsp;
+    Report SellLink Bulanan • {{ current_month_name }}
+</div>
+
+<div class="report-grid">
+
+    <div class="report-card">
+        <div class="report-top">
+            <div>
+                <h3>Total Penjualan</h3>
+                <h2>{{ month_sell_orders }}</h2>
+
+                <div class="change {% if month_sell_growth < 0 %}down{% endif %}">
+                    {% if month_sell_growth >= 0 %}
+                        <i class="fa-solid fa-arrow-trend-up"></i>
+                    {% else %}
+                        <i class="fa-solid fa-arrow-trend-down"></i>
+                    {% endif %}
+                    {{ month_sell_growth }}%
+                </div>
+            </div>
+
+            <i class="fa-solid fa-cart-shopping icon-green"></i>
+        </div>
+    </div>
+
+    <div class="report-card">
+        <div class="report-top">
+            <div>
+                <h3>Total Pendapatan</h3>
+                <h2>Rp {{ "{:,.0f}".format(month_sell_income).replace(",",".") }}</h2>
+
+                <div class="change {% if month_sell_income_growth < 0 %}down{% endif %}">
+                    {% if month_sell_income_growth >= 0 %}
+                        <i class="fa-solid fa-arrow-trend-up"></i>
+                    {% else %}
+                        <i class="fa-solid fa-arrow-trend-down"></i>
+                    {% endif %}
+                    {{ month_sell_income_growth }}%
+                </div>
+            </div>
+
+            <i class="fa-solid fa-wallet icon-blue"></i>
+        </div>
+    </div>
+
+    <div class="report-card">
+        <div class="report-top">
+            <div>
+                <h3>Produk Terjual</h3>
+                <h2>{{ month_products_sold }}</h2>
+
+                <div class="change">
+                    <i class="fa-solid fa-box"></i>
+                    Sold
+                </div>
+            </div>
+
+            <i class="fa-solid fa-box-open icon-orange"></i>
+        </div>
+    </div>
+
+    <div class="report-card">
+        <div class="report-top">
+            <div>
+                <h3>Rata-rata Order</h3>
+                <h2>Rp {{ "{:,.0f}".format(month_avg_order).replace(",",".") }}</h2>
+
+                <div class="change">
+                    <i class="fa-solid fa-chart-line"></i>
+                    Average
+                </div>
+            </div>
+
+            <i class="fa-solid fa-sack-dollar icon-purple"></i>
+        </div>
     </div>
 
 </div>
