@@ -1681,11 +1681,11 @@ body{
 
     <div class="announcement-content">
         <div class="announcement-title">
-            {{ announcement.title }}
+            {{ announcement.title if announcement else "Pengumuman" }}
         </div>
 
         <div class="announcement-text">
-            {{ announcement.message }}
+            {{ announcement.message if announcement else "Belum ada pengumuman terbaru." }}
         </div>
     </div>
 
