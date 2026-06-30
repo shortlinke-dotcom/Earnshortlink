@@ -1448,8 +1448,7 @@ async def links(request: Request, page: int = Query(1, ge=1)):
     user_data = (user.data or [{}])[0]
 
     # ================= PAGINATION =================
-    per_page = 10
-
+    per_page = 5
     # ================= TOTAL COUNT =================
     count_res = (
         supabase.table("links")
