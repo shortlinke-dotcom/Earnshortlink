@@ -1,375 +1,168 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Login • EarnShortlink</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
-<link rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
 
-:root{
-    --card:#ffffff;
-    --card2:#f8fafc;
-    --border:#dbe4f0;
-    --text:#0f172a;
-    --sub:#64748b;
-    --primary:#2563eb;
-    --primary2:#00b8ff;
-}
-
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:'Poppins',sans-serif;
-}
-
-html{
-    scroll-behavior:smooth;
-}
-
+/* ================= GLOBAL ================= */
 body{
+    font-family:"Poppins",sans-serif;
+    margin:0;
     min-height:100vh;
+
     display:flex;
     justify-content:center;
     align-items:center;
-    overflow:hidden;
-    position:relative;
-    background:#ffffff;
-    color:var(--text);
+
+    background:
+        radial-gradient(circle at top left,#dbeafe 0%,transparent 45%),
+        radial-gradient(circle at bottom right,#bfdbfe 0%,transparent 40%),
+        linear-gradient(135deg,#f8fafc,#eef4ff);
+
+    color:#0f172a;
 }
 
-/* GRID */
+/* ================= CARD ================= */
+.card{
+    width:92%;
+    max-width:420px;
 
-body::before{
-    content:"";
-    position:absolute;
-    inset:-100%;
-    background-image:
-        linear-gradient(rgba(15,23,42,.04) 1px,transparent 1px),
-        linear-gradient(90deg,rgba(15,23,42,.04) 1px,transparent 1px);
-    background-size:45px 45px;
-    animation:gridMove 18s linear infinite;
-}
+    padding:28px;
+    border-radius:18px;
 
-@keyframes gridMove{
-    from{transform:translate(0,0);}
-    to{transform:translate(-45px,-45px);}
-}
+    background:rgba(255,255,255,.55);
+    backdrop-filter:blur(18px);
 
-/* GLOW */
-
-.glow{
-    position:absolute;
-    border-radius:50%;
-    filter:blur(120px);
-}
-
-.glow.one{
-    width:350px;
-    height:350px;
-    top:-120px;
-    left:-120px;
-    background:#60a5fa;
-    opacity:.15;
-    animation:float1 8s ease-in-out infinite;
-}
-
-.glow.two{
-    width:300px;
-    height:300px;
-    right:-100px;
-    bottom:-100px;
-    background:#38bdf8;
-    opacity:.12;
-    animation:float2 10s ease-in-out infinite;
-}
-
-@keyframes float1{
-    50%{
-        transform:translateY(40px);
-    }
-}
-
-@keyframes float2{
-    50%{
-        transform:translate(-30px,-30px);
-    }
-}
-
-/* PARTICLES */
-
-.particles{
-    position:absolute;
-    inset:0;
-    overflow:hidden;
-}
-
-.particles span{
-    position:absolute;
-    width:4px;
-    height:4px;
-    border-radius:50%;
-    background:#5da9ff;
-    opacity:.4;
-    animation:particle 12s linear infinite;
-}
-
-.particles span:nth-child(1){left:10%;top:100%;animation-delay:0s;}
-.particles span:nth-child(2){left:25%;top:100%;animation-delay:2s;}
-.particles span:nth-child(3){left:42%;top:100%;animation-delay:4s;}
-.particles span:nth-child(4){left:58%;top:100%;animation-delay:6s;}
-.particles span:nth-child(5){left:74%;top:100%;animation-delay:8s;}
-.particles span:nth-child(6){left:90%;top:100%;animation-delay:10s;}
-
-@keyframes particle{
-    0%{
-        transform:translateY(0) scale(0);
-        opacity:0;
-    }
-    20%{
-        opacity:.45;
-        transform:scale(1);
-    }
-    100%{
-        transform:translateY(-110vh);
-        opacity:0;
-    }
-}
-
-/* CARD */
-
-.login-box{
-    position:relative;
-    width:100%;
-    max-width:430px;
-    padding:34px;
-    border-radius:28px;
-    background:var(--card);
-    border:1px solid #e5e7eb;
+    border:1px solid rgba(255,255,255,.4);
     box-shadow:0 20px 50px rgba(15,23,42,.08);
-    animation:popup .6s ease;
 }
 
-@keyframes popup{
-    from{
-        opacity:0;
-        transform:translateY(30px) scale(.96);
-    }
-    to{
-        opacity:1;
-        transform:none;
-    }
-}
-
-.login-box::before{
-    content:"";
-    position:absolute;
-    inset:0;
-    padding:1px;
-    border-radius:28px;
-    background:linear-gradient(135deg,#3b82f6,transparent,#00c2ff);
-    -webkit-mask:
-        linear-gradient(#fff 0 0) content-box,
-        linear-gradient(#fff 0 0);
-    -webkit-mask-composite:xor;
-    mask-composite:exclude;
-    pointer-events:none;
-}
-
-/* INPUT */
-
-.group{
-    position:relative;
+/* ================= TITLE ================= */
+.title{
+    text-align:center;
     margin-bottom:18px;
 }
 
-.group input{
+.title h1{
+    font-size:26px;
+    font-weight:800;
+}
+
+.title p{
+    font-size:13px;
+    color:#64748b;
+}
+
+/* ================= INPUT ================= */
+.input{
     width:100%;
-    height:54px;
-    padding:0 50px 0 48px;
-    border-radius:15px;
-    border:1px solid var(--border);
-    background:var(--card2);
-    color:var(--text);
-    font-size:14px;
+    padding:12px 14px;
+    margin-bottom:12px;
+
+    border-radius:12px;
+    border:1px solid rgba(148,163,184,.3);
+
     outline:none;
-    transition:.25s;
+    background:rgba(255,255,255,.8);
 }
 
-.group input::placeholder{
-    color:#94a3b8;
+.input:focus{
+    border-color:#3b82f6;
 }
 
-.group input:focus{
-    background:#fff;
-    border-color:var(--primary);
-    box-shadow:0 0 0 4px rgba(37,99,235,.12);
-}
-
-.group .fa-user,
-.group .fa-lock{
-    position:absolute;
-    left:18px;
-    top:50%;
-    transform:translateY(-50%);
-    color:#60a5fa;
-}
-
-.group .toggle{
-    position:absolute;
-    right:18px;
-    top:50%;
-    transform:translateY(-50%);
-    cursor:pointer;
-    color:#94a3b8;
-}
-
-.group .toggle:hover{
-    color:var(--primary);
-}
-
-/* BUTTON */
-
+/* ================= BUTTON ================= */
 .btn{
     width:100%;
-    height:54px;
+    padding:12px;
+
     border:none;
-    border-radius:15px;
-    cursor:pointer;
-    font-size:15px;
+    border-radius:12px;
+
     font-weight:700;
-    transition:.3s;
-}
+    cursor:pointer;
 
-.btn-login{
-    background:linear-gradient(90deg,var(--primary),var(--primary2));
     color:#fff;
-    box-shadow:0 12px 35px rgba(37,99,235,.25);
+    background:linear-gradient(135deg,#3b82f6,#2563eb);
 }
 
-.btn-login:hover{
-    transform:translateY(-2px);
+.btn:hover{
+    opacity:.95;
 }
 
-/* OR */
-
-.or{
-    display:flex;
-    align-items:center;
-    gap:12px;
-    margin:24px 0;
-    color:var(--sub);
-    font-size:13px;
-}
-
-.or::before,
-.or::after{
-    content:"";
-    flex:1;
-    height:1px;
-    background:#e5e7eb;
-}
-
-/* GOOGLE */
-
+/* ================= GOOGLE ================= */
 .google{
     display:flex;
     justify-content:center;
     align-items:center;
-    gap:12px;
-    width:100%;
-    height:54px;
-    border-radius:15px;
-    background:#fff;
-    border:1px solid var(--border);
-    text-decoration:none;
-    color:var(--text);
-    font-weight:600;
-    transition:.25s;
-}
+    gap:10px;
 
-.google:hover{
-    background:#f8fafc;
-    border-color:var(--primary);
+    margin-top:12px;
+    padding:12px;
+
+    border-radius:12px;
+    border:1px solid rgba(148,163,184,.3);
+
+    text-decoration:none;
+    color:#0f172a;
+    background:rgba(255,255,255,.7);
+    font-weight:600;
 }
 
 .google img{
-    width:22px;
+    width:20px;
 }
 
-/* ALERT */
-
-.alert{
-    background:#fef2f2;
-    color:#dc2626;
-    border:1px solid #fecaca;
-    padding:13px;
-    border-radius:14px;
-    margin-bottom:18px;
+/* ================= REGISTER ================= */
+.register{
+    text-align:center;
+    margin-top:14px;
     font-size:13px;
-}
-
-/* BRAND */
-
-.brand{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:16px;
-    margin-bottom:35px;
-}
-
-.brand-icon{
-    width:62px;
-    height:62px;
-    border-radius:18px;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    background:linear-gradient(135deg,#2563eb,#00b8ff);
-}
-
-.brand-icon i{
-    color:#fff;
-    font-size:28px;
-}
-
-.brand-text{
-    text-align:left;
-}
-
-.brand-text h1{
-    font-size:28px;
-    font-weight:800;
-    color:#0f172a;
-}
-
-.brand-text h1 span{
-    background:linear-gradient(90deg,#2563eb,#00b8ff);
-    -webkit-background-clip:text;
-    -webkit-text-fill-color:transparent;
-}
-
-.brand-text p{
     color:#64748b;
-    font-size:13px;
 }
 
-/* FOOTER */
+.register a{
+    color:#2563eb;
+    font-weight:700;
+    text-decoration:none;
+}
 
+/* ================= ALERT ================= */
+.alert{
+    background:#fee2e2;
+    color:#b91c1c;
+
+    padding:10px;
+    border-radius:10px;
+    font-size:13px;
+
+    margin-bottom:12px;
+}
+
+/* ================= FOOTER ================= */
 .footer{
-    margin-top:22px;
     text-align:center;
     font-size:12px;
-    color:#64748b;
+    color:#94a3b8;
+
+    margin-top:18px;
+}
+
+/* ================= MOBILE ================= */
+@media (max-width:480px){
+    .card{
+        padding:22px;
+        border-radius:16px;
+    }
+
+    .title h1{
+        font-size:22px;
+    }
 }
 
 </style>
@@ -377,224 +170,44 @@ body::before{
 
 <body>
 
-<div class="glow one"></div>
-<div class="glow two"></div>
+<div class="card">
 
-<div class="particles">
-<span></span>
-<span></span>
-<span></span>
-<span></span>
-<span></span>
-<span></span>
-</div>
-
-<div class="login-box">
-
-<div class="brand">
-
-    <div class="brand-icon">
-        <i class="fa-solid fa-link"></i>
+    <div class="title">
+        <h1>EarnShortlink</h1>
+        <p>Login untuk lanjut ke dashboard</p>
     </div>
 
-    <div class="brand-text">
-        <h1>Earn<span>Shortlink</span></h1>
-        <p>Welcome back! Login untuk melanjutkan.</p>
+    {% if error %}
+    <div class="alert">
+        {{ error }}
+    </div>
+    {% endif %}
+
+    <form action="/login" method="POST">
+
+        <input class="input" type="text" name="login" placeholder="Email / Username" required>
+
+        <input class="input" type="password" name="password" placeholder="Password" required>
+
+        <button class="btn">Masuk</button>
+
+    </form>
+
+    <a href="/auth/google" class="google">
+        <img src="https://www.svgrepo.com/show/475656/google-color.svg">
+        Login dengan Google
+    </a>
+
+    <div class="register">
+        Belum punya akun?
+        <a href="/register">Register sekarang</a>
+    </div>
+
+    <div class="footer">
+        © 2026 EarnShortlink • All rights reserved
     </div>
 
 </div>
-
-{% if error %}
-<div class="alert">
-{{ error }}
-</div>
-{% endif %}
-
-<form action="/login" method="POST">
-
-<div class="group">
-<i class="fa-solid fa-user"></i>
-<input
-type="text"
-name="login"
-placeholder="Email atau Username"
-required>
-</div>
-
-<div class="group">
-<i class="fa-solid fa-lock"></i>
-
-<input
-id="password"
-type="password"
-name="password"
-placeholder="Password"
-required>
-
-<i class="fa-regular fa-eye toggle"
-id="togglePassword"></i>
-</div>
-
-<button class="btn btn-login">
-Masuk
-</button>
-
-</form>
-
-<div class="or">
-atau
-</div>
-
-<a href="/auth/google" class="google">
-
-<img src="https://www.svgrepo.com/show/475656/google-color.svg">
-
-<span>Login dengan Google</span>
-
-</a>
-
-<div class="footer">
-
-© 2026 EarnShortlink
-
-</div>
-</div>
-<script>
-
-// =========================
-// SHOW / HIDE PASSWORD
-// =========================
-
-const toggle = document.getElementById("togglePassword");
-const password = document.getElementById("password");
-
-toggle.addEventListener("click",()=>{
-
-if(password.type==="password"){
-
-password.type="text";
-
-toggle.classList.remove("fa-eye");
-toggle.classList.add("fa-eye-slash");
-
-}else{
-
-password.type="password";
-
-toggle.classList.remove("fa-eye-slash");
-toggle.classList.add("fa-eye");
-
-}
-
-});
-
-// =========================
-// LOGIN LOADING
-// =========================
-
-const form=document.querySelector("form");
-const loginBtn=document.querySelector(".btn-login");
-
-form.addEventListener("submit",()=>{
-
-loginBtn.disabled=true;
-
-loginBtn.innerHTML=`
-<i class="fa-solid fa-spinner fa-spin"></i>
-&nbsp;Sedang Masuk...
-`;
-
-});
-
-// =========================
-// RIPPLE EFFECT
-// =========================
-
-document.querySelectorAll(".btn").forEach(btn=>{
-
-btn.addEventListener("click",function(e){
-
-const circle=document.createElement("span");
-
-const d=Math.max(this.clientWidth,this.clientHeight);
-
-circle.style.width=d+"px";
-circle.style.height=d+"px";
-
-circle.style.left=e.offsetX-d/2+"px";
-circle.style.top=e.offsetY-d/2+"px";
-
-circle.style.position="absolute";
-circle.style.borderRadius="50%";
-circle.style.background="rgba(255,255,255,.25)";
-circle.style.transform="scale(0)";
-circle.style.animation="ripple .6s linear";
-circle.style.pointerEvents="none";
-
-this.appendChild(circle);
-
-setTimeout(()=>circle.remove(),600);
-
-});
-
-});
-
-// =========================
-// BUTTON STYLE
-// =========================
-
-document.querySelectorAll(".btn").forEach(btn=>{
-
-btn.style.position="relative";
-btn.style.overflow="hidden";
-
-});
-
-// =========================
-// RIPPLE KEYFRAME
-// =========================
-
-const style=document.createElement("style");
-
-style.innerHTML=`
-
-@keyframes ripple{
-
-to{
-
-transform:scale(4);
-opacity:0;
-
-}
-
-}
-
-`;
-
-document.head.appendChild(style);
-
-// =========================
-// CARD FLOAT
-// =========================
-
-const card=document.querySelector(".login-box");
-
-document.addEventListener("mousemove",(e)=>{
-
-const x=(e.clientX-window.innerWidth/2)/35;
-const y=(e.clientY-window.innerHeight/2)/35;
-
-card.style.transform=`rotateY(${x}deg) rotateX(${-y}deg)`;
-
-});
-
-document.addEventListener("mouseleave",()=>{
-
-card.style.transform="rotateX(0) rotateY(0)";
-
-});
-
-</script>
 
 </body>
 </html>
