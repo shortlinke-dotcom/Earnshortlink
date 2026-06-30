@@ -35,6 +35,76 @@ templates = Jinja2Templates(directory="templates")
 
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 
+@app.middleware("http")
+async def check_session(request: Request, call_next):
+    public_paths = [
+        "/",
+        "/login",
+        "/register",
+        "/auth/google",
+        "/auth/callback",
+        "/setup-username",
+        "/privacy",
+        "/terms",
+        "/favicon.ico"
+    ]
+
+    if (
+        request.url.path.startswith("/s/")
+        or request.url.path.startswith("/pay/")
+        or request.url.path.startswith("/ref/")
+        or request.url.path.startswith("/task")
+        or request.url.path in public_paths
+    ):
+        return await call_next(request)
+
+    token = request.cookies.get("session_token")
+
+    if not token:
+        return RedirectResponse("/login", 303)
+
+    res = (
+        supabase.table("users")
+        .select("*")
+        .eq("session_token", token)
+        .limit(1)
+        .execute()
+    )
+
+    if not res.data:
+        response = RedirectResponse("/login", 303)
+        response.delete_cookie("session_token")
+        return response
+
+    user = res.data[0]
+
+    try:
+        last = datetime.fromisoformat(
+            user["last_activity"].replace("Z", "+00:00")
+        )
+
+        if datetime.now(timezone.utc) - last > timedelta(hours=24):
+            response = RedirectResponse("/login", 303)
+            response.delete_cookie("session_token")
+
+            supabase.table("users").update({
+                "session_token": None
+            }).eq("id", user["id"]).execute()
+
+            return response
+    except:
+        pass
+
+    # update aktivitas terakhir
+    supabase.table("users").update({
+        "last_activity": datetime.now(timezone.utc).isoformat()
+    }).eq("id", user["id"]).execute()
+
+    request.session["user_id"] = user["id"]
+    request.session["username"] = user["username"]
+    request.session["logged_in"] = True
+
+    return await call_next(request)
 
 @app.exception_handler(Exception)
 async def global_error_handler(request: Request, exc: Exception):
@@ -98,9 +168,15 @@ async def login_page(request: Request, error: str | None = None):
 # =========================
 # LOGIN
 # =========================
+# =========================
+# LOGIN
+# =========================
 @app.post("/login")
-async def login_post(request: Request, login: str = Form(...), password: str = Form(...)):
-
+async def login_post(
+    request: Request,
+    login: str = Form(...),
+    password: str = Form(...)
+):
     result = (
         supabase.table("users")
         .select("*")
@@ -122,8 +198,29 @@ async def login_post(request: Request, login: str = Form(...), password: str = F
 
     request.session["username"] = user["username"]
     request.session["user_id"] = user["id"]
+    request.session["logged_in"] = True
 
-    return RedirectResponse("/dashboard", 303)
+    token = secrets.token_hex(32)
+
+    supabase.table("users").update({
+        "session_token": token,
+        "last_activity": datetime.now(timezone.utc).isoformat()
+    }).eq("id", user["id"]).execute()
+
+    request.session["session_token"] = token
+
+    response = RedirectResponse("/dashboard", 303)
+
+    response.set_cookie(
+        key="session_token",
+        value=token,
+        max_age=2592000,
+        httponly=True,
+        samesite="lax",
+        secure=True
+    )
+
+    return response
 
 
 # =========================
@@ -213,17 +310,34 @@ async def auth_callback(
         return RedirectResponse("/login?error=banned")
 
     # =========================
-    # SET SESSION
-    # =========================
+# SET SESSION
+# =========================
     request.session["username"] = user.get("username")
     request.session["user_id"] = user.get("id")
     request.session["logged_in"] = True
     request.session["email"] = email
 
-    # penting biar session tidak delay di beberapa server
-    request.session.modified = True if hasattr(request.session, "modified") else None
+    token = secrets.token_hex(32)
 
-    return RedirectResponse("/dashboard")
+    supabase.table("users").update({
+        "session_token": token,
+        "last_activity": datetime.now(timezone.utc).isoformat()
+    }).eq("id", user["id"]).execute()
+
+    request.session["session_token"] = token
+
+    response = RedirectResponse("/dashboard", 303)
+
+    response.set_cookie(
+        key="session_token",
+        value=token,
+        max_age=2592000,
+        httponly=True,
+        samesite="lax",
+        secure=True
+    )
+
+    return response
     
 # =========================
 # SETUP USERNAME (GET)
@@ -282,30 +396,49 @@ async def setup_username_post(
     if len(password) > 72:
         return JSONResponse({"ok": False, "error": "password_too_long"})
 
-    # =========================
-    # CEK EMAIL (ANTI DUPLICATE FIX 🔥)
-    # =========================
-    existing_email = (
-        supabase.table("users")
-        .select("id", "username")
-        .eq("gmail", email)
-        .limit(1)
-        .execute()
+# =========================
+# CEK EMAIL (ANTI DUPLICATE)
+# =========================
+existing_email = (
+    supabase.table("users")
+    .select("id, username")
+    .eq("gmail", email)
+    .limit(1)
+    .execute()
+)
+
+if existing_email.data:
+    user = existing_email.data[0]
+
+    request.session["username"] = user["username"]
+    request.session["user_id"] = user["id"]
+    request.session["logged_in"] = True
+
+    token = secrets.token_hex(32)
+
+    supabase.table("users").update({
+        "session_token": token,
+        "last_activity": datetime.now(timezone.utc).isoformat()
+    }).eq("id", user["id"]).execute()
+
+    request.session["session_token"] = token
+    request.session.pop("pending_email", None)
+
+    response = JSONResponse({
+        "ok": True,
+        "redirect": "/dashboard"
+    })
+
+    response.set_cookie(
+        key="session_token",
+        value=token,
+        max_age=2592000,
+        httponly=True,
+        samesite="lax",
+        secure=True
     )
 
-    if existing_email.data:
-        user = existing_email.data[0]
-
-        request.session["username"] = user.get("username")
-        request.session["user_id"] = user.get("id")
-        request.session["logged_in"] = True
-
-        request.session.pop("pending_email", None)
-
-        return JSONResponse({
-            "ok": True,
-            "redirect": "/dashboard"
-        })
+    return response
 
     # =========================
     # CEK USERNAME
@@ -348,21 +481,37 @@ async def setup_username_post(
     new_user = insert.data[0]
 
     # =========================
+
     # SESSION LOGIN
-    # =========================
     request.session["username"] = new_user["username"]
     request.session["user_id"] = new_user["id"]
     request.session["logged_in"] = True
 
+    token = secrets.token_hex(32)
+
+    supabase.table("users").update({
+        "session_token": token,
+        "last_activity": datetime.now(timezone.utc).isoformat()
+    }).eq("id", new_user["id"]).execute()
+
+    request.session["session_token"] = token
     request.session.pop("pending_email", None)
 
-    # =========================
-    # SUCCESS RESPONSE
-    # =========================
-    return JSONResponse({
+    response = JSONResponse({
         "ok": True,
         "redirect": "/dashboard"
     })
+
+    response.set_cookie(
+        key="session_token",
+        value=token,
+        max_age=2592000,
+        httponly=True,
+        samesite="lax",
+        secure=True
+    )
+
+    return response
 
 
 # =========================
@@ -1703,11 +1852,20 @@ async def terms(request: Request):
 # =========================
 # LOGOUT
 # =========================
-@app.get("/logout")
-async def logout(request: Request):
-    request.session.clear()
-    return RedirectResponse("/", 303)
+@app.post("/logout-all")
+async def logout_all(request: Request):
+    user_id = request.session.get("user_id")
 
+    if user_id:
+        supabase.table("users").update({
+            "session_token": None
+        }).eq("id", user_id).execute()
+
+    request.session.clear()
+
+    response = RedirectResponse("/login", 303)
+    response.delete_cookie("session_token")
+    return response
 
 # =========================
 # FAVICON
