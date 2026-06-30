@@ -908,7 +908,7 @@ async def create_sell_link(
         "destination_url": destination_url.strip(),
         "price": int(price),
         "sold": 0,
-        "income": 0
+        "earnings": 0,
     }).execute()
 
     return JSONResponse({
