@@ -480,6 +480,22 @@ async def dashboard(request: Request):
     if not user_id:
         return RedirectResponse("/login", status_code=303)
 
+    # ================= PENGUMUMAN =================
+    res = (
+        supabase.table("announcements")
+        .select("*")
+        .eq("active", True)
+        .order("created_at", desc=True)
+        .limit(1)
+        .execute()
+    )
+
+    announcement = (
+        res.data[0]
+        if res.data
+        else None
+    )
+
     # ================= USER =================
     user_res = (
         supabase.table("users")
@@ -497,7 +513,12 @@ async def dashboard(request: Request):
 
     if user.get("is_banned"):
         request.session.clear()
-        return RedirectResponse("/login?error=banned", status_code=303)
+        return RedirectResponse(
+            "/login?error=banned",
+            status_code=303
+        )
+
+    # lanjutkan kode dashboard yang sudah ada...
 
     # ================= LINKS =================
     links_res = (
@@ -854,6 +875,7 @@ async def dashboard(request: Request):
             "links": links,
 
             "current_month_name": calendar.month_name[current_month],
+            "announcement": announcement,
         },
     )
     
@@ -993,29 +1015,33 @@ async def pay_page(request: Request, code: str):
 async def delete_sell_link(request: Request, code: str):
 
     user_id = request.session.get("user_id")
-    if not username:
-        return JSONResponse({"ok": False}, status_code=401)
+    if not user_id:
+        return JSONResponse(
+            {"ok": False, "error": "Unauthorized"},
+            status_code=401
+        )
 
-    user_res = (
-        supabase.table("users")
+    link = (
+        supabase.table("sell_links")
         .select("id")
+        .eq("code", code)
         .eq("user_id", user_id)
         .single()
         .execute()
     )
 
-    if not user_res.data:
-        return JSONResponse({"ok": False}, status_code=404)
-
-    user_id = user_res.data["id"]
+    if not link.data:
+        return JSONResponse(
+            {"ok": False, "error": "Link not found"},
+            status_code=404
+        )
 
     supabase.table("sell_links") \
         .delete() \
-        .eq("code", code) \
-        .eq("user_id", user_id) \
+        .eq("id", link.data["id"]) \
         .execute()
 
-    return {"ok": True}
+    return JSONResponse({"ok": True})
 
 
 # =========================
@@ -1401,18 +1427,20 @@ async def links(request: Request):
 
     user_id = request.session.get("user_id")
 
-    if not username:
+    if not user_id:
         return RedirectResponse("/login", 303)
 
     user = (
         supabase.table("users")
-        .select("id")
-        .eq("username", username)
-        .limit(1)
+        .select("username")
+        .eq("id", user_id)
+        .single()
         .execute()
     )
 
-    user_id = user.data[0]["id"]
+    if not user.data:
+        request.session.clear()
+        return RedirectResponse("/login", 303)
 
     links_res = (
         supabase.table("links")
@@ -1426,7 +1454,7 @@ async def links(request: Request):
         "links.html",
         {
             "request": request,
-            "username": username,
+            "username": user.data["username"],
             "links": links_res.data or []
         }
     )
