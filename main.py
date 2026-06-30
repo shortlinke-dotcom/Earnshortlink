@@ -1157,35 +1157,29 @@ async def create_link(
 async def shortlink(request: Request, short_code: str):
 
     try:
-        # Ambil link
         res = (
             supabase.table("links")
             .select("*")
             .eq("short_code", short_code)
-            .single()
+            .limit(1)
             .execute()
         )
 
         if not res.data:
             return HTMLResponse("Link tidak ditemukan", 404)
 
-        link = res.data
+        link = res.data[0]
 
-        # Cek status link
-        if not link.get("is_active", True):
+        if link.get("is_active") is False:
             return HTMLResponse("Link tidak aktif", 403)
 
-        # Update klik
-        new_clicks = (link.get("clicks") or 0) + 1
-
+        # update klik
         supabase.table("links").update({
-            "clicks": new_clicks
+            "clicks": (link.get("clicks") or 0) + 1
         }).eq("id", link["id"]).execute()
 
-        # Generate token
         token = secrets.token_urlsafe(32)
 
-        # Simpan token
         supabase.table("download_tokens").insert({
             "token": token,
             "short_code": short_code,
@@ -1194,20 +1188,17 @@ async def shortlink(request: Request, short_code: str):
             "created_at": datetime.now(timezone.utc).isoformat()
         }).execute()
 
-        # Render task
-        return templates.TemplateResponse(
-            "task1.html",
-            {
-                "request": request,
-                "token": token,
-                "destination_url": link["destination_url"],
-                "title": link.get("title", "")
-            }
-        )
+        return templates.TemplateResponse("task1.html", {
+            "request": request,
+            "token": token,
+            "destination_url": link["destination_url"],
+            "title": link.get("title", "")
+        })
 
     except Exception as e:
+        print("ERROR SHORTLINK:", e)
         traceback.print_exc()
-        return HTMLResponse(f"Server Error: {str(e)}", 500)
+        return HTMLResponse("Internal Server Error", 500)
 
 # =========================
 # TASK2
