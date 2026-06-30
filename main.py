@@ -1129,6 +1129,7 @@ async def create_link(
             "short_code": short_code,
             "clicks": 0,
             "earnings": 0,
+            "is_active": True,
             "created_at": datetime.now(timezone.utc).isoformat()
         })
         .execute()
@@ -1155,40 +1156,36 @@ async def create_link(
 @app.get("/s/{short_code}")
 async def shortlink(request: Request, short_code: str):
 
-    # Ambil link
-    res = (
-        supabase.table("links")
-        .select("*")
-        .eq("short_code", short_code)
-        .single()
-        .execute()
-    )
-
-    if not res.data:
-        return HTMLResponse("Link tidak ditemukan", 404)
-
-    link = res.data
-
-    # Jangan izinkan link nonaktif
-    if not link.get("is_active", True):
-        return HTMLResponse("Link tidak aktif", 403)
-
-    # Update klik
     try:
+        # Ambil link
+        res = (
+            supabase.table("links")
+            .select("*")
+            .eq("short_code", short_code)
+            .single()
+            .execute()
+        )
+
+        if not res.data:
+            return HTMLResponse("Link tidak ditemukan", 404)
+
+        link = res.data
+
+        # Cek status link
+        if not link.get("is_active", True):
+            return HTMLResponse("Link tidak aktif", 403)
+
+        # Update klik
         new_clicks = (link.get("clicks") or 0) + 1
 
         supabase.table("links").update({
             "clicks": new_clicks
         }).eq("id", link["id"]).execute()
 
-    except Exception as e:
-        print("Click update error:", e)
+        # Generate token
+        token = secrets.token_urlsafe(32)
 
-    # Generate token
-    token = secrets.token_urlsafe(32)
-
-    # Simpan token
-    try:
+        # Simpan token
         supabase.table("download_tokens").insert({
             "token": token,
             "short_code": short_code,
@@ -1197,21 +1194,20 @@ async def shortlink(request: Request, short_code: str):
             "created_at": datetime.now(timezone.utc).isoformat()
         }).execute()
 
-    except Exception as e:
-        print("Token insert error:", e)
-        traceback.print_exc()
-        return HTMLResponse("Server Error", 500)
+        # Render task
+        return templates.TemplateResponse(
+            "task1.html",
+            {
+                "request": request,
+                "token": token,
+                "destination_url": link["destination_url"],
+                "title": link.get("title", "")
+            }
+        )
 
-    # Render halaman task
-    return templates.TemplateResponse(
-        "task1.html",
-        {
-            "request": request,
-            "token": token,
-            "destination_url": link["destination_url"],
-            "title": link.get("title", "")
-        }
-    )
+    except Exception as e:
+        traceback.print_exc()
+        return HTMLResponse(f"Server Error: {str(e)}", 500)
 
 # =========================
 # TASK2
