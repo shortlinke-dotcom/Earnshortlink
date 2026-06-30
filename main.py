@@ -1437,9 +1437,11 @@ async def links(request: Request):
         supabase.table("users")
         .select("username, saldo")
         .eq("id", user_id)
-        .single()
+        .limit(1)
         .execute()
     )
+
+    user_data = (user.data or [{}])[0]
 
     links_res = (
         supabase.table("links")
@@ -1459,20 +1461,17 @@ async def links(request: Request):
         "links.html",
         {
             "request": request,
-
-            # penting
             "base_url": str(request.base_url),
 
-            # stats
             "total_links": total_links,
             "total_clicks": total_clicks,
             "total_earnings": total_earnings,
 
-            # data utama
             "links": links_data,
 
-            # user
-            "username": user.data.get("username", "")
+            # 🔥 FIX AMAN
+            "saldo": user_data.get("saldo") or 0,
+            "username": user_data.get("username") or "",
         }
     )
 
