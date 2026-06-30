@@ -235,6 +235,117 @@ body{
     50%{filter:brightness(1.4);}
     100%{filter:brightness(1);}
 }
+/* ================= RESPONSIVE ================= */
+*{
+    box-sizing:border-box;
+}
+
+.card{
+    width:100%;
+    max-width:440px;
+    margin:20px;
+}
+
+.input,
+.btn,
+.google{
+    width:100%;
+    box-sizing:border-box;
+}
+
+.brand-text h1{
+    margin:0;
+    line-height:1.2;
+}
+
+.brand-text p{
+    margin-top:4px;
+    line-height:1.4;
+}
+
+/* Tablet */
+@media (max-width:768px){
+    body{
+        padding:20px;
+    }
+
+    .card{
+        max-width:430px;
+        padding:24px;
+    }
+
+    .brand-icon{
+        width:52px;
+        height:52px;
+    }
+
+    .brand-icon i{
+        font-size:22px;
+    }
+
+    .brand-text h1{
+        font-size:22px;
+    }
+}
+
+/* Android kecil */
+@media (max-width:480px){
+    body{
+        padding:15px;
+        align-items:center;
+    }
+
+    .card{
+        width:100%;
+        padding:22px 18px;
+        border-radius:18px;
+    }
+
+    .brand{
+        gap:12px;
+    }
+
+    .brand-icon{
+        width:48px;
+        height:48px;
+        border-radius:14px;
+    }
+
+    .brand-icon i{
+        font-size:20px;
+    }
+
+    .brand-text h1{
+        font-size:20px;
+    }
+
+    .brand-text p{
+        font-size:11px;
+    }
+
+    .input,
+    .btn,
+    .google{
+        padding:13px;
+        font-size:14px;
+    }
+
+    .footer{
+        font-size:11px;
+    }
+}
+
+/* Desktop besar */
+@media (min-width:1200px){
+    .card{
+        max-width:470px;
+        padding:32px;
+    }
+
+    .brand-text h1{
+        font-size:28px;
+    }
+}
 </style>
 </head>
 
