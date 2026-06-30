@@ -306,9 +306,121 @@ body{
     }
 }
 /* ================= CHART ================= */
+
+.chart-grid{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:18px;
+    margin-top:14px;
+}
+
+.chart-card{
+    background:rgba(255,255,255,.55);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+    border:1px solid rgba(255,255,255,.4);
+    border-radius:18px;
+    padding:18px;
+    box-shadow:0 6px 20px rgba(15,23,42,.06);
+}
+
+.chart-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    cursor:pointer;
+    user-select:none;
+    margin-bottom:16px;
+}
+
+.chart-header h2{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-size:18px;
+    font-weight:700;
+    margin:0;
+}
+
+.chart-header .fa-chevron-down{
+    color:#64748b;
+    transition:.3s;
+}
+
+.chart-content{
+    position:relative;
+    width:100%;
+    height:300px;
+    overflow:hidden;
+}
+
 .chart-card canvas{
     width:100% !important;
-    height:220px !important;
+    height:100% !important;
+}
+
+/* Hover desktop */
+@media (min-width:768px){
+
+    .chart-card{
+        transition:.25s;
+    }
+
+    .chart-card:hover{
+        transform:translateY(-3px);
+        box-shadow:0 18px 35px rgba(15,23,42,.10);
+    }
+}
+
+/* Tablet */
+@media (max-width:992px){
+
+    .chart-grid{
+        grid-template-columns:1fr;
+    }
+}
+
+/* Android */
+@media (max-width:768px){
+
+    .chart-grid{
+        grid-template-columns:1fr;
+        gap:14px;
+    }
+
+    .chart-card{
+        padding:14px;
+        border-radius:16px;
+    }
+
+    .chart-header{
+        margin-bottom:12px;
+    }
+
+    .chart-header h2{
+        font-size:16px;
+    }
+
+    .chart-content{
+        height:240px;
+    }
+}
+
+/* HP kecil */
+@media (max-width:480px){
+
+    .chart-card{
+        padding:12px;
+    }
+
+    .chart-header h2{
+        font-size:15px;
+    }
+
+    .chart-content{
+        height:220px;
+    }
 }
 
 /* ================= REFERRAL ================= */
@@ -933,25 +1045,71 @@ body{
 
 <div class="chart-grid">
 
+    <!-- Visitor -->
     <div class="chart-card">
 
-        <h2>
-            <i class="fa-solid fa-chart-line"></i>
-            Statistik Pengunjung
-        </h2>
+        <div class="chart-header" onclick="toggleChart('visitorBox', this)">
+            <h2>
+                <i class="fa-solid fa-chart-line"></i>
+                Statistik Pengunjung
+            </h2>
+            <i class="fa-solid fa-chevron-down"></i>
+        </div>
 
-        <canvas id="visitorChart"></canvas>
+        <div id="visitorBox" class="chart-content">
+            <canvas id="visitorChart"></canvas>
+        </div>
 
     </div>
 
+    <!-- Earnings -->
     <div class="chart-card">
 
-        <h2>
-            <i class="fa-solid fa-sack-dollar"></i>
-            Statistik Pendapatan
-        </h2>
+        <div class="chart-header" onclick="toggleChart('earningBox', this)">
+            <h2>
+                <i class="fa-solid fa-sack-dollar"></i>
+                Statistik Pendapatan
+            </h2>
+            <i class="fa-solid fa-chevron-down"></i>
+        </div>
 
-        <canvas id="earningChart"></canvas>
+        <div id="earningBox" class="chart-content">
+            <canvas id="earningChart"></canvas>
+        </div>
+
+    </div>
+
+    <!-- Sell Orders -->
+    <div class="chart-card">
+
+        <div class="chart-header" onclick="toggleChart('sellOrderBox', this)">
+            <h2>
+                <i class="fa-solid fa-cart-shopping"></i>
+                Statistik Penjualan
+            </h2>
+            <i class="fa-solid fa-chevron-down"></i>
+        </div>
+
+        <div id="sellOrderBox" class="chart-content">
+            <canvas id="sellOrderChart"></canvas>
+        </div>
+
+    </div>
+
+    <!-- Sell Income -->
+    <div class="chart-card">
+
+        <div class="chart-header" onclick="toggleChart('sellIncomeBox', this)">
+            <h2>
+                <i class="fa-solid fa-wallet"></i>
+                Pendapatan SellLink
+            </h2>
+            <i class="fa-solid fa-chevron-down"></i>
+        </div>
+
+        <div id="sellIncomeBox" class="chart-content">
+            <canvas id="sellIncomeChart"></canvas>
+        </div>
 
     </div>
 
@@ -1078,75 +1236,117 @@ body{
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 <script>
-new Chart(document.getElementById("visitorChart"),{
-
-type:"line",
-
-data:{
-
-labels:{{ chart_labels|safe }},
-
-datasets:[{
-
-label:"Visitors",
-
-data:{{ chart_clicks|safe }},
-
-borderColor:"#22d3ee",
-
-fill:false,
-
-tension:.4
-
-}]
-
+function chartOptions() {
+    return {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+            mode: "index",
+            intersect: false
+        },
+        plugins: {
+            legend: {
+                display: true
+            }
+        },
+        scales: {
+            x: {
+                ticks: {
+                    maxTicksLimit: window.innerWidth < 768 ? 5 : 8,
+                    maxRotation: 0,
+                    minRotation: 0
+                }
+            },
+            y: {
+                beginAtZero: true
+            }
+        }
+    };
 }
 
+new Chart(document.getElementById("visitorChart"), {
+    type: "line",
+    data: {
+        labels: {{ chart_labels|safe }},
+        datasets: [{
+            label: "Visitors",
+            data: {{ chart_clicks|safe }},
+            borderColor: "#22d3ee",
+            backgroundColor: "rgba(34,211,238,.1)",
+            fill: true,
+            tension: .4
+        }]
+    },
+    options: chartOptions()
 });
 
-new Chart(document.getElementById("earningChart"),{
-
-type:"line",
-
-data:{
-
-labels:{{ chart_labels|safe }},
-
-datasets:[{
-
-label:"Earnings",
-
-data:{{ chart_earnings|safe }},
-
-borderColor:"#4ade80",
-
-fill:false,
-
-tension:.4
-
-}]
-
-}
-
+new Chart(document.getElementById("earningChart"), {
+    type: "line",
+    data: {
+        labels: {{ chart_labels|safe }},
+        datasets: [{
+            label: "Earnings",
+            data: {{ chart_earnings|safe }},
+            borderColor: "#4ade80",
+            backgroundColor: "rgba(74,222,128,.1)",
+            fill: true,
+            tension: .4
+        }]
+    },
+    options: chartOptions()
 });
-</script>
-<script>
-function copyReferral(){
 
-    const input = document.getElementById("refLink");
+/* Sell Order Chart */
+{% if sell_order_chart is defined %}
+new Chart(document.getElementById("sellOrderChart"), {
+    type: "line",
+    data: {
+        labels: {{ chart_labels|safe }},
+        datasets: [{
+            label: "Sell Orders",
+            data: {{ sell_order_chart|safe }},
+            borderColor: "#f59e0b",
+            backgroundColor: "rgba(245,158,11,.1)",
+            fill: true,
+            tension: .4
+        }]
+    },
+    options: chartOptions()
+});
+{% endif %}
 
-    navigator.clipboard.writeText(input.value);
+/* Sell Income Chart */
+{% if sell_income_chart is defined %}
+new Chart(document.getElementById("sellIncomeChart"), {
+    type: "line",
+    data: {
+        labels: {{ chart_labels|safe }},
+        datasets: [{
+            label: "Sell Income",
+            data: {{ sell_income_chart|safe }},
+            borderColor: "#8b5cf6",
+            backgroundColor: "rgba(139,92,246,.1)",
+            fill: true,
+            tension: .4
+        }]
+    },
+    options: chartOptions()
+});
+{% endif %}
 
-    const btn = document.querySelector(".copy-btn");
+function toggleChart(id, el){
+    const box = document.getElementById(id);
+    const icon = el.querySelector(".fa-chevron-down");
 
-    btn.innerHTML = '<i class="fa-solid fa-check"></i> Tersalin';
+    if (!box) return;
 
-    setTimeout(function(){
-
-        btn.innerHTML = '<i class="fa-solid fa-copy"></i> Copy';
-
-    },2000);
-
+    if (box.style.display === "none") {
+        box.style.display = "block";
+        icon.style.transform = "rotate(0deg)";
+    } else {
+        box.style.display = "none";
+        icon.style.transform = "rotate(-90deg)";
+    }
 }
 </script>
 <script>
