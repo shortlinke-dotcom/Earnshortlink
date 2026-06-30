@@ -1596,6 +1596,28 @@ body{
 
 </div>
 
+{% if announcement %}
+<div class="announcement-panel">
+
+    <div class="announcement-icon">
+        <i class="fa-solid fa-bullhorn"></i>
+    </div>
+
+    <div class="announcement-content">
+        <div class="announcement-title">
+            {{ announcement.title }}
+        </div>
+
+        <div class="announcement-text">
+            {{ announcement.message }}
+        </div>
+    </div>
+
+    <div class="announcement-badge">NEW</div>
+
+</div>
+{% endif %}
+
 <!-- ================= REFERRAL ================= -->
 <div class="card referral-card">
 
