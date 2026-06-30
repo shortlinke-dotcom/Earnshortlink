@@ -1472,6 +1472,8 @@ async def links(request: Request):
             # 🔥 FIX AMAN
             "saldo": user_data.get("saldo") or 0,
             "username": user_data.get("username") or "",
+            "page": page,
+            "total_pages": total_pages,
         }
     )
 
