@@ -166,6 +166,53 @@ tbody tr:hover{
     background: #3b82f6;
 }
 
+/* ================= CREATE PANEL ================= */
+.create-panel{
+    margin-bottom:18px;
+}
+
+.form-group{
+    margin-bottom:12px;
+}
+
+.form-group label{
+    display:block;
+    font-size:13px;
+    color:#475569;
+    margin-bottom:6px;
+    font-weight:600;
+}
+
+.form-group input,
+.form-group select{
+    width:100%;
+    padding:12px;
+    border-radius:10px;
+    border:1px solid rgba(148,163,184,.3);
+    outline:none;
+    background:rgba(255,255,255,.8);
+}
+
+/* BUTTON */
+.btn-create{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:10px;
+    background:linear-gradient(135deg,#3b82f6,#2563eb);
+    color:#fff;
+    font-weight:700;
+    cursor:pointer;
+    margin-top:6px;
+}
+
+/* MOBILE OPTIMIZED */
+@media (max-width:768px){
+    .create-panel{
+        padding:14px;
+    }
+}
+
 /* ================= RESPONSIVE ================= */
 @media (max-width:992px){
     .stats{grid-template-columns:repeat(2,1fr);}
@@ -184,6 +231,46 @@ tbody tr:hover{
 <div class="page-header">
     <h1>Kelola Tautan 🔗</h1>
     <p>Lihat dan kelola semua shortlink kamu</p>
+</div>
+
+<!-- ================= CREATE LINK PANEL ================= -->
+<div class="card create-panel">
+
+    <h3>Buat Link Baru</h3>
+
+    <form id="createLinkForm">
+
+        <!-- URL -->
+        <div class="form-group">
+            <label>Link</label>
+            <input type="text" name="destination_url" placeholder="https://..." required>
+        </div>
+
+        <!-- TITLE -->
+        <div class="form-group">
+            <label>Judul</label>
+            <input type="text" name="title" placeholder="Judul link" required>
+        </div>
+
+        <!-- TYPE -->
+        <div class="form-group">
+            <label>Tipe</label>
+            <select name="type" id="linkType" onchange="togglePrice()">
+                <option value="ads">Ads (Shortlink)</option>
+                <option value="sell">Sell Link</option>
+            </select>
+        </div>
+
+        <!-- PRICE (SELL ONLY) -->
+        <div class="form-group" id="priceBox" style="display:none;">
+            <label>Nominal (Rp)</label>
+            <input type="number" name="price" placeholder="Contoh: 10000">
+        </div>
+
+        <button type="submit" class="btn-create">Create Link</button>
+
+    </form>
+
 </div>
 
 <!-- ================= STATS ================= -->
@@ -303,6 +390,48 @@ function copyText(text){
     navigator.clipboard.writeText(text);
     alert("Link copied!");
 }
+</script>
+<script>
+function togglePrice(){
+    const type = document.getElementById("linkType").value;
+    const priceBox = document.getElementById("priceBox");
+
+    if(type === "sell"){
+        priceBox.style.display = "block";
+    } else {
+        priceBox.style.display = "none";
+    }
+}
+</script>
+<script>
+document.getElementById("createLinkForm").addEventListener("submit", async function(e){
+    e.preventDefault();
+
+    const form = new FormData(this);
+    const type = form.get("type");
+
+    let url = "";
+
+    if(type === "ads"){
+        url = "/create-link";
+    } else {
+        url = "/create-sell-link";
+    }
+
+    const res = await fetch(url, {
+        method: "POST",
+        body: form
+    });
+
+    const data = await res.json();
+
+    if(data.ok){
+        alert("Link berhasil dibuat!");
+        window.location.reload();
+    } else {
+        alert(data.error || "Gagal membuat link");
+    }
+});
 </script>
 
 {% endblock %}
