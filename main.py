@@ -74,7 +74,7 @@ async def login_post(request: Request, login: str = Form(...), password: str = F
     result = (
         supabase.table("users")
         .select("*")
-        .eq("gmail", login)
+        .or_(f"gmail.eq.{login},username.eq.{login.lower()}")
         .limit(1)
         .execute()
     )
@@ -747,77 +747,71 @@ async def dashboard(request: Request):
     else:
         today_sell_income_growth = 100 if today_sell_income else 0
 
-    # Bulanan (sementara)
+        # Bulanan (sementara)
     month_sell_growth = 0
     month_sell_income_growth = 0
 
-# ================= RENDER =================
-return templates.TemplateResponse(
-    "dashboard.html",
-    {
-        "request": request,
-        "user": user,
-        "username": user.get("username", ""),
-        "saldo": user.get("saldo", 0),
+    # ================= RENDER =================
+    return templates.TemplateResponse(
+        "dashboard.html",
+        {
+            "request": request,
+            "user": user,
+            "username": user.get("username", ""),
+            "saldo": user.get("saldo", 0),
 
-        "total_links": total_links,
-        "total_clicks": total_clicks,
-        "total_earnings": total_earnings,
+            "total_links": total_links,
+            "total_clicks": total_clicks,
+            "total_earnings": total_earnings,
 
-        "today": today.strftime("%d %B %Y"),
-        "today_clicks": today_clicks,
-        "today_earnings": today_earnings,
+            "today": today.strftime("%d %B %Y"),
+            "today_clicks": today_clicks,
+            "today_earnings": today_earnings,
 
-        "month_clicks": month_clicks,
-        "month_earnings": month_earnings,
+            "month_clicks": month_clicks,
+            "month_earnings": month_earnings,
 
-        "average_cpm": average_cpm,
-        "month_cpm": month_cpm,
+            "average_cpm": average_cpm,
+            "month_cpm": month_cpm,
 
-        # FIX NO ERROR JINJA
-        "cpm_growth": cpm_growth,
-        "today_growth": today_growth,
-        "earning_growth": earning_growth,
-        "month_growth": month_growth,
-        "month_earning_growth": month_earning_growth,
-        "month_cpm_growth": month_cpm_growth,
+            "cpm_growth": cpm_growth,
+            "today_growth": today_growth,
+            "earning_growth": earning_growth,
+            "month_growth": month_growth,
+            "month_earning_growth": month_earning_growth,
+            "month_cpm_growth": month_cpm_growth,
 
-        # ================= SELLLINK =================
-        "today_sell_orders": today_sell_orders,
-        "today_sell_growth": today_sell_growth,
-        "today_sell_income": today_sell_income,
-        "today_sell_income_growth": today_sell_income_growth,
+            "today_sell_orders": today_sell_orders,
+            "today_sell_growth": today_sell_growth,
+            "today_sell_income": today_sell_income,
+            "today_sell_income_growth": today_sell_income_growth,
 
-        "total_sell_products": total_sell_products,
-        "avg_sell_value": avg_sell_value,
+            "total_sell_products": total_sell_products,
+            "avg_sell_value": avg_sell_value,
 
-        "month_sell_orders": month_sell_orders,
-        "month_sell_growth": month_sell_growth,
-        "month_sell_income": month_sell_income,
-        "month_sell_income_growth": month_sell_income_growth,
+            "month_sell_orders": month_sell_orders,
+            "month_sell_growth": month_sell_growth,
+            "month_sell_income": month_sell_income,
+            "month_sell_income_growth": month_sell_income_growth,
 
-        "month_products_sold": month_products_sold,
-        "month_avg_order": month_avg_order,
+            "month_products_sold": month_products_sold,
+            "month_avg_order": month_avg_order,
 
-        # CHART 30 HARI
-        "chart_labels": chart_labels,
-        "chart_clicks": chart_clicks,
-        "chart_earnings": chart_earnings,
+            "chart_labels": chart_labels,
+            "chart_clicks": chart_clicks,
+            "chart_earnings": chart_earnings,
 
-        # REF + USERS
-        "active_referrals": active_referrals,
-        "total_users": total_users,
+            "active_referrals": active_referrals,
+            "total_users": total_users,
 
-        # CPM COUNTRY
-        "cpm_by_country": cpm_by_country,
+            "cpm_by_country": cpm_by_country,
 
-        # LINKS
-        "latest_links": links[:5],
-        "links": links,
+            "latest_links": links[:5],
+            "links": links,
 
-        "current_month_name": calendar.month_name[current_month],
-    },
-)
+            "current_month_name": calendar.month_name[current_month],
+        },
+    )
     
 # =========================
 # SELL PAGE
@@ -954,14 +948,14 @@ async def pay_page(request: Request, code: str):
 @app.delete("/delete-sell-link/{code}")
 async def delete_sell_link(request: Request, code: str):
 
-    username = request.session.get("username")
+    user_id = request.session.get("user_id")
     if not username:
         return JSONResponse({"ok": False}, status_code=401)
 
     user_res = (
         supabase.table("users")
         .select("id")
-        .eq("username", username)
+        .eq("user_id", user_id)
         .single()
         .execute()
     )
@@ -1013,7 +1007,7 @@ async def create_link(
     # =========================
     # LOGIN CHECK
     # =========================
-    username = request.session.get("username")
+    user_id = request.session.get("user_id")
 
     if not username:
         return JSONResponse(
@@ -1361,7 +1355,7 @@ async def final_reward(request: Request, token: str = Form(...)):
 @app.get("/links")
 async def links(request: Request):
 
-    username = request.session.get("username")
+    user_id = request.session.get("user_id")
 
     if not username:
         return RedirectResponse("/login", 303)
@@ -1462,23 +1456,6 @@ async def update_password(
         .execute()
 
     return RedirectResponse("/settings?success=password", 303)
-
-@app.post("/settings/payment")
-async def update_payment(
-    request: Request,
-    payment_name: str = Form(None),
-    payment_method: str = Form(None),
-    payment_number: str = Form(None),
-):
-    user_id = request.session.get("user_id")
-
-    supabase.table("users").update({
-        "payment_name": payment_name,
-        "payment_method": payment_method,
-        "payment_number": payment_number
-    }).eq("id", user_id).execute()
-
-    return RedirectResponse("/settings?success=payment", 303)
 
 @app.post("/settings/payment")
 async def update_payment(
