@@ -1447,9 +1447,7 @@ async def links(request: Request, page: int = Query(1, ge=1)):
 
     user_data = (user.data or [{}])[0]
 
-    # ================= PAGINATION =================
-    per_page = 5
-    # ================= TOTAL COUNT =================
+    # ================= COUNT ALL =================
     count_res = (
         supabase.table("links")
         .select("id", count="exact")
@@ -1457,17 +1455,23 @@ async def links(request: Request, page: int = Query(1, ge=1)):
         .execute()
     )
 
-    total_links_all = count_res.count or 0
-    total_pages = max(1, ceil(total_links_all / per_page))
+    total_links = count_res.count or 0
 
-    # 🔥 CLAMP PAGE BIAR TIDAK OVERFLOW
+    per_page = 10
+    total_pages = max(1, ceil(total_links / per_page))
+
+    # ================= SMART CLAMP PAGE =================
+    if page < 1:
+        page = 1
+
     if page > total_pages:
         page = total_pages
 
+    # ================= CALC RANGE =================
     start = (page - 1) * per_page
     end = start + per_page - 1
 
-    # ================= DATA =================
+    # ================= FETCH DATA =================
     links_res = (
         supabase.table("links")
         .select("*")
@@ -1479,9 +1483,32 @@ async def links(request: Request, page: int = Query(1, ge=1)):
 
     links_data = links_res.data or []
 
+    # ================= EDGE CASE: DATA KOSONG DI PAGE VALID =================
+    # kalau halaman valid tapi data kosong (karena delete data)
+    if not links_data and page > 1:
+        page = max(1, page - 1)
+
+        start = (page - 1) * per_page
+        end = start + per_page - 1
+
+        links_res = (
+            supabase.table("links")
+            .select("*")
+            .eq("user_id", user_id)
+            .order("id", desc=True)
+            .range(start, end)
+            .execute()
+        )
+
+        links_data = links_res.data or []
+
     # ================= STATS =================
     total_clicks = sum(l.get("clicks") or 0 for l in links_data)
     total_earnings = sum(l.get("earnings") or 0 for l in links_data)
+
+    # ================= NAVIGATION HELPERS =================
+    has_prev = page > 1
+    has_next = page < total_pages
 
     return templates.TemplateResponse(
         "links.html",
@@ -1491,15 +1518,18 @@ async def links(request: Request, page: int = Query(1, ge=1)):
 
             "links": links_data,
 
-            "total_links": total_links_all,
+            "total_links": total_links,
             "total_clicks": total_clicks,
             "total_earnings": total_earnings,
 
             "saldo": user_data.get("saldo") or 0,
             "username": user_data.get("username") or "",
 
+            # ================= PAGINATION =================
             "page": page,
             "total_pages": total_pages,
+            "has_prev": has_prev,
+            "has_next": has_next,
         }
     )
 
