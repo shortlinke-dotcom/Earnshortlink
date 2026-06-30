@@ -366,7 +366,6 @@ async def setup_username_post(
     username: str = Form(...),
     password: str = Form(...)
 ):
-
     email = request.session.get("pending_email")
 
     if not email:
@@ -378,40 +377,104 @@ async def setup_username_post(
     username = username.strip().lower()
     password = password.strip()
 
-    # =========================
     # VALIDASI USERNAME
-    # =========================
     if len(username) < 3:
         return JSONResponse({"ok": False, "error": "username_too_short"})
 
     if " " in username:
         return JSONResponse({"ok": False, "error": "username_no_space"})
 
-    # =========================
     # VALIDASI PASSWORD
-    # =========================
     if len(password) < 6:
         return JSONResponse({"ok": False, "error": "password_too_short"})
 
     if len(password) > 72:
         return JSONResponse({"ok": False, "error": "password_too_long"})
 
-# =========================
-# CEK EMAIL (ANTI DUPLICATE)
-# =========================
-existing_email = (
-    supabase.table("users")
-    .select("id, username")
-    .eq("gmail", email)
-    .limit(1)
-    .execute()
-)
+    # ANTI DUPLIKAT EMAIL
+    existing_email = (
+        supabase.table("users")
+        .select("id,username")
+        .eq("gmail", email)
+        .limit(1)
+        .execute()
+    )
 
-if existing_email.data:
-    user = existing_email.data[0]
+    if existing_email.data:
+        user = existing_email.data[0]
 
-    request.session["username"] = user["username"]
-    request.session["user_id"] = user["id"]
+        request.session["username"] = user["username"]
+        request.session["user_id"] = user["id"]
+        request.session["logged_in"] = True
+
+        token = secrets.token_hex(32)
+
+        supabase.table("users").update({
+            "session_token": token,
+            "last_activity": datetime.now(timezone.utc).isoformat()
+        }).eq("id", user["id"]).execute()
+
+        request.session["session_token"] = token
+        request.session.pop("pending_email", None)
+
+        response = JSONResponse({
+            "ok": True,
+            "redirect": "/dashboard"
+        })
+
+        response.set_cookie(
+            key="session_token",
+            value=token,
+            max_age=2592000,
+            httponly=True,
+            samesite="lax",
+            secure=True
+        )
+
+        return response
+
+    # CEK USERNAME
+    check = (
+        supabase.table("users")
+        .select("id")
+        .eq("username", username)
+        .limit(1)
+        .execute()
+    )
+
+    if check.data:
+        return JSONResponse({
+            "ok": False,
+            "error": "username_exists"
+        })
+
+    # HASH PASSWORD
+    hashed_password = bcrypt.hashpw(
+        password.encode("utf-8"),
+        bcrypt.gensalt()
+    ).decode("utf-8")
+
+    # INSERT USER
+    insert = (
+        supabase.table("users")
+        .insert({
+            "gmail": email,
+            "username": username,
+            "password": hashed_password,
+        })
+        .execute()
+    )
+
+    if not insert.data:
+        return JSONResponse({
+            "ok": False,
+            "error": "insert_failed"
+        })
+
+    new_user = insert.data[0]
+
+    request.session["username"] = new_user["username"]
+    request.session["user_id"] = new_user["id"]
     request.session["logged_in"] = True
 
     token = secrets.token_hex(32)
@@ -419,7 +482,7 @@ if existing_email.data:
     supabase.table("users").update({
         "session_token": token,
         "last_activity": datetime.now(timezone.utc).isoformat()
-    }).eq("id", user["id"]).execute()
+    }).eq("id", new_user["id"]).execute()
 
     request.session["session_token"] = token
     request.session.pop("pending_email", None)
@@ -439,7 +502,6 @@ if existing_email.data:
     )
 
     return response
-
     # =========================
     # CEK USERNAME
     # =========================
