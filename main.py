@@ -1405,15 +1405,11 @@ async def links(request: Request):
 
     user = (
         supabase.table("users")
-        .select("username")
+        .select("username, saldo")
         .eq("id", user_id)
         .single()
         .execute()
     )
-
-    if not user.data:
-        request.session.clear()
-        return RedirectResponse("/login", 303)
 
     links_res = (
         supabase.table("links")
@@ -1423,22 +1419,30 @@ async def links(request: Request):
         .execute()
     )
 
-    links = links_res.data or []
+    links_data = links_res.data or []
 
-    total_links = len(links)
-    total_clicks = sum(link.get("clicks", 0) for link in links)
-    total_earn = sum(link.get("earnings", 0) for link in links)
+    total_links = len(links_data)
+    total_clicks = sum(l.get("clicks") or 0 for l in links_data)
+    total_earnings = sum(l.get("earnings") or 0 for l in links_data)
 
     return templates.TemplateResponse(
         "links.html",
         {
             "request": request,
-            "username": user.data["username"],
-            "links": links,
+
+            # penting
+            "base_url": str(request.base_url),
+
+            # stats
             "total_links": total_links,
             "total_clicks": total_clicks,
-            "total_earn": total_earn,
-            "base_url": str(request.base_url).rstrip("/")
+            "total_earnings": total_earnings,
+
+            # data utama
+            "links": links_data,
+
+            # user
+            "username": user.data.get("username", "")
         }
     )
 
