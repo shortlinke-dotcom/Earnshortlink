@@ -44,6 +44,7 @@ async def check_session(request: Request, call_next):
         "/auth/google",
         "/auth/callback",
         "/setup-username",
+        "/check-username",
         "/privacy",
         "/terms",
         "/favicon.ico"
@@ -658,18 +659,40 @@ async def register_post(
     return RedirectResponse("/dashboard", status_code=303)
 
 @app.get("/check-username")
-async def check_username(u: str):
-    user = (
-        supabase.table("users")
-        .select("id")
-        .eq("username", u.lower())
-        .limit(1)
-        .execute()
-    )
+async def check_username(request: Request, u: str = ""):
+    try:
+        username = u.strip().lower()
 
-    return {
-        "exists": bool(user.data)
-    }
+        if len(username) < 3:
+            return JSONResponse({
+                "exists": False,
+                "valid": False,
+                "message": "Minimal 3 karakter"
+            })
+
+        user = (
+            supabase.table("users")
+            .select("id")
+            .eq("username", username)
+            .limit(1)
+            .execute()
+        )
+
+        return JSONResponse({
+            "exists": bool(user.data),
+            "valid": True
+        })
+
+    except Exception as e:
+        print("CHECK USERNAME ERROR:", e)
+        return JSONResponse(
+            {
+                "exists": False,
+                "valid": False,
+                "message": "Server error"
+            },
+            status_code=500
+        )
 
 # =========================
 # DASHBOARD
