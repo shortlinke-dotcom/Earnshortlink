@@ -667,56 +667,152 @@ async def dashboard(request: Request):
     except:
         cpm_by_country = {}
 
-    # ================= RENDER =================
-    return templates.TemplateResponse(
-        "dashboard.html",
-        {
-            "request": request,
-            "user": user,
-            "username": user.get("username", ""),
-            "saldo": user.get("saldo", 0),
+# ================= SELLLINK =================
+sell_res = (
+    supabase.table("selllinks")
+    .select("*")
+    .eq("user_id", user_id)
+    .execute()
+)
 
-            "total_links": total_links,
-            "total_clicks": total_clicks,
-            "total_earnings": total_earnings,
+selllinks = sell_res.data or []
 
-            "today": today.strftime("%d %B %Y"),
-            "today_clicks": today_clicks,
-            "today_earnings": today_earnings,
+today_sell_orders = 0
+today_sell_income = 0
 
-            "month_clicks": month_clicks,
-            "month_earnings": month_earnings,
+month_sell_orders = 0
+month_sell_income = 0
 
-            "average_cpm": average_cpm,
-            "month_cpm": month_cpm,
+yesterday_sell_orders = 0
+yesterday_sell_income = 0
 
-            # FIX NO ERROR JINJA
-            "cpm_growth": cpm_growth,
-            "today_growth": today_growth,
-            "earning_growth": earning_growth,
-            "month_growth": month_growth,
-            "month_earning_growth": month_earning_growth,
-            "month_cpm_growth": month_cpm_growth,
+total_sell_products = len(selllinks)
 
-            # CHART 30 HARI
-            "chart_labels": chart_labels,
-            "chart_clicks": chart_clicks,
-            "chart_earnings": chart_earnings,
+for s in selllinks:
 
-            # REF + USERS
-            "active_referrals": active_referrals,
-            "total_users": total_users,
+    created = parse_date(s.get("created_at"))
+    if not created:
+        continue
 
-            # CPM COUNTRY
-            "cpm_by_country": cpm_by_country,
+    sold = int(s.get("sold") or 0)
+    earnings = float(s.get("earnings") or 0)
 
-            # LINKS
-            "latest_links": links[:5],
-            "links": links,
+    if created.date() == today:
+        today_sell_orders += sold
+        today_sell_income += earnings
 
-            "current_month_name": calendar.month_name[current_month],
-        },
+    elif created.date() == yesterday:
+        yesterday_sell_orders += sold
+        yesterday_sell_income += earnings
+
+    if (
+        created.month == current_month
+        and created.year == current_year
+    ):
+        month_sell_orders += sold
+        month_sell_income += earnings
+
+# ================= AVERAGE =================
+avg_sell_value = (
+    round(today_sell_income / today_sell_orders, 2)
+    if today_sell_orders else 0
+)
+
+month_avg_order = (
+    round(month_sell_income / month_sell_orders, 2)
+    if month_sell_orders else 0
+)
+
+month_products_sold = month_sell_orders
+
+# ================= GROWTH =================
+if yesterday_sell_orders:
+    today_sell_growth = round(
+        ((today_sell_orders - yesterday_sell_orders) / yesterday_sell_orders) * 100,
+        2
     )
+else:
+    today_sell_growth = 100 if today_sell_orders else 0
+
+if yesterday_sell_income:
+    today_sell_income_growth = round(
+        ((today_sell_income - yesterday_sell_income) / yesterday_sell_income) * 100,
+        2
+    )
+else:
+    today_sell_income_growth = 100 if today_sell_income else 0
+
+# sementara dibanding bulan lalu nanti
+month_sell_growth = 0
+month_sell_income_growth = 0
+
+# ================= RENDER =================
+return templates.TemplateResponse(
+    "dashboard.html",
+    {
+        "request": request,
+        "user": user,
+        "username": user.get("username", ""),
+        "saldo": user.get("saldo", 0),
+
+        "total_links": total_links,
+        "total_clicks": total_clicks,
+        "total_earnings": total_earnings,
+
+        "today": today.strftime("%d %B %Y"),
+        "today_clicks": today_clicks,
+        "today_earnings": today_earnings,
+
+        "month_clicks": month_clicks,
+        "month_earnings": month_earnings,
+
+        "average_cpm": average_cpm,
+        "month_cpm": month_cpm,
+
+        # FIX NO ERROR JINJA
+        "cpm_growth": cpm_growth,
+        "today_growth": today_growth,
+        "earning_growth": earning_growth,
+        "month_growth": month_growth,
+        "month_earning_growth": month_earning_growth,
+        "month_cpm_growth": month_cpm_growth,
+
+        # ================= SELLLINK =================
+        "today_sell_orders": today_sell_orders,
+        "today_sell_growth": today_sell_growth,
+        "today_sell_income": today_sell_income,
+        "today_sell_income_growth": today_sell_income_growth,
+
+        "total_sell_products": total_sell_products,
+        "avg_sell_value": avg_sell_value,
+
+        "month_sell_orders": month_sell_orders,
+        "month_sell_growth": month_sell_growth,
+        "month_sell_income": month_sell_income,
+        "month_sell_income_growth": month_sell_income_growth,
+
+        "month_products_sold": month_products_sold,
+        "month_avg_order": month_avg_order,
+
+        # CHART 30 HARI
+        "chart_labels": chart_labels,
+        "chart_clicks": chart_clicks,
+        "chart_earnings": chart_earnings,
+
+        # REF + USERS
+        "active_referrals": active_referrals,
+        "total_users": total_users,
+
+        # CPM COUNTRY
+        "cpm_by_country": cpm_by_country,
+
+        # LINKS
+        "latest_links": links[:5],
+        "links": links,
+
+        "current_month_name": calendar.month_name[current_month],
+    },
+)
     
 # =========================
 # SELL PAGE
