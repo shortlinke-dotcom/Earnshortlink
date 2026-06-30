@@ -173,18 +173,27 @@ body{
 
 .orbit-icon{
     position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%, -50%);
     color:#2563eb;
-    font-size:16px;
+    font-size:14px;
     animation:orbit 5s linear infinite;
-    transform-origin:0 0;
 }
 
 @keyframes orbit{
     0%{
-        transform:rotate(0deg) translateX(45px);
+        transform:
+            translate(-50%, -50%)
+            rotate(0deg)
+            translateX(40px);
     }
+
     100%{
-        transform:rotate(360deg) translateX(45px);
+        transform:
+            translate(-50%, -50%)
+            rotate(360deg)
+            translateX(40px);
     }
 }
 
