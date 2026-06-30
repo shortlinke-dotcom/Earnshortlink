@@ -137,64 +137,39 @@ body{
 
 .logo-wrapper{
     position:relative;
-
-    display:inline-flex;
-    justify-content:center;
+    display:flex;
     align-items:center;
+    justify-content:center;
 
-    font-size:28px;
+    font-size:20px;
     font-weight:800;
-    letter-spacing:1px;
-
-    padding:10px 20px;
+    letter-spacing:0.5px;
+    padding:6px 12px;
 }
 
-.logo-wrapper span{
-    background:linear-gradient(
-        90deg,
-        #2563eb,
-        #00b8ff,
-        #60a5fa,
-        #2563eb
-    );
-
-    background-size:300% auto;
-
-    -webkit-background-clip:text;
-    -webkit-text-fill-color:transparent;
-
-    animation:logoGradient 4s linear infinite;
-}
-
-@keyframes logoGradient{
-    0%{ background-position:0%; }
-    100%{ background-position:300%; }
-}
-
-.orbit-icon{
+/* ICON BACKGROUND (CENTER PERFECT) */
+.logo-bg-icon{
     position:absolute;
     top:50%;
     left:50%;
     transform:translate(-50%, -50%);
+
+    font-size:42px;
     color:#2563eb;
-    font-size:14px;
-    animation:orbit 5s linear infinite;
+    opacity:0.08;
+
+    z-index:0;
+    pointer-events:none;
 }
 
-@keyframes orbit{
-    0%{
-        transform:
-            translate(-50%, -50%)
-            rotate(0deg)
-            translateX(40px);
-    }
+/* TEXT DI ATAS ICON */
+.logo-wrapper span{
+    position:relative;
+    z-index:1;
 
-    100%{
-        transform:
-            translate(-50%, -50%)
-            rotate(360deg)
-            translateX(40px);
-    }
+    background:linear-gradient(90deg,#2563eb,#00b8ff);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
 }
 
 /* =========================
