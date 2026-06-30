@@ -944,80 +944,88 @@ body{
     }
 }
 
-.announcement-panel{
-    max-width:1280px;
-    margin:90px auto 20px auto;
-    padding:16px 18px;
+.announcement-floating{
+    position:fixed;
+    right:20px;
+    bottom:20px;
+    width:320px;
+    z-index:9999;
 
-    display:flex;
-    align-items:center;
-    gap:14px;
+    background:rgba(255,255,255,.75);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
 
     border-radius:18px;
+    border:1px solid rgba(255,255,255,.4);
 
-    background:rgba(255,255,255,0.4);
-    backdrop-filter:blur(16px);
-    -webkit-backdrop-filter:blur(16px);
-
-    border:1px solid rgba(37,99,235,0.15);
-
-    box-shadow:0 15px 35px rgba(0,0,0,0.08);
-
-    animation:floatPanel 4s ease-in-out infinite;
+    box-shadow:0 15px 35px rgba(0,0,0,.12);
+    overflow:hidden;
+    animation:slideUp .4s ease;
 }
 
-.announcement-icon{
-    width:42px;
-    height:42px;
+.announcement-header{
+    position:relative;
+    padding:16px;
+    background:linear-gradient(135deg,#2563eb,#3b82f6);
+    color:#fff;
+    font-size:20px;
+}
+
+.notif-badge{
+    position:absolute;
+    top:10px;
+    right:12px;
+
+    min-width:22px;
+    height:22px;
+    padding:0 6px;
+
+    border-radius:999px;
+    background:#ef4444;
+    color:#fff;
 
     display:flex;
-    justify-content:center;
     align-items:center;
+    justify-content:center;
 
-    border-radius:12px;
-
-    background:linear-gradient(135deg,#2563eb,#00b8ff);
-    color:#fff;
+    font-size:12px;
+    font-weight:700;
 }
 
-.announcement-content{
-    flex:1;
+.announcement-body{
+    padding:18px;
 }
 
 .announcement-title{
+    font-size:15px;
     font-weight:700;
-    font-size:14px;
-    color:#0f172a;
+    margin-bottom:8px;
 }
 
 .announcement-text{
     font-size:13px;
     color:#64748b;
-    margin-top:2px;
+    line-height:1.6;
 }
 
-.announcement-badge{
-    padding:5px 10px;
-    border-radius:999px;
-
-    font-size:11px;
-    font-weight:700;
-
-    background:#ef4444;
-    color:#fff;
-
-    animation:pulse 1.5s infinite;
+@keyframes slideUp{
+    from{
+        opacity:0;
+        transform:translateY(30px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
 }
 
-@keyframes floatPanel{
-    0%,100%{ transform:translateY(0); }
-    50%{ transform:translateY(-3px); }
-}
-
-@keyframes pulse{
-    0%{ transform:scale(1); }
-    50%{ transform:scale(1.1); }
-    100%{ transform:scale(1); }
+@media(max-width:768px){
+    .announcement-floating{
+        right:12px;
+        left:12px;
+        width:auto;
+        bottom:12px;
+    }
 }
 </style>
 {% endblock %}
@@ -1672,27 +1680,29 @@ body{
 
 </div>
 
-{% if announcement %}
-<div class="announcement-panel">
+<div class="announcement-floating" id="announcementBox">
 
-    <div class="announcement-icon">
-        <i class="fa-solid fa-bullhorn"></i>
+    <div class="announcement-header">
+        <i class="fa-solid fa-bell"></i>
+
+        {% if unread_count > 0 %}
+        <span class="notif-badge">{{ unread_count }}</span>
+        {% endif %}
     </div>
 
-    <div class="announcement-content">
+    {% if announcement %}
+    <div class="announcement-body">
         <div class="announcement-title">
-            {{ announcement.title if announcement else "Pengumuman" }}
+            {{ announcement.title }}
         </div>
 
         <div class="announcement-text">
-            {{ announcement.message if announcement else "Belum ada pengumuman terbaru." }}
+            {{ announcement.message }}
         </div>
     </div>
-
-    <div class="announcement-badge">NEW</div>
+    {% endif %}
 
 </div>
-{% endif %}
 
 <!-- ================= REFERRAL ================= -->
 <div class="card referral-card">
