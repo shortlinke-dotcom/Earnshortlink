@@ -991,7 +991,7 @@ body{
 
     </form>
 
-    <div id="result" class="create-result" hidden>
+    <div id="result" class="create-result" style="display:none;">
 
         <div class="success-icon">
             <i class="fa-solid fa-circle-check"></i>
@@ -1853,7 +1853,7 @@ if(data.ok){
 
     const result = document.getElementById("result");
 
-    result.hidden = false;
+    result.style.display = "flex";
 
     document.getElementById("shortLink").value=data.short_link;
 
@@ -1891,5 +1891,10 @@ function copyShortLink(){
     }, 2000);
 
 }
+</script>
+<script>
+window.addEventListener("load", function () {
+    document.getElementById("result").style.display = "none";
+});
 </script>
 {% endblock %}
