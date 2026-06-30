@@ -830,6 +830,8 @@ async def dashboard(request: Request):
             "total_links": total_links,
             "total_clicks": total_clicks,
             "total_earnings": total_earnings,
+            "total_earn": total_earnings,
+            "base_url": str(request.base_url).rstrip("/"),
 
             "today": today.strftime("%d %B %Y"),
             "today_clicks": today_clicks,
