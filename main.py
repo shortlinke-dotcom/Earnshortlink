@@ -5,6 +5,8 @@ import secrets
 import calendar
 import bcrypt
 import traceback
+from math import ceil
+from fastapi import Query
 from datetime import datetime, timezone, timedelta
 
 from fastapi import FastAPI, Request, Form, Body
@@ -1426,13 +1428,14 @@ async def final_reward(request: Request, token: str = Form(...)):
 # LINKS
 # =========================
 @app.get("/links")
-async def links(request: Request):
+async def links(request: Request, page: int = Query(1, ge=1)):
 
     user_id = request.session.get("user_id")
 
     if not user_id:
         return RedirectResponse("/login", 303)
 
+    # ================= USER =================
     user = (
         supabase.table("users")
         .select("username, saldo")
@@ -1443,17 +1446,35 @@ async def links(request: Request):
 
     user_data = (user.data or [{}])[0]
 
+    # ================= PAGINATION SETTING =================
+    per_page = 10
+    start = (page - 1) * per_page
+    end = start + per_page - 1
+
+    # ================= TOTAL COUNT =================
+    count_res = (
+        supabase.table("links")
+        .select("id", count="exact")
+        .eq("user_id", user_id)
+        .execute()
+    )
+
+    total_links_all = count_res.count or 0
+    total_pages = max(1, ceil(total_links_all / per_page))
+
+    # ================= DATA LINKS =================
     links_res = (
         supabase.table("links")
         .select("*")
         .eq("user_id", user_id)
         .order("id", desc=True)
+        .range(start, end)
         .execute()
     )
 
     links_data = links_res.data or []
 
-    total_links = len(links_data)
+    # ================= STATS =================
     total_clicks = sum(l.get("clicks") or 0 for l in links_data)
     total_earnings = sum(l.get("earnings") or 0 for l in links_data)
 
@@ -1463,15 +1484,16 @@ async def links(request: Request):
             "request": request,
             "base_url": str(request.base_url),
 
-            "total_links": total_links,
+            "links": links_data,
+
+            "total_links": total_links_all,
             "total_clicks": total_clicks,
             "total_earnings": total_earnings,
 
-            "links": links_data,
-
-            # 🔥 FIX AMAN
             "saldo": user_data.get("saldo") or 0,
             "username": user_data.get("username") or "",
+
+            # ✅ PAGINATION FIX
             "page": page,
             "total_pages": total_pages,
         }
