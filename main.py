@@ -669,7 +669,7 @@ async def dashboard(request: Request):
 
     # ================= SELLLINK =================
     sell_res = (
-        supabase.table("selllinks")
+        supabase.table("sell_links")
         .select("user_id,sold,earnings,created_at")
         .eq("user_id", user_id)
         .execute()
@@ -695,7 +695,7 @@ async def dashboard(request: Request):
             continue
 
         sold = int(item.get("sold") or 0)
-        earnings = float(item.get("earnings") or 0)
+        earnings = float(item.get("income") or 0)
 
         # Hari ini
         if created.date() == today:
