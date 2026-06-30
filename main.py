@@ -1079,39 +1079,16 @@ async def create_link(
     title: str = Form(...)
 ):
 
-    # =========================
     # LOGIN CHECK
-    # =========================
     user_id = request.session.get("user_id")
 
-    if not username:
+    if not user_id:
         return JSONResponse(
             {"ok": False, "error": "Unauthorized"},
             status_code=401
         )
 
-    # =========================
-    # GET USER
-    # =========================
-    user_res = (
-        supabase.table("users")
-        .select("id")
-        .eq("username", username)
-        .single()
-        .execute()
-    )
-
-    if not user_res.data:
-        return JSONResponse(
-            {"ok": False, "error": "User not found"},
-            status_code=404
-        )
-
-    user_id = user_res.data["id"]
-
-    # =========================
     # VALIDASI URL
-    # =========================
     destination_url = destination_url.strip()
 
     if not (
@@ -1120,11 +1097,8 @@ async def create_link(
     ):
         destination_url = "https://" + destination_url
 
-    # =========================
     # GENERATE SHORT CODE
-    # =========================
     while True:
-
         short_code = "".join(
             random.choices(
                 string.ascii_letters + string.digits,
@@ -1143,9 +1117,7 @@ async def create_link(
         if not check.data:
             break
 
-    # =========================
     # INSERT DATABASE
-    # =========================
     insert = (
         supabase.table("links")
         .insert({
@@ -1162,10 +1134,7 @@ async def create_link(
 
     if not insert.data:
         return JSONResponse(
-            {
-                "ok": False,
-                "error": "Failed create link"
-            },
+            {"ok": False, "error": "Failed create link"},
             status_code=500
         )
 
@@ -1184,32 +1153,39 @@ async def create_link(
 @app.get("/s/{short_code}")
 async def shortlink(request: Request, short_code: str):
 
-    # 1. ambil link
+    # Ambil link
     res = (
         supabase.table("links")
         .select("*")
         .eq("short_code", short_code)
-        .limit(1)
+        .single()
         .execute()
     )
 
     if not res.data:
-        return HTMLResponse("Not found", 404)
+        return HTMLResponse("Link tidak ditemukan", 404)
 
-    link = res.data[0]
+    link = res.data
 
-    # 2. update klik (aman dari null)
+    # Jangan izinkan link nonaktif
+    if not link.get("is_active", True):
+        return HTMLResponse("Link tidak aktif", 403)
+
+    # Update klik
     try:
+        new_clicks = (link.get("clicks") or 0) + 1
+
         supabase.table("links").update({
-            "clicks": (link.get("clicks") or 0) + 1
-        }).eq("short_code", short_code).execute()
+            "clicks": new_clicks
+        }).eq("id", link["id"]).execute()
+
     except Exception as e:
         print("Click update error:", e)
 
-    # 3. generate token
+    # Generate token
     token = secrets.token_urlsafe(32)
 
-    # 4. insert download token (SAFE MODE)
+    # Simpan token
     try:
         supabase.table("download_tokens").insert({
             "token": token,
@@ -1218,17 +1194,20 @@ async def shortlink(request: Request, short_code: str):
             "used": False,
             "created_at": datetime.now(timezone.utc).isoformat()
         }).execute()
+
     except Exception as e:
         print("Token insert error:", e)
-        return HTMLResponse("Server error", 500)
+        traceback.print_exc()
+        return HTMLResponse("Server Error", 500)
 
-    # 5. render task
+    # Render halaman task
     return templates.TemplateResponse(
         "task1.html",
         {
             "request": request,
             "token": token,
-            "destination_url": link["destination_url"]
+            "destination_url": link["destination_url"],
+            "title": link.get("title", "")
         }
     )
 
