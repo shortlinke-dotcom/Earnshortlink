@@ -237,28 +237,22 @@ body{
 
 .sidebar{
     position:fixed;
-
     top:0;
     left:-320px;
 
     width:290px;
     max-width:88%;
-
     height:100vh;
 
     background:#fff;
-
     border-right:1px solid var(--border);
 
-    box-shadow:
-        0 20px 50px rgba(15,23,42,.08);
+    box-shadow:18px 0 45px rgba(15,23,42,.15);
 
     padding:24px;
-
     overflow-y:auto;
 
     transition:.35s ease;
-
     z-index:10000;
 }
 
@@ -588,15 +582,6 @@ body{
 }
 
 /* ===========================
-   SIDEBAR SHADOW
-=========================== */
-
-.sidebar{
-    box-shadow:
-        18px 0 45px rgba(15,23,42,.15);
-}
-
-/* ===========================
    LOADER
 =========================== */
 
@@ -667,49 +652,12 @@ body{
 =========================== */
 
 @media (max-width:768px){
-
+    /* container */
     .container{
-        padding:
-            calc(70px + 20px)
-            16px
-            24px;
+        padding:90px 15px 25px;
     }
 
-    .account-dropdown{
-        width:235px;
-    }
-
-    .footer-content{
-        flex-direction:column;
-        text-align:center;
-    }
-
-    .footer-text{
-        text-align:center;
-    }
-
-    .footer-links{
-        justify-content:center;
-    }
-
-}
-
-@media (min-width:1200px){
-
-    .container{
-        padding-top:120px;
-        padding-left:35px;
-        padding-right:35px;
-    }
-
-}
-
-/* ===========================
-   MOBILE RESPONSIVE
-=========================== */
-
-@media (max-width:768px){
-
+    /* topbar */
     .topbar{
         height:65px;
         padding:0 15px;
@@ -724,33 +672,41 @@ body{
         font-size:14px;
     }
 
-    @keyframes orbit{
-        0%{
-            transform:
-                rotate(0deg)
-                translateX(78px)
-                rotate(0deg);
-        }
-
-        100%{
-            transform:
-                rotate(360deg)
-                translateX(78px)
-                rotate(-360deg);
-        }
-    }
-
-    .container{
-        padding:90px 15px 25px;
-    }
-
+    /* sidebar */
     .sidebar{
         width:270px;
     }
+
+    /* dropdown */
+    .account-dropdown{
+        width:235px;
+    }
+
+    /* footer */
+    .footer-content{
+        flex-direction:column;
+        text-align:center;
+    }
+
+    .footer-text{
+        text-align:center;
+    }
+
+    .footer-links{
+        justify-content:center;
+    }
 }
 
-</style>
-{% block extra_css %}{% endblock %}
+@media (min-width:1200px){
+
+    .container{
+        padding-top:120px;
+        padding-left:35px;
+        padding-right:35px;
+    }
+
+}
+
 </style>
 {% block extra_css %}{% endblock %}
 </head>
@@ -900,54 +856,84 @@ onclick="closeMenu()"></div>
     </div>
 </footer>
 <script>
-function openMenu(){
-    document.getElementById("sidebar")
-        .classList.add("active");
-    document.getElementById("overlay")
-        .classList.add("active");
-}
-function closeMenu(){
-    document.getElementById("sidebar")
-        .classList.remove("active");
-    document.getElementById("overlay")
-        .classList.remove("active");
-}
-function toggleUserMenu(){
-    document.getElementById("accountDropdown")
-        .classList.toggle("show");
-}
-document.addEventListener("click", function(e){
-    const menu = document.querySelector(".user-menu");
+document.addEventListener("DOMContentLoaded", function () {
 
-    if(!menu.contains(e.target)){
-        document
-        .getElementById("accountDropdown")
-        .classList.remove("show");
-    }
-});
-document.addEventListener("keydown",function(e){
-    if(e.key==="Escape"){
-        closeMenu();
-        document.getElementById("accountDropdown").classList.remove("show");
-    }
-});window.addEventListener("resize",function(){
-    if(window.innerWidth>768){
-        closeMenu();
-    }
-});
-window.addEventListener("load",function(){
+    const sidebar = document.getElementById("sidebar");
+    const overlay = document.getElementById("overlay");
+    const accountDropdown = document.getElementById("accountDropdown");
+    const userMenu = document.querySelector(".user-menu");
     const loader = document.getElementById("loader");
 
-    loader.classList.add("hide");
+    // =========================
+    // SIDEBAR CONTROL
+    // =========================
+    window.openMenu = function () {
+        sidebar?.classList.add("active");
+        overlay?.classList.add("active");
+    };
 
-    setTimeout(function(){
-        loader.remove();
-    },400);
+    window.closeMenu = function () {
+        sidebar?.classList.remove("active");
+        overlay?.classList.remove("active");
+    };
+
+    // =========================
+    // USER DROPDOWN
+    // =========================
+    window.toggleUserMenu = function () {
+        accountDropdown?.classList.toggle("show");
+    };
+
+    document.addEventListener("click", function (e) {
+        if (!userMenu) return;
+
+        if (!userMenu.contains(e.target)) {
+            accountDropdown?.classList.remove("show");
+        }
+    });
+
+    // =========================
+    // KEYBOARD SHORTCUT
+    // =========================
+    document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") {
+            closeMenu();
+            accountDropdown?.classList.remove("show");
+        }
+    });
+
+    // =========================
+    // RESPONSIVE FIX
+    // =========================
+    window.addEventListener("resize", function () {
+        if (window.innerWidth > 768) {
+            closeMenu();
+        }
+    });
+
+    // =========================
+    // LOADER
+    // =========================
+    if (loader) {
+        loader.classList.add("hide");
+
+        setTimeout(function () {
+            loader.remove();
+        }, 400);
+    }
+
+    // =========================
+    // YEAR AUTO UPDATE
+    // =========================
+    const year = new Date().getFullYear();
+
+    const yearEl = document.getElementById("year");
+    const footerYearEl = document.getElementById("footerYear");
+
+    if (yearEl) yearEl.textContent = year;
+    if (footerYearEl) footerYearEl.textContent = year;
+
 });
-document.getElementById("year").textContent =
-new Date().getFullYear();
-document.getElementById("footerYear").textContent =
-new Date().getFullYear();
 </script>
 {% block extra_js %}{% endblock %}
 </body>
