@@ -481,20 +481,23 @@ async def dashboard(request: Request):
         return RedirectResponse("/login", status_code=303)
 
     # ================= PENGUMUMAN =================
-    res = (
-        supabase.table("announcements")
-        .select("*")
-        .eq("active", True)
-        .order("created_at", desc=True)
-        .limit(1)
-        .execute()
-    )
+    announcement = None
 
-    announcement = (
-        res.data[0]
-        if res.data
-        else None
-    )
+    try:
+        res = (
+            supabase.table("announcements")
+            .select("*")
+            .eq("active", True)
+            .order("created_at", desc=True)
+            .limit(1)
+            .execute()
+        )
+
+        if res.data:
+            announcement = res.data[0]
+
+    except Exception as e:
+        print("Announcement error:", e)
 
     # ================= USER =================
     user_res = (
