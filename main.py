@@ -612,38 +612,21 @@ async def dashboard(request: Request):
     month_earning_growth = month_earnings
     month_cpm_growth = month_cpm
 
-    # ================= 30 HARI CHART (REAL TIME READY) =================
-    chart_labels = []
-    chart_clicks = []
-    chart_earnings = []
-
-    for i in range(29, -1, -1):
-        day = today - timedelta(days=i)
-
-        dc = 0
-        de = 0
-
-        for l in links:
-            created = parse_date(l.get("created_at"))
-            if created and created.date() == day:
-                dc += l.get("clicks") or 0
-                de += l.get("earnings") or 0
-
-        chart_labels.append(day.strftime("%d/%m"))
-        chart_clicks.append(dc)
-        chart_earnings.append(de)
-
     # ================= TOTAL USERS =================
-    users_res = supabase.table("users").select("id", count="exact").execute()
+    users_res = (
+        supabase.table("users")
+        .select("id", count="exact")
+        .execute()
+    )
     total_users = users_res.count or 0
 
-    # ================= CPM BY COUNTRY (SAFE + REAL) =================
+    # ================= CPM BY COUNTRY =================
     cpm_by_country = {}
 
     try:
         geo_res = (
             supabase.table("clicks_log")
-            .select("country, earnings")
+            .select("country,earnings")
             .eq("user_id", user_id)
             .execute()
         )
@@ -654,13 +637,21 @@ async def dashboard(request: Request):
             country = r.get("country") or "Unknown"
 
             if country not in geo_map:
-                geo_map[country] = {"clicks": 0, "earnings": 0}
+                geo_map[country] = {
+                    "clicks": 0,
+                    "earnings": 0
+                }
 
             geo_map[country]["clicks"] += 1
-            geo_map[country]["earnings"] += r.get("earnings") or 0
+            geo_map[country]["earnings"] += (
+                r.get("earnings") or 0
+            )
 
         cpm_by_country = {
-            k: (v["earnings"] / v["clicks"] if v["clicks"] else 0)
+            k: (
+                v["earnings"] / v["clicks"]
+                if v["clicks"] else 0
+            )
             for k, v in geo_map.items()
         }
 
@@ -670,7 +661,7 @@ async def dashboard(request: Request):
     # ================= SELLLINK =================
     sell_res = (
         supabase.table("sell_links")
-        .select("user_id,sold,earnings,created_at")
+        .select("*")
         .eq("user_id", user_id)
         .execute()
     )
@@ -689,25 +680,21 @@ async def dashboard(request: Request):
     total_sell_products = len(selllinks)
 
     for item in selllinks:
-
         created = parse_date(item.get("created_at"))
-        if created is None:
+        if not created:
             continue
 
         sold = int(item.get("sold") or 0)
-        earnings = float(item.get("income") or 0)
+        earnings = float(item.get("earnings") or 0)
 
-        # Hari ini
         if created.date() == today:
             today_sell_orders += sold
             today_sell_income += earnings
 
-        # Kemarin
         elif created.date() == yesterday:
             yesterday_sell_orders += sold
             yesterday_sell_income += earnings
 
-        # Bulan ini
         if (
             created.year == current_year
             and created.month == current_month
@@ -715,41 +702,85 @@ async def dashboard(request: Request):
             month_sell_orders += sold
             month_sell_income += earnings
 
-    # ================= AVERAGE =================
     avg_sell_value = (
         round(today_sell_income / today_sell_orders, 2)
-        if today_sell_orders > 0 else 0
+        if today_sell_orders > 0
+        else 0
     )
 
     month_avg_order = (
         round(month_sell_income / month_sell_orders, 2)
-        if month_sell_orders > 0 else 0
+        if month_sell_orders > 0
+        else 0
     )
 
     month_products_sold = month_sell_orders
 
-    # ================= GROWTH HARIAN =================
     if yesterday_sell_orders > 0:
         today_sell_growth = round(
-            ((today_sell_orders - yesterday_sell_orders)
-            / yesterday_sell_orders) * 100,
+            (
+                (today_sell_orders - yesterday_sell_orders)
+                / yesterday_sell_orders
+            ) * 100,
             2
         )
     else:
-        today_sell_growth = 100 if today_sell_orders else 0
+        today_sell_growth = (
+            100 if today_sell_orders else 0
+        )
 
     if yesterday_sell_income > 0:
         today_sell_income_growth = round(
-            ((today_sell_income - yesterday_sell_income)
-            / yesterday_sell_income) * 100,
+            (
+                (today_sell_income - yesterday_sell_income)
+                / yesterday_sell_income
+            ) * 100,
             2
         )
     else:
-        today_sell_income_growth = 100 if today_sell_income else 0
+        today_sell_income_growth = (
+            100 if today_sell_income else 0
+        )
 
-        # Bulanan (sementara)
     month_sell_growth = 0
     month_sell_income_growth = 0
+
+    # ================= 30 HARI CHART =================
+    chart_labels = []
+    chart_clicks = []
+    chart_earnings = []
+
+    sell_order_chart = []
+    sell_income_chart = []
+
+    for i in range(29, -1, -1):
+        day = today - timedelta(days=i)
+
+        dc = 0
+        de = 0
+        so = 0
+        si = 0
+
+        for l in links:
+            created = parse_date(l.get("created_at"))
+
+            if created and created.date() == day:
+                dc += l.get("clicks") or 0
+                de += l.get("earnings") or 0
+
+        for s in selllinks:
+            created = parse_date(s.get("created_at"))
+
+            if created and created.date() == day:
+                so += int(s.get("sold") or 0)
+                si += float(s.get("earnings") or 0)
+
+        chart_labels.append(day.strftime("%d/%m"))
+        chart_clicks.append(dc)
+        chart_earnings.append(de)
+
+        sell_order_chart.append(so)
+        sell_income_chart.append(si)
 
     # ================= RENDER =================
     return templates.TemplateResponse(
@@ -800,6 +831,8 @@ async def dashboard(request: Request):
             "chart_labels": chart_labels,
             "chart_clicks": chart_clicks,
             "chart_earnings": chart_earnings,
+            "sell_order_chart": sell_order_chart,
+            "sell_income_chart": sell_income_chart,
 
             "active_referrals": active_referrals,
             "total_users": total_users,
