@@ -135,41 +135,105 @@ body{
     align-items:center;
 }
 
+/* WRAPPER UTAMA */
 .logo-wrapper{
     position:relative;
     display:flex;
     align-items:center;
     justify-content:center;
 
-    font-size:20px;
-    font-weight:800;
-    letter-spacing:0.5px;
-    padding:6px 12px;
+    padding:10px 18px;
+    border-radius:16px;
+
+    /* GLASSMORPHISM */
+    background:rgba(255,255,255,0.35);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+
+    border:1px solid rgba(37,99,235,0.15);
+
+    box-shadow:
+        0 10px 30px rgba(0,0,0,0.08),
+        inset 0 1px 0 rgba(255,255,255,0.6);
+
+    overflow:hidden;
+
+    /* animasi hidup */
+    animation:floatLogo 4s ease-in-out infinite;
 }
 
-/* ICON BACKGROUND (CENTER PERFECT) */
+/* ICON BACKGROUND (EFEK 4D DEPTH) */
 .logo-bg-icon{
     position:absolute;
     top:50%;
     left:50%;
     transform:translate(-50%, -50%);
 
-    font-size:42px;
+    font-size:54px;
     color:#2563eb;
-    opacity:0.08;
+    opacity:0.07;
 
     z-index:0;
     pointer-events:none;
+
+    filter:blur(0.5px);
+
+    animation:slowRotate 10s linear infinite;
 }
 
-/* TEXT DI ATAS ICON */
+/* TEXT */
 .logo-wrapper span{
     position:relative;
     z-index:1;
 
-    background:linear-gradient(90deg,#2563eb,#00b8ff);
+    font-size:20px;
+    font-weight:800;
+    letter-spacing:0.8px;
+
+    background:linear-gradient(
+        90deg,
+        #2563eb,
+        #00b8ff,
+        #60a5fa,
+        #2563eb
+    );
+    background-size:300% auto;
+
     -webkit-background-clip:text;
     -webkit-text-fill-color:transparent;
+
+    animation:gradientMove 4s linear infinite;
+    text-shadow:0 2px 10px rgba(37,99,235,0.15);
+}
+
+/* FLOAT EFFECT (4D HIDUP) */
+@keyframes floatLogo{
+    0%,100%{
+        transform:translateY(0px);
+    }
+    50%{
+        transform:translateY(-3px);
+    }
+}
+
+/* ICON ROTATE HALUS */
+@keyframes slowRotate{
+    0%{
+        transform:translate(-50%, -50%) rotate(0deg);
+    }
+    100%{
+        transform:translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+/* GRADIENT TEXT MOVE */
+@keyframes gradientMove{
+    0%{
+        background-position:0%;
+    }
+    100%{
+        background-position:300%;
+    }
 }
 
 /* =========================
