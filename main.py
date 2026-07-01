@@ -28,6 +28,9 @@ from database import supabase
 
 app = FastAPI()
 
+from starlette.middleware.httpsredirect import HTTPSRedirectMiddleware
+app.add_middleware(HTTPSRedirectMiddleware)
+
 
 oauth = OAuth()
 
@@ -50,7 +53,7 @@ app.add_middleware(
     SessionMiddleware,
     secret_key=SESSION_SECRET,
     same_site="lax",
-    https_only=False
+    https_only=True
 )
 
 print("SESSION_SECRET:", SESSION_SECRET)
@@ -265,29 +268,49 @@ async def auth_google(request: Request):
 
 @app.get("/auth/callback")
 async def auth_callback(request: Request):
-    token = await oauth.google.authorize_access_token(request)
+    print("=== GOOGLE CALLBACK HIT ===")
+    print("SESSION BEFORE:", dict(request.session))
+    print("COOKIES:", request.cookies)
+
+    try:
+        token = await oauth.google.authorize_access_token(request)
+        print("TOKEN:", token)
+
+    except Exception as e:
+        print("TOKEN ERROR:", str(e))
+        traceback.print_exc()
+        return HTMLResponse(f"OAuth error: {str(e)}", 400)
 
     user = token.get("userinfo")
+    print("USERINFO:", user)
 
     if not user:
-        return HTMLResponse("Google login gagal", 400)
+        return HTMLResponse("Google login gagal (no userinfo)", 400)
 
     email = user["email"].lower().strip()
+    print("EMAIL:", email)
 
-    result = (
-        supabase.table("users")
-        .select("*")
-        .eq("gmail", email)
-        .limit(1)
-        .execute()
-    )
+    try:
+        result = (
+            supabase.table("users")
+            .select("*")
+            .eq("gmail", email)
+            .limit(1)
+            .execute()
+        )
 
-    # Email belum terdaftar
+        print("DB RESULT:", result.data)
+
+    except Exception as e:
+        print("DB ERROR:", str(e))
+        traceback.print_exc()
+        return HTMLResponse("DB error", 500)
+
     if not result.data:
         request.session["pending_email"] = email
+        print("NEW USER FLOW")
         return RedirectResponse("/setup-username", 303)
 
-    # Login
     db_user = result.data[0]
 
     request.session["user_id"] = db_user["id"]
@@ -298,15 +321,12 @@ async def auth_callback(request: Request):
 
     supabase.table("users").update({
         "session_token": token_session,
-        "last_activity": datetime.now(
-            timezone.utc
-        ).isoformat()
+        "last_activity": datetime.now(timezone.utc).isoformat()
     }).eq("id", db_user["id"]).execute()
 
-    response = RedirectResponse(
-        "/dashboard",
-        status_code=303
-    )
+    print("LOGIN SUCCESS:", db_user["id"])
+
+    response = RedirectResponse("/dashboard", 303)
 
     response.set_cookie(
         key="session_token",
@@ -314,7 +334,7 @@ async def auth_callback(request: Request):
         max_age=2592000,
         httponly=True,
         samesite="lax",
-        secure=False
+        secure=True  # 🔥 HARUS TRUE di production HTTPS
     )
 
     return response
