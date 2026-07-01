@@ -293,7 +293,7 @@ async def auth_callback(request: Request):
     except Exception as e:
         print("TOKEN ERROR:", str(e))
         traceback.print_exc()
-        return HTMLResponse(f"OAuth error: {str(e)}", 400)
+        return RedirectResponse("/oauth-error", status_code=303)
 
     user = token.get("userinfo")
     print("USERINFO:", user)
@@ -323,7 +323,7 @@ async def auth_callback(request: Request):
     if not result.data:
         request.session["pending_email"] = email
         print("NEW USER FLOW")
-        return RedirectResponse("/setup-username", 303)
+        return RedirectResponse("/setup-username", status_code=303)
 
     db_user = result.data[0]
 
@@ -338,9 +338,7 @@ async def auth_callback(request: Request):
         "last_activity": datetime.now(timezone.utc).isoformat()
     }).eq("id", db_user["id"]).execute()
 
-    print("LOGIN SUCCESS:", db_user["id"])
-
-    response = RedirectResponse("/dashboard", 303)
+    response = RedirectResponse("/dashboard", status_code=303)
 
     response.set_cookie(
         key="session_token",
@@ -348,7 +346,7 @@ async def auth_callback(request: Request):
         max_age=2592000,
         httponly=True,
         samesite="lax",
-        secure=True  # 🔥 HARUS TRUE di production HTTPS
+        secure=True
     )
 
     return response
@@ -1925,6 +1923,84 @@ async def logout(request: Request):
     response.delete_cookie("session_token")
     return response
 
+from fastapi.responses import HTMLResponse
+@app.get("/oauth-error")
+async def oauth_error():
+    return HTMLResponse("""
+    <!DOCTYPE html>
+    <html lang="id">
+    <head>
+        <meta charset="UTF-8">
+        <title>Login Google Gagal</title>
+        <style>
+            body{
+                margin:0;
+                background:#0f172a;
+                color:#fff;
+                font-family:Arial,sans-serif;
+                display:flex;
+                justify-content:center;
+                align-items:center;
+                height:100vh;
+            }
+            .card{
+                width:90%;
+                max-width:500px;
+                background:#1e293b;
+                padding:35px;
+                border-radius:20px;
+                text-align:center;
+                box-shadow:0 15px 35px rgba(0,0,0,.4);
+            }
+            h1{
+                color:#ef4444;
+                margin-bottom:15px;
+            }
+            p{
+                color:#cbd5e1;
+                line-height:1.7;
+            }
+            .uri{
+                margin:20px 0;
+                padding:12px;
+                background:#0f172a;
+                border-radius:10px;
+                word-break:break-all;
+                color:#38bdf8;
+            }
+            a{
+                display:inline-block;
+                margin-top:20px;
+                padding:12px 25px;
+                background:#2563eb;
+                color:#fff;
+                text-decoration:none;
+                border-radius:10px;
+            }
+            a:hover{
+                background:#1d4ed8;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="card">
+            <h1>❌ Login Google Gagal</h1>
+            <p>
+                Terjadi kesalahan konfigurasi OAuth Google
+                (<b>redirect_uri_mismatch</b>).
+            </p>
+            <p>
+                Pastikan URL berikut sudah ditambahkan
+                pada Google Cloud Console:
+            </p>
+            <div class="uri">
+                https://eslink.up.railway.app/auth/callback
+            </div>
+            <a href="/login">Kembali ke Login</a>
+        </div>
+    </body>
+    </html>
+    """)
 # =========================
 # FAVICON
 # =========================
