@@ -34,9 +34,8 @@ oauth.register(
     client_id=os.getenv("GOOGLE_CLIENT_ID"),
     client_secret=os.getenv("GOOGLE_CLIENT_SECRET"),
     server_metadata_url="https://accounts.google.com/.well-known/openid-configuration",
-    client_kwargs={
-        "scope": "openid email profile"
-    }
+    client_kwargs={"scope": "openid email profile"},
+    authorize_params={"prompt": "select_account"}
 )
 # Ambil secret dari Railway Environment Variables
 SESSION_SECRET = os.getenv(
@@ -48,7 +47,8 @@ app.add_middleware(
     SessionMiddleware,
     secret_key=SESSION_SECRET,
     same_site="lax",
-    https_only=False
+    https_only=False,
+    max_age=60 * 60 * 24 * 7  # 7 hari (biar stabil)
 )
 
 print("SESSION_SECRET:", SESSION_SECRET)
