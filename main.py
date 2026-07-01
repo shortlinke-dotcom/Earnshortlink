@@ -272,21 +272,19 @@ async def auth_callback(
         })
 
         session = getattr(res, "session", None)
-
         if not session:
             return RedirectResponse("/login?error=google_failed")
 
-        user = getattr(session, "user", None)
-
-        if not user:
+        oauth_user = getattr(session, "user", None)
+        if not oauth_user:
             return RedirectResponse("/login?error=google_failed")
 
-        email = user.email.strip().lower()
+        email = (oauth_user.email or "").strip().lower()
+
+        print("GOOGLE EMAIL:", repr(email))
 
         if not email:
             return RedirectResponse("/login?error=google_failed")
-
-        return HTMLResponse(f"Google email: [{email}]")
 
     except Exception as e:
         traceback.print_exc()
@@ -295,35 +293,32 @@ async def auth_callback(
             status_code=500
         )
 
-    # =========================
     # CEK USER DI DATABASE
-    # =========================
     result = (
         supabase.table("users")
         .select("*")
-        .eq("gmail", email)
+        .ilike("gmail", email)
         .limit(1)
         .execute()
     )
 
     print("RESULT:", result.data)
 
-    # =========================
-    # USER BELUM ADA
-    # =========================
+    # USER BELUM TERDAFTAR
     if not result.data:
         print("USER NOT FOUND")
         request.session["pending_email"] = email
-        request.session["oauth_email"] = email
-        return RedirectResponse("/setup-username")
+        return RedirectResponse("/setup-username", 303)
 
-    user = result.data[0]
+    db_user = result.data[0]
 
-    if user.get("is_banned"):
-        return RedirectResponse("/login?error=banned")
+    # CEK BANNED
+    if db_user.get("is_banned"):
+        return RedirectResponse("/login?error=banned", 303)
 
-    request.session["username"] = user.get("username")
-    request.session["user_id"] = user.get("id")
+    # LOGIN
+    request.session["username"] = db_user["username"]
+    request.session["user_id"] = db_user["id"]
     request.session["logged_in"] = True
     request.session["email"] = email
 
@@ -332,7 +327,7 @@ async def auth_callback(
     supabase.table("users").update({
         "session_token": token,
         "last_activity": datetime.now(timezone.utc).isoformat()
-    }).eq("id", user["id"]).execute()
+    }).eq("id", db_user["id"]).execute()
 
     request.session["session_token"] = token
 
@@ -344,7 +339,7 @@ async def auth_callback(
         max_age=2592000,
         httponly=True,
         samesite="lax",
-        secure=True
+        secure=False
     )
 
     return response
