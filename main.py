@@ -1980,16 +1980,16 @@ async def admin_dashboard(request: Request):
         .execute()
     ).count or 0
 
-    # kalau tabel withdraws belum ada, ubah jadi 0
+    # ================= WITHDRAW PENDING =================
     try:
-        withdraw_count = (
+        withdraw_pending = (
             supabase.table("withdrawals")
             .select("id", count="exact")
             .eq("status", "pending")
             .execute()
         ).count or 0
     except:
-        withdraw_count = 0
+        withdraw_pending = 0
 
     # ================= USERS =================
     users_res = (
@@ -2002,10 +2002,7 @@ async def admin_dashboard(request: Request):
     users = users_res.data or []
 
     # ================= TOTAL SALDO =================
-    total_saldo = sum(
-        u.get("saldo") or 0
-        for u in users
-    )
+    total_saldo = sum(u.get("saldo") or 0 for u in users)
 
     return templates.TemplateResponse(
         "admin.html",
@@ -2016,9 +2013,10 @@ async def admin_dashboard(request: Request):
             "total_users": total_users,
             "total_links": total_links,
             "total_sell_links": total_sell_links,
-            "withdraw_count": withdraw_count,
-            "total_saldo": total_saldo,
 
+            "withdraw_pending": withdraw_pending,
+
+            "total_saldo": total_saldo,
             "users": users
         }
     )
@@ -2111,58 +2109,97 @@ async def delete_user(request: Request, user_id: str):
 
     return RedirectResponse("/admin", 303)
 # === 🆗 ADMIN WD PANEL
+from math import ceil
+from fastapi import Query
+
 @app.get("/admin/withdraw")
 async def admin_withdraw(
     request: Request,
-    page: int = 1,
-    status: str = "",
-    search: str = ""
+    page: int = Query(1, ge=1),
+    status: str | None = None,
+    search: str | None = None
 ):
+
     admin = get_admin(request)
     if not admin:
         return RedirectResponse("/dashboard", 303)
 
-    per_page = 20
-    start = (page - 1) * per_page
-    end = start + per_page - 1
+    per_page = 10
 
-    query = (
-        supabase.table("withdrawals")
-        .select("*", count="exact")
-        .order("id", desc=True)
-    )
+    query = supabase.table("withdrawals").select("*", count="exact")
 
+    # ================= FILTER STATUS =================
     if status:
         query = query.eq("status", status)
 
+    # ================= SEARCH USER =================
     if search:
-        query = query.ilike("username", f"%{search}%")
+        users = (
+            supabase.table("users")
+            .select("id")
+            .ilike("username", f"%{search}%")
+            .execute()
+        ).data or []
 
-    withdraws = query.range(start, end).execute()
+        user_ids = [u["id"] for u in users]
 
-    total = withdraws.count or 0
-    total_pages = max(1, (total + per_page - 1) // per_page)
+        if user_ids:
+            query = query.in_("user_id", user_ids)
+        else:
+            query = query.eq("user_id", -1)  # kosongkan hasil
+
+    # ================= COUNT =================
+    count_res = query.execute()
+    total = count_res.count or 0
+
+    total_pages = max(1, ceil(total / per_page))
+
+    if page < 1:
+        page = 1
+    if page > total_pages:
+        page = total_pages
+
+    start = (page - 1) * per_page
+    end = start + per_page - 1
+
+    # ================= DATA =================
+    data_res = (
+        supabase.table("withdrawals")
+        .select("*")
+        .order("id", desc=True)
+        .range(start, end)
+        .execute()
+    )
+
+    withdraws = data_res.data or []
 
     return templates.TemplateResponse(
         "admin_withdraw.html",
         {
             "request": request,
             "admin": admin,
-            "withdraws": withdraws.data or [],
+            "withdraws": withdraws,
+
             "page": page,
             "total_pages": total_pages,
             "status": status,
-            "search": search,
+            "search": search or ""
         }
     )
 @app.get("/admin/withdraw/approve/{withdraw_id}")
-async def approve_withdraw(
-    request: Request,
-    withdraw_id: int
-):
+async def approve_withdraw(request: Request, withdraw_id: int):
+
     admin = get_admin(request)
     if not admin:
         return RedirectResponse("/dashboard", 303)
+
+    w = get_withdraw(withdraw_id)
+    if not w:
+        return RedirectResponse("/admin/withdraw", 303)
+
+    # anti double approve
+    if w["status"] != "process":
+        return RedirectResponse("/admin/withdraw", 303)
 
     supabase.table("withdrawals").update({
         "status": "approved"
@@ -2170,13 +2207,19 @@ async def approve_withdraw(
 
     return RedirectResponse("/admin/withdraw", 303)
 @app.get("/admin/withdraw/process/{withdraw_id}")
-async def process_withdraw(
-    request: Request,
-    withdraw_id: int
-):
+async def process_withdraw(request: Request, withdraw_id: int):
+
     admin = get_admin(request)
     if not admin:
         return RedirectResponse("/dashboard", 303)
+
+    w = get_withdraw(withdraw_id)
+    if not w:
+        return RedirectResponse("/admin/withdraw", 303)
+
+    # anti double action
+    if w["status"] != "pending":
+        return RedirectResponse("/admin/withdraw", 303)
 
     supabase.table("withdrawals").update({
         "status": "process"
@@ -2184,41 +2227,38 @@ async def process_withdraw(
 
     return RedirectResponse("/admin/withdraw", 303)
 @app.get("/admin/withdraw/reject/{withdraw_id}")
-async def reject_withdraw(
-    request: Request,
-    withdraw_id: int
-):
+async def reject_withdraw(request: Request, withdraw_id: int):
+
     admin = get_admin(request)
     if not admin:
         return RedirectResponse("/dashboard", 303)
 
-    withdraw = (
-        supabase.table("withdrawals")
-        .select("*")
-        .eq("id", withdraw_id)
+    w = get_withdraw(withdraw_id)
+    if not w:
+        return RedirectResponse("/admin/withdraw", 303)
+
+    # anti double reject
+    if w["status"] == "rejected":
+        return RedirectResponse("/admin/withdraw", 303)
+
+    # ================= ROLLBACK SALDO =================
+    user = (
+        supabase.table("users")
+        .select("saldo")
+        .eq("id", w["user_id"])
         .single()
         .execute()
-    )
+    ).data
 
-    if withdraw.data:
-
-        data = withdraw.data
-
-        user = (
-            supabase.table("users")
-            .select("saldo")
-            .eq("id", data["user_id"])
-            .single()
-            .execute()
-        )
-
-        saldo = user.data.get("saldo", 0)
+    if user:
+        current_saldo = user.get("saldo") or 0
 
         supabase.table("users").update({
-            "saldo": saldo + data["amount"]
-        }).eq("id", data["user_id"]).execute()
+            "saldo": current_saldo + w["amount"]
+        }).eq("id", w["user_id"]).execute()
 
-    supabase.table("withdraws").update({
+    # update status
+    supabase.table("withdrawals").update({
         "status": "rejected"
     }).eq("id", withdraw_id).execute()
 
