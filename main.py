@@ -259,22 +259,14 @@ async def auth_callback(
     code: str | None = None,
     error: str | None = None
 ):
-
-    # =========================
-    # HANDLE ERROR
-    # =========================
     if error or not code:
         return RedirectResponse("/login?error=google_failed")
 
     try:
-        # =========================
-        # EXCHANGE CODE → SESSION
-        # =========================
         res = supabase.auth.exchange_code_for_session({
             "auth_code": code
         })
 
-        # adaptasi berbagai versi SDK
         session = getattr(res, "session", None)
 
         if not session:
@@ -285,14 +277,19 @@ async def auth_callback(
         if not user:
             return RedirectResponse("/login?error=google_failed")
 
-        email = user.email
+        email = user.email.strip().lower()
 
         if not email:
             return RedirectResponse("/login?error=google_failed")
 
+        print("GOOGLE EMAIL:", email)
+
     except Exception as e:
         traceback.print_exc()
-        return HTMLResponse(f"OAuth Error: {str(e)}", status_code=500)
+        return HTMLResponse(
+            f"OAuth Error: {str(e)}",
+            status_code=500
+        )
 
     # =========================
     # CEK USER DI DATABASE
@@ -305,25 +302,22 @@ async def auth_callback(
         .execute()
     )
 
+    print("RESULT:", result.data)
+
     # =========================
     # USER BELUM ADA
     # =========================
     if not result.data:
+        print("USER NOT FOUND")
         request.session["pending_email"] = email
-        request.session["oauth_email"] = email  # extra safety
+        request.session["oauth_email"] = email
         return RedirectResponse("/setup-username")
 
     user = result.data[0]
 
-    # =========================
-    # CEK BANNED
-    # =========================
     if user.get("is_banned"):
         return RedirectResponse("/login?error=banned")
 
-    # =========================
-# SET SESSION
-# =========================
     request.session["username"] = user.get("username")
     request.session["user_id"] = user.get("id")
     request.session["logged_in"] = True
