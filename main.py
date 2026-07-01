@@ -1647,7 +1647,6 @@ async def links(request: Request, page: int = Query(1, ge=1)):
     if not user_id:
         return RedirectResponse("/login", 303)
 
-    # ================= USER =================
     user = (
         supabase.table("users")
         .select("username, saldo")
@@ -1658,7 +1657,6 @@ async def links(request: Request, page: int = Query(1, ge=1)):
 
     user_data = (user.data or [{}])[0]
 
-    # ================= COUNT ALL =================
     count_res = (
         supabase.table("links")
         .select("id", count="exact")
@@ -1671,18 +1669,16 @@ async def links(request: Request, page: int = Query(1, ge=1)):
     per_page = 10
     total_pages = max(1, ceil(total_links / per_page))
 
-    # ================= SMART CLAMP PAGE =================
     if page < 1:
         page = 1
 
     if page > total_pages:
         page = total_pages
 
-    # ================= CALC RANGE =================
     start = (page - 1) * per_page
     end = start + per_page - 1
 
-    # ================= FETCH DATA =================
+    # ================= FETCH SHORTLINK =================
     links_res = (
         supabase.table("links")
         .select("*")
@@ -1694,8 +1690,17 @@ async def links(request: Request, page: int = Query(1, ge=1)):
 
     links_data = links_res.data or []
 
-    # ================= EDGE CASE: DATA KOSONG DI PAGE VALID =================
-    # kalau halaman valid tapi data kosong (karena delete data)
+    # ================= FETCH SELL LINK =================
+    sell_res = (
+        supabase.table("sell_links")
+        .select("*")
+        .eq("user_id", user_id)
+        .order("id", desc=True)
+        .execute()
+    )
+
+    sell_links = sell_res.data or []
+
     if not links_data and page > 1:
         page = max(1, page - 1)
 
@@ -1713,11 +1718,9 @@ async def links(request: Request, page: int = Query(1, ge=1)):
 
         links_data = links_res.data or []
 
-    # ================= STATS =================
     total_clicks = sum(l.get("clicks") or 0 for l in links_data)
     total_earnings = sum(l.get("earnings") or 0 for l in links_data)
 
-    # ================= NAVIGATION HELPERS =================
     has_prev = page > 1
     has_next = page < total_pages
 
@@ -1725,18 +1728,14 @@ async def links(request: Request, page: int = Query(1, ge=1)):
         "links.html",
         {
             "request": request,
-            "base_url": str(request.base_url),
-
+            "base_url": str(request.base_url).rstrip("/"),
             "links": links_data,
-
+            "sell_links": sell_links,  # ← jangan lupa
             "total_links": total_links,
             "total_clicks": total_clicks,
             "total_earnings": total_earnings,
-
             "saldo": user_data.get("saldo") or 0,
             "username": user_data.get("username") or "",
-
-            # ================= PAGINATION =================
             "page": page,
             "total_pages": total_pages,
             "has_prev": has_prev,
