@@ -446,39 +446,34 @@ function check(){
 }
 
 document.getElementById("setupForm")
-.addEventListener("submit",async(e)=>{
-
+.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    submitBtn.disabled=true;
-    submitBtn.innerText="Memproses...";
+    submitBtn.disabled = true;
+    submitBtn.innerText = "Memproses...";
 
-    let res=await fetch("/setup-username",{
-        method:"POST",
-        body:new FormData(e.target)
-    });
+    try {
+        const res = await fetch("/setup-username", {
+            method: "POST",
+            body: new FormData(e.target)
+        });
 
-    let d=await res.json();
+        const d = await res.json();
 
-    if(d.ok){
-        window.location.href=d.redirect;
-        return;
-    }
+        if (d.ok) {
+            window.location.href = d.redirect;
+            return;
+        }
 
-    submitBtn.disabled=false;
-    submitBtn.innerText="Lanjutkan";
+        throw new Error(d.error || "Terjadi kesalahan.");
 
-    if(d.error==="username_exists"){
-        alert("Username sudah digunakan.");
-    }
-    else if(d.error==="password_too_short"){
-        alert("Password minimal 6 karakter.");
-    }
-    else if(d.error==="password_too_long"){
-        alert("Password maksimal 72 karakter.");
-    }
-    else{
-        alert(d.error || "Terjadi kesalahan.");
+    } catch (err) {
+        console.error(err);
+
+        submitBtn.disabled = false;
+        submitBtn.innerText = "Lanjutkan";
+
+        alert(err.message || "Terjadi kesalahan.");
     }
 });
 </script>
