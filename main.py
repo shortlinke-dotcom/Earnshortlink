@@ -269,8 +269,7 @@ async def login_post(
 # =========================
 @app.get("/auth/google")
 async def auth_google(request: Request):
-    redirect_uri = request.url_for("auth_callback")
-    print("REDIRECT URI:", redirect_uri)
+    redirect_uri = "https://eslink.up.railway.app/auth/callback"
     return await oauth.google.authorize_redirect(
         request,
         redirect_uri
