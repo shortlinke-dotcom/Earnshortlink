@@ -1865,11 +1865,6 @@ async def regenerate_api(request: Request):
 
     return RedirectResponse("/settings?success=api", 303)
 
-@app.post("/logout-all")
-async def logout_all(request: Request):
-    request.session.clear()
-    return RedirectResponse("/login", 303)
-
 @app.post("/delete-account")
 async def delete_account(request: Request):
     user_id = request.session.get("user_id")
@@ -1881,8 +1876,6 @@ async def delete_account(request: Request):
 
     request.session.clear()
     return RedirectResponse("/", 303)
-
-from fastapi import Request
 
 @app.get("/privacy")
 async def privacy(request: Request):
