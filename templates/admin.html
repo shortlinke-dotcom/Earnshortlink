@@ -152,24 +152,6 @@
     {% endfor %}
 </table>
 
-    <table>
-        <tr>
-            <th>ID</th>
-            <th>Username</th>
-            <th>Gmail</th>
-            <th>Saldo</th>
-        </tr>
-
-        {% for u in latest_users %}
-        <tr>
-            <td>{{ u.id }}</td>
-            <td>{{ u.username }}</td>
-            <td>{{ u.gmail }}</td>
-            <td>Rp {{ u.saldo or 0 }}</td>
-        </tr>
-        {% endfor %}
-    </table>
-
 </div>
 
 </body>
