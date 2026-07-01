@@ -2110,6 +2110,7 @@ async def delete_user(request: Request, user_id: str):
         .execute()
 
     return RedirectResponse("/admin", 303)
+# === 🆗 ADMIN WD PANEL
 @app.get("/admin/withdraw")
 async def admin_withdraw(request: Request):
 
@@ -2143,6 +2144,20 @@ async def approve_withdraw(
 
     supabase.table("withdrawals").update({
         "status": "approved"
+    }).eq("id", withdraw_id).execute()
+
+    return RedirectResponse("/admin/withdraw", 303)
+@app.get("/admin/withdraw/process/{withdraw_id}")
+async def process_withdraw(
+    request: Request,
+    withdraw_id: int
+):
+    admin = get_admin(request)
+    if not admin:
+        return RedirectResponse("/dashboard", 303)
+
+    supabase.table("withdrawals").update({
+        "status": "process"
     }).eq("id", withdraw_id).execute()
 
     return RedirectResponse("/admin/withdraw", 303)
