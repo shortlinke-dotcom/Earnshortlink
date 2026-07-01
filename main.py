@@ -259,6 +259,10 @@ async def auth_callback(
     code: str | None = None,
     error: str | None = None
 ):
+    print("CALLBACK HIT")
+    print("CODE:", code)
+    print("ERROR:", error)
+
     if error or not code:
         return RedirectResponse("/login?error=google_failed")
 
