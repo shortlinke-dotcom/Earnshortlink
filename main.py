@@ -2112,25 +2112,47 @@ async def delete_user(request: Request, user_id: str):
     return RedirectResponse("/admin", 303)
 # === 🆗 ADMIN WD PANEL
 @app.get("/admin/withdraw")
-async def admin_withdraw(request: Request):
-
+async def admin_withdraw(
+    request: Request,
+    page: int = 1,
+    status: str = "",
+    search: str = ""
+):
     admin = get_admin(request)
     if not admin:
         return RedirectResponse("/dashboard", 303)
 
-    withdraws = (
+    per_page = 20
+    start = (page - 1) * per_page
+    end = start + per_page - 1
+
+    query = (
         supabase.table("withdrawals")
-        .select("*")
+        .select("*", count="exact")
         .order("id", desc=True)
-        .execute()
     )
+
+    if status:
+        query = query.eq("status", status)
+
+    if search:
+        query = query.ilike("username", f"%{search}%")
+
+    withdraws = query.range(start, end).execute()
+
+    total = withdraws.count or 0
+    total_pages = max(1, (total + per_page - 1) // per_page)
 
     return templates.TemplateResponse(
         "admin_withdraw.html",
         {
             "request": request,
             "admin": admin,
-            "withdraws": withdraws.data or []
+            "withdraws": withdraws.data or [],
+            "page": page,
+            "total_pages": total_pages,
+            "status": status,
+            "search": search,
         }
     )
 @app.get("/admin/withdraw/approve/{withdraw_id}")
