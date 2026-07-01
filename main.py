@@ -16,6 +16,7 @@ from fastapi.responses import (
 )
 from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
+from authlib.integrations.starlette_client import OAuth
 
 from auth import hash_password, verify_password
 from database import supabase
@@ -27,6 +28,18 @@ from database import supabase
 
 app = FastAPI()
 
+
+oauth = OAuth()
+
+oauth.register(
+    name="google",
+    client_id=os.getenv("GOOGLE_CLIENT_ID"),
+    client_secret=os.getenv("GOOGLE_CLIENT_SECRET"),
+    server_metadata_url="https://accounts.google.com/.well-known/openid-configuration",
+    client_kwargs={
+        "scope": "openid email profile"
+    }
+)
 # Ambil secret dari Railway Environment Variables
 SESSION_SECRET = os.getenv(
     "SESSION_SECRET",
@@ -239,15 +252,12 @@ async def login_post(
 # GOOGLE LOGIN (START)
 # =========================
 @app.get("/auth/google")
-async def auth_google():
-    res = supabase.auth.sign_in_with_oauth({
-        "provider": "google",
-        "options": {
-            "redirect_to": "https://eslink.up.railway.app/auth/callback"
-        }
-    })
-
-    return RedirectResponse(res.url)
+async def auth_google(request: Request):
+    redirect_uri = request.url_for("auth_callback")
+    return await oauth.google.authorize_redirect(
+        request,
+        redirect_uri
+    )
     
 # =========================
 # GOOGLE CALLBACK (FINAL)
@@ -255,166 +265,59 @@ async def auth_google():
 
 @app.get("/auth/callback")
 async def auth_callback(request: Request):
-    return HTMLResponse("""
-    <script>
-    const hash = window.location.hash;
-    if(hash){
-        window.location.href =
-            "/auth/finish?" +
-            hash.substring(1);
-    }
-    </script>
-    Login berhasil...
-    """)
+    token = await oauth.google.authorize_access_token(request)
 
-    try:
-        debug.append("CALLBACK HIT")
-        debug.append(f"CODE = {code}")
-        debug.append(f"ERROR = {error}")
+    user = token.get("userinfo")
 
-        if error or not code:
-            return HTMLResponse(
-                "<br>".join(debug) +
-                "<br><br>❌ google_failed"
-            )
+    if not user:
+        return HTMLResponse("Google login gagal", 400)
 
-        res = supabase.auth.exchange_code_for_session({
-            "auth_code": code
-        })
+    email = user["email"].lower().strip()
 
-        session = getattr(res, "session", None)
-        debug.append(f"SESSION EXISTS = {session is not None}")
+    result = (
+        supabase.table("users")
+        .select("*")
+        .eq("gmail", email)
+        .limit(1)
+        .execute()
+    )
 
-        if not session:
-            return HTMLResponse(
-                "<br>".join(debug) +
-                "<br><br>❌ Session kosong"
-            )
+    # Email belum terdaftar
+    if not result.data:
+        request.session["pending_email"] = email
+        return RedirectResponse("/setup-username", 303)
 
-        oauth_user = getattr(session, "user", None)
-        debug.append(f"USER EXISTS = {oauth_user is not None}")
+    # Login
+    db_user = result.data[0]
 
-        if not oauth_user:
-            return HTMLResponse(
-                "<br>".join(debug) +
-                "<br><br>❌ User kosong"
-            )
+    request.session["user_id"] = db_user["id"]
+    request.session["username"] = db_user["username"]
+    request.session["logged_in"] = True
 
-        # =========================
-        # AMBIL EMAIL GOOGLE
-        # =========================
-        email = str(oauth_user.email or "")
-        email = email.strip().lower()
-        email = email.replace("[", "")
-        email = email.replace("]", "")
-        email = email.replace("'", "")
-        email = email.replace('"', "")
+    token_session = secrets.token_hex(32)
 
-        debug.append(f"EMAIL FIXED = [{email}]")
+    supabase.table("users").update({
+        "session_token": token_session,
+        "last_activity": datetime.now(
+            timezone.utc
+        ).isoformat()
+    }).eq("id", db_user["id"]).execute()
 
-        if not email:
-            return HTMLResponse(
-                "<br>".join(debug) +
-                "<br><br>❌ Email kosong"
-            )
+    response = RedirectResponse(
+        "/dashboard",
+        status_code=303
+    )
 
-        # DEBUG SEMUA USER
-        all_users = (
-            supabase.table("users")
-            .select("id,gmail,username")
-            .execute()
-        )
+    response.set_cookie(
+        key="session_token",
+        value=token_session,
+        max_age=2592000,
+        httponly=True,
+        samesite="lax",
+        secure=False
+    )
 
-        debug.append(
-            f"ALL USERS = {all_users.data}"
-        )
-
-        # =========================
-        # CARI USER
-        # =========================
-        result = (
-            supabase.table("users")
-            .select("*")
-            .eq("gmail", email)
-            .limit(1)
-            .execute()
-        )
-
-        debug.append(f"RESULT = {result.data}")
-
-        # =========================
-        # USER BELUM ADA
-        # =========================
-        if not result.data:
-            debug.append("❌ USER NOT FOUND")
-
-            request.session["pending_email"] = email
-            request.session["oauth_email"] = email
-
-            return HTMLResponse(
-                "<br>".join(debug)
-            )
-
-        # =========================
-        # USER DITEMUKAN
-        # =========================
-        db_user = result.data[0]
-
-        debug.append("✅ USER FOUND")
-        debug.append(f"ID = {db_user['id']}")
-        debug.append(
-            f"USERNAME = {db_user['username']}"
-        )
-        debug.append(
-            f"GMAIL DB = {db_user['gmail']}"
-        )
-
-        # =========================
-        # LOGIN
-        # =========================
-        request.session["username"] = db_user["username"]
-        request.session["user_id"] = db_user["id"]
-        request.session["logged_in"] = True
-        request.session["email"] = email
-
-        token = secrets.token_hex(32)
-
-        supabase.table("users").update({
-            "session_token": token,
-            "last_activity":
-                datetime.now(
-                    timezone.utc
-                ).isoformat()
-        }).eq(
-            "id",
-            db_user["id"]
-        ).execute()
-
-        request.session["session_token"] = token
-
-        response = RedirectResponse(
-            "/dashboard",
-            status_code=303
-        )
-
-        response.set_cookie(
-            key="session_token",
-            value=token,
-            max_age=2592000,
-            httponly=True,
-            samesite="lax",
-            secure=False
-        )
-
-        return response
-
-    except Exception as e:
-        debug.append(f"❌ EXCEPTION = {str(e)}")
-        debug.append(traceback.format_exc())
-
-        return HTMLResponse(
-            "<br>".join(debug)
-        )
+    return response
     
 # =========================
 # SETUP USERNAME (GET)
