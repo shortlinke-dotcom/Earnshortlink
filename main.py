@@ -165,10 +165,6 @@ async def login_page(request: Request, error: str | None = None):
         {"request": request, "error": message}
     )
 
-
-# =========================
-# LOGIN
-# =========================
 # =========================
 # LOGIN
 # =========================
@@ -486,13 +482,18 @@ async def setup_username_post(
         .execute()
     )
 
+    print("INSERT RESULT:", insert)
+    print("INSERT DATA:", insert.data)
+
     if not insert.data:
+        print("INSERT FAILED")
         return JSONResponse({
             "ok": False,
             "error": "insert_failed"
         })
 
     new_user = insert.data[0]
+    print("NEW USER:", new_user)
 
     request.session["username"] = new_user["username"]
     request.session["user_id"] = new_user["id"]
