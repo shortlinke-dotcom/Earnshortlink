@@ -1908,8 +1908,8 @@ async def terms(request: Request):
 # =========================
 # LOGOUT
 # =========================
-@app.post("/logout-all")
-async def logout_all(request: Request):
+@app.get("/logout")
+async def logout(request: Request):
     user_id = request.session.get("user_id")
 
     if user_id:
