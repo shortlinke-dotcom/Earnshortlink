@@ -26,10 +26,18 @@ from database import supabase
 # =========================
 app = FastAPI()
 
+SESSION_SECRET = os.getenv("SESSION_SECRET")
+
+if not SESSION_SECRET:
+    SESSION_SECRET = "change-this-secret-key-to-a-long-random-string"
+
 app.add_middleware(
     SessionMiddleware,
-    secret_key=os.getenv("SESSION_SECRET")
+    secret_key=SESSION_SECRET
 )
+
+print("SESSION_SECRET:", SESSION_SECRET)
+print("MIDDLEWARE:", app.user_middleware)
 
 templates = Jinja2Templates(directory="templates")
 
