@@ -254,21 +254,17 @@ async def auth_google():
 # =========================
 
 @app.get("/auth/callback")
-async def auth_callback(
-    request: Request,
-    code: str | None = None,
-    error: str | None = None
-):
-    return HTMLResponse(f"""
-    <h2>Google Login</h2>
-    <p>CODE: {code}</p>
-    <p>ERROR: {error}</p>
-    <p>URL: {request.url}</p>
-
+async def auth_callback(request: Request):
+    return HTMLResponse("""
     <script>
-        const hash = window.location.hash;
-        document.body.innerHTML += "<p>HASH: " + hash + "</p>";
+    const hash = window.location.hash;
+    if(hash){
+        window.location.href =
+            "/auth/finish?" +
+            hash.substring(1);
+    }
     </script>
+    Login berhasil...
     """)
 
     try:
