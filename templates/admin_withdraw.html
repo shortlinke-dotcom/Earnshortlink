@@ -12,10 +12,16 @@
             padding:30px;
         }
 
+        h1{
+            margin-bottom:25px;
+        }
+
         table{
             width:100%;
             border-collapse:collapse;
             background:#1e293b;
+            border-radius:15px;
+            overflow:hidden;
         }
 
         th,td{
@@ -27,19 +33,37 @@
             background:#111827;
         }
 
-        a{
+        .pending{
+            color:#facc15;
+        }
+
+        .process{
             color:#38bdf8;
+        }
+
+        .approved{
+            color:#22c55e;
+        }
+
+        .rejected{
+            color:#ef4444;
+        }
+
+        a{
             text-decoration:none;
+            margin-right:10px;
+            color:#38bdf8;
         }
     </style>
 </head>
 <body>
 
-<h1>Withdraw Management</h1>
+<h1>💸 Withdraw Management</h1>
 
 <table>
 
 <tr>
+    <th>ID</th>
     <th>User ID</th>
     <th>Jumlah</th>
     <th>Metode</th>
@@ -50,21 +74,57 @@
 {% for w in withdraws %}
 <tr>
 
+    <td>{{ w.id }}</td>
     <td>{{ w.user_id }}</td>
-    <td>Rp {{ "{:,.0f}".format(w.amount or 0).replace(",",".") }}</td>
+    <td>
+        Rp {{ "{:,.0f}".format(w.amount or 0).replace(",",".") }}
+    </td>
+
     <td>{{ w.method }}</td>
-    <td>{{ w.status }}</td>
 
     <td>
+
         {% if w.status == "pending" %}
-            <a href="/admin/withdraw/approve/{{ w.id }}">
-                Approve
+            <span class="pending">🟡 Pending</span>
+
+        {% elif w.status == "process" %}
+            <span class="process">🔵 Process</span>
+
+        {% elif w.status == "approved" %}
+            <span class="approved">🟢 Approved</span>
+
+        {% else %}
+            <span class="rejected">🔴 Rejected</span>
+        {% endif %}
+
+    </td>
+
+    <td>
+
+        {% if w.status == "pending" %}
+
+            <a href="/admin/withdraw/process/{{ w.id }}">
+                Process
             </a>
-            |
+
             <a href="/admin/withdraw/reject/{{ w.id }}">
                 Reject
             </a>
+
+        {% elif w.status == "process" %}
+
+            <a href="/admin/withdraw/approve/{{ w.id }}">
+                Approve
+            </a>
+
+            <a href="/admin/withdraw/reject/{{ w.id }}">
+                Reject
+            </a>
+
+        {% else %}
+            -
         {% endif %}
+
     </td>
 
 </tr>
