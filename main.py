@@ -1922,58 +1922,16 @@ async def logout(request: Request):
     return response
 
 
-# ==============
-# ADMIN 
-# ==============
+# =========================
+# ADMIN HELPER
+# =========================
 def get_admin(request: Request):
     user_id = request.session.get("user_id")
 
     if not user_id:
         return None
 
-    user = (
-        supabase.table("users")
-        .select("*")
-        .eq("id", user_id)
-        .limit(1)
-        .execute()
-    )
-
-    if not user.data:
-        return None
-
-    data = user.data[0]
-
-    if not data.get("is_admin"):
-        return None
-
-    return data
-
-@app.get("/admin")
-async def admin_dashboard(request: Request):
-
-    admin = get_admin(request)
-
-    if not admin:
-        return RedirectResponse("/dashboard", 303)
-
-    return templates.TemplateResponse(
-        "admin/dashboard.html",
-        {
-            "request": request,
-            "admin": admin
-        }
-    )
-@app.get("/admin")
-async def admin_panel(request: Request):
-
-    user_id = request.session.get("user_id")
-
-    if not user_id:
-        return RedirectResponse("/login", 303)
-
-    # Ambil data user login
-    user_res = (
+    res = (
         supabase.table("users")
         .select("*")
         .eq("id", user_id)
@@ -1981,16 +1939,29 @@ async def admin_panel(request: Request):
         .execute()
     )
 
-    if not user_res.data:
-        return RedirectResponse("/login", 303)
+    if not res.data:
+        return None
 
-    user = user_res.data
+    user = res.data
 
-    # Cek admin
     if not user.get("is_admin"):
-        return HTMLResponse("Access Denied", status_code=403)
+        return None
 
-    # Statistik
+    return user
+
+
+# =========================
+# ADMIN DASHBOARD
+# =========================
+@app.get("/admin")
+async def admin_dashboard(request: Request):
+
+    admin = get_admin(request)
+
+    if not admin:
+        return RedirectResponse("/dashboard", status_code=303)
+
+    # ================= STATISTIK =================
     total_users = (
         supabase.table("users")
         .select("id", count="exact")
@@ -2009,33 +1980,112 @@ async def admin_panel(request: Request):
         .execute()
     ).count or 0
 
-    withdraw_count = (
-        supabase.table("withdraws")
-        .select("id", count="exact")
-        .eq("status", "pending")
-        .execute()
-    ).count or 0
+    # kalau tabel withdraws belum ada, ubah jadi 0
+    try:
+        withdraw_count = (
+            supabase.table("withdraws")
+            .select("id", count="exact")
+            .eq("status", "pending")
+            .execute()
+        ).count or 0
+    except:
+        withdraw_count = 0
 
-    latest_users = (
+    # ================= USERS =================
+    users_res = (
         supabase.table("users")
         .select("*")
         .order("id", desc=True)
-        .limit(10)
         .execute()
+    )
+
+    users = users_res.data or []
+
+    # ================= TOTAL SALDO =================
+    total_saldo = sum(
+        u.get("saldo") or 0
+        for u in users
     )
 
     return templates.TemplateResponse(
         "admin.html",
         {
             "request": request,
-            "user": user,
+            "admin": admin,
+
             "total_users": total_users,
             "total_links": total_links,
             "total_sell_links": total_sell_links,
             "withdraw_count": withdraw_count,
-            "latest_users": latest_users.data or []
+            "total_saldo": total_saldo,
+
+            "users": users
         }
     )
+@app.get("/admin/ban/{user_id}")
+async def ban_user(request: Request, user_id: str):
+
+    admin_id = request.session.get("user_id")
+
+    if not admin_id:
+        return RedirectResponse("/login", 303)
+
+    admin = (
+        supabase.table("users")
+        .select("is_admin")
+        .eq("id", admin_id)
+        .single()
+        .execute()
+    )
+
+    if not admin.data or not admin.data["is_admin"]:
+        return HTMLResponse("Access Denied", 403)
+
+    supabase.table("users").update({
+        "is_banned": True
+    }).eq("id", user_id).execute()
+
+    return RedirectResponse("/admin", 303)
+@app.get("/admin/delete-user/{user_id}")
+async def delete_user(request: Request, user_id: str):
+
+    admin_id = request.session.get("user_id")
+
+    if not admin_id:
+        return RedirectResponse("/login", 303)
+
+    admin = (
+        supabase.table("users")
+        .select("is_admin")
+        .eq("id", admin_id)
+        .single()
+        .execute()
+    )
+
+    if not admin.data or not admin.data["is_admin"]:
+        return HTMLResponse("Access Denied", 403)
+
+    supabase.table("links")\
+        .delete()\
+        .eq("user_id", user_id)\
+        .execute()
+
+    supabase.table("sell_links")\
+        .delete()\
+        .eq("user_id", user_id)\
+        .execute()
+
+    supabase.table("referrals")\
+        .delete()\
+        .eq("referred_user_id", user_id)\
+        .execute()
+
+    supabase.table("users")\
+        .delete()\
+        .eq("id", user_id)\
+        .execute()
+
+    return RedirectResponse("/admin", 303)
 
 
 from fastapi.responses import HTMLResponse
