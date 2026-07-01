@@ -24,16 +24,20 @@ from database import supabase
 # =========================
 # APP INIT (ONLY ONCE)
 # =========================
+
 app = FastAPI()
 
-SESSION_SECRET = os.getenv("SESSION_SECRET")
-
-if not SESSION_SECRET:
-    SESSION_SECRET = "change-this-secret-key-to-a-long-random-string"
+# Ambil secret dari Railway Environment Variables
+SESSION_SECRET = os.getenv(
+    "SESSION_SECRET",
+    "Yeni-saputra-keynarra-14072025"
+)
 
 app.add_middleware(
     SessionMiddleware,
-    secret_key=SESSION_SECRET
+    secret_key=SESSION_SECRET,
+    same_site="lax",
+    https_only=True
 )
 
 print("SESSION_SECRET:", SESSION_SECRET)
