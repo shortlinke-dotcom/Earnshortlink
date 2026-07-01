@@ -48,7 +48,7 @@ app.add_middleware(
     SessionMiddleware,
     secret_key=SESSION_SECRET,
     same_site="lax",
-    https_only=True
+    https_only=False
 )
 
 print("SESSION_SECRET:", SESSION_SECRET)
@@ -271,6 +271,8 @@ async def login_post(
 @app.get("/auth/google")
 async def auth_google(request: Request):
     redirect_uri = request.url_for("auth_callback")
+    print("REDIRECT URI:", redirect_uri)
+
     return await oauth.google.authorize_redirect(
         request,
         redirect_uri
