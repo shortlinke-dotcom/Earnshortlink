@@ -45,6 +45,8 @@ SUPABASE_URL = os.getenv("SUPABASE_URL")
 
 @app.middleware("http")
 async def check_session(request: Request, call_next):
+    print("HAS SESSION:", "session" in request.scope)
+
     public_paths = [
         "/",
         "/login",
@@ -104,14 +106,15 @@ async def check_session(request: Request, call_next):
     except:
         pass
 
-    # update aktivitas terakhir
     supabase.table("users").update({
         "last_activity": datetime.now(timezone.utc).isoformat()
     }).eq("id", user["id"]).execute()
 
-    request.session["user_id"] = user["id"]
-    request.session["username"] = user["username"]
-    request.session["logged_in"] = True
+    # Pastikan SessionMiddleware aktif
+    if "session" in request.scope:
+        request.session["user_id"] = user["id"]
+        request.session["username"] = user["username"]
+        request.session["logged_in"] = True
 
     return await call_next(request)
 
