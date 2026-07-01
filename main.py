@@ -141,7 +141,7 @@ async def check_session(request: Request, call_next):
     # =========================
     # SET SESSION (SAFE ONLY)
     # =========================
-    if hasattr(request, "session"):
+    if "session" in request.scope:
         request.session["user_id"] = user["id"]
         request.session["username"] = user["username"]
         request.session["logged_in"] = True
