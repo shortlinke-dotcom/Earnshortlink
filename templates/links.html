@@ -410,11 +410,11 @@ tbody tr:hover{
 <div class="card">
 
     <div class="link-tabs">
-        <button class="tab-btn active" onclick="showTab('ads')">
+        <button type="button" class="tab-btn active" onclick="showTab('ads')">
             📢 Ads Links
         </button>
 
-        <button class="tab-btn" onclick="showTab('sell')">
+        <button type="button" class="tab-btn" onclick="showTab('sell')">
             💰 Sell Links
         </button>
     </div>
@@ -422,18 +422,20 @@ tbody tr:hover{
     <!-- ADS LINKS -->
     <div id="adsTab" class="tab-content">
 
-        {% for link in links %}
-        {% if link.type == "ads" %}
-        <div class="link-card">
+        {% set ads_count = 0 %}
 
+        {% for link in links %}
+        {% if (link.price|default(0)|int) <= 0 %}
+
+        <div class="link-card">
             <div class="link-info">
-                <h4>{{ link.title }}</h4>
+                <h4>{{ link.title or 'Tanpa Judul' }}</h4>
                 <small>{{ base_url }}/s/{{ link.short_code }}</small>
 
                 <div class="link-meta">
-                    <span>👁 {{ link.clicks or 0 }} Klik</span>
+                    <span>👁 {{ link.clicks|default(0) }} Klik</span>
                     <span>
-                        Rp {{ "{:,.0f}".format(link.earnings or 0).replace(",",".") }}
+                        Rp {{ "{:,.0f}".format(link.earnings|default(0)).replace(",", ".") }}
                     </span>
                 </div>
             </div>
@@ -441,13 +443,14 @@ tbody tr:hover{
             <div class="link-actions">
 
                 {% if link.is_active %}
-                <span class="status active">On</span>
+                    <span class="status active">On</span>
                 {% else %}
-                <span class="status inactive">Off</span>
+                    <span class="status inactive">Off</span>
                 {% endif %}
 
-                <button class="action-btn copy"
-                    onclick="copyText('{{ base_url }}/s/{{ link.short_code }}')">
+                <button type="button"
+                        class="action-btn copy"
+                        onclick="copyText('{{ base_url }}/s/{{ link.short_code }}')">
                     <i class="fas fa-copy"></i>
                 </button>
 
@@ -456,46 +459,59 @@ tbody tr:hover{
                     <i class="fas fa-pen"></i>
                 </a>
 
-                <button class="action-btn delete"
+                <button type="button"
+                        class="action-btn delete"
                         onclick="deleteLink('{{ link.id }}')">
                     <i class="fas fa-trash"></i>
                 </button>
 
             </div>
-
         </div>
+
+        {% set ads_count = ads_count + 1 %}
         {% endif %}
         {% endfor %}
+
+        {% if ads_count == 0 %}
+        <p style="text-align:center;color:#64748b;padding:20px;">
+            Belum ada Ads Link.
+        </p>
+        {% endif %}
 
     </div>
 
     <!-- SELL LINKS -->
-    <div id="sellTab" class="tab-content" style="display:none">
+    <div id="sellTab" class="tab-content" style="display:none;">
+
+        {% set sell_count = 0 %}
 
         {% for link in links %}
-        {% if link.type == "sell" %}
-        <div class="link-card">
+        {% if (link.price|default(0)|int) > 0 %}
 
+        <div class="link-card">
             <div class="link-info">
-                <h4>{{ link.title }}</h4>
+                <h4>{{ link.title or 'Tanpa Judul' }}</h4>
                 <small>{{ base_url }}/s/{{ link.short_code }}</small>
 
                 <div class="link-meta">
-                    <span>💰 Rp {{ "{:,.0f}".format(link.price or 0).replace(",",".") }}</span>
-                    <span>👁 {{ link.clicks or 0 }}</span>
+                    <span>
+                        💰 Rp {{ "{:,.0f}".format(link.price|default(0)).replace(",", ".") }}
+                    </span>
+                    <span>👁 {{ link.clicks|default(0) }} Klik</span>
                 </div>
             </div>
 
             <div class="link-actions">
 
                 {% if link.is_active %}
-                <span class="status active">On</span>
+                    <span class="status active">On</span>
                 {% else %}
-                <span class="status inactive">Off</span>
+                    <span class="status inactive">Off</span>
                 {% endif %}
 
-                <button class="action-btn copy"
-                    onclick="copyText('{{ base_url }}/s/{{ link.short_code }}')">
+                <button type="button"
+                        class="action-btn copy"
+                        onclick="copyText('{{ base_url }}/s/{{ link.short_code }}')">
                     <i class="fas fa-copy"></i>
                 </button>
 
@@ -504,16 +520,24 @@ tbody tr:hover{
                     <i class="fas fa-pen"></i>
                 </a>
 
-                <button class="action-btn delete"
+                <button type="button"
+                        class="action-btn delete"
                         onclick="deleteLink('{{ link.id }}')">
                     <i class="fas fa-trash"></i>
                 </button>
 
             </div>
-
         </div>
+
+        {% set sell_count = sell_count + 1 %}
         {% endif %}
         {% endfor %}
+
+        {% if sell_count == 0 %}
+        <p style="text-align:center;color:#64748b;padding:20px;">
+            Belum ada Sell Link.
+        </p>
+        {% endif %}
 
     </div>
 
@@ -596,7 +620,11 @@ function showTab(type){
     document.querySelectorAll(".tab-btn")
         .forEach(btn => btn.classList.remove("active"));
 
-    event.target.classList.add("active");
+    if(type === "ads"){
+        document.querySelectorAll(".tab-btn")[0].classList.add("active");
+    }else{
+        document.querySelectorAll(".tab-btn")[1].classList.add("active");
+    }
 }
 
 async function deleteLink(id){
