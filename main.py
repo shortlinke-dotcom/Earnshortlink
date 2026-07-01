@@ -48,7 +48,7 @@ app.add_middleware(
     secret_key=SESSION_SECRET,
     same_site="lax",
     https_only=False,
-    max_age=60 * 60 * 24 * 7  # 7 hari (biar stabil)
+    max_age=604800
 )
 
 print("SESSION_SECRET:", SESSION_SECRET)
@@ -259,7 +259,7 @@ async def login_post(
         max_age=2592000,
         httponly=True,
         samesite="lax",
-        secure=True
+        secure=False
     )
 
     return response
