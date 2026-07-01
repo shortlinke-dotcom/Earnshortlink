@@ -59,14 +59,52 @@
 <body>
 
 <h1>💸 Withdraw Management</h1>
+<form method="get" style="margin-bottom:20px;">
 
+    <input
+        type="text"
+        name="search"
+        placeholder="Cari username..."
+        value="{{ search }}"
+    >
+
+    <select name="status">
+        <option value="">Semua Status</option>
+        <option value="pending"
+            {% if status=="pending" %}selected{% endif %}>
+            Pending
+        </option>
+
+        <option value="process"
+            {% if status=="process" %}selected{% endif %}>
+            Process
+        </option>
+
+        <option value="approved"
+            {% if status=="approved" %}selected{% endif %}>
+            Approved
+        </option>
+
+        <option value="rejected"
+            {% if status=="rejected" %}selected{% endif %}>
+            Rejected
+        </option>
+    </select>
+
+    <button type="submit">
+        Filter
+    </button>
+
+</form>
 <table>
 
 <tr>
     <th>ID</th>
-    <th>User ID</th>
+    <th>User</th>
     <th>Jumlah</th>
     <th>Metode</th>
+    <th>Rekening</th>
+    <th>Tanggal</th>
     <th>Status</th>
     <th>Aksi</th>
 </tr>
@@ -75,62 +113,72 @@
 <tr>
 
     <td>{{ w.id }}</td>
+
     <td>{{ w.user_id }}</td>
+
     <td>
         Rp {{ "{:,.0f}".format(w.amount or 0).replace(",",".") }}
     </td>
 
-    <td>{{ w.method }}</td>
+    <td>{{ w.method or "-" }}</td>
 
     <td>
-
-        {% if w.status == "pending" %}
-            <span class="pending">🟡 Pending</span>
-
-        {% elif w.status == "process" %}
-            <span class="process">🔵 Process</span>
-
-        {% elif w.status == "approved" %}
-            <span class="approved">🟢 Approved</span>
-
-        {% else %}
-            <span class="rejected">🔴 Rejected</span>
-        {% endif %}
-
+        {{ w.account_name or "-" }}<br>
+        {{ w.account_number or "-" }}
     </td>
 
     <td>
+        {{ w.created_at[:19].replace("T"," ") if w.created_at else "-" }}
+    </td>
 
+    <td>
         {% if w.status == "pending" %}
+            <span class="pending">🟡 Pending</span>
+        {% elif w.status == "process" %}
+            <span class="process">🔵 Process</span>
+        {% elif w.status == "approved" %}
+            <span class="approved">🟢 Approved</span>
+        {% else %}
+            <span class="rejected">🔴 Rejected</span>
+        {% endif %}
+    </td>
 
-            <a href="/admin/withdraw/process/{{ w.id }}">
-                Process
-            </a>
-
-            <a href="/admin/withdraw/reject/{{ w.id }}">
-                Reject
-            </a>
+    <td>
+        {% if w.status == "pending" %}
+            <a href="/admin/withdraw/process/{{ w.id }}">Process</a>
+            |
+            <a href="/admin/withdraw/reject/{{ w.id }}">Reject</a>
 
         {% elif w.status == "process" %}
-
-            <a href="/admin/withdraw/approve/{{ w.id }}">
-                Approve
-            </a>
-
-            <a href="/admin/withdraw/reject/{{ w.id }}">
-                Reject
-            </a>
+            <a href="/admin/withdraw/approve/{{ w.id }}">Approve</a>
+            |
+            <a href="/admin/withdraw/reject/{{ w.id }}">Reject</a>
 
         {% else %}
             -
         {% endif %}
-
     </td>
 
 </tr>
 {% endfor %}
 
 </table>
+<div style="margin-top:20px;">
 
+    {% if page > 1 %}
+        <a href="?page={{ page-1 }}&status={{ status }}&search={{ search }}">
+            ← Prev
+        </a>
+    {% endif %}
+
+    Halaman {{ page }} / {{ total_pages }}
+
+    {% if page < total_pages %}
+        <a href="?page={{ page+1 }}&status={{ status }}&search={{ search }}">
+            Next →
+        </a>
+    {% endif %}
+
+</div>
 </body>
 </html>
