@@ -259,90 +259,67 @@ async def auth_callback(
     code: str | None = None,
     error: str | None = None
 ):
-    print("CALLBACK HIT")
-    print("CODE:", code)
-    print("ERROR:", error)
-
-    if error or not code:
-        return RedirectResponse("/login?error=google_failed")
+    debug = []
 
     try:
+        debug.append(f"CALLBACK HIT")
+        debug.append(f"CODE = {code}")
+        debug.append(f"ERROR = {error}")
+
+        if error or not code:
+            return HTMLResponse("<br>".join(debug) + "<br><br>❌ google_failed")
+
         res = supabase.auth.exchange_code_for_session({
             "auth_code": code
         })
 
         session = getattr(res, "session", None)
+        debug.append(f"SESSION EXISTS = {session is not None}")
+
         if not session:
-            return RedirectResponse("/login?error=google_failed")
+            return HTMLResponse("<br>".join(debug) + "<br><br>❌ Session kosong")
 
         oauth_user = getattr(session, "user", None)
+        debug.append(f"USER EXISTS = {oauth_user is not None}")
+
         if not oauth_user:
-            return RedirectResponse("/login?error=google_failed")
+            return HTMLResponse("<br>".join(debug) + "<br><br>❌ User kosong")
 
         email = (oauth_user.email or "").strip().lower()
-
-        print("GOOGLE EMAIL:", repr(email))
+        debug.append(f"EMAIL = [{repr(email)}]")
 
         if not email:
-            return RedirectResponse("/login?error=google_failed")
+            return HTMLResponse("<br>".join(debug) + "<br><br>❌ Email kosong")
+
+        result = (
+            supabase.table("users")
+            .select("*")
+            .ilike("gmail", email)
+            .limit(1)
+            .execute()
+        )
+
+        debug.append(f"RESULT = {result.data}")
+
+        if not result.data:
+            debug.append("❌ USER NOT FOUND")
+            request.session["pending_email"] = email
+
+            return HTMLResponse("<br>".join(debug))
+
+        db_user = result.data[0]
+
+        debug.append(f"✅ USER FOUND")
+        debug.append(f"ID = {db_user.get('id')}")
+        debug.append(f"USERNAME = {db_user.get('username')}")
+        debug.append(f"GMAIL DB = [{db_user.get('gmail')}]")
+
+        return HTMLResponse("<br>".join(debug))
 
     except Exception as e:
         traceback.print_exc()
-        return HTMLResponse(
-            f"OAuth Error: {str(e)}",
-            status_code=500
-        )
-
-    # CEK USER DI DATABASE
-    result = (
-        supabase.table("users")
-        .select("*")
-        .ilike("gmail", email)
-        .limit(1)
-        .execute()
-    )
-
-    print("RESULT:", result.data)
-
-    # USER BELUM TERDAFTAR
-    if not result.data:
-        print("USER NOT FOUND")
-        request.session["pending_email"] = email
-        return RedirectResponse("/setup-username", 303)
-
-    db_user = result.data[0]
-
-    # CEK BANNED
-    if db_user.get("is_banned"):
-        return RedirectResponse("/login?error=banned", 303)
-
-    # LOGIN
-    request.session["username"] = db_user["username"]
-    request.session["user_id"] = db_user["id"]
-    request.session["logged_in"] = True
-    request.session["email"] = email
-
-    token = secrets.token_hex(32)
-
-    supabase.table("users").update({
-        "session_token": token,
-        "last_activity": datetime.now(timezone.utc).isoformat()
-    }).eq("id", db_user["id"]).execute()
-
-    request.session["session_token"] = token
-
-    response = RedirectResponse("/dashboard", 303)
-
-    response.set_cookie(
-        key="session_token",
-        value=token,
-        max_age=2592000,
-        httponly=True,
-        samesite="lax",
-        secure=False
-    )
-
-    return response
+        debug.append(f"❌ EXCEPTION = {str(e)}")
+        return HTMLResponse("<br>".join(debug))
     
 # =========================
 # SETUP USERNAME (GET)
