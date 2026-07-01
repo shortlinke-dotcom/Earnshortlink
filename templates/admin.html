@@ -93,7 +93,64 @@
 
     </div>
 
-    <h2>User Terbaru</h2>
+<h2>Kelola User</h2>
+
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Username</th>
+        <th>Gmail</th>
+        <th>Saldo</th>
+        <th>Status</th>
+        <th>Aksi</th>
+    </tr>
+
+    {% for u in users %}
+    <tr>
+
+        <td>{{ u.id }}</td>
+        <td>{{ u.username }}</td>
+        <td>{{ u.gmail }}</td>
+        <td>Rp {{ u.saldo or 0 }}</td>
+
+        <td>
+            {% if u.is_banned %}
+                🚫 Banned
+            {% else %}
+                ✅ Active
+            {% endif %}
+        </td>
+
+        <td>
+
+            {% if not u.is_admin %}
+
+                {% if u.is_banned %}
+                <a href="/admin/unban/{{ u.id }}">
+                    Unban
+                </a>
+                {% else %}
+                <a href="/admin/ban/{{ u.id }}">
+                    Ban
+                </a>
+                {% endif %}
+
+                |
+
+                <a
+                  href="/admin/delete-user/{{ u.id }}"
+                  onclick="return confirm('Hapus user ini?')"
+                >
+                    Delete
+                </a>
+
+            {% endif %}
+
+        </td>
+
+    </tr>
+    {% endfor %}
+</table>
 
     <table>
         <tr>
