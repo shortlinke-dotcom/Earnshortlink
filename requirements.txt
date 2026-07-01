@@ -8,3 +8,5 @@ bcrypt==4.0.1
 requests==2.32.3
 itsdangerous
 google-auth
+authlib
+httpx
