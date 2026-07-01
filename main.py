@@ -2110,6 +2110,82 @@ async def delete_user(request: Request, user_id: str):
         .execute()
 
     return RedirectResponse("/admin", 303)
+@app.get("/admin/withdraw")
+async def admin_withdraw(request: Request):
+
+    admin = get_admin(request)
+    if not admin:
+        return RedirectResponse("/dashboard", 303)
+
+    withdraws = (
+        supabase.table("withdraws")
+        .select("*")
+        .order("id", desc=True)
+        .execute()
+    )
+
+    return templates.TemplateResponse(
+        "admin_withdraw.html",
+        {
+            "request": request,
+            "admin": admin,
+            "withdraws": withdraws.data or []
+        }
+    )
+@app.get("/admin/withdraw/approve/{withdraw_id}")
+async def approve_withdraw(
+    request: Request,
+    withdraw_id: int
+):
+    admin = get_admin(request)
+    if not admin:
+        return RedirectResponse("/dashboard", 303)
+
+    supabase.table("withdraws").update({
+        "status": "approved"
+    }).eq("id", withdraw_id).execute()
+
+    return RedirectResponse("/admin/withdraw", 303)
+@app.get("/admin/withdraw/reject/{withdraw_id}")
+async def reject_withdraw(
+    request: Request,
+    withdraw_id: int
+):
+    admin = get_admin(request)
+    if not admin:
+        return RedirectResponse("/dashboard", 303)
+
+    withdraw = (
+        supabase.table("withdraws")
+        .select("*")
+        .eq("id", withdraw_id)
+        .single()
+        .execute()
+    )
+
+    if withdraw.data:
+
+        data = withdraw.data
+
+        user = (
+            supabase.table("users")
+            .select("saldo")
+            .eq("id", data["user_id"])
+            .single()
+            .execute()
+        )
+
+        saldo = user.data.get("saldo", 0)
+
+        supabase.table("users").update({
+            "saldo": saldo + data["amount"]
+        }).eq("id", data["user_id"]).execute()
+
+    supabase.table("withdraws").update({
+        "status": "rejected"
+    }).eq("id", withdraw_id).execute()
+
+    return RedirectResponse("/admin/withdraw", 303)
 
 
 from fastapi.responses import HTMLResponse
