@@ -2046,6 +2046,30 @@ async def ban_user(request: Request, user_id: str):
     }).eq("id", user_id).execute()
 
     return RedirectResponse("/admin", 303)
+@app.get("/admin/unban/{user_id}")
+async def unban_user(request: Request, user_id: str):
+
+    admin_id = request.session.get("user_id")
+
+    if not admin_id:
+        return RedirectResponse("/login", 303)
+
+    admin = (
+        supabase.table("users")
+        .select("is_admin")
+        .eq("id", admin_id)
+        .single()
+        .execute()
+    )
+
+    if not admin.data or not admin.data["is_admin"]:
+        return HTMLResponse("Access Denied", 403)
+
+    supabase.table("users").update({
+        "is_banned": False
+    }).eq("id", user_id).execute()
+
+    return RedirectResponse("/admin", 303)
 @app.get("/admin/delete-user/{user_id}")
 async def delete_user(request: Request, user_id: str):
 
