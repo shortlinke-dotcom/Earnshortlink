@@ -1983,7 +1983,7 @@ async def admin_dashboard(request: Request):
     # kalau tabel withdraws belum ada, ubah jadi 0
     try:
         withdraw_count = (
-            supabase.table("withdraws")
+            supabase.table("withdrawals")
             .select("id", count="exact")
             .eq("status", "pending")
             .execute()
