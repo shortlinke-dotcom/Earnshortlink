@@ -1921,6 +1921,52 @@ async def logout(request: Request):
     response.delete_cookie("session_token")
     return response
 
+
+# ==============
+# ADMIN 
+# ==============
+def get_admin(request: Request):
+    user_id = request.session.get("user_id")
+
+    if not user_id:
+        return None
+
+    user = (
+        supabase.table("users")
+        .select("*")
+        .eq("id", user_id)
+        .limit(1)
+        .execute()
+    )
+
+    if not user.data:
+        return None
+
+    data = user.data[0]
+
+    if not data.get("is_admin"):
+        return None
+
+    return data
+
+@app.get("/admin")
+async def admin_dashboard(request: Request):
+
+    admin = get_admin(request)
+
+    if not admin:
+        return RedirectResponse("/dashboard", 303)
+
+    return templates.TemplateResponse(
+        "admin/dashboard.html",
+        {
+            "request": request,
+            "admin": admin
+        }
+    )
+
+
+
 from fastapi.responses import HTMLResponse
 @app.get("/oauth-error")
 async def oauth_error():
