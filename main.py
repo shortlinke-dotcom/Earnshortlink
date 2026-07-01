@@ -286,7 +286,7 @@ async def auth_callback(
         if not email:
             return RedirectResponse("/login?error=google_failed")
 
-        print("GOOGLE EMAIL:", email)
+        return HTMLResponse(f"Google email: [{email}]")
 
     except Exception as e:
         traceback.print_exc()
