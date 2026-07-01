@@ -259,7 +259,17 @@ async def auth_callback(
     code: str | None = None,
     error: str | None = None
 ):
-    debug = []
+    return HTMLResponse(f"""
+    <h2>Google Login</h2>
+    <p>CODE: {code}</p>
+    <p>ERROR: {error}</p>
+    <p>URL: {request.url}</p>
+
+    <script>
+        const hash = window.location.hash;
+        document.body.innerHTML += "<p>HASH: " + hash + "</p>";
+    </script>
+    """)
 
     try:
         debug.append("CALLBACK HIT")
