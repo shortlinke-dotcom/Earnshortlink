@@ -271,7 +271,6 @@ async def login_post(
 async def auth_google(request: Request):
     redirect_uri = request.url_for("auth_callback")
     print("REDIRECT URI:", redirect_uri)
-
     return await oauth.google.authorize_redirect(
         request,
         redirect_uri
