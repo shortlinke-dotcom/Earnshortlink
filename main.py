@@ -1964,7 +1964,78 @@ async def admin_dashboard(request: Request):
             "admin": admin
         }
     )
+@app.get("/admin")
+async def admin_panel(request: Request):
 
+    user_id = request.session.get("user_id")
+
+    if not user_id:
+        return RedirectResponse("/login", 303)
+
+    # Ambil data user login
+    user_res = (
+        supabase.table("users")
+        .select("*")
+        .eq("id", user_id)
+        .single()
+        .execute()
+    )
+
+    if not user_res.data:
+        return RedirectResponse("/login", 303)
+
+    user = user_res.data
+
+    # Cek admin
+    if not user.get("is_admin"):
+        return HTMLResponse("Access Denied", status_code=403)
+
+    # Statistik
+    total_users = (
+        supabase.table("users")
+        .select("id", count="exact")
+        .execute()
+    ).count or 0
+
+    total_links = (
+        supabase.table("links")
+        .select("id", count="exact")
+        .execute()
+    ).count or 0
+
+    total_sell_links = (
+        supabase.table("sell_links")
+        .select("id", count="exact")
+        .execute()
+    ).count or 0
+
+    withdraw_count = (
+        supabase.table("withdraws")
+        .select("id", count="exact")
+        .eq("status", "pending")
+        .execute()
+    ).count or 0
+
+    latest_users = (
+        supabase.table("users")
+        .select("*")
+        .order("id", desc=True)
+        .limit(10)
+        .execute()
+    )
+
+    return templates.TemplateResponse(
+        "admin.html",
+        {
+            "request": request,
+            "user": user,
+            "total_users": total_users,
+            "total_links": total_links,
+            "total_sell_links": total_sell_links,
+            "withdraw_count": withdraw_count,
+            "latest_users": latest_users.data or []
+        }
+    )
 
 
 from fastapi.responses import HTMLResponse
