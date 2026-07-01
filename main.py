@@ -2118,7 +2118,7 @@ async def admin_withdraw(request: Request):
         return RedirectResponse("/dashboard", 303)
 
     withdraws = (
-        supabase.table("withdraws")
+        supabase.table("withdrawals")
         .select("*")
         .order("id", desc=True)
         .execute()
@@ -2141,7 +2141,7 @@ async def approve_withdraw(
     if not admin:
         return RedirectResponse("/dashboard", 303)
 
-    supabase.table("withdraws").update({
+    supabase.table("withdrawals").update({
         "status": "approved"
     }).eq("id", withdraw_id).execute()
 
@@ -2156,7 +2156,7 @@ async def reject_withdraw(
         return RedirectResponse("/dashboard", 303)
 
     withdraw = (
-        supabase.table("withdraws")
+        supabase.table("withdrawals")
         .select("*")
         .eq("id", withdraw_id)
         .single()
