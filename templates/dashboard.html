@@ -948,84 +948,84 @@ body{
     position:fixed;
     right:20px;
     bottom:20px;
-    width:320px;
-    z-index:9999;
 
-    background:rgba(255,255,255,.75);
-    backdrop-filter:blur(18px);
-    -webkit-backdrop-filter:blur(18px);
+    width:70px;
+    height:70px;
 
-    border-radius:18px;
-    border:1px solid rgba(255,255,255,.4);
-
-    box-shadow:0 15px 35px rgba(0,0,0,.12);
-    overflow:hidden;
-    animation:slideUp .4s ease;
-}
-
-.announcement-header{
-    position:relative;
-    padding:16px;
+    border-radius:50%;
     background:linear-gradient(135deg,#2563eb,#3b82f6);
-    color:#fff;
-    font-size:20px;
-}
-
-.notif-badge{
-    position:absolute;
-    top:10px;
-    right:12px;
-
-    min-width:22px;
-    height:22px;
-    padding:0 6px;
-
-    border-radius:999px;
-    background:#ef4444;
-    color:#fff;
 
     display:flex;
     align-items:center;
     justify-content:center;
 
-    font-size:12px;
+    color:#fff;
+    font-size:28px;
+
+    cursor:grab;
+    user-select:none;
+    touch-action:none;
+
+    z-index:99999;
+
+    box-shadow:0 10px 30px rgba(37,99,235,.35);
+
+    transition:box-shadow .25s;
+}
+
+.announcement-floating:active{
+    cursor:grabbing;
+}
+
+.notif-badge{
+    position:absolute;
+    top:4px;
+    right:4px;
+
+    min-width:22px;
+    height:22px;
+
+    border-radius:50%;
+    background:#ef4444;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    color:#fff;
+    font-size:11px;
     font-weight:700;
 }
 
-.announcement-body{
+.announcement-popup{
+    position:absolute;
+    right:80px;
+    bottom:0;
+
+    width:300px;
+
+    background:#fff;
+    border-radius:18px;
     padding:18px;
+
+    color:#0f172a;
+
+    box-shadow:0 15px 40px rgba(0,0,0,.15);
+
+    display:none;
 }
 
-.announcement-title{
-    font-size:15px;
-    font-weight:700;
-    margin-bottom:8px;
-}
-
-.announcement-text{
-    font-size:13px;
-    color:#64748b;
-    line-height:1.6;
-}
-
-@keyframes slideUp{
-    from{
-        opacity:0;
-        transform:translateY(30px);
-    }
-    to{
-        opacity:1;
-        transform:translateY(0);
-    }
+.announcement-popup.show{
+    display:block;
 }
 
 @media(max-width:768px){
-    .announcement-floating{
-        right:12px;
-        left:12px;
-        width:auto;
-        bottom:12px;
+
+    .announcement-popup{
+        width:260px;
+        right:75px;
     }
+
 }
 </style>
 {% endblock %}
@@ -1682,16 +1682,17 @@ body{
 
 <div class="announcement-floating" id="announcementBox">
 
-    <div class="announcement-header">
-        <i class="fa-solid fa-bell"></i>
+    <i class="fa-solid fa-bell"></i>
 
-        {% if unread_count > 0 %}
-        <span class="notif-badge">{{ unread_count }}</span>
-        {% endif %}
-    </div>
+    {% if unread_count > 0 %}
+    <span class="notif-badge">
+        {{ unread_count }}
+    </span>
+    {% endif %}
 
-    {% if announcement %}
-    <div class="announcement-body">
+    <div class="announcement-popup">
+
+        {% if announcement %}
         <div class="announcement-title">
             {{ announcement.title }}
         </div>
@@ -1699,8 +1700,9 @@ body{
         <div class="announcement-text">
             {{ announcement.content }}
         </div>
+        {% endif %}
+
     </div>
-    {% endif %}
 
 </div>
 
@@ -1999,6 +2001,51 @@ function copyShortLink(){
     }, 2000);
 
 }
+
+const floating = document.getElementById("announcementBox");
+
+let isDragging = false;
+let offsetX = 0;
+let offsetY = 0;
+
+floating.addEventListener("pointerdown", e=>{
+
+    isDragging=true;
+
+    offsetX=e.clientX-floating.offsetLeft;
+    offsetY=e.clientY-floating.offsetTop;
+
+    floating.setPointerCapture(e.pointerId);
+
+});
+
+floating.addEventListener("pointermove",e=>{
+
+    if(!isDragging) return;
+
+    floating.style.left=(e.clientX-offsetX)+"px";
+    floating.style.top=(e.clientY-offsetY)+"px";
+
+    floating.style.right="auto";
+    floating.style.bottom="auto";
+
+});
+
+floating.addEventListener("pointerup",()=>{
+
+    isDragging=false;
+
+});
+
+const popup = document.querySelector(".announcement-popup");
+
+floating.addEventListener("click",function(e){
+
+    if(isDragging) return;
+
+    popup.classList.toggle("show");
+
+});
 </script>
 <script>
 window.addEventListener("load", function () {
