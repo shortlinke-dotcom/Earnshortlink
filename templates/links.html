@@ -129,18 +129,44 @@ body{
 
 /* ================= LINK CARD ================= */
 .link-card{
-    display:flex;
-    justify-content:space-between;
-    gap:15px;
-    padding:16px;
-    border-radius:16px;
-    background:rgba(255,255,255,.85);
-    border:1px solid rgba(148,163,184,.15);
+    cursor:pointer;
+    position:relative;
+    transition:all .25s ease;
+}
+
+.link-card:hover{
+    transform:translateY(-4px) scale(1.01);
+    box-shadow:0 15px 35px rgba(0,0,0,.08);
+}
+
+/* efek klik */
+.link-card:active{
+    transform:scale(.97);
+}
+
+/* tombol lebih smooth */
+.action-btn{
+    transition:all .2s ease;
+}
+
+.action-btn:hover{
+    transform:scale(1.1);
+}
+
+/* search lebih hidup */
+.search-box input{
     transition:.25s;
 }
-.link-card:hover{
-    transform:translateY(-3px);
-    box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+.search-box input:focus{
+    transform:scale(1.02);
+    box-shadow:0 0 0 2px rgba(59,130,246,.2);
+}
+
+/* empty lebih clean */
+.empty-state p{
+    font-size:14px;
+    color:#94a3b8;
 }
 
 /* ================= LINK INFO ================= */
@@ -373,147 +399,114 @@ body{
     </div>
 
     <!-- ADS -->
-    <div id="adsTab" class="tab-content">
+<div id="adsTab" class="tab-content">
 
-        {% set has_ads = false %}
+    {% set ads_links = links | selectattr("price", "equalto", None) | list
+        + links | selectattr("price", "equalto", 0) | list %}
 
-        {% for link in links %}
-        {% if (link.price|default(0)|int) <= 0 %}
-        {% set has_ads = true %}
+    {% if ads_links|length == 0 %}
+    <div class="empty-state">
+        <p>Belum ada link</p>
+    </div>
+    {% else %}
 
-        <div class="link-card">
+    {% for link in links %}
+    {% if (link.price|default(0)|int) <= 0 %}
 
-            <div class="link-info">
+    <div class="link-card"
+         onclick="openEdit('{{ link.id }}', {{ link.price|default(0)|int }})">
 
-                <div class="link-title">
-                    <h4>{{ base_url }}/s/{{ link.short_code }}</h4>
+        <div class="link-info">
+            <h4>{{ base_url }}/s/{{ link.short_code }}</h4>
+            <small>{{ base_url }}/s/{{ link.short_code }}</small>
 
-                    {% if link.is_active %}
-                        <span class="status active">Active</span>
-                    {% else %}
-                        <span class="status inactive">Inactive</span>
-                    {% endif %}
-                </div>
-
-                <small>{{ base_url }}/s/{{ link.short_code }}</small>
-
-                <div class="link-meta">
-                    <span>
-                        <i class="fa-solid fa-eye"></i>
-                        {{ link.clicks|default(0) }}
-                    </span>
-
-                    <span>
-                        <i class="fa-solid fa-coins"></i>
-                        Rp {{ "{:,.0f}".format(link.earnings|default(0)).replace(",",".") }}
-                    </span>
-                </div>
-
+            <div class="link-meta">
+                <span>{{ link.clicks|default(0) }} klik</span>
+                <span>Rp {{ "{:,.0f}".format(link.earnings|default(0)).replace(",",".") }}</span>
             </div>
-
-            <div class="link-actions">
-
-                <button class="action-btn copy"
-                    onclick="copyText('{{ base_url }}/s/{{ link.short_code }}', this)">
-                    <i class="fas fa-copy"></i>
-                </button>
-
-                <a href="/edit-link/{{ link.id }}" class="action-btn edit">
-                    <i class="fas fa-pen"></i>
-                </a>
-
-                <button class="action-btn delete"
-                    onclick="deleteLink('{{ link.id }}')">
-                    <i class="fas fa-trash"></i>
-                </button>
-
-            </div>
-
         </div>
 
-        {% endif %}
-        {% endfor %}
+        <div class="link-actions">
 
-        {% if not has_ads %}
-        <div class="empty-state">
-            <i class="fa-solid fa-link"></i>
-            <p>Belum ada link</p>
+            <button class="action-btn copy"
+            onclick="event.stopPropagation(); copyText('{{ base_url }}/s/{{ link.short_code }}', this)">
+                <i class="fas fa-copy"></i>
+            </button>
+
+            <a href="/edit-link/{{ link.id }}"
+               class="action-btn edit"
+               onclick="event.stopPropagation();">
+                <i class="fas fa-pen"></i>
+            </a>
+
+            <button class="action-btn delete"
+            onclick="event.stopPropagation(); deleteLink('{{ link.id }}')">
+                <i class="fas fa-trash"></i>
+            </button>
+
         </div>
-        {% endif %}
 
     </div>
+
+    {% endif %}
+    {% endfor %}
+
+    {% endif %}
+</div>
 
     <!-- SELL -->
-    <div id="sellTab" class="tab-content" style="display:none;">
+<div id="sellTab" class="tab-content" style="display:none;">
 
-        {% set has_sell = false %}
+    {% set sell_links = links | selectattr("price", "gt", 0) | list %}
 
-        {% for link in links %}
-        {% if (link.price|default(0)|int) > 0 %}
-        {% set has_sell = true %}
+    {% if sell_links|length == 0 %}
+    <div class="empty-state">
+        <p>Belum ada link</p>
+    </div>
+    {% else %}
 
-        <div class="link-card">
+    {% for link in links %}
+    {% if (link.price|default(0)|int) > 0 %}
 
-            <div class="link-info">
+    <div class="link-card"
+         onclick="openEdit('{{ link.id }}', {{ link.price|default(0)|int }})">
 
-                <div class="link-title">
-                    <h4>{{ base_url }}/s/{{ link.short_code }}</h4>
+        <div class="link-info">
+            <h4>{{ base_url }}/s/{{ link.short_code }}</h4>
+            <small>{{ base_url }}/s/{{ link.short_code }}</small>
 
-                    {% if link.is_active %}
-                        <span class="status active">Active</span>
-                    {% else %}
-                        <span class="status inactive">Inactive</span>
-                    {% endif %}
-                </div>
-
-                <small>{{ base_url }}/s/{{ link.short_code }}</small>
-
-                <div class="link-meta">
-                    <span>
-                        <i class="fa-solid fa-wallet"></i>
-                        Rp {{ "{:,.0f}".format(link.price|default(0)).replace(",",".") }}
-                    </span>
-
-                    <span>
-                        <i class="fa-solid fa-eye"></i>
-                        {{ link.clicks|default(0) }}
-                    </span>
-                </div>
-
+            <div class="link-meta">
+                <span>Rp {{ "{:,.0f}".format(link.price|default(0)).replace(",",".") }}</span>
+                <span>{{ link.clicks|default(0) }} klik</span>
             </div>
-
-            <div class="link-actions">
-
-                <button class="action-btn copy"
-                    onclick="copyText('{{ base_url }}/s/{{ link.short_code }}', this)">
-                    <i class="fas fa-copy"></i>
-                </button>
-
-                <a href="/edit-link/{{ link.id }}" class="action-btn edit">
-                    <i class="fas fa-pen"></i>
-                </a>
-
-                <button class="action-btn delete"
-                    onclick="deleteLink('{{ link.id }}')">
-                    <i class="fas fa-trash"></i>
-                </button>
-
-            </div>
-
         </div>
 
-        {% endif %}
-        {% endfor %}
+        <div class="link-actions">
 
-        {% if not has_sell %}
-        <div class="empty-state">
-            <i class="fa-solid fa-link"></i>
-            <p>Belum ada link</p>
+            <button class="action-btn copy"
+            onclick="event.stopPropagation(); copyText('{{ base_url }}/s/{{ link.short_code }}', this)">
+                <i class="fas fa-copy"></i>
+            </button>
+
+            <a href="/edit-link/{{ link.id }}"
+               class="action-btn edit"
+               onclick="event.stopPropagation();">
+                <i class="fas fa-pen"></i>
+            </a>
+
+            <button class="action-btn delete"
+            onclick="event.stopPropagation(); deleteLink('{{ link.id }}')">
+                <i class="fas fa-trash"></i>
+            </button>
+
         </div>
-        {% endif %}
 
     </div>
 
+    {% endif %}
+    {% endfor %}
+
+    {% endif %}
 </div>
 
 {% if total_links > 5 and total_pages > 1 %}
@@ -600,18 +593,35 @@ function togglePrice(){
 }
 
 /* AUTO INIT */
-document.addEventListener("DOMContentLoaded", togglePrice);
-.addEventListener("input", function(){
+document.addEventListener("DOMContentLoaded", function(){
 
-    const keyword = this.value.toLowerCase();
+    togglePrice();
 
-    document.querySelectorAll(".link-card")
-    .forEach(card=>{
-        const text = card.innerText.toLowerCase();
-        card.style.display = text.includes(keyword) ? "flex" : "none";
-    });
+    const search = document.querySelector(".search-box input");
+
+    if(search){
+        search.addEventListener("input", function(){
+
+            const keyword = this.value.toLowerCase();
+
+            document.querySelectorAll(".link-card")
+            .forEach(card=>{
+                const text = card.innerText.toLowerCase();
+                card.style.display =
+                    text.includes(keyword) ? "" : "none";
+            });
+
+        });
+    }
 
 });
+function openEdit(id, price){
+    if(price > 0){
+        window.location.href = `/edit-sell-link/${id}`;
+    }else{
+        window.location.href = `/edit-link/${id}`;
+    }
+}
 </script>
 <script>
 document.getElementById("createLinkForm").addEventListener("submit", async function(e){
@@ -625,7 +635,7 @@ document.getElementById("createLinkForm").addEventListener("submit", async funct
     btn.innerHTML = "Loading...";
     btn.disabled = true;
 
-    showLoading(); // 🔥 TAMBAH INI
+    showLoading();
 
     const type = form.get("type");
     const url = type === "ads" ? "/create-link" : "/create-sell-link";
@@ -636,22 +646,37 @@ document.getElementById("createLinkForm").addEventListener("submit", async funct
             body: form
         });
 
+        // ❗ handle kalau server error (bukan JSON)
+        if(!res.ok){
+            throw new Error("Server error");
+        }
+
         const data = await res.json();
 
         if(data.ok){
             showToast("Link berhasil dibuat!");
+
+            // reset form
             this.reset();
-            window.location.reload();
-        } else {
-            showToast(data.error || "Gagal membuat link");
+            togglePrice();
+
+            // kasih delay biar loading keliatan smooth
+            setTimeout(()=>{
+                window.location.reload();
+            }, 500);
+
+            return; // ❗ penting biar gak lanjut ke bawah
         }
 
+        showToast(data.error || "Gagal membuat link");
+
     } catch(err){
-        showToast("Koneksi error!");
+        console.error(err);
+        showToast("Koneksi / server error!");
     }
 
-    hideLoading(); // 🔥 TAMBAH INI
-
+    // ❗ hanya jalan kalau gagal
+    hideLoading();
     btn.innerHTML = "Create Link";
     btn.disabled = false;
 });
