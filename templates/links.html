@@ -410,6 +410,11 @@ body{
 
 {% block content %}
 {% set user_data = user_data if user_data is defined else (user.data[0] if user.data else {}) %}
+{% set links = links or [] %}
+
+{% set ads_links = links | selectattr("type", "equalto", "ads") | list %}
+{% set sell_links = links | selectattr("type", "equalto", "sell") | list %}
+
 <div id="clickLoader"></div>
 <div id="loadingOverlay">
     <div class="loader"></div>
