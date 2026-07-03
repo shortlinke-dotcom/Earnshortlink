@@ -1296,13 +1296,18 @@ async def delete_sell_link(request: Request, code: str):
 # =========================
 @app.post("/edit-link/{id}")
 async def edit_link(id: int, url: str = Form(...)):
-    pool = await get_pool()
-    async with pool.acquire() as conn:
-        await conn.execute(
-            "UPDATE links SET destination_url=$1 WHERE id=$2",
-            url, id
-        )
-    return {"ok": True}
+    try:
+        pool = await get_pool()
+        async with pool.acquire() as conn:
+            await conn.execute(
+                "UPDATE links SET destination_url=$1 WHERE id=$2",
+                url, id
+            )
+        return {"ok": True}
+
+    except Exception as e:
+        print("ERROR EDIT ADS:", e)
+        return {"ok": False, "error": str(e)}
 
 # =========================
 # EDIT SELL LINK
@@ -1311,19 +1316,32 @@ async def edit_link(id: int, url: str = Form(...)):
 async def edit_sell_link(
     request: Request,
     id: int,
-    url: str = Form(...),
-    price: int = Form(...)
+    url: str = Form(None),
+    price: int = Form(None)
 ):
-    username = request.session.get("username")
-    if not username:
-        return JSONResponse({"ok": False}, status_code=401)
+    try:
+        username = request.session.get("username")
+        if not username:
+            return JSONResponse({"ok": False, "error": "Unauthorized"}, status_code=401)
 
-    supabase.table("sell_links").update({
-        "destination_url": url,   # ✅ TAMBAH INI
-        "price": price
-    }).eq("id", id).execute()    # ✅ GANTI KE ID
+        update_data = {}
 
-    return {"ok": True}
+        if url:
+            update_data["destination_url"] = url
+
+        if price is not None:
+            update_data["price"] = price
+
+        if not update_data:
+            return {"ok": False, "error": "Tidak ada data diupdate"}
+
+        supabase.table("sell_links").update(update_data).eq("id", id).execute()
+
+        return {"ok": True}
+
+    except Exception as e:
+        print("ERROR EDIT SELL:", e)
+        return {"ok": False, "error": str(e)}
 # =========================
 # CREATE SHORT LINK
 # =========================
