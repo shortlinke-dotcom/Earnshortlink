@@ -1291,24 +1291,37 @@ async def delete_sell_link(request: Request, code: str):
 
     return JSONResponse({"ok": True})
 
+# =========================
+# EDIT ADS LINK
+# =========================
+@app.post("/edit-link/{id}")
+async def edit_link(id: int, url: str = Form(...)):
+    pool = await get_pool()
+    async with pool.acquire() as conn:
+        await conn.execute(
+            "UPDATE links SET destination_url=$1 WHERE id=$2",
+            url, id
+        )
+    return {"ok": True}
+
 
 # =========================
 # EDIT SELL LINK
 # =========================
-@app.post("/edit-sell-link")
-async def edit_sell_link(request: Request, data: dict = Body(...)):
-
+@app.post("/edit-sell-link/{code}")
+async def edit_sell_link(
+    request: Request,
+    code: str,
+    title: str = Form(...),
+    price: int = Form(...)
+):
     username = request.session.get("username")
     if not username:
         return JSONResponse({"ok": False}, status_code=401)
 
-    code = data.get("code")
-    title = data.get("title")
-    price = data.get("price")
-
     supabase.table("sell_links").update({
         "title": title,
-        "price": int(price)
+        "price": price
     }).eq("code", code).execute()
 
     return {"ok": True}
