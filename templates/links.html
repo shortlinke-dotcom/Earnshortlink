@@ -128,7 +128,7 @@ body{
 }
 
 /* ================= LINK CARD ================= */
-/* ================= CARD ================= */
+
 .link-card{
     cursor:pointer;
     position:relative;
@@ -144,7 +144,55 @@ body{
 .link-card:active{
     transform:scale(.97);
 }
+.link-switch{
+    display:flex;
+    background:#f1f5f9;
+    border-radius:10px;
+    padding:4px;
+    margin-bottom:10px;
+}
 
+.switch-btn{
+    flex:1;
+    border:none;
+    padding:8px;
+    font-size:13px;
+    border-radius:8px;
+    background:transparent;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.switch-btn.active{
+    background:#fff;
+    box-shadow:0 2px 8px rgba(0,0,0,.08);
+    font-weight:600;
+}
+
+/* LOCKED SELL */
+.switch-btn.locked{
+    opacity:.5;
+    cursor:not-allowed;
+}
+
+/* INFO */
+.lock-info{
+    font-size:12px;
+    color:#64748b;
+    background:#f8fafc;
+    padding:8px;
+    border-radius:8px;
+    margin-bottom:10px;
+    text-align:center;
+}
+
+/* PRICE HIDE */
+#priceBox{
+    display:none;
+}
+#priceBox.show{
+    display:block;
+}
 /* ================= ACTION BUTTON ================= */
 .btn-icon{
     transition:all .2s ease;
@@ -362,40 +410,46 @@ body{
 
 <!-- ================= CREATE LINK PANEL ================= -->
 <div class="card create-panel">
+
 <form id="createLinkForm">
 
-    <!-- TYPE -->
-    <div class="form-group">
-        <label>Tipe Link</label>
-        <select
-            name="type"
-            id="linkType"
-            onchange="togglePrice()">
+    <!-- SWITCH TYPE -->
+    <div class="link-switch">
+        <button type="button" class="switch-btn active" onclick="setType('ads', this)">
+            Monetized
+        </button>
 
-            <option value="ads">Monetized Link</option>
-            <option value="sell">Paid Link</option>
-
-        </select>
+        <button type="button" class="switch-btn" id="sellBtn"
+            onclick="setType('sell', this)">
+            Paid
+        </button>
     </div>
 
-    <!-- LINK -->
+    <!-- INFO LOCK -->
+    {% if not user.has_withdraw %}
+    <div class="lock-info">
+        🔒 Paid Link terkunci — lakukan minimal 1x withdraw untuk membuka fitur ini
+    </div>
+    {% endif %}
+
+    <!-- HIDDEN TYPE -->
+    <input type="hidden" name="type" id="type" value="ads">
+
+    <!-- URL -->
     <div class="form-group">
-        <label>Link Tujuan</label>
         <input
             type="url"
             name="destination_url"
-            placeholder="https://..."
+            placeholder="https://target.com"
             required>
     </div>
 
     <!-- PRICE -->
     <div class="form-group" id="priceBox">
-        <label>Harga (Rp)</label>
-
         <input
             type="number"
             name="price"
-            placeholder="10000">
+            placeholder="Harga (Rp)">
     </div>
 
     <!-- BUTTON -->
@@ -442,11 +496,8 @@ body{
         </button>
     </div>
 
-    <!-- ADS -->
 <!-- ADS -->
 <div id="adsTab" class="tab-content">
-
-    {% set ads_links = links | selectattr("price", "equalto", 0) | list %}
 
     {% if ads_links %}
         {% for link in ads_links %}
@@ -463,9 +514,8 @@ body{
             </div>
 
             <div class="link-actions">
-
                 <button class="btn-icon copy"
-                onclick="event.stopPropagation(); copyText('{{ base_url }}/s/{{ link.short_code }}', this)">
+                    onclick="event.stopPropagation(); copyText('{{ base_url }}/s/{{ link.short_code }}', this)">
                     <i class="fas fa-copy"></i>
                 </button>
 
@@ -476,19 +526,16 @@ body{
                 </a>
 
                 <button class="btn-icon delete"
-                onclick="event.stopPropagation(); deleteLink('{{ link.id }}')">
+                    onclick="event.stopPropagation(); deleteLink('{{ link.id }}')">
                     <i class="fas fa-trash"></i>
                 </button>
-
             </div>
 
         </div>
 
         {% endfor %}
     {% else %}
-        <div class="empty-state">
-            <p>Belum ada link</p>
-        </div>
+        <div class="empty-state"><p>Belum ada link</p></div>
     {% endif %}
 
 </div>
@@ -496,8 +543,6 @@ body{
 
 <!-- SELL -->
 <div id="sellTab" class="tab-content" style="display:none;">
-
-    {% set sell_links = links | selectattr("price", "gt", 0) | list %}
 
     {% if sell_links %}
         {% for link in sell_links %}
@@ -511,38 +556,34 @@ body{
                 </h4>
 
                 <div class="link-meta">
-                    <span class="price">Rp {{ "{:,.0f}".format(link.price).replace(",",".") }}</span>
+                    <span>Rp {{ "{:,.0f}".format(link.price).replace(",",".") }}</span>
                     <span>{{ link.clicks|default(0) }} klik</span>
                 </div>
             </div>
 
             <div class="link-actions">
-
                 <button class="btn-icon copy"
-                onclick="event.stopPropagation(); copyText('{{ base_url }}/s/{{ link.short_code }}', this)">
+                    onclick="event.stopPropagation(); copyText('{{ base_url }}/s/{{ link.short_code }}', this)">
                     <i class="fas fa-copy"></i>
                 </button>
 
-                <a href="/edit-link/{{ link.id }}"
+                <a href="/edit-sell-link/{{ link.id }}"
                    class="btn-icon edit"
                    onclick="event.stopPropagation();">
                     <i class="fas fa-pen"></i>
                 </a>
 
                 <button class="btn-icon delete"
-                onclick="event.stopPropagation(); deleteLink('{{ link.id }}')">
+                    onclick="event.stopPropagation(); deleteLink('{{ link.id }}')">
                     <i class="fas fa-trash"></i>
                 </button>
-
             </div>
 
         </div>
 
         {% endfor %}
     {% else %}
-        <div class="empty-state">
-            <p>Belum ada link</p>
-        </div>
+        <div class="empty-state"><p>Belum ada link</p></div>
     {% endif %}
 
 </div>
@@ -574,6 +615,46 @@ body{
 </div>
 
 {% endif %}
+<script>
+let currentType = "ads";
+
+// dari backend
+const hasWithdraw = {{ 'true' if user.has_withdraw else 'false' }};
+
+function setType(type, el){
+
+    // ❌ LOCK SELL
+    if(type === "sell" && !hasWithdraw){
+        alert("Fitur Paid Link terbuka setelah minimal 1x withdraw");
+        return;
+    }
+
+    currentType = type;
+    document.getElementById("type").value = type;
+
+    // active switch
+    document.querySelectorAll(".switch-btn").forEach(btn=>{
+        btn.classList.remove("active");
+    });
+    el.classList.add("active");
+
+    // toggle price
+    const priceBox = document.getElementById("priceBox");
+
+    if(type === "sell"){
+        priceBox.classList.add("show");
+    }else{
+        priceBox.classList.remove("show");
+    }
+}
+
+// INIT LOCK STYLE
+window.addEventListener("DOMContentLoaded", ()=>{
+    if(!hasWithdraw){
+        document.getElementById("sellBtn").classList.add("locked");
+    }
+});
+</script>
 <script>
 function showToast(msg){
     const toast = document.createElement("div");
@@ -771,9 +852,17 @@ function hideLoading(){
 }
 </script>
 <script>
-document.querySelectorAll("a").forEach(link=>{
-    link.addEventListener("click", function(){
+document.querySelectorAll("a.page-btn").forEach(link=>{
+    link.addEventListener("click", function(e){
+        e.preventDefault();
+
+        const url = this.getAttribute("href");
+
         document.getElementById("clickLoader").classList.add("active");
+
+        setTimeout(()=>{
+            window.location.href = url;
+        }, 200);
     });
 });
 </script>
