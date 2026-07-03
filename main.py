@@ -1651,7 +1651,7 @@ async def links(request: Request, page: int = Query(1, ge=1)):
     # ================= USER =================
     user = (
         supabase.table("users")
-        .select("username, saldo")
+        .select("username, saldo, has_withdraw")
         .eq("id", user_id)
         .limit(1)
         .execute()
@@ -1734,6 +1734,7 @@ async def links(request: Request, page: int = Query(1, ge=1)):
         "links.html",
         {
             "request": request,
+            "user": user_data,
             "base_url": str(request.base_url).rstrip("/"),
             "links": paginated_links,  # 🔥 SUDAH DIGABUNG
             "total_links": total_links,
