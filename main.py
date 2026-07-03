@@ -1304,15 +1304,14 @@ async def edit_link(id: int, url: str = Form(...)):
         )
     return {"ok": True}
 
-
 # =========================
 # EDIT SELL LINK
 # =========================
-@app.post("/edit-sell-link/{code}")
+@app.post("/edit-sell-link/{id}")
 async def edit_sell_link(
     request: Request,
-    code: str,
-    title: str = Form(...),
+    id: int,
+    url: str = Form(...),
     price: int = Form(...)
 ):
     username = request.session.get("username")
@@ -1320,9 +1319,9 @@ async def edit_sell_link(
         return JSONResponse({"ok": False}, status_code=401)
 
     supabase.table("sell_links").update({
-        "title": title,
+        "destination_url": url,   # ✅ TAMBAH INI
         "price": price
-    }).eq("code", code).execute()
+    }).eq("id", id).execute()    # ✅ GANTI KE ID
 
     return {"ok": True}
 # =========================
