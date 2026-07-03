@@ -592,7 +592,7 @@ body{
                 </button>
 
                 <button class="btn-icon edit"
-                    onclick="event.stopPropagation(); openEditModal('{{ link.id }}','{{ base_url }}/s/{{ link.short_code }}','ads',0)">
+                    onclick="event.stopPropagation(); openEditModal('{{ link.id }}','{{ base_url }}/s/{{ link.short_code }}','ads',0)"
                     <i class="fas fa-pen"></i>
                 </button>
 
@@ -639,7 +639,7 @@ body{
                 </button>
 
                 <button class="btn-icon edit"
-                    onclick="event.stopPropagation(); openEditModal('{{ link.id }}','{{ base_url }}/s/{{ link.short_code }}','sell','{{ link.price }}')">
+                    onclick="event.stopPropagation(); openEditModal('{{ link.id }}','{{ base_url }}/s/{{ link.short_code }}','sell','{{ link.price }}')"
                     <i class="fas fa-pen"></i>
                 </button>
 
@@ -663,23 +663,30 @@ body{
 
     <h3>Edit Link</h3>
 
+    <!-- ID -->
     <input type="hidden" id="edit_id">
     <input type="hidden" id="edit_type">
 
+    <!-- SHORTLINK (DISPLAY) -->
     <div class="form-group">
         <label>Shortlink</label>
         <input type="text" id="edit_short" disabled>
     </div>
 
-    <div class="form-group" id="editPriceBox">
-        <label>Harga</label>
+    <!-- ✅ TARUH DI SINI -->
+    <div class="form-group">
+        <label>Destination URL</label>
+        <input type="text" id="edit_url" placeholder="https://target.com">
+    </div>
+
+    <!-- PRICE (KHUSUS SELL) -->
+    <div class="form-group" id="editPriceBox" style="display:none;">
+        <label>Price</label>
         <input type="number" id="edit_price">
     </div>
 
-    <div style="display:flex; gap:10px; margin-top:10px;">
-        <button onclick="submitEdit()" class="btn-create">Simpan</button>
-        <button onclick="closeModal()" class="btn-icon delete">Batal</button>
-    </div>
+    <!-- BUTTON -->
+    <button onclick="submitEdit()">Simpan</button>
 
   </div>
 </div>
@@ -718,7 +725,9 @@ function openEditModal(id, shortlink, type, price){
 
     document.getElementById("edit_id").value = id;
     document.getElementById("edit_type").value = type;
+
     document.getElementById("edit_short").value = shortlink;
+    document.getElementById("edit_url").value = shortlink; // ✅ FIX
 
     const priceBox = document.getElementById("editPriceBox");
 
@@ -738,23 +747,27 @@ async function submitEdit(){
 
     const id = document.getElementById("edit_id").value;
     const type = document.getElementById("edit_type").value;
+    const urlInput = document.getElementById("edit_url").value;
     const price = document.getElementById("edit_price").value;
 
     showLoading();
 
     try{
 
-        const url = type === "sell"
+        const endpoint = type === "sell"
             ? `/edit-sell-link/${id}`
             : `/edit-link/${id}`;
 
         const form = new FormData();
 
+        // ✅ KIRIM URL
+        form.append("url", urlInput);
+
         if(type === "sell"){
             form.append("price", price);
         }
 
-        const res = await fetch(url, {
+        const res = await fetch(endpoint,{
             method:"POST",
             body:form
         });
@@ -765,10 +778,11 @@ async function submitEdit(){
             showToast("Berhasil update!");
             location.reload();
         }else{
-            showToast("Gagal update");
+            showToast(data.error || "Gagal update");
         }
 
-    }catch{
+    }catch(err){
+        console.error(err);
         showToast("Server error");
     }
 
