@@ -426,7 +426,7 @@ body{
     </div>
 
     <!-- INFO LOCK -->
-    {% if not user.has_withdraw %}
+    {% if not user.get("has_withdraw") %}
     <div class="lock-info">
         🔒 Paid Link terkunci — lakukan minimal 1x withdraw untuk membuka fitur ini
     </div>
