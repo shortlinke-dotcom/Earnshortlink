@@ -592,7 +592,7 @@ body{
                 </button>
 
                 <button class="btn-icon edit"
-                    onclick="event.stopPropagation(); openEditModal('{{ link.id }}','{{ base_url }}/s/{{ link.short_code }}','ads',0)"
+                    onclick="event.stopPropagation(); openEditModal('{{ link.id }}','{{ link.destination_url }}','ads',0)">
                     <i class="fas fa-pen"></i>
                 </button>
 
@@ -639,7 +639,7 @@ body{
                 </button>
 
                 <button class="btn-icon edit"
-                    onclick="event.stopPropagation(); openEditModal('{{ link.id }}','{{ base_url }}/s/{{ link.short_code }}','sell','{{ link.price }}')"
+                    onclick="event.stopPropagation(); openEditModal('{{ link.id }}','{{ link.destination_url }}','sell','{{ link.price }}')">
                     <i class="fas fa-pen"></i>
                 </button>
 
@@ -719,15 +719,18 @@ body{
 
 {% endif %}
 <script>
-function openEditModal(id, shortlink, type, price){
+function openEditModal(id, url, type, price){
 
     document.getElementById("editModal").style.display = "block";
 
     document.getElementById("edit_id").value = id;
     document.getElementById("edit_type").value = type;
 
-    document.getElementById("edit_short").value = shortlink;
-    document.getElementById("edit_url").value = shortlink; // ✅ FIX
+    // tampilkan shortlink (optional)
+    document.getElementById("edit_short").value = "Editing link...";
+
+    // ✅ ini yang benar
+    document.getElementById("edit_url").value = url;
 
     const priceBox = document.getElementById("editPriceBox");
 
@@ -747,8 +750,13 @@ async function submitEdit(){
 
     const id = document.getElementById("edit_id").value;
     const type = document.getElementById("edit_type").value;
-    const urlInput = document.getElementById("edit_url").value;
+    const urlInput = document.getElementById("edit_url").value.trim();
     const price = document.getElementById("edit_price").value;
+
+    if(!urlInput.startsWith("http")){
+        showToast("URL harus diawali http/https");
+        return;
+    }
 
     showLoading();
 
@@ -760,11 +768,10 @@ async function submitEdit(){
 
         const form = new FormData();
 
-        // ✅ KIRIM URL
         form.append("url", urlInput);
 
         if(type === "sell"){
-            form.append("price", price);
+            form.append("price", price || 0);
         }
 
         const res = await fetch(endpoint,{
