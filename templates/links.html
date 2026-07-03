@@ -206,13 +206,39 @@ body{
 }
 
 /* ================= SEARCH ================= */
-.search-box input{
-    transition:.25s ease;
+.search-box{
+    display:flex;
+    align-items:center;
+    gap:10px;
+
+    background:rgba(255,255,255,.7);
+    backdrop-filter:blur(12px);
+
+    padding:10px 14px;
+    border-radius:12px;
+
+    border:1px solid rgba(148,163,184,.2);
+    margin-bottom:14px;
+
+    transition:.25s;
 }
 
-.search-box input:focus{
-    transform:scale(1.02);
+.search-box i{
+    color:#64748b;
+    font-size:14px;
+}
+
+.search-box input{
+    border:none;
+    outline:none;
+    width:100%;
+    background:transparent;
+    font-size:14px;
+}
+
+.search-box:focus-within{
     box-shadow:0 0 0 2px rgba(59,130,246,.2);
+    transform:scale(1.02);
 }
 
 /* ================= EMPTY ================= */
@@ -404,7 +430,12 @@ body{
 .btn-icon{
     will-change:transform;
 }
-
+.highlight{
+    background:#fef08a;
+    color:#111827;
+    padding:0 2px;
+    border-radius:3px;
+}
 </style>
 {% endblock %}
 
@@ -497,6 +528,7 @@ body{
 
 <!-- ================= SEARCH ================= -->
 <div class="search-box">
+    <i class="fas fa-search"></i>
     <input type="text" placeholder="Cari shortlink...">
 </div>
 
@@ -731,24 +763,53 @@ function togglePrice(){
 /* AUTO INIT */
 document.addEventListener("DOMContentLoaded", function(){
 
-    togglePrice();
-
     const search = document.querySelector(".search-box input");
 
-    if(search){
-        search.addEventListener("input", function(){
+    if(!search) return;
 
-            const keyword = this.value.toLowerCase();
+    search.addEventListener("input", function(){
 
-            document.querySelectorAll(".link-card")
-            .forEach(card=>{
-                const text = card.innerText.toLowerCase();
-                card.style.display =
-                    text.includes(keyword) ? "" : "none";
-            });
+        const keyword = this.value.toLowerCase().trim();
+
+        document.querySelectorAll(".link-card").forEach(card=>{
+
+            const titleEl = card.querySelector("h4");
+
+            if(!titleEl) return;
+
+            const originalText = titleEl.getAttribute("data-original") || titleEl.innerText;
+
+            // simpan original pertama kali
+            if(!titleEl.getAttribute("data-original")){
+                titleEl.setAttribute("data-original", originalText);
+            }
+
+            // reset dulu
+            titleEl.innerHTML = originalText;
+
+            if(keyword === ""){
+                card.style.display = "";
+                return;
+            }
+
+            const textLower = originalText.toLowerCase();
+
+            if(textLower.includes(keyword)){
+
+                card.style.display = "";
+
+                // highlight keyword
+                const regex = new RegExp(`(${keyword})`, "gi");
+
+                titleEl.innerHTML = originalText.replace(regex, `<span class="highlight">$1</span>`);
+
+            } else {
+                card.style.display = "none";
+            }
 
         });
-    }
+
+    });
 
 });
 function openEdit(id, price){
