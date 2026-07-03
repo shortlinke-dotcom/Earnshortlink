@@ -1297,12 +1297,10 @@ async def delete_sell_link(request: Request, code: str):
 @app.post("/edit-link/{id}")
 async def edit_link(id: int, url: str = Form(...)):
     try:
-        pool = await get_pool()
-        async with pool.acquire() as conn:
-            await conn.execute(
-                "UPDATE links SET destination_url=$1 WHERE id=$2",
-                url, id
-            )
+        supabase.table("links").update({
+            "destination_url": url
+        }).eq("id", id).execute()
+
         return {"ok": True}
 
     except Exception as e:
@@ -1316,26 +1314,18 @@ async def edit_link(id: int, url: str = Form(...)):
 async def edit_sell_link(
     request: Request,
     id: int,
-    url: str = Form(None),
-    price: int = Form(None)
+    url: str = Form(...),
+    price: int = Form(...)
 ):
     try:
         username = request.session.get("username")
         if not username:
             return JSONResponse({"ok": False, "error": "Unauthorized"}, status_code=401)
 
-        update_data = {}
-
-        if url:
-            update_data["destination_url"] = url
-
-        if price is not None:
-            update_data["price"] = price
-
-        if not update_data:
-            return {"ok": False, "error": "Tidak ada data diupdate"}
-
-        supabase.table("sell_links").update(update_data).eq("id", id).execute()
+        supabase.table("sell_links").update({
+            "destination_url": url,
+            "price": price
+        }).eq("id", id).execute()
 
         return {"ok": True}
 
