@@ -128,34 +128,35 @@ body{
 }
 
 /* ================= LINK CARD ================= */
+/* ================= CARD ================= */
 .link-card{
     cursor:pointer;
     position:relative;
     transition:all .25s ease;
+    border-radius:14px;
 }
 
 .link-card:hover{
-    transform:translateY(-4px) scale(1.01);
-    box-shadow:0 15px 35px rgba(0,0,0,.08);
+    transform:translateY(-3px) scale(1.01);
+    box-shadow:0 12px 28px rgba(0,0,0,.08);
 }
 
-/* efek klik */
 .link-card:active{
     transform:scale(.97);
 }
 
-/* tombol lebih smooth */
-.action-btn{
+/* ================= ACTION BUTTON ================= */
+.btn-icon{
     transition:all .2s ease;
 }
 
-.action-btn:hover{
-    transform:scale(1.1);
+.btn-icon:hover{
+    transform:scale(1.12);
 }
 
-/* search lebih hidup */
+/* ================= SEARCH ================= */
 .search-box input{
-    transition:.25s;
+    transition:.25s ease;
 }
 
 .search-box input:focus{
@@ -163,9 +164,9 @@ body{
     box-shadow:0 0 0 2px rgba(59,130,246,.2);
 }
 
-/* empty lebih clean */
+/* ================= EMPTY ================= */
 .empty-state p{
-    font-size:14px;
+    font-size:13px;
     color:#94a3b8;
 }
 
@@ -193,24 +194,47 @@ body{
     display:flex;
     gap:8px;
 }
-.action-btn{
-    width:40px;
-    height:40px;
-    border-radius:10px;
+/* tombol kecil clean */
+.btn-icon{
+    width:32px;
+    height:32px;
+    border-radius:8px;
     display:flex;
     align-items:center;
     justify-content:center;
-    color:#fff;
+    font-size:13px;
+    background:#f1f5f9;
+    color:#0f172a;
     border:none;
     cursor:pointer;
     transition:.2s;
 }
-.action-btn:active{
-    transform:scale(.9);
+
+/* hover */
+.btn-icon:hover{
+    transform:scale(1.08);
 }
-.copy{background:var(--success);}
-.edit{background:var(--warning);}
-.delete{background:var(--danger);}
+
+/* warna beda dikit */
+.btn-icon.copy{ background:#e0f2fe; }
+.btn-icon.edit{ background:#fef9c3; }
+.btn-icon.delete{ background:#fee2e2; }
+
+/* spacing tombol */
+.link-actions{
+    display:flex;
+    gap:6px;
+}
+
+/* badge sell */
+.badge{
+    font-size:10px;
+    padding:2px 6px;
+    border-radius:6px;
+    background:#22c55e;
+    color:#fff;
+    margin-left:6px;
+}
 
 /* ================= TABS ================= */
 .link-tabs{
@@ -399,117 +423,108 @@ body{
     </div>
 
     <!-- ADS -->
+<!-- ADS -->
 <div id="adsTab" class="tab-content">
 
-    {% set ads_links = links 
-        | rejectattr("price", "defined") 
-        | list
-        + links 
-        | selectattr("price", "equalto", 0) 
-        | list %}
+    {% set ads_links = links | selectattr("price", "equalto", 0) | list %}
 
-    {% if ads_links|length == 0 %}
-    <div class="empty-state">
-        <p>Belum ada link</p>
-    </div>
-    {% else %}
+    {% if ads_links %}
+        {% for link in ads_links %}
 
-    {% for link in ads_links %}
+        <div class="link-card" onclick="openEdit('{{ link.id }}', 0)">
 
-    <div class="link-card"
-         onclick="openEdit('{{ link.id }}', {{ link.price|default(0)|int }})">
+            <div class="link-info">
+                <h4>{{ base_url }}/s/{{ link.short_code }}</h4>
 
-        <div class="link-info">
-            <h4>{{ base_url }}/s/{{ link.short_code }}</h4>
-            <small>{{ base_url }}/s/{{ link.short_code }}</small>
-
-            <div class="link-meta">
-                <span>{{ link.clicks|default(0) }} klik</span>
-                <span>Rp {{ "{:,.0f}".format(link.earnings|default(0)).replace(",",".") }}</span>
+                <div class="link-meta">
+                    <span>{{ link.clicks|default(0) }} klik</span>
+                    <span>Rp {{ "{:,.0f}".format(link.earnings|default(0)).replace(",",".") }}</span>
+                </div>
             </div>
+
+            <div class="link-actions">
+
+                <button class="btn-icon copy"
+                onclick="event.stopPropagation(); copyText('{{ base_url }}/s/{{ link.short_code }}', this)">
+                    <i class="fas fa-copy"></i>
+                </button>
+
+                <a href="/edit-link/{{ link.id }}"
+                   class="btn-icon edit"
+                   onclick="event.stopPropagation();">
+                    <i class="fas fa-pen"></i>
+                </a>
+
+                <button class="btn-icon delete"
+                onclick="event.stopPropagation(); deleteLink('{{ link.id }}')">
+                    <i class="fas fa-trash"></i>
+                </button>
+
+            </div>
+
         </div>
 
-        <div class="link-actions">
-
-            <button class="action-btn copy"
-            onclick="event.stopPropagation(); copyText('{{ base_url }}/s/{{ link.short_code }}', this)">
-                <i class="fas fa-copy"></i>
-            </button>
-
-            <a href="/edit-link/{{ link.id }}"
-               class="action-btn edit"
-               onclick="event.stopPropagation();">
-                <i class="fas fa-pen"></i>
-            </a>
-
-            <button class="action-btn delete"
-            onclick="event.stopPropagation(); deleteLink('{{ link.id }}')">
-                <i class="fas fa-trash"></i>
-            </button>
-
+        {% endfor %}
+    {% else %}
+        <div class="empty-state">
+            <p>Belum ada link</p>
         </div>
-
-    </div>
-
-    {% endfor %}
-
     {% endif %}
+
 </div>
 
-    <!-- SELL -->
+
+<!-- SELL -->
 <div id="sellTab" class="tab-content" style="display:none;">
 
-    {% set sell_links = links 
-        | selectattr("price", "defined") 
-        | selectattr("price", "gt", 0) 
-        | list %}
+    {% set sell_links = links | selectattr("price", "gt", 0) | list %}
 
-    {% if sell_links|length == 0 %}
-    <div class="empty-state">
-        <p>Belum ada link</p>
-    </div>
-    {% else %}
+    {% if sell_links %}
+        {% for link in sell_links %}
 
-    {% for link in sell_links %}
+        <div class="link-card" onclick="openEdit('{{ link.id }}', {{ link.price|int }})">
 
-    <div class="link-card"
-         onclick="openEdit('{{ link.id }}', {{ link.price|default(0)|int }})">
+            <div class="link-info">
+                <h4>
+                    {{ base_url }}/s/{{ link.short_code }}
+                    <span class="badge">SELL</span>
+                </h4>
 
-        <div class="link-info">
-            <h4>{{ base_url }}/s/{{ link.short_code }}</h4>
-            <small>{{ base_url }}/s/{{ link.short_code }}</small>
-
-            <div class="link-meta">
-                <span>Rp {{ "{:,.0f}".format(link.price|default(0)).replace(",",".") }}</span>
-                <span>{{ link.clicks|default(0) }} klik</span>
+                <div class="link-meta">
+                    <span class="price">Rp {{ "{:,.0f}".format(link.price).replace(",",".") }}</span>
+                    <span>{{ link.clicks|default(0) }} klik</span>
+                </div>
             </div>
+
+            <div class="link-actions">
+
+                <button class="btn-icon copy"
+                onclick="event.stopPropagation(); copyText('{{ base_url }}/s/{{ link.short_code }}', this)">
+                    <i class="fas fa-copy"></i>
+                </button>
+
+                <a href="/edit-link/{{ link.id }}"
+                   class="btn-icon edit"
+                   onclick="event.stopPropagation();">
+                    <i class="fas fa-pen"></i>
+                </a>
+
+                <button class="btn-icon delete"
+                onclick="event.stopPropagation(); deleteLink('{{ link.id }}')">
+                    <i class="fas fa-trash"></i>
+                </button>
+
+            </div>
+
         </div>
 
-        <div class="link-actions">
-
-            <button class="action-btn copy"
-            onclick="event.stopPropagation(); copyText('{{ base_url }}/s/{{ link.short_code }}', this)">
-                <i class="fas fa-copy"></i>
-            </button>
-
-            <a href="/edit-link/{{ link.id }}"
-               class="action-btn edit"
-               onclick="event.stopPropagation();">
-                <i class="fas fa-pen"></i>
-            </a>
-
-            <button class="action-btn delete"
-            onclick="event.stopPropagation(); deleteLink('{{ link.id }}')">
-                <i class="fas fa-trash"></i>
-            </button>
-
+        {% endfor %}
+    {% else %}
+        <div class="empty-state">
+            <p>Belum ada link</p>
         </div>
-
-    </div>
-
-    {% endfor %}
-
     {% endif %}
+
 </div>
 
 {% if total_links > 5 and total_pages > 1 %}
