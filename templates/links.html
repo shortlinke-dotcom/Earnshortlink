@@ -401,8 +401,12 @@ body{
     <!-- ADS -->
 <div id="adsTab" class="tab-content">
 
-    {% set ads_links = links | selectattr("price", "equalto", None) | list
-        + links | selectattr("price", "equalto", 0) | list %}
+    {% set ads_links = links 
+        | rejectattr("price", "defined") 
+        | list
+        + links 
+        | selectattr("price", "equalto", 0) 
+        | list %}
 
     {% if ads_links|length == 0 %}
     <div class="empty-state">
@@ -410,8 +414,7 @@ body{
     </div>
     {% else %}
 
-    {% for link in links %}
-    {% if (link.price|default(0)|int) <= 0 %}
+    {% for link in ads_links %}
 
     <div class="link-card"
          onclick="openEdit('{{ link.id }}', {{ link.price|default(0)|int }})">
@@ -448,7 +451,6 @@ body{
 
     </div>
 
-    {% endif %}
     {% endfor %}
 
     {% endif %}
@@ -457,7 +459,10 @@ body{
     <!-- SELL -->
 <div id="sellTab" class="tab-content" style="display:none;">
 
-    {% set sell_links = links | selectattr("price", "gt", 0) | list %}
+    {% set sell_links = links 
+        | selectattr("price", "defined") 
+        | selectattr("price", "gt", 0) 
+        | list %}
 
     {% if sell_links|length == 0 %}
     <div class="empty-state">
@@ -465,8 +470,7 @@ body{
     </div>
     {% else %}
 
-    {% for link in links %}
-    {% if (link.price|default(0)|int) > 0 %}
+    {% for link in sell_links %}
 
     <div class="link-card"
          onclick="openEdit('{{ link.id }}', {{ link.price|default(0)|int }})">
@@ -503,7 +507,6 @@ body{
 
     </div>
 
-    {% endif %}
     {% endfor %}
 
     {% endif %}
