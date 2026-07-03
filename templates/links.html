@@ -196,20 +196,6 @@ body{
     text-align:center;
 }
 
-/* ================= PRICE BOX ================= */
-#priceBox{
-    opacity:0;
-    max-height:0;
-    overflow:hidden;
-    transform:translateY(-5px);
-    transition:all .25s ease;
-}
-
-#priceBox.show{
-    opacity:1;
-    max-height:120px;
-    transform:translateY(0);
-}
 /* ================= ACTION BUTTON ================= */
 .btn-icon{
     transition:all .2s ease;
@@ -411,6 +397,13 @@ body{
 #clickLoader.active{
     transform:scaleX(1);
 }
+.link-card{
+    will-change:transform;
+}
+
+.btn-icon{
+    will-change:transform;
+}
 
 </style>
 {% endblock %}
@@ -444,7 +437,7 @@ body{
     </div>
 
     <!-- INFO LOCK -->
-    {% if not user.get("has_withdraw") %}
+    {% if not user_data.get("has_withdraw") %}
     <div class="lock-info">
         🔒 Paid Link terkunci — lakukan minimal 1x withdraw untuk membuka fitur ini
     </div>
@@ -637,7 +630,7 @@ body{
 let currentType = "ads";
 
 // dari backend
-const hasWithdraw = {{ 'true' if user.has_withdraw else 'false' }};
+const hasWithdraw = {{ 'true' if user_data.get("has_withdraw") else 'false' }};
 
 function setType(type, el){
 
@@ -761,7 +754,13 @@ function openEdit(id, price){
 }
 </script>
 <script>
-document.getElementById("createLinkForm").addEventListener("submit", async function(e){
+document.addEventListener("DOMContentLoaded", () => {
+
+const formEl = document.getElementById("createLinkForm");
+
+if(!formEl) return;
+
+formEl.addEventListener("submit", async function(e){
     e.preventDefault();
 
     const form = new FormData(this);
@@ -792,21 +791,14 @@ document.getElementById("createLinkForm").addEventListener("submit", async funct
         if(data.ok){
             showToast("Link berhasil dibuat!");
 
-            // ✅ reset form
             this.reset();
 
-            // 🔥 BALIKIN TYPE BIAR GAK KE RESET ADS
+            // restore UI state
             document.getElementById("type").value = currentType;
 
             const priceBox = document.getElementById("priceBox");
+            priceBox.classList.toggle("show", currentType === "sell");
 
-            if(currentType === "sell"){
-                priceBox.classList.add("show");
-            } else {
-                priceBox.classList.remove("show");
-            }
-
-            // 🔥 BALIKIN BUTTON SWITCH UI
             document.querySelectorAll(".switch-btn").forEach(btn=>{
                 btn.classList.remove("active");
             });
@@ -817,7 +809,6 @@ document.getElementById("createLinkForm").addEventListener("submit", async funct
                 document.querySelectorAll(".switch-btn")[0].classList.add("active");
             }
 
-            // reload halus
             setTimeout(()=>{
                 window.location.reload();
             }, 500);
@@ -832,10 +823,11 @@ document.getElementById("createLinkForm").addEventListener("submit", async funct
         showToast("Koneksi / server error!");
     }
 
-    // ❗ hanya jalan kalau gagal
     hideLoading();
     btn.innerHTML = "Create Link";
     btn.disabled = false;
+});
+
 });
 </script>
 <script>
@@ -890,17 +882,19 @@ function hideLoading(){
 }
 </script>
 <script>
-document.querySelectorAll("a.page-btn").forEach(link=>{
-    link.addEventListener("click", function(e){
-        e.preventDefault();
+document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll("a.page-btn").forEach(link=>{
+        link.addEventListener("click", function(e){
+            e.preventDefault();
 
-        const url = this.getAttribute("href");
+            const url = this.getAttribute("href");
 
-        document.getElementById("clickLoader").classList.add("active");
+            document.getElementById("clickLoader").classList.add("active");
 
-        setTimeout(()=>{
-            window.location.href = url;
-        }, 200);
+            setTimeout(()=>{
+                window.location.href = url;
+            }, 200);
+        });
     });
 });
 </script>
