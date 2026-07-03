@@ -409,6 +409,7 @@ body{
 {% endblock %}
 
 {% block content %}
+{% set user_data = user_data if user_data is defined else (user.data[0] if user.data else {}) %}
 <div id="clickLoader"></div>
 <div id="loadingOverlay">
     <div class="loader"></div>
@@ -630,7 +631,7 @@ body{
 let currentType = "ads";
 
 // dari backend
-const hasWithdraw = {{ 'true' if user_data.get("has_withdraw") else 'false' }};
+const hasWithdraw = {{ 'true' if user_data.get("has_withdraw", False) else 'false' }};
 
 function setType(type, el){
 
