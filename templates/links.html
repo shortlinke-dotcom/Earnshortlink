@@ -255,7 +255,10 @@ body{
     background:var(--primary);
     color:#fff;
 }
-
+.tab-btn i{
+    margin-right:6px;
+    font-size:13px;
+}
 /* ================= PAGINATION ================= */
 .pagination{
     display:flex;
@@ -327,10 +330,27 @@ body{
         justify-content:flex-end;
     }
 }
+#clickLoader{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:3px;
+    background:#3b82f6;
+    transform:scaleX(0);
+    transform-origin:left;
+    transition:transform .3s;
+    z-index:9999;
+}
+
+#clickLoader.active{
+    transform:scaleX(1);
+}
 </style>
 {% endblock %}
 
 {% block content %}
+<div id="clickLoader"></div>
 <div id="loadingOverlay">
     <div class="loader"></div>
 </div>
@@ -749,6 +769,13 @@ function showLoading(){
 function hideLoading(){
     document.getElementById("loadingOverlay").classList.remove("active");
 }
+</script>
+<script>
+document.querySelectorAll("a").forEach(link=>{
+    link.addEventListener("click", function(){
+        document.getElementById("clickLoader").classList.add("active");
+    });
+});
 </script>
 
 {% endblock %}
