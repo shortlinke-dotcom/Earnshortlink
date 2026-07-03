@@ -128,12 +128,18 @@ body{
 }
 
 /* ================= LINK CARD ================= */
-
 .link-card{
     cursor:pointer;
     position:relative;
-    transition:all .25s ease;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    padding:14px;
     border-radius:14px;
+
+    transition:all .25s ease;
 }
 
 .link-card:hover{
@@ -142,8 +148,10 @@ body{
 }
 
 .link-card:active{
-    transform:scale(.97);
+    transform:scale(.96);
 }
+
+/* ================= SWITCH ================= */
 .link-switch{
     display:flex;
     background:#f1f5f9;
@@ -163,13 +171,15 @@ body{
     transition:.2s;
 }
 
+/* ACTIVE (FINAL STYLE - JANGAN DOUBLE) */
 .switch-btn.active{
-    background:#fff;
-    box-shadow:0 2px 8px rgba(0,0,0,.08);
+    background:linear-gradient(135deg,#3b82f6,#2563eb);
+    color:#fff;
     font-weight:600;
+    box-shadow:0 4px 12px rgba(59,130,246,.3);
 }
 
-/* LOCKED SELL */
+/* LOCKED */
 .switch-btn.locked{
     opacity:.5;
     cursor:not-allowed;
@@ -186,12 +196,19 @@ body{
     text-align:center;
 }
 
-/* PRICE HIDE */
+/* ================= PRICE BOX ================= */
 #priceBox{
-    display:none;
+    opacity:0;
+    max-height:0;
+    overflow:hidden;
+    transform:translateY(-5px);
+    transition:all .25s ease;
 }
+
 #priceBox.show{
-    display:block;
+    opacity:1;
+    max-height:120px;
+    transform:translateY(0);
 }
 /* ================= ACTION BUTTON ================= */
 .btn-icon{
@@ -394,6 +411,7 @@ body{
 #clickLoader.active{
     transform:scaleX(1);
 }
+
 </style>
 {% endblock %}
 
@@ -701,7 +719,7 @@ function copyText(text, el){
 </script>
 <script>
 function togglePrice(){
-    const type = document.getElementById("linkType").value;
+    const type = document.getElementById("type").value;
     const box = document.getElementById("priceBox");
 
     if(type === "sell"){
@@ -765,7 +783,6 @@ document.getElementById("createLinkForm").addEventListener("submit", async funct
             body: form
         });
 
-        // ❗ handle kalau server error (bukan JSON)
         if(!res.ok){
             throw new Error("Server error");
         }
@@ -775,16 +792,37 @@ document.getElementById("createLinkForm").addEventListener("submit", async funct
         if(data.ok){
             showToast("Link berhasil dibuat!");
 
-            // reset form
+            // ✅ reset form
             this.reset();
-            togglePrice();
 
-            // kasih delay biar loading keliatan smooth
+            // 🔥 BALIKIN TYPE BIAR GAK KE RESET ADS
+            document.getElementById("type").value = currentType;
+
+            const priceBox = document.getElementById("priceBox");
+
+            if(currentType === "sell"){
+                priceBox.classList.add("show");
+            } else {
+                priceBox.classList.remove("show");
+            }
+
+            // 🔥 BALIKIN BUTTON SWITCH UI
+            document.querySelectorAll(".switch-btn").forEach(btn=>{
+                btn.classList.remove("active");
+            });
+
+            if(currentType === "sell"){
+                document.getElementById("sellBtn").classList.add("active");
+            } else {
+                document.querySelectorAll(".switch-btn")[0].classList.add("active");
+            }
+
+            // reload halus
             setTimeout(()=>{
                 window.location.reload();
             }, 500);
 
-            return; // ❗ penting biar gak lanjut ke bawah
+            return;
         }
 
         showToast(data.error || "Gagal membuat link");
