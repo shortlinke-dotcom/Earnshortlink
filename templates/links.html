@@ -403,6 +403,108 @@ tbody tr:hover{
 .link-info h4{
     word-break: break-all;
 }
+/* ================= MOBILE PERFECT FIX ================= */
+@media (max-width:768px){
+
+    body{
+        padding:12px;
+    }
+
+    .page-header h1{
+        font-size:20px;
+    }
+
+    .page-header p{
+        font-size:13px;
+    }
+
+    /* CARD FULL WIDTH */
+    .card{
+        padding:14px;
+        border-radius:14px;
+    }
+
+    /* FORM */
+    .form-group input,
+    .form-group select{
+        padding:14px;
+        font-size:14px;
+    }
+
+    .btn-create{
+        padding:14px;
+        font-size:14px;
+    }
+
+    /* STATS */
+    .stat{
+        padding:14px;
+    }
+
+    .stat h2{
+        font-size:18px;
+    }
+
+    /* LINK CARD */
+    .link-card{
+        width:100%;
+        padding:14px;
+        gap:10px;
+    }
+
+    .link-info h4{
+        font-size:13px;
+    }
+
+    .link-meta{
+        font-size:12px;
+        gap:12px;
+    }
+
+    /* BUTTON LEBIH GEDE */
+    .action-btn{
+        width:42px;
+        height:42px;
+        font-size:14px;
+    }
+
+    /* SEARCH */
+    .search-box input{
+        padding:14px;
+        font-size:14px;
+    }
+
+    /* TAB */
+    .tab-btn{
+        flex:1;
+        text-align:center;
+        padding:12px;
+        font-size:13px;
+    }
+
+    /* PAGINATION */
+    .page-btn{
+        padding:8px 12px;
+        font-size:13px;
+    }
+}
+/* SAFE AREA (iPhone notch dll) */
+body{
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* TAP EFFECT */
+.action-btn:active{
+    transform: scale(0.92);
+}
+
+/* LINK CARD TAP */
+.link-card:active{
+    transform: scale(0.98);
+}
+html{
+    scroll-behavior:smooth;
+}
 </style>
 {% endblock %}
 
@@ -585,7 +687,7 @@ tbody tr:hover{
             <div class="link-info">
 
                 <div class="link-title">
-                    <h4>{{ link.title if link.title else "Link #" ~ link.id }}</h4>
+                    <h4>{{ base_url }}/s/{{ link.short_code }}</h4>
 
                     {% if link.is_active %}
                         <span class="status active">Active</span>
@@ -704,9 +806,11 @@ function showToast(msg){
     },2000);
 }
 function copyText(text, el){
-    navigator.clipboard.writeText(text);
-
-    showToast("Link copied!");
+    navigator.clipboard.writeText(text).then(()=>{
+        showToast("Link copied!");
+    }).catch(()=>{
+        showToast("Gagal copy");
+    });
 
     if(el){
         el.innerHTML = "✓";
@@ -745,35 +849,38 @@ document.getElementById("createLinkForm").addEventListener("submit", async funct
     e.preventDefault();
 
     const form = new FormData(this);
+    const btn = this.querySelector(".btn-create");
 
-    // Tambahkan di sini
-    if (!form.get("title")) {
-        form.append("title", "Untitled");
-    }
+    if(btn.disabled) return;
+
+    btn.innerHTML = "Loading...";
+    btn.disabled = true;
 
     const type = form.get("type");
+    const url = type === "ads" ? "/create-link" : "/create-sell-link";
 
-    let url = "";
+    try {
+        const res = await fetch(url, {
+            method: "POST",
+            body: form
+        });
 
-    if(type === "ads"){
-        url = "/create-link";
-    } else {
-        url = "/create-sell-link";
+        const data = await res.json();
+
+        if(data.ok){
+            showToast("Link berhasil dibuat!");
+            this.reset(); // 🔥 UX lebih halus
+            window.location.reload();
+        } else {
+            showToast(data.error || "Gagal membuat link");
+        }
+
+    } catch(err){
+        showToast("Koneksi error!");
     }
 
-    const res = await fetch(url, {
-        method: "POST",
-        body: form
-    });
-
-    const data = await res.json();
-
-    if(data.ok){
-        showToast("Link berhasil dibuat!");
-        window.location.reload();
-    } else {
-        showToast(data.error || "Gagal membuat link");
-    }
+    btn.innerHTML = "Create Link";
+    btn.disabled = false;
 });
 </script>
 <script>
