@@ -400,6 +400,9 @@ tbody tr:hover{
         transform:translateY(0);
     }
 }
+.link-info h4{
+    word-break: break-all;
+}
 </style>
 {% endblock %}
 
@@ -511,7 +514,7 @@ tbody tr:hover{
             <div class="link-info">
 
                 <div class="link-title">
-                    <h4>{{ link.title if link.title else "Link #" ~ link.id }}</h4>
+                    <h4>{{ base_url }}/s/{{ link.short_code }}</h4>
 
                     {% if link.is_active %}
                         <span class="status active">Active</span>
@@ -539,7 +542,7 @@ tbody tr:hover{
             <div class="link-actions">
 
                 <button class="action-btn copy"
-                    onclick="copyText('{{ base_url }}/s/{{ link.short_code }}')">
+                    onclick="copyText('{{ base_url }}/s/{{ link.short_code }}', this)">
                     <i class="fas fa-copy"></i>
                 </button>
 
