@@ -333,6 +333,39 @@ tbody tr:hover{
         justify-content:flex-end;
     }
 }
+.link-title{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:6px;
+}
+
+.link-title h4{
+    margin:0;
+}
+
+.link-meta{
+    display:flex;
+    flex-wrap:wrap;
+    gap:18px;
+    margin-top:12px;
+    color:#64748b;
+    font-size:13px;
+}
+
+.link-meta span{
+    display:flex;
+    align-items:center;
+    gap:6px;
+}
+
+.pagination{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:8px;
+    margin-top:24px;
+}
 </style>
 {% endblock %}
 
@@ -344,44 +377,54 @@ tbody tr:hover{
 </div>
 
 <!-- ================= CREATE LINK PANEL ================= -->
-<div class="card create-panel">
+<form id="createLinkForm">
 
-    <h3>Buat Link Baru</h3>
+    <div class="form-group">
+        <label>Link Tujuan</label>
+        <input
+            type="url"
+            name="destination_url"
+            placeholder="https://..."
+            required>
+    </div>
 
-    <form id="createLinkForm">
+    <div class="form-group">
+        <label>Tipe Link</label>
+        <select
+            name="type"
+            id="linkType"
+            onchange="togglePrice()">
 
-        <!-- URL -->
-        <div class="form-group">
-            <label>Link</label>
-            <input type="text" name="destination_url" placeholder="https://..." required>
-        </div>
+            <option value="ads">📢 Ads Link</option>
+            <option value="sell">💰 Sell Link</option>
 
-        <!-- TITLE -->
-        <div class="form-group">
-            <label>Judul</label>
-            <input type="text" name="title" placeholder="Judul link" required>
-        </div>
+        </select>
+    </div>
 
-        <!-- TYPE -->
-        <div class="form-group">
-            <label>Tipe</label>
-            <select name="type" id="linkType" onchange="togglePrice()">
-                <option value="ads">Ads (Shortlink)</option>
-                <option value="sell">Sell Link</option>
-            </select>
-        </div>
+    <div
+        class="form-group"
+        id="priceBox"
+        style="display:none;">
 
-        <!-- PRICE (SELL ONLY) -->
-        <div class="form-group" id="priceBox" style="display:none;">
-            <label>Nominal (Rp)</label>
-            <input type="number" name="price" placeholder="Contoh: 10000">
-        </div>
+        <label>Harga (Rp)</label>
 
-        <button type="submit" class="btn-create">Create Link</button>
+        <input
+            type="number"
+            name="price"
+            placeholder="10000">
 
-    </form>
+    </div>
 
-</div>
+    <button
+        type="submit"
+        class="btn-create">
+
+        <i class="fa-solid fa-plus"></i>
+        Create Link
+
+    </button>
+
+</form>
 
 <!-- ================= STATS ================= -->
 <div class="stats">
@@ -419,7 +462,7 @@ tbody tr:hover{
         </button>
     </div>
 
-    <!-- ADS LINKS -->
+    <!-- ADS -->
     <div id="adsTab" class="tab-content">
 
         {% set ads_count = 0 %}
@@ -428,59 +471,69 @@ tbody tr:hover{
         {% if (link.price|default(0)|int) <= 0 %}
 
         <div class="link-card">
+
             <div class="link-info">
-                <h4>{{ link.title or 'Tanpa Judul' }}</h4>
+
+                <div class="link-title">
+                    <h4>{{ link.title or "Untitled" }}</h4>
+
+                    {% if link.is_active %}
+                        <span class="status active">Active</span>
+                    {% else %}
+                        <span class="status inactive">Inactive</span>
+                    {% endif %}
+                </div>
+
                 <small>{{ base_url }}/s/{{ link.short_code }}</small>
 
                 <div class="link-meta">
-                    <span>👁 {{ link.clicks|default(0) }} Klik</span>
                     <span>
-                        Rp {{ "{:,.0f}".format(link.earnings|default(0)).replace(",", ".") }}
+                        <i class="fa-solid fa-eye"></i>
+                        {{ link.clicks|default(0) }}
+                    </span>
+
+                    <span>
+                        <i class="fa-solid fa-coins"></i>
+                        Rp {{ "{:,.0f}".format(link.earnings|default(0)).replace(",",".") }}
                     </span>
                 </div>
+
             </div>
 
             <div class="link-actions">
 
-                {% if link.is_active %}
-                    <span class="status active">On</span>
-                {% else %}
-                    <span class="status inactive">Off</span>
-                {% endif %}
-
-                <button type="button"
-                        class="action-btn copy"
-                        onclick="copyText('{{ base_url }}/s/{{ link.short_code }}')">
+                <button class="action-btn copy"
+                    onclick="copyText('{{ base_url }}/s/{{ link.short_code }}')">
                     <i class="fas fa-copy"></i>
                 </button>
 
-                <a href="/edit-link/{{ link.id }}"
-                   class="action-btn edit">
+                <a href="/edit-link/{{ link.id }}" class="action-btn edit">
                     <i class="fas fa-pen"></i>
                 </a>
 
-                <button type="button"
-                        class="action-btn delete"
-                        onclick="deleteLink('{{ link.id }}')">
+                <button class="action-btn delete"
+                    onclick="deleteLink('{{ link.id }}')">
                     <i class="fas fa-trash"></i>
                 </button>
 
             </div>
+
         </div>
 
         {% set ads_count = ads_count + 1 %}
+
         {% endif %}
         {% endfor %}
 
         {% if ads_count == 0 %}
-        <p style="text-align:center;color:#64748b;padding:20px;">
+        <p style="text-align:center;color:#64748b;padding:30px;">
             Belum ada Ads Link.
         </p>
         {% endif %}
 
     </div>
 
-    <!-- SELL LINKS -->
+    <!-- SELL -->
     <div id="sellTab" class="tab-content" style="display:none;">
 
         {% set sell_count = 0 %}
@@ -489,52 +542,62 @@ tbody tr:hover{
         {% if (link.price|default(0)|int) > 0 %}
 
         <div class="link-card">
+
             <div class="link-info">
-                <h4>{{ link.title or 'Tanpa Judul' }}</h4>
+
+                <div class="link-title">
+                    <h4>{{ link.title or "Untitled" }}</h4>
+
+                    {% if link.is_active %}
+                        <span class="status active">Active</span>
+                    {% else %}
+                        <span class="status inactive">Inactive</span>
+                    {% endif %}
+                </div>
+
                 <small>{{ base_url }}/s/{{ link.short_code }}</small>
 
                 <div class="link-meta">
                     <span>
-                        💰 Rp {{ "{:,.0f}".format(link.price|default(0)).replace(",", ".") }}
+                        <i class="fa-solid fa-wallet"></i>
+                        Rp {{ "{:,.0f}".format(link.price|default(0)).replace(",",".") }}
                     </span>
-                    <span>👁 {{ link.clicks|default(0) }} Klik</span>
+
+                    <span>
+                        <i class="fa-solid fa-eye"></i>
+                        {{ link.clicks|default(0) }}
+                    </span>
                 </div>
+
             </div>
 
             <div class="link-actions">
 
-                {% if link.is_active %}
-                    <span class="status active">On</span>
-                {% else %}
-                    <span class="status inactive">Off</span>
-                {% endif %}
-
-                <button type="button"
-                        class="action-btn copy"
-                        onclick="copyText('{{ base_url }}/s/{{ link.short_code }}')">
+                <button class="action-btn copy"
+                    onclick="copyText('{{ base_url }}/s/{{ link.short_code }}')">
                     <i class="fas fa-copy"></i>
                 </button>
 
-                <a href="/edit-link/{{ link.id }}"
-                   class="action-btn edit">
+                <a href="/edit-link/{{ link.id }}" class="action-btn edit">
                     <i class="fas fa-pen"></i>
                 </a>
 
-                <button type="button"
-                        class="action-btn delete"
-                        onclick="deleteLink('{{ link.id }}')">
+                <button class="action-btn delete"
+                    onclick="deleteLink('{{ link.id }}')">
                     <i class="fas fa-trash"></i>
                 </button>
 
             </div>
+
         </div>
 
         {% set sell_count = sell_count + 1 %}
+
         {% endif %}
         {% endfor %}
 
         {% if sell_count == 0 %}
-        <p style="text-align:center;color:#64748b;padding:20px;">
+        <p style="text-align:center;color:#64748b;padding:30px;">
             Belum ada Sell Link.
         </p>
         {% endif %}
@@ -542,24 +605,34 @@ tbody tr:hover{
     </div>
 
 </div>
+
+{% if total_links > 5 and total_pages > 1 %}
+
 <div class="pagination">
 
     {% if page > 1 %}
-        <a class="page-btn" href="?page={{ page - 1 }}">Prev</a>
+    <a class="page-btn" href="?page={{ page-1 }}">
+        <i class="fa-solid fa-chevron-left"></i>
+    </a>
     {% endif %}
 
     {% for p in range(1, total_pages + 1) %}
-        <a class="page-btn {% if p == page %}active{% endif %}"
-           href="?page={{ p }}">
-            {{ p }}
-        </a>
+        {% if p == page %}
+            <span class="page-btn active">{{ p }}</span>
+        {% else %}
+            <a class="page-btn" href="?page={{ p }}">{{ p }}</a>
+        {% endif %}
     {% endfor %}
 
     {% if page < total_pages %}
-        <a class="page-btn" href="?page={{ page + 1 }}">Next</a>
+    <a class="page-btn" href="?page={{ page+1 }}">
+        <i class="fa-solid fa-chevron-right"></i>
+    </a>
     {% endif %}
 
 </div>
+
+{% endif %}
 <script>
 function copyText(text){
     navigator.clipboard.writeText(text);
@@ -583,6 +656,12 @@ document.getElementById("createLinkForm").addEventListener("submit", async funct
     e.preventDefault();
 
     const form = new FormData(this);
+
+    // Tambahkan di sini
+    if (!form.get("title")) {
+        form.append("title", "Untitled");
+    }
+
     const type = form.get("type");
 
     let url = "";
