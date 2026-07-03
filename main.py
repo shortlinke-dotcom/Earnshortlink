@@ -1637,7 +1637,8 @@ async def final_reward(request: Request, token: str = Form(...)):
 # LINKS
 # =========================
 from math import ceil
-from fastapi import Query
+from fastapi import Request, Query
+from fastapi.responses import RedirectResponse
 
 @app.get("/links")
 async def links(request: Request, page: int = Query(1, ge=1)):
@@ -1647,6 +1648,7 @@ async def links(request: Request, page: int = Query(1, ge=1)):
     if not user_id:
         return RedirectResponse("/login", 303)
 
+    # ================= USER =================
     user = (
         supabase.table("users")
         .select("username, saldo")
@@ -1657,40 +1659,41 @@ async def links(request: Request, page: int = Query(1, ge=1)):
 
     user_data = (user.data or [{}])[0]
 
-    count_res = (
+    # ================= COUNT TOTAL (GABUNG) =================
+    count_links = (
         supabase.table("links")
         .select("id", count="exact")
         .eq("user_id", user_id)
         .execute()
     )
 
-    total_links = count_res.count or 0
+    count_sell = (
+        supabase.table("sell_links")
+        .select("id", count="exact")
+        .eq("user_id", user_id)
+        .execute()
+    )
 
+    total_links = (count_links.count or 0) + (count_sell.count or 0)
+
+    # ================= PAGINATION =================
     per_page = 10
     total_pages = max(1, ceil(total_links / per_page))
 
-    if page < 1:
-        page = 1
-
-    if page > total_pages:
-        page = total_pages
+    page = max(1, min(page, total_pages))
 
     start = (page - 1) * per_page
     end = start + per_page - 1
 
-    # ================= FETCH SHORTLINK =================
+    # ================= FETCH DATA =================
     links_res = (
         supabase.table("links")
         .select("*")
         .eq("user_id", user_id)
         .order("id", desc=True)
-        .range(start, end)
         .execute()
     )
 
-    links_data = links_res.data or []
-
-    # ================= FETCH SELL LINK =================
     sell_res = (
         supabase.table("sell_links")
         .select("*")
@@ -1699,38 +1702,40 @@ async def links(request: Request, page: int = Query(1, ge=1)):
         .execute()
     )
 
+    links_data = links_res.data or []
     sell_links = sell_res.data or []
 
-    if not links_data and page > 1:
-        page = max(1, page - 1)
+    # ================= NORMALIZE =================
+    for link in links_data:
+        link["price"] = 0
+        link["type"] = "ads"
 
-        start = (page - 1) * per_page
-        end = start + per_page - 1
+    for link in sell_links:
+        link["price"] = link.get("price", 0)
+        link["type"] = "sell"
 
-        links_res = (
-            supabase.table("links")
-            .select("*")
-            .eq("user_id", user_id)
-            .order("id", desc=True)
-            .range(start, end)
-            .execute()
-        )
+    # ================= GABUNG + SORT =================
+    all_links = links_data + sell_links
+    all_links.sort(key=lambda x: x.get("id", 0), reverse=True)
 
-        links_data = links_res.data or []
+    # ================= PAGINATION (SETELAH GABUNG) =================
+    paginated_links = all_links[start:end+1]
 
-    total_clicks = sum(l.get("clicks") or 0 for l in links_data)
-    total_earnings = sum(l.get("earnings") or 0 for l in links_data)
+    # ================= STATS =================
+    total_clicks = sum(l.get("clicks") or 0 for l in all_links)
+    total_earnings = sum(l.get("earnings") or 0 for l in all_links)
 
+    # ================= NAV =================
     has_prev = page > 1
     has_next = page < total_pages
 
+    # ================= RETURN =================
     return templates.TemplateResponse(
         "links.html",
         {
             "request": request,
             "base_url": str(request.base_url).rstrip("/"),
-            "links": links_data,
-            "sell_links": sell_links,  # ← jangan lupa
+            "links": paginated_links,  # 🔥 SUDAH DIGABUNG
             "total_links": total_links,
             "total_clicks": total_clicks,
             "total_earnings": total_earnings,
