@@ -1840,19 +1840,18 @@ active=false;
 const bottomAd = document.getElementById("bottomAd");
 const toggleBtn = document.getElementById("toggleBottomAd");
 
-// Muncul setelah 5 detik (lebih smooth, tidak agresif)
+// muncul pelan setelah 5 detik
 setTimeout(() => {
     bottomAd.classList.add("show");
 }, 5000);
 
 
-// toggle (sembunyi / tampil lagi)
+// toggle hide / show
 toggleBtn.onclick = function () {
 
     if (bottomAd.classList.contains("show")) {
         bottomAd.classList.remove("show");
         bottomAd.classList.add("hide");
-
         toggleBtn.innerHTML = '<i class="fa-solid fa-chevron-up"></i>';
     } 
     else {
