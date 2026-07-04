@@ -1739,7 +1739,7 @@ async def links(request: Request, page: int = Query(1, ge=1)):
     all_links.sort(key=lambda x: x.get("id", 0), reverse=True)
 
     # ================= PAGINATION (SETELAH GABUNG) =================
-    paginated_links = all_links[start:end+1]
+    paginated_links = all_links[start:end]
 
     # ================= STATS =================
     total_clicks = sum(l.get("clicks") or 0 for l in all_links)
