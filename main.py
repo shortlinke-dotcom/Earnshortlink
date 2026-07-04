@@ -1660,8 +1660,16 @@ from math import ceil
 from fastapi import Request, Query
 from fastapi.responses import RedirectResponse
 
+from math import ceil
+from fastapi import Request, Query
+from fastapi.responses import RedirectResponse
+
 @app.get("/links")
-async def links(request: Request, page: int = Query(1, ge=1)):
+async def links(
+    request: Request,
+    page: int = Query(1, ge=1),
+    tab: str = Query("ads")   # ✅ FIX 1: TAMBAH TAB
+):
 
     user_id = request.session.get("user_id")
 
@@ -1678,32 +1686,6 @@ async def links(request: Request, page: int = Query(1, ge=1)):
     )
 
     user_data = (user.data or [{}])[0]
-
-    # ================= COUNT TOTAL (GABUNG) =================
-    count_links = (
-        supabase.table("links")
-        .select("id", count="exact")
-        .eq("user_id", user_id)
-        .execute()
-    )
-
-    count_sell = (
-        supabase.table("sell_links")
-        .select("id", count="exact")
-        .eq("user_id", user_id)
-        .execute()
-    )
-
-    total_links = (count_links.count or 0) + (count_sell.count or 0)
-
-    # ================= PAGINATION =================
-    per_page = 5
-    total_pages = max(1, ceil(total_links / per_page))
-
-    page = max(1, min(page, total_pages))
-
-    start = (page - 1) * per_page
-    end = start + per_page - 1
 
     # ================= FETCH DATA =================
     links_res = (
@@ -1734,16 +1716,27 @@ async def links(request: Request, page: int = Query(1, ge=1)):
         link["price"] = link.get("price", 0)
         link["type"] = "sell"
 
-    # ================= GABUNG + SORT =================
-    all_links = links_data + sell_links
-    all_links.sort(key=lambda x: x.get("id", 0), reverse=True)
+    # ================= FILTER BY TAB =================
+    if tab == "ads":
+        filtered = links_data
+    else:
+        filtered = sell_links
 
-    # ================= PAGINATION (SETELAH GABUNG) =================
-    paginated_links = all_links[start:end]
+    # ================= PAGINATION =================
+    per_page = 5
+    total_links = len(filtered)
+    total_pages = max(1, ceil(total_links / per_page))
+
+    page = max(1, min(page, total_pages))
+
+    start = (page - 1) * per_page
+    end = start + per_page
+
+    paginated_links = filtered[start:end]   # ✅ FIX 2 (end tanpa -1)
 
     # ================= STATS =================
-    total_clicks = sum(l.get("clicks") or 0 for l in all_links)
-    total_earnings = sum(l.get("earnings") or 0 for l in all_links)
+    total_clicks = sum(l.get("clicks") or 0 for l in links_data + sell_links)
+    total_earnings = sum(l.get("earnings") or 0 for l in links_data + sell_links)
 
     # ================= NAV =================
     has_prev = page > 1
@@ -1754,18 +1747,23 @@ async def links(request: Request, page: int = Query(1, ge=1)):
         "links.html",
         {
             "request": request,
-            "tab": tab,
+            "tab": tab,   # ✅ FIX 3: SEKARANG AMAN
             "user": user,
             "user_data": user_data,
-            "ads_links_page": links_data,
-            "sell_links_page": sell_links,
+
+            # pagination sudah sesuai tab
+            "ads_links_page": paginated_links if tab == "ads" else [],
+            "sell_links_page": paginated_links if tab == "sell" else [],
+
             "base_url": str(request.base_url).rstrip("/"),
-            "links": paginated_links,  # 🔥 SUDAH DIGABUNG
+
             "total_links": total_links,
             "total_clicks": total_clicks,
             "total_earnings": total_earnings,
+
             "saldo": user_data.get("saldo") or 0,
             "username": user_data.get("username") or "",
+
             "page": page,
             "total_pages": total_pages,
             "has_prev": has_prev,
