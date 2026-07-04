@@ -601,18 +601,18 @@ justify-content:flex-end;
 <div class="card">
 
     <div class="link-tabs">
-        <button type="button" class="tab-btn active" onclick="showTab('ads')">
+        <button type="button" class="tab-btn active" onclick="setTab('ads')">
             <i class="fas fa-chart-line"></i> Ads Links
         </button>
 
-        <button type="button" class="tab-btn" onclick="showTab('sell')">
+        <button type="button" class="tab-btn" onclick="setTab('sell')">
             <i class="fas fa-wallet"></i> Sell Links
         </button>
     </div>
 
 <!-- ADS -->
 <div id="adsTab">
-{% if ads_links_page %}
+{% if tab == "ads" and ads_links %}
 {% for link in ads_links_page %}
 
 <div class="link-card">
@@ -697,7 +697,7 @@ justify-content:flex-end;
 
 <!-- SELL -->
 <div id="sellTab" style="display:none;">
-{% if sell_links_page %}
+{% if tab == "sell" and sell_links %}
 {% for link in sell_links_page %}
 
 <div class="link-card">
@@ -848,14 +848,14 @@ justify-content:flex-end;
 
 </div>
 
-{% if total_pages > 1 %}
+{% if total_pages > 1 and links|length > 0 %}
 
 <div class="pagination">
 
     {% if page > 1 %}
         <a
             class="page-btn"
-            href="?page={{ page - 1 }}"
+            href="?page={{ page - 1 }}&tab={{ request.query_params.get('tab', 'ads') }}"
             aria-label="Halaman sebelumnya">
             ‹
         </a>
@@ -882,7 +882,7 @@ justify-content:flex-end;
     {% if page < total_pages %}
         <a
             class="page-btn"
-            href="?page={{ page + 1 }}"
+            href="?page={{ page + 1 }}&tab={{ request.query_params.get('tab', 'ads') }}"
             aria-label="Halaman berikutnya">
             ›
         </a>
@@ -891,6 +891,36 @@ justify-content:flex-end;
 </div>
 
 {% endif %}
+<script>
+function setTab(type){
+    const url = new URL(window.location.href);
+    url.searchParams.set("tab", type);
+    url.searchParams.set("page", 1); // reset page saat ganti tab
+    window.location.href = url.toString();
+}
+
+function showTab(type){
+
+    const adsTab = document.getElementById("adsTab");
+    const sellTab = document.getElementById("sellTab");
+
+    adsTab.style.display = type === "ads" ? "block" : "none";
+    sellTab.style.display = type === "sell" ? "block" : "none";
+
+    const tabs = document.querySelectorAll(".tab-btn");
+    tabs.forEach(btn => btn.classList.remove("active"));
+
+    if(type === "ads") tabs[0].classList.add("active");
+    else tabs[1].classList.add("active");
+}
+
+// auto detect dari URL
+document.addEventListener("DOMContentLoaded", () => {
+    const params = new URLSearchParams(window.location.search);
+    const tab = params.get("tab") || "ads";
+    showTab(tab);
+});
+</script>
 <script>
 function openEditModal(id, url, type, price = 0, shortlink = ""){
 
