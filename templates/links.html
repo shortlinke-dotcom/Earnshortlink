@@ -77,34 +77,66 @@ margin-bottom:10px;
 }
 /* ================= STATS ================= */
 .stats{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:14px;
-margin:18px 0;
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:16px;
+    margin:20px 0;
 }
+
 .stat-card{
-    background:#fff;
-    border-radius:14px;
-    padding:18px;
-    box-shadow:0 6px 16px rgba(0,0,0,.05);
-    transition:.2s;
+    background:#ffffff;
+    border:1px solid #e5e7eb;
+    border-radius:16px;
+    padding:18px 20px;
+    box-shadow:0 6px 20px rgba(0,0,0,.04);
+    transition:all .25s ease;
 }
+
 .stat-card:hover{
-    transform:translateY(-2px);
+    transform:translateY(-4px);
+    box-shadow:0 12px 30px rgba(0,0,0,.08);
 }
+
 .stat-label{
-font-size:12px;
-color:var(--muted);
+    font-size:12px;
+    color:#64748b;
+    font-weight:500;
+    letter-spacing:.3px;
+    margin-bottom:8px;
+    text-transform:uppercase;
 }
+
 .stat-value{
-    font-size:24px;
+    font-size:26px;
     font-weight:800;
-    margin-top:6px;
+    color:#0f172a;
 }
+
+/* Highlight card */
 .stat-card.highlight{
-    background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+    background:linear-gradient(135deg,#3b82f6,#2563eb);
+    border:none;
     color:#fff;
-    box-shadow:0 10px 30px rgba(59,130,246,.35);
+    box-shadow:0 12px 30px rgba(59,130,246,.25);
+}
+
+.stat-card.highlight .stat-label{
+    color:rgba(255,255,255,.8);
+}
+
+.stat-card.highlight .stat-value{
+    color:#fff;
+}
+
+/* Responsive */
+@media(max-width:768px){
+    .stats{
+        grid-template-columns:1fr;
+    }
+
+    .stat-value{
+        font-size:22px;
+    }
 }
 /* ================= FORM ================= */
 .form-group{
@@ -579,24 +611,20 @@ justify-content:flex-end;
 <div class="stats">
 
     <div class="stat-card">
-        <span class="stat-label">Total Link</span>
-        <h2 class="stat-value">
-            {{ total_links|default(0) }}
-        </h2>
+        <div class="stat-label">Total Link</div>
+        <div class="stat-value">{{ total_links|default(0) }}</div>
     </div>
 
     <div class="stat-card">
-        <span class="stat-label">Total Klik</span>
-        <h2 class="stat-value">
-            {{ total_clicks|default(0) }}
-        </h2>
+        <div class="stat-label">Total Klik</div>
+        <div class="stat-value">{{ total_clicks|default(0) }}</div>
     </div>
 
     <div class="stat-card highlight">
-        <span class="stat-label">Total Pendapatan</span>
-        <h2 class="stat-value">
+        <div class="stat-label">Total Pendapatan</div>
+        <div class="stat-value">
             Rp {{ "{:,.0f}".format(total_earnings|default(0)).replace(",", ".") }}
-        </h2>
+        </div>
     </div>
 
 </div>
@@ -1270,42 +1298,65 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 <script>
-async function deleteLink(id){
+async function deleteLink(id) {
 
-    if(!confirm("Hapus link ini?")) return;
+    if (!id) {
+        showToast("ID link tidak valid");
+        return;
+    }
+
+    if (!confirm("Hapus link ini?")) return;
 
     showLoading();
 
-    try{
+    try {
 
-        const res = await fetch(`/delete-link/${id}`,{
-            method:"POST"
+        const res = await fetch(`/delete-link/${id}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            }
         });
 
-        const data = await res.json();
+        // ❗ lebih aman daripada langsung json()
+        const text = await res.text();
 
-        if(data.ok){
-            showToast("Link berhasil dihapus");
-            setTimeout(() => location.reload(), 500);
-        }else{
-            showToast(data.error || "Gagal menghapus link");
+        let data;
+        try {
+            data = JSON.parse(text);
+        } catch (e) {
+            console.error("Response bukan JSON:", text);
+            throw new Error("Server tidak mengembalikan JSON");
         }
 
-    }catch(err){
-        console.error(err);
+        if (data.ok) {
+            showToast("Link berhasil dihapus");
+
+            setTimeout(() => {
+                location.reload();
+            }, 500);
+
+        } else {
+            showToast(data.error || "Gagal menghapus link");
+            console.warn("Delete gagal:", data);
+        }
+
+    } catch (err) {
+        console.error("Delete error:", err);
         showToast("Terjadi kesalahan server");
-    }finally{
+    } finally {
         hideLoading();
     }
-
 }
 
-function showLoading(){
-    document.getElementById("loadingOverlay").classList.add("active");
+function showLoading() {
+    const el = document.getElementById("loadingOverlay");
+    if (el) el.classList.add("active");
 }
 
-function hideLoading(){
-    document.getElementById("loadingOverlay").classList.remove("active");
+function hideLoading() {
+    const el = document.getElementById("loadingOverlay");
+    if (el) el.classList.remove("active");
 }
 </script>
 <script>
