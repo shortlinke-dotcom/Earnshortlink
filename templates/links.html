@@ -335,18 +335,72 @@ color:#fff;
 }
 /* ================= MODAL ================= */
 .modal{
-display:none;
-position:fixed;
-inset:0;
-background:rgba(0,0,0,.5);
-z-index:999;
+    position:fixed;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:rgba(15,23,42,.55);
+    backdrop-filter:blur(4px);
+
+    opacity:0;
+    visibility:hidden;
+    pointer-events:none;
+
+    transition:.25s ease;
+    z-index:9999;
 }
+
+.modal.active{
+    opacity:1;
+    visibility:visible;
+    pointer-events:auto;
+}
+
 .modal-content{
-background:#fff;
-padding:20px;
-border-radius:14px;
-max-width:400px;
-margin:100px auto;
+    width:100%;
+    max-width:430px;
+    background:#fff;
+    border-radius:16px;
+    padding:24px;
+    box-shadow:0 20px 50px rgba(0,0,0,.25);
+
+    transform:translateY(15px) scale(.97);
+    transition:.25s ease;
+}
+
+.modal.active .modal-content{
+    transform:translateY(0) scale(1);
+}
+
+.modal-content h3{
+    margin:0 0 18px;
+    font-size:22px;
+    font-weight:700;
+}
+
+.modal-content label{
+    display:block;
+    margin-bottom:6px;
+    font-size:13px;
+    font-weight:600;
+    color:#475569;
+}
+
+.modal-content button{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:10px;
+    background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+    color:#fff;
+    font-weight:700;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.modal-content button:hover{
+    transform:translateY(-2px);
 }
 /* ================= RESPONSIVE ================= */
 @media(max-width:768px){
@@ -415,53 +469,75 @@ justify-content:flex-end;
 <!-- ================= CREATE LINK PANEL ================= -->
 <div class="card create-panel">
 
-<form id="createLinkForm">
+<form id="createLinkForm" autocomplete="off">
 
     <!-- SWITCH TYPE -->
     <div class="link-switch">
-        <button type="button" class="switch-btn active" onclick="setType('ads', this)">
+        <button
+            type="button"
+            class="switch-btn active"
+            onclick="setType('ads', this)">
             Monetized
         </button>
 
-        <button type="button" class="switch-btn" id="sellBtn"
+        <button
+            type="button"
+            class="switch-btn"
+            id="sellBtn"
             onclick="setType('sell', this)">
             Paid
         </button>
     </div>
 
     <!-- INFO LOCK -->
-    {% if not (user_data.get("has_withdraw") if user_data else False) %}
+    {% if not user_data.get("has_withdraw", False) %}
     <div class="lock-info">
-        🔒 Paid Link terkunci — lakukan minimal 1x withdraw untuk membuka fitur ini
+        🔒 Paid Link terkunci — lakukan minimal 1x withdraw untuk membuka fitur ini.
     </div>
     {% endif %}
 
-    <!-- HIDDEN TYPE -->
-    <input type="hidden" name="type" id="type" value="ads">
+    <!-- TYPE -->
+    <input
+        type="hidden"
+        id="type"
+        name="type"
+        value="ads">
 
     <!-- URL -->
     <div class="form-group">
         <input
             type="url"
+            id="destination_url"
             name="destination_url"
             placeholder="https://target.com"
+            autocomplete="off"
             required>
     </div>
 
     <!-- PRICE -->
-    <div class="form-group" id="priceBox">
+    <div
+        class="form-group"
+        id="priceBox"
+        style="display:none;">
+
         <input
             type="number"
+            id="price"
             name="price"
+            min="0"
+            step="1"
             placeholder="Harga (Rp)">
     </div>
 
     <!-- BUTTON -->
-    <button type="submit" class="btn-create">
+    <button
+        type="submit"
+        class="btn-create">
         Create Link
     </button>
 
 </form>
+
 </div>
 
 <!-- ================= STATS ================= -->
@@ -470,21 +546,21 @@ justify-content:flex-end;
     <div class="stat-card">
         <span class="stat-label">Total Link</span>
         <h2 class="stat-value">
-            {{ total_links or 0 }}
+            {{ total_links|default(0) }}
         </h2>
     </div>
 
     <div class="stat-card">
         <span class="stat-label">Total Klik</span>
         <h2 class="stat-value">
-            {{ total_clicks or 0 }}
+            {{ total_clicks|default(0) }}
         </h2>
     </div>
 
     <div class="stat-card highlight">
         <span class="stat-label">Total Pendapatan</span>
         <h2 class="stat-value">
-            Rp {{ "{:,.0f}".format(total_earnings or 0).replace(",", ".") }}
+            Rp {{ "{:,.0f}".format(total_earnings|default(0)).replace(",", ".") }}
         </h2>
     </div>
 
@@ -510,136 +586,241 @@ justify-content:flex-end;
     </div>
 
 <!-- ADS -->
+<div id="adsTab">
 {% if ads_links_page %}
 {% for link in ads_links_page %}
 
-<div class="link-card" onclick="openEdit('{{ link.id }}', 0, event)">
+<div class="link-card">
     <div class="link-info">
+
         <h4 class="link-title">
             <a href="{{ base_url }}/s/{{ link.short_code }}"
                target="_blank"
+               rel="noopener noreferrer"
                onclick="event.stopPropagation()">
                 {{ base_url }}/s/{{ link.short_code }}
             </a>
+
             <span class="badge ads">ADS</span>
         </h4>
+
         <small class="link-destination">
             <a href="{{ link.destination_url }}"
                target="_blank"
+               rel="noopener noreferrer"
                onclick="event.stopPropagation()">
                 {{ link.destination_url }}
             </a>
         </small>
+
         <div class="link-meta">
             <span>{{ link.clicks|default(0) }} klik</span>
             <span>
                 Rp {{ "{:,.0f}".format(link.earnings|default(0)).replace(",", ".") }}
             </span>
         </div>
+
     </div>
+
     <div class="link-actions">
-        <button class="btn-icon copy"
+
+        <!-- COPY -->
+        <button
+            type="button"
+            class="btn-icon copy"
             onclick="event.stopPropagation(); copyText('{{ base_url }}/s/{{ link.short_code }}', this)">
             <i class="fas fa-copy"></i>
         </button>
-        <button class="btn-icon edit"
-            onclick="event.stopPropagation(); openEditModal('{{ link.id }}','{{ link.destination_url }}','ads',0)">
+
+        <!-- EDIT -->
+        <button
+            type="button"
+            class="btn-icon edit"
+            onclick='event.stopPropagation(); openEditModal(
+                "{{ link.id }}",
+                {{ link.destination_url|tojson }},
+                "ads",
+                0,
+                {{ (base_url ~ "/s/" ~ link.short_code)|tojson }}
+            )'>
             <i class="fas fa-pen"></i>
         </button>
-        <button class="btn-icon delete"
+
+        <!-- DELETE -->
+        <button
+            type="button"
+            class="btn-icon delete"
             onclick="event.stopPropagation(); deleteLink('{{ link.id }}')">
             <i class="fas fa-trash"></i>
         </button>
+
     </div>
+
 </div>
+
 {% endfor %}
 
 {% else %}
-Belum ada link
-Mulai dengan membuat shortlink pertama kamu
+
+<div class="card" style="text-align:center;padding:40px;">
+    <h3>Belum ada link</h3>
+    <p>Mulai dengan membuat shortlink pertama kamu.</p>
+</div>
+
 {% endif %}
+</div>
 
 <!-- SELL -->
+<div id="sellTab" style="display:none;">
 {% if sell_links_page %}
 {% for link in sell_links_page %}
 
-<div class="link-card" onclick="openEdit('{{ link.id }}', {{ link.price|int }}, event)">
+<div class="link-card">
+
     <div class="link-info">
+
         <h4 class="link-title">
             <a href="{{ base_url }}/s/{{ link.short_code }}"
                target="_blank"
+               rel="noopener noreferrer"
                onclick="event.stopPropagation()">
                 {{ base_url }}/s/{{ link.short_code }}
             </a>
+
             <span class="badge sell">SELL</span>
         </h4>
+
         <small class="link-destination">
             <a href="{{ link.destination_url }}"
                target="_blank"
+               rel="noopener noreferrer"
                onclick="event.stopPropagation()">
                 {{ link.destination_url }}
             </a>
         </small>
+
         <div class="link-meta">
-            <span>
-                Rp {{ "{:,.0f}".format(link.price).replace(",", ".") }}
-            </span>
+            <span>Rp {{ "{:,.0f}".format(link.price|default(0)).replace(",", ".") }}</span>
             <span>{{ link.clicks|default(0) }} klik</span>
         </div>
+
     </div>
+
     <div class="link-actions">
-        <button class="btn-icon copy"
+
+        <!-- COPY -->
+        <button
+            type="button"
+            class="btn-icon copy"
             onclick="event.stopPropagation(); copyText('{{ base_url }}/s/{{ link.short_code }}', this)">
             <i class="fas fa-copy"></i>
         </button>
-        <button class="btn-icon edit"
-            onclick="event.stopPropagation(); openEditModal('{{ link.id }}','{{ link.destination_url }}','sell','{{ link.price }}')">
+
+        <!-- EDIT -->
+        <button
+            type="button"
+            class="btn-icon edit"
+            onclick='event.stopPropagation(); openEditModal(
+                "{{ link.id }}",
+                {{ link.destination_url|tojson }},
+                "sell",
+                {{ link.price|default(0)|int }},
+                {{ (base_url ~ "/s/" ~ link.short_code)|tojson }}
+            )'>
             <i class="fas fa-pen"></i>
         </button>
-        <button class="btn-icon delete"
+
+        <!-- DELETE -->
+        <button
+            type="button"
+            class="btn-icon delete"
             onclick="event.stopPropagation(); deleteLink('{{ link.id }}')">
             <i class="fas fa-trash"></i>
         </button>
+
     </div>
+
 </div>
+
 {% endfor %}
 
 {% else %}
-Belum ada link
-Mulai dengan membuat shortlink pertama kamu
+
+<div class="card" style="text-align:center;padding:40px;">
+    <h3>Belum ada Paid Link</h3>
+    <p>Mulai dengan membuat paid link pertamamu.</p>
+</div>
+
 {% endif %}
+</div>
 <!-- ================= EDIT MODAL ================= -->
 <div id="editModal" class="modal">
-  <div class="modal-content">
 
-    <h3>Edit Link</h3>
+    <div class="modal-content">
 
-    <!-- ID -->
-    <input type="hidden" id="edit_id">
-    <input type="hidden" id="edit_type">
+        <h3>Edit Link</h3>
 
-    <!-- SHORTLINK (DISPLAY) -->
-    <div class="form-group">
-        <label>Shortlink</label>
-        <input type="text" id="edit_short" disabled>
+        <!-- HIDDEN -->
+        <input type="hidden" id="edit_id">
+        <input type="hidden" id="edit_type">
+
+        <!-- SHORTLINK -->
+        <div class="form-group">
+            <label for="edit_short">Shortlink</label>
+            <input
+                type="text"
+                id="edit_short"
+                readonly>
+        </div>
+
+        <!-- DESTINATION -->
+        <div class="form-group">
+            <label for="edit_url">Destination URL</label>
+            <input
+                type="url"
+                id="edit_url"
+                placeholder="https://target.com"
+                autocomplete="off">
+        </div>
+
+        <!-- PRICE -->
+        <div
+            class="form-group"
+            id="editPriceBox"
+            style="display:none;">
+
+            <label for="edit_price">Price</label>
+
+            <input
+                type="number"
+                id="edit_price"
+                min="0"
+                step="1"
+                placeholder="Harga (Rp)">
+        </div>
+
+        <!-- ACTION -->
+        <div style="display:flex;gap:10px;margin-top:20px;">
+
+            <button
+                type="button"
+                class="btn-create"
+                style="background:#64748b;"
+                onclick="closeModal()">
+                Tutup
+            </button>
+
+            <button
+                type="button"
+                class="btn-create"
+                onclick="submitEdit()">
+                Simpan
+            </button>
+
+        </div>
+
     </div>
 
-    <!-- ✅ TARUH DI SINI -->
-    <div class="form-group">
-        <label>Destination URL</label>
-        <input type="text" id="edit_url" placeholder="https://target.com">
-    </div>
-
-    <!-- PRICE (KHUSUS SELL) -->
-    <div class="form-group" id="editPriceBox" style="display:none;">
-        <label>Price</label>
-        <input type="number" id="edit_price">
-    </div>
-
-    <!-- BUTTON -->
-    <button onclick="submitEdit()">Simpan</button>
-
-  </div>
 </div>
 
 {% if total_pages > 1 %}
@@ -647,62 +828,95 @@ Mulai dengan membuat shortlink pertama kamu
 <div class="pagination">
 
     {% if page > 1 %}
-        <a class="page-btn" href="?page={{ page-1 }}">‹</a>
+        <a
+            class="page-btn"
+            href="?page={{ page - 1 }}"
+            aria-label="Halaman sebelumnya">
+            ‹
+        </a>
     {% endif %}
 
     {% for p in range(1, total_pages + 1) %}
+
         {% if p == page %}
-            <span class="page-btn active">{{ p }}</span>
+            <span
+                class="page-btn active"
+                aria-current="page">
+                {{ p }}
+            </span>
         {% else %}
-            <a class="page-btn" href="?page={{ p }}">{{ p }}</a>
+            <a
+                class="page-btn"
+                href="?page={{ p }}">
+                {{ p }}
+            </a>
         {% endif %}
+
     {% endfor %}
 
     {% if page < total_pages %}
-        <a class="page-btn" href="?page={{ page+1 }}">›</a>
+        <a
+            class="page-btn"
+            href="?page={{ page + 1 }}"
+            aria-label="Halaman berikutnya">
+            ›
+        </a>
     {% endif %}
 
 </div>
 
 {% endif %}
 <script>
-function openEditModal(id, url, type, price){
-    const modal = document.getElementById("editModal");
-    modal.classList.add("active");
+function openEditModal(id, url, type, price = 0, shortlink = ""){
 
-    document.getElementById("editModal").style.display = "block";
+    const modal = document.getElementById("editModal");
+
+    if(!modal) return;
+
+    modal.classList.add("active");
+    modal.style.display = "block";
 
     document.getElementById("edit_id").value = id;
     document.getElementById("edit_type").value = type;
-
-    // tampilkan shortlink (optional)
-    document.getElementById("edit_short").value = "Editing link...";
-
-    // ✅ ini yang benar
-    document.getElementById("edit_url").value = url;
+    document.getElementById("edit_short").value = shortlink || "";
+    document.getElementById("edit_url").value = url || "";
 
     const priceBox = document.getElementById("editPriceBox");
+    const priceInput = document.getElementById("edit_price");
 
     if(type === "sell"){
         priceBox.style.display = "block";
-        document.getElementById("edit_price").value = price;
+        priceInput.value = price || 0;
     }else{
         priceBox.style.display = "none";
+        priceInput.value = "";
     }
 }
 
 function closeModal(){
-    document.getElementById("editModal").classList.remove("active");
+
+    const modal = document.getElementById("editModal");
+
+    if(!modal) return;
+
+    modal.classList.remove("active");
+    modal.style.display = "none";
 }
+
 async function submitEdit(){
 
     const id = document.getElementById("edit_id").value;
     const type = document.getElementById("edit_type").value;
-    const urlInput = document.getElementById("edit_url").value.trim();
+    const url = document.getElementById("edit_url").value.trim();
     const price = document.getElementById("edit_price").value;
 
-    if(!urlInput.startsWith("http")){
-        showToast("URL harus diawali http/https");
+    if(!url){
+        showToast("URL tidak boleh kosong");
+        return;
+    }
+
+    if(!/^https?:\/\//i.test(url)){
+        showToast("URL harus diawali http:// atau https://");
         return;
     }
 
@@ -715,8 +929,7 @@ async function submitEdit(){
             : `/edit-link/${id}`;
 
         const form = new FormData();
-
-        form.append("url", urlInput);
+        form.append("url", url);
 
         if(type === "sell"){
             form.append("price", price || 0);
@@ -731,7 +944,12 @@ async function submitEdit(){
 
         if(data.ok){
             showToast("Berhasil update!");
-            location.reload();
+            closeModal();
+
+            setTimeout(()=>{
+                location.reload();
+            },500);
+
         }else{
             showToast(data.error || "Gagal update");
         }
@@ -739,9 +957,9 @@ async function submitEdit(){
     }catch(err){
         console.error(err);
         showToast("Server error");
+    }finally{
+        hideLoading();
     }
-
-    hideLoading();
 }
 </script>
 <script>
@@ -752,69 +970,99 @@ const hasWithdraw = {{ 'true' if user_data.get("has_withdraw", False) else 'fals
 
 function setType(type, el){
 
-    // ❌ LOCK SELL
+    // LOCK SELL
     if(type === "sell" && !hasWithdraw){
-        alert("Fitur Paid Link terbuka setelah minimal 1x withdraw");
+        alert("Fitur Paid Link terbuka setelah minimal 1x withdraw.");
         return;
     }
 
     currentType = type;
-    document.getElementById("type").value = type;
 
-    // active switch
+    const typeInput = document.getElementById("type");
+    const priceBox = document.getElementById("priceBox");
+
+    if(typeInput){
+        typeInput.value = type;
+    }
+
     document.querySelectorAll(".switch-btn").forEach(btn=>{
         btn.classList.remove("active");
     });
-    el.classList.add("active");
 
-    // toggle price
-    const priceBox = document.getElementById("priceBox");
+    if(el){
+        el.classList.add("active");
+    }
 
-    if(type === "sell"){
-        priceBox.classList.add("show");
-    }else{
-        priceBox.classList.remove("show");
+    if(priceBox){
+        if(type === "sell"){
+            priceBox.classList.add("show");
+        }else{
+            priceBox.classList.remove("show");
+        }
     }
 }
 
-// INIT LOCK STYLE
+// INIT
 window.addEventListener("DOMContentLoaded", ()=>{
-    if(!hasWithdraw){
-        document.getElementById("sellBtn").classList.add("locked");
+
+    const sellBtn = document.getElementById("sellBtn");
+
+    if(sellBtn && !hasWithdraw){
+        sellBtn.classList.add("locked");
     }
+
 });
 </script>
 <script>
-function showToast(msg){
+function showToast(message){
+
     const toast = document.createElement("div");
-    toast.innerText = msg;
 
-    toast.style.position = "fixed";
-    toast.style.bottom = "20px";
-    toast.style.right = "20px";
-    toast.style.background = "#111827";
-    toast.style.color = "#fff";
-    toast.style.padding = "10px 14px";
-    toast.style.borderRadius = "8px";
-    toast.style.zIndex = "9999";
+    toast.textContent = message;
 
-    // ANIMASI
-    toast.style.opacity = "0";
-    toast.style.transition = "all .3s ease";
+    Object.assign(toast.style,{
+        position:"fixed",
+        right:"20px",
+        bottom:"20px",
+        padding:"10px 14px",
+        background:"#111827",
+        color:"#fff",
+        borderRadius:"8px",
+        zIndex:"9999",
+        opacity:"0",
+        transition:"opacity .3s ease"
+    });
 
     document.body.appendChild(toast);
 
-    setTimeout(()=>{
+    requestAnimationFrame(()=>{
         toast.style.opacity = "1";
-    },10);
+    });
 
     setTimeout(()=>{
         toast.style.opacity = "0";
-        setTimeout(()=>toast.remove(),300);
+        setTimeout(()=>{
+            toast.remove();
+        },300);
     },2000);
 }
-function copyText(text, el){
-    navigator.clipboard.writeText(text).then(()=>{
+
+async function copyText(text, el){
+
+    try{
+
+        if(navigator.clipboard){
+            await navigator.clipboard.writeText(text);
+        }else{
+            const input = document.createElement("input");
+            input.value = text;
+
+            document.body.appendChild(input);
+            input.select();
+            document.execCommand("copy");
+            input.remove();
+        }
+
         showToast("Link copied!");
 
         if(el){
@@ -829,65 +1077,52 @@ function copyText(text, el){
             },1200);
         }
 
-    }).catch(()=>{
+    }catch(err){
+        console.error(err);
         showToast("Gagal copy");
-    });
+    }
+
 }
 </script>
 <script>
-function togglePrice(){
-    const type = document.getElementById("type").value;
-    const box = document.getElementById("priceBox");
+document.addEventListener("DOMContentLoaded", () => {
 
-    if(type === "sell"){
-        box.classList.add("show");
-    } else {
-        box.classList.remove("show");
-    }
-}
+    const searchInput = document.querySelector(".search-box input");
+    if (!searchInput) return;
 
-/* AUTO INIT */
-document.addEventListener("DOMContentLoaded", function(){
+    const cards = document.querySelectorAll(".link-card");
 
-    const search = document.querySelector(".search-box input");
+    cards.forEach(card => {
+        const title = card.querySelector(".link-title a");
+        if (title) {
+            title.dataset.original = title.textContent;
+        }
+    });
 
-    if(!search) return;
+    searchInput.addEventListener("input", function () {
 
-    search.addEventListener("input", function(){
+        const keyword = this.value.trim().toLowerCase();
 
-        const keyword = this.value.toLowerCase().trim();
+        cards.forEach(card => {
 
-        document.querySelectorAll(".link-card").forEach(card=>{
+            const title = card.querySelector(".link-title a");
+            const destination = card.querySelector(".link-destination a");
 
-            const titleEl = card.querySelector("h4");
+            const shortlink = title ? title.dataset.original : "";
+            const url = destination ? destination.textContent : "";
 
-            if(!titleEl) return;
+            const searchText = (shortlink + " " + url).toLowerCase();
 
-            const originalText = titleEl.getAttribute("data-original") || titleEl.innerText;
-
-            // simpan original pertama kali
-            if(!titleEl.getAttribute("data-original")){
-                titleEl.setAttribute("data-original", originalText);
-            }
-
-            // reset dulu
-            titleEl.innerHTML = originalText;
-
-            if(keyword === ""){
-                card.style.display = "";
-                return;
-            }
-
-            const textLower = originalText.toLowerCase();
-
-            if(textLower.includes(keyword)){
-
+            if (!keyword || searchText.includes(keyword)) {
                 card.style.display = "";
 
-                // highlight keyword
-                const regex = new RegExp(`(${keyword})`, "gi");
+                if (title) {
+                    const regex = new RegExp(`(${keyword})`, "ig");
 
-                titleEl.innerHTML = originalText.replace(regex, `<span class="highlight">$1</span>`);
+                    title.innerHTML = keyword
+                        ? shortlink.replace(regex, '<span class="highlight">$1</span>')
+                        : shortlink;
+                }
 
             } else {
                 card.style.display = "none";
@@ -898,139 +1133,136 @@ document.addEventListener("DOMContentLoaded", function(){
     });
 
 });
-function openEdit(id, price, e){
-    // ⛔ STOP kalau klik link atau tombol
-    if(e && e.target.closest("a, button")){
-        return;
-    }
-
-    if(price > 0){
-        window.location.href = `/edit-sell-link/${id}`;
-    }else{
-        window.location.href = `/edit-link/${id}`;
-    }
-}
 </script>
 <script>
 document.addEventListener("DOMContentLoaded", () => {
 
-const formEl = document.getElementById("createLinkForm");
+    const form = document.getElementById("createLinkForm");
+    if (!form) return;
 
-if(!formEl) return;
+    form.addEventListener("submit", async function (e) {
 
-formEl.addEventListener("submit", async function(e){
-    e.preventDefault();
+        e.preventDefault();
 
-    const form = new FormData(this);
-    const btn = this.querySelector(".btn-create");
+        const submitBtn = this.querySelector(".btn-create");
+        if (submitBtn.disabled) return;
 
-    if(btn.disabled) return;
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Loading...";
 
-    btn.innerHTML = "Loading...";
-    btn.disabled = true;
+        showLoading();
 
-    showLoading();
+        try {
 
-    const type = form.get("type");
-    const url = type === "ads" ? "/create-link" : "/create-sell-link";
+            const formData = new FormData(this);
+            const endpoint = formData.get("type") === "sell"
+                ? "/create-sell-link"
+                : "/create-link";
 
-    try {
-        const res = await fetch(url, {
-            method: "POST",
-            body: form
-        });
-
-        if(!res.ok){
-            throw new Error("Server error");
-        }
-
-        const data = await res.json();
-
-        if(data.ok){
-            showToast("Link berhasil dibuat!");
-
-            this.reset();
-
-            // restore UI state
-            document.getElementById("type").value = currentType;
-
-            const priceBox = document.getElementById("priceBox");
-            priceBox.classList.toggle("show", currentType === "sell");
-
-            document.querySelectorAll(".switch-btn").forEach(btn=>{
-                btn.classList.remove("active");
+            const res = await fetch(endpoint, {
+                method: "POST",
+                body: formData
             });
 
-            if(currentType === "sell"){
-                document.getElementById("sellBtn").classList.add("active");
-            } else {
-                document.querySelectorAll(".switch-btn")[0].classList.add("active");
+            if (!res.ok) {
+                throw new Error("Server Error");
             }
 
-            setTimeout(()=>{
-                window.location.reload();
-            }, 500);
+            const data = await res.json();
 
-            return;
+            if (data.ok) {
+
+                showToast("Link berhasil dibuat!");
+
+                this.reset();
+
+                document.getElementById("type").value = currentType;
+
+                document.getElementById("priceBox")
+                    .classList.toggle("show", currentType === "sell");
+
+                document.querySelectorAll(".switch-btn")
+                    .forEach(btn => btn.classList.remove("active"));
+
+                if (currentType === "sell") {
+                    document.getElementById("sellBtn").classList.add("active");
+                } else {
+                    document.querySelector(".switch-btn").classList.add("active");
+                }
+
+                setTimeout(() => location.reload(), 500);
+
+            } else {
+                showToast(data.error || "Gagal membuat link");
+            }
+
+        } catch (err) {
+
+            console.error(err);
+            showToast("Koneksi / Server Error");
+
+        } finally {
+
+            hideLoading();
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Create Link";
+
         }
 
-        showToast(data.error || "Gagal membuat link");
-
-    } catch(err){
-        console.error(err);
-        showToast("Koneksi / server error!");
-    }
-
-    hideLoading();
-    btn.innerHTML = "Create Link";
-    btn.disabled = false;
-});
+    });
 
 });
 </script>
 <script>
 function showTab(type){
 
-    document.getElementById("adsTab").style.display =
-        type === "ads" ? "block" : "none";
+    const adsTab = document.getElementById("adsTab");
+    const sellTab = document.getElementById("sellTab");
 
-    document.getElementById("sellTab").style.display =
-        type === "sell" ? "block" : "none";
+    adsTab.style.display = type === "ads" ? "block" : "none";
+    sellTab.style.display = type === "sell" ? "block" : "none";
 
-    document.querySelectorAll(".tab-btn")
-        .forEach(btn => btn.classList.remove("active"));
+    const tabs = document.querySelectorAll(".tab-btn");
+
+    tabs.forEach(btn => btn.classList.remove("active"));
 
     if(type === "ads"){
-        document.querySelectorAll(".tab-btn")[0].classList.add("active");
+        tabs[0].classList.add("active");
     }else{
-        document.querySelectorAll(".tab-btn")[1].classList.add("active");
+        tabs[1].classList.add("active");
     }
 }
 
 async function deleteLink(id){
+
     if(!confirm("Hapus link ini?")) return;
 
     showLoading();
 
     try{
-        const res = await fetch(`/delete-link/${id}`, {method:"POST"});
+
+        const res = await fetch(`/delete-link/${id}`,{
+            method:"POST"
+        });
+
         const data = await res.json();
 
         if(data.ok){
-            showToast("Link dihapus");
-            window.location.reload();
+            showToast("Link berhasil dihapus");
+            setTimeout(() => location.reload(), 500);
         }else{
-            showToast("Gagal hapus");
+            showToast(data.error || "Gagal menghapus link");
         }
 
-    }catch{
-        showToast("Error");
+    }catch(err){
+        console.error(err);
+        showToast("Terjadi kesalahan server");
+    }finally{
+        hideLoading();
     }
 
-    hideLoading();
 }
-</script>
-<script>
+
 function showLoading(){
     document.getElementById("loadingOverlay").classList.add("active");
 }
@@ -1041,19 +1273,27 @@ function hideLoading(){
 </script>
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-    document.querySelectorAll("a.page-btn").forEach(link=>{
-        link.addEventListener("click", function(e){
+
+    const loader = document.getElementById("clickLoader");
+
+    document.querySelectorAll(".pagination .page-btn[href]").forEach(link => {
+
+        link.addEventListener("click", function (e) {
+
             e.preventDefault();
 
-            const url = this.getAttribute("href");
+            if (loader) {
+                loader.classList.add("active");
+            }
 
-            document.getElementById("clickLoader").classList.add("active");
-
-            setTimeout(()=>{
-                window.location.href = url;
+            setTimeout(() => {
+                window.location.href = this.href;
             }, 200);
+
         });
+
     });
+
 });
 </script>
 
