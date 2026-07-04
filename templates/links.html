@@ -396,7 +396,7 @@ justify-content:flex-end;
 
 {% block content %}
 {% set per_page = 5 %}
-{% set page = request.query_params.get(‘page’, 1) | int %}
+{% set page = request.query_params.get('page', 1) | int %}
 
 {% set start = (page - 1) * per_page %}
 {% set end = start + per_page %}
