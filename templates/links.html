@@ -222,6 +222,16 @@ box-shadow:0 10px 25px rgba(59,130,246,.3);
 .link-card:hover::before{
     opacity:1;
 }
+.link-card::before{
+    pointer-events: none;
+    z-index: 0;
+}
+
+.link-info,
+.link-actions{
+    position: relative;
+    z-index: 1;
+}
 .link-card:active{
     transform:scale(.98);
     box-shadow:0 6px 14px rgba(0,0,0,.08);
@@ -1260,25 +1270,6 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 <script>
-function showTab(type){
-
-    const adsTab = document.getElementById("adsTab");
-    const sellTab = document.getElementById("sellTab");
-
-    adsTab.style.display = type === "ads" ? "block" : "none";
-    sellTab.style.display = type === "sell" ? "block" : "none";
-
-    const tabs = document.querySelectorAll(".tab-btn");
-
-    tabs.forEach(btn => btn.classList.remove("active"));
-
-    if(type === "ads"){
-        tabs[0].classList.add("active");
-    }else{
-        tabs[1].classList.add("active");
-    }
-}
-
 async function deleteLink(id){
 
     if(!confirm("Hapus link ini?")) return;
