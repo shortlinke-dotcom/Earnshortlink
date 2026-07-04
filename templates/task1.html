@@ -576,48 +576,47 @@ margin-bottom:5px;
 font-size:14px;
 color:#64748b;
 }
-#bottomAd{
-position:fixed;
-left:50%;
-bottom:-500px;
-transform:translateX(-50%);
-width:min(95%,480px);
-
-background:#fff;
-border-radius:18px 18px 0 0;
-padding:15px;
-
-box-shadow:0 -10px 35px rgba(0,0,0,.18);
-
-transition:.5s ease;
-
-z-index:999999;
+.bottom-ad{
+    position:fixed;
+    left:50%;
+    bottom:-350px;
+    transform:translateX(-50%);
+    width:320px;
+    max-width:95%;
+    background:#fff;
+    border-radius:16px;
+    box-shadow:0 -10px 40px rgba(0,0,0,.2);
+    transition:all .8s ease;
+    z-index:99999;
+    overflow:hidden;
 }
 
-#bottomAd.show{
-bottom:0;
+.bottom-ad.show{
+    bottom:20px;
 }
 
-#closeBottomAd{
-position:absolute;
-top:10px;
-right:10px;
-
-width:34px;
-height:34px;
-
-border:none;
-border-radius:50%;
-
-background:#f1f5f9;
-cursor:pointer;
-
-font-size:16px;
+.bottom-ad.hide{
+    bottom:-360px;
 }
 
 .ad-content{
-text-align:center;
-margin-top:20px;
+    padding:10px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+/* tombol panah */
+.toggle-btn{
+    position:absolute;
+    top:8px;
+    right:8px;
+    border:none;
+    background:#f1f5f9;
+    border-radius:8px;
+    padding:6px 9px;
+    cursor:pointer;
+    z-index:10;
 }
 
 </style>
@@ -1494,15 +1493,15 @@ EarnShortlink • Best CPM
 
 </div>
 
-</footer>
-<div id="bottomAd">
+</footer><div id="bottomAd" class="bottom-ad">
 
-    <button id="closeBottomAd">
+    <button id="toggleBottomAd" class="toggle-btn">
         <i class="fa-solid fa-chevron-down"></i>
     </button>
 
     <div class="ad-content">
 
+        <!-- IKLAN -->
         <script>
           atOptions = {
             'key' : '5737a07c4a33cf9a6e8fc68028ae5b82',
@@ -1838,24 +1837,33 @@ active=false;
 
 };
 
-// Muncul setelah 3 detik
-setTimeout(function(){
+const bottomAd = document.getElementById("bottomAd");
+const toggleBtn = document.getElementById("toggleBottomAd");
 
-document
-.getElementById("bottomAd")
-.classList.add("show");
+// Muncul setelah 5 detik (lebih smooth, tidak agresif)
+setTimeout(() => {
+    bottomAd.classList.add("show");
+}, 5000);
 
-},3000);
 
-// Tutup iklan
-document
-.getElementById("closeBottomAd")
-.onclick=function(){
+// toggle (sembunyi / tampil lagi)
+toggleBtn.onclick = function () {
 
-document
-.getElementById("bottomAd")
-.classList.remove("show");
+    if (bottomAd.classList.contains("show")) {
+        bottomAd.classList.remove("show");
+        bottomAd.classList.add("hide");
 
+        toggleBtn.innerHTML = '<i class="fa-solid fa-chevron-up"></i>';
+    } 
+    else {
+        bottomAd.classList.remove("hide");
+
+        setTimeout(() => {
+            bottomAd.classList.add("show");
+        }, 50);
+
+        toggleBtn.innerHTML = '<i class="fa-solid fa-chevron-down"></i>';
+    }
 };
 </script>
 
