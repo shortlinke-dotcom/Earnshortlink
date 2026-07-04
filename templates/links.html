@@ -165,6 +165,36 @@ cursor:pointer;
 transform:translateY(-2px);
 box-shadow:0 10px 25px rgba(59,130,246,.3);
 }
+.pagination{
+    display:flex;
+    justify-content:center;
+    gap:8px;
+    margin-top:20px;
+}
+
+.page-btn{
+    min-width:34px;
+    height:34px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:8px;
+    background:#f1f5f9;
+    text-decoration:none;
+    color:#0f172a;
+    font-size:13px;
+    font-weight:600;
+    transition:.2s;
+}
+
+.page-btn:hover{
+    background:#e2e8f0;
+}
+
+.page-btn.active{
+    background:var(--primary);
+    color:#fff;
+}
 /* ================= LINK CARD ================= */
 .link-card{
     display:flex;
@@ -365,6 +395,17 @@ justify-content:flex-end;
 {% endblock %}
 
 {% block content %}
+{% set per_page = 5 %}
+{% set page = request.args.get('page', 1) | int %}
+
+{% set start = (page - 1) * per_page %}
+{% set end = start + per_page %}
+
+{% set ads_links_page = ads_links[start:end] %}
+{% set sell_links_page = sell_links[start:end] %}
+
+{% set total_ads_pages = (ads_links|length // per_page) + (1 if ads_links|length % per_page else 0) %}
+{% set total_sell_pages = (sell_links|length // per_page) + (1 if sell_links|length % per_page else 0) %}
 {% set user_data = user_data if user_data is defined else (user.data[0] if user.data else {}) %}
 {% set links = links or [] %}
 
@@ -481,8 +522,8 @@ justify-content:flex-end;
 <!-- ADS -->
 <div id="adsTab" class="tab-content">
 
-    {% if ads_links %}
-        {% for link in ads_links %}
+    {% if ads_links_page %}
+        {% for link in ads_links_page %}
 
         <div class="link-card" onclick="openEdit('{{ link.id }}', 0, event)">
 
@@ -551,8 +592,8 @@ justify-content:flex-end;
 <!-- SELL -->
 <div id="sellTab" class="tab-content">
 
-    {% if sell_links %}
-        {% for link in sell_links %}
+    {% if sell_links_page %}
+        {% for link in sell_links_page %}
 
         <div class="link-card" onclick="openEdit('{{ link.id }}', {{ link.price|int }}, event)">
 
@@ -651,15 +692,17 @@ justify-content:flex-end;
   </div>
 </div>
 
-{% if total_links > 5 and total_pages > 1 %}
+{% if ads_links|length > per_page or sell_links|length > per_page %}
 
 <div class="pagination">
 
     {% if page > 1 %}
     <a class="page-btn" href="?page={{ page-1 }}">
-        <i class="fa-solid fa-chevron-left"></i>
+        ‹
     </a>
     {% endif %}
+
+    {% set total_pages = total_ads_pages if ads_links_page else total_sell_pages %}
 
     {% for p in range(1, total_pages + 1) %}
         {% if p == page %}
@@ -671,7 +714,7 @@ justify-content:flex-end;
 
     {% if page < total_pages %}
     <a class="page-btn" href="?page={{ page+1 }}">
-        <i class="fa-solid fa-chevron-right"></i>
+        ›
     </a>
     {% endif %}
 
