@@ -1290,6 +1290,47 @@ async def delete_sell_link(request: Request, code: str):
         .execute()
 
     return JSONResponse({"ok": True})
+@app.post("/delete-link/{id}")
+async def delete_link(request: Request, id: int):
+
+    user_id = request.session.get("user_id")
+
+    if not user_id:
+        return JSONResponse(
+            {"ok": False, "error": "Unauthorized"},
+            status_code=401
+        )
+
+    try:
+        # Pastikan link milik user
+        link = (
+            supabase.table("links")
+            .select("id")
+            .eq("id", id)
+            .eq("user_id", user_id)
+            .single()
+            .execute()
+        )
+
+        if not link.data:
+            return JSONResponse(
+                {"ok": False, "error": "Link tidak ditemukan"},
+                status_code=404
+            )
+
+        supabase.table("links")\
+            .delete()\
+            .eq("id", id)\
+            .execute()
+
+        return JSONResponse({"ok": True})
+
+    except Exception as e:
+        print("DELETE ERROR:", e)
+        return JSONResponse(
+            {"ok": False, "error": str(e)},
+            status_code=500
+        )
 
 # =========================
 # EDIT ADS LINK
