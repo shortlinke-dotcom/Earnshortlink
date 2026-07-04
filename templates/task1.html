@@ -131,7 +131,7 @@ HERO
 
 .hero{
 
-padding:70px 0;
+padding:45px 0;
 background:
 linear-gradient(135deg,#eff6ff,#ffffff);
 
@@ -549,15 +549,37 @@ Silakan ikuti langkah verifikasi untuk melanjutkan proses download. Semua proses
 
 <div class="hero-buttons">
 
-<a href="#" class="btn-primary">
+<button id="startBtn" class="btn-primary" onclick="startDownload()">
 ⬇️ Mulai Download
-</a>
+</button>
+
+<div id="heroLoading" style="display:none;margin-top:25px;text-align:center;">
+
+<div style="font-size:55px;font-weight:800;color:#2563eb;" id="heroTimer">
+10
+</div>
+
+<p style="margin-top:10px;color:#64748b;">
+Menyiapkan Download...
+</p>
+
+</div>
+
+<button
+id="scrollBtn"
+class="btn-secondary"
+style="display:none;margin-top:20px;"
+onclick="scrollDownload()">
+
+⬇️ Scroll Down
+
+</button>
 
 <a href="https://nooseamazingbatch.com/pcxdx71e?key=d3f1614512a0ab30d02f2c2f9831bcb5"
 class="btn-secondary"
 target="_blank">
 
-🎁 Lihat Penawaran
+🪎 Klaim Sekarang
 
 </a>
 
@@ -842,6 +864,59 @@ Lanjutkan
 
 </div>
 
+<section class="section" id="downloadSection">
+
+<div class="container">
+
+<div class="article" style="text-align:center;">
+
+<h2>Download File</h2>
+
+<p>
+Silakan lakukan verifikasi terlebih dahulu.
+</p>
+
+<button
+id="verifyBtn"
+class="btn-primary"
+disabled
+style="opacity:.5;"
+onclick="startVerify()">
+
+🔒 Verifikasi
+
+</button>
+
+<div id="verifyLoading" style="display:none;margin-top:25px;">
+
+<div
+id="verifyTimer"
+style="font-size:55px;font-weight:800;color:#22c55e;">
+
+10
+
+</div>
+
+<p>Memverifikasi...</p>
+
+</div>
+
+<a
+href="task2.html"
+id="downloadBtn"
+class="btn-secondary"
+style="display:none;margin-top:25px;">
+
+⬇️ Lanjut Download
+
+</a>
+
+</div>
+
+</div>
+
+</section>
+
 <!-- =========================
 FAQ
 ========================= -->
@@ -1125,6 +1200,99 @@ popup.style.display="none";
 }
 
 },10000);
+
+</script>
+<script>
+
+let running=false;
+
+function startDownload(){
+
+if(running)return;
+
+running=true;
+
+document.getElementById("startBtn").style.display="none";
+
+document.getElementById("heroLoading").style.display="block";
+
+let count=10;
+
+const timer=document.getElementById("heroTimer");
+
+timer.innerHTML=count;
+
+const x=setInterval(()=>{
+
+count--;
+
+timer.innerHTML=count;
+
+if(count<=0){
+
+clearInterval(x);
+
+document.getElementById("heroLoading").style.display="none";
+
+document.getElementById("scrollBtn").style.display="inline-block";
+
+}
+
+},1000);
+
+}
+
+function scrollDownload(){
+
+document.getElementById("downloadSection").scrollIntoView({
+
+behavior:"smooth"
+
+});
+
+const btn=document.getElementById("verifyBtn");
+
+btn.disabled=false;
+
+btn.style.opacity="1";
+
+}
+
+function startVerify(){
+
+const btn=document.getElementById("verifyBtn");
+
+btn.disabled=true;
+
+btn.style.display="none";
+
+document.getElementById("verifyLoading").style.display="block";
+
+let count=10;
+
+const timer=document.getElementById("verifyTimer");
+
+timer.innerHTML=count;
+
+const x=setInterval(()=>{
+
+count--;
+
+timer.innerHTML=count;
+
+if(count<=0){
+
+clearInterval(x);
+
+document.getElementById("verifyLoading").style.display="none";
+
+document.getElementById("downloadBtn").style.display="inline-block";
+
+}
+
+},1000);
+
+}
 
 </script>
 
