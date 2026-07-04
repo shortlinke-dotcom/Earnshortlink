@@ -459,6 +459,13 @@ body{
     from{opacity:0; transform:scale(.9);}
     to{opacity:1; transform:scale(1);}
 }
+.link-info small{
+    display:block;
+    max-width:260px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
 </style>
 {% endblock %}
 
@@ -577,13 +584,18 @@ body{
         <div class="link-card" onclick="openEdit('{{ link.id }}', 0)">
 
             <div class="link-info">
-                <h4>{{ base_url }}/s/{{ link.short_code }}</h4>
+    <h4>{{ base_url }}/s/{{ link.short_code }}</h4>
 
-                <div class="link-meta">
-                    <span>{{ link.clicks|default(0) }} klik</span>
-                    <span>Rp {{ "{:,.0f}".format(link.earnings|default(0)).replace(",",".") }}</span>
-                </div>
-            </div>
+    <!-- ✅ TARUH DI SINI -->
+    <small style="display:block; word-break:break-all; color:#94a3b8;">
+        {{ link.destination_url }}
+    </small>
+
+    <div class="link-meta">
+        <span>{{ link.clicks|default(0) }} klik</span>
+        <span>Rp {{ "{:,.0f}".format(link.earnings|default(0)).replace(",",".") }}</span>
+    </div>
+</div>
 
             <div class="link-actions">
                 <button class="btn-icon copy"
@@ -621,16 +633,21 @@ body{
         <div class="link-card" onclick="openEdit('{{ link.id }}', {{ link.price|int }})">
 
             <div class="link-info">
-                <h4>
-                    {{ base_url }}/s/{{ link.short_code }}
-                    <span class="badge">SELL</span>
-                </h4>
+    <h4>
+        {{ base_url }}/s/{{ link.short_code }}
+        <span class="badge">SELL</span>
+    </h4>
 
-                <div class="link-meta">
-                    <span>Rp {{ "{:,.0f}".format(link.price).replace(",",".") }}</span>
-                    <span>{{ link.clicks|default(0) }} klik</span>
-                </div>
-            </div>
+    <!-- ✅ TARUH DI SINI -->
+    <small style="display:block; word-break:break-all; color:#94a3b8;">
+        {{ link.destination_url }}
+    </small>
+
+    <div class="link-meta">
+        <span>Rp {{ "{:,.0f}".format(link.price).replace(",",".") }}</span>
+        <span>{{ link.clicks|default(0) }} klik</span>
+    </div>
+</div>
 
             <div class="link-actions">
                 <button class="btn-icon copy"
