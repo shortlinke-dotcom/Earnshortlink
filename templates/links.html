@@ -612,171 +612,167 @@ justify-content:flex-end;
 
 <!-- ADS -->
 <div id="adsTab">
-{% if tab == "ads" and ads_links %}
-{% for link in ads_links_page %}
 
-<div class="link-card">
-    <div class="link-info">
+{% if tab == "ads" and ads_links_page %}
 
-        <h4 class="link-title">
-            <a href="{{ base_url }}/s/{{ link.short_code }}"
-               target="_blank"
-               rel="noopener noreferrer"
-               onclick="event.stopPropagation()">
-                {{ base_url }}/s/{{ link.short_code }}
-            </a>
+    {% for link in ads_links_page %}
 
-            <span class="badge ads">ADS</span>
-        </h4>
+    <div class="link-card">
+        <div class="link-info">
 
-        <small class="link-destination">
-            <a href="{{ link.destination_url }}"
-               target="_blank"
-               rel="noopener noreferrer"
-               onclick="event.stopPropagation()">
-                {{ link.destination_url }}
-            </a>
-        </small>
+            <h4 class="link-title">
+                <a href="{{ base_url }}/s/{{ link.short_code }}"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   onclick="event.stopPropagation()">
+                    {{ base_url }}/s/{{ link.short_code }}
+                </a>
 
-        <div class="link-meta">
-            <span>{{ link.clicks|default(0) }} klik</span>
-            <span>
-                Rp {{ "{:,.0f}".format(link.earnings|default(0)).replace(",", ".") }}
-            </span>
+                <span class="badge ads">ADS</span>
+            </h4>
+
+            <small class="link-destination">
+                <a href="{{ link.destination_url }}"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   onclick="event.stopPropagation()">
+                    {{ link.destination_url }}
+                </a>
+            </small>
+
+            <div class="link-meta">
+                <span>{{ link.clicks|default(0) }} klik</span>
+                <span>
+                    Rp {{ "{:,.0f}".format(link.earnings|default(0)).replace(",", ".") }}
+                </span>
+            </div>
+
         </div>
 
+        <div class="link-actions">
+
+            <button type="button"
+                class="btn-icon copy"
+                onclick="event.stopPropagation(); copyText('{{ base_url }}/s/{{ link.short_code }}', this)">
+                <i class="fas fa-copy"></i>
+            </button>
+
+            <button type="button"
+                class="btn-icon edit"
+                onclick='event.stopPropagation(); openEditModal(
+                    "{{ link.id }}",
+                    {{ link.destination_url|tojson }},
+                    "ads",
+                    0,
+                    {{ (base_url ~ "/s/" ~ link.short_code)|tojson }}
+                )'>
+                <i class="fas fa-pen"></i>
+            </button>
+
+            <button type="button"
+                class="btn-icon delete"
+                onclick="event.stopPropagation(); deleteLink('{{ link.id }}')">
+                <i class="fas fa-trash"></i>
+            </button>
+
+        </div>
     </div>
 
-    <div class="link-actions">
-
-        <!-- COPY -->
-        <button
-            type="button"
-            class="btn-icon copy"
-            onclick="event.stopPropagation(); copyText('{{ base_url }}/s/{{ link.short_code }}', this)">
-            <i class="fas fa-copy"></i>
-        </button>
-
-        <!-- EDIT -->
-        <button
-            type="button"
-            class="btn-icon edit"
-            onclick='event.stopPropagation(); openEditModal(
-                "{{ link.id }}",
-                {{ link.destination_url|tojson }},
-                "ads",
-                0,
-                {{ (base_url ~ "/s/" ~ link.short_code)|tojson }}
-            )'>
-            <i class="fas fa-pen"></i>
-        </button>
-
-        <!-- DELETE -->
-        <button
-            type="button"
-            class="btn-icon delete"
-            onclick="event.stopPropagation(); deleteLink('{{ link.id }}')">
-            <i class="fas fa-trash"></i>
-        </button>
-
-    </div>
-
-</div>
-
-{% endfor %}
+    {% endfor %}
 
 {% else %}
 
-<div class="card" style="text-align:center;padding:40px;">
-    <h3>Belum ada link</h3>
-    <p>Mulai dengan membuat shortlink pertama kamu.</p>
-</div>
+    <div class="card" style="text-align:center;padding:40px;">
+        <h3>Belum ada link</h3>
+        <p>Mulai dengan membuat shortlink pertama kamu.</p>
+    </div>
 
 {% endif %}
+
 </div>
 
 <!-- SELL -->
 <div id="sellTab" style="display:none;">
-{% if tab == "sell" and sell_links %}
-{% for link in sell_links_page %}
 
-<div class="link-card">
+{% if tab == "sell" and sell_links_page %}
 
-    <div class="link-info">
+    {% for link in sell_links_page %}
 
-        <h4 class="link-title">
-            <a href="{{ base_url }}/s/{{ link.short_code }}"
-               target="_blank"
-               rel="noopener noreferrer"
-               onclick="event.stopPropagation()">
-                {{ base_url }}/s/{{ link.short_code }}
-            </a>
+    <div class="link-card">
 
-            <span class="badge sell">SELL</span>
-        </h4>
+        <div class="link-info">
 
-        <small class="link-destination">
-            <a href="{{ link.destination_url }}"
-               target="_blank"
-               rel="noopener noreferrer"
-               onclick="event.stopPropagation()">
-                {{ link.destination_url }}
-            </a>
-        </small>
+            <h4 class="link-title">
+                <a href="{{ base_url }}/s/{{ link.short_code }}"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   onclick="event.stopPropagation()">
+                    {{ base_url }}/s/{{ link.short_code }}
+                </a>
 
-        <div class="link-meta">
-            <span>Rp {{ "{:,.0f}".format(link.price|default(0)).replace(",", ".") }}</span>
-            <span>{{ link.clicks|default(0) }} klik</span>
+                <span class="badge sell">SELL</span>
+            </h4>
+
+            <small class="link-destination">
+                <a href="{{ link.destination_url }}"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   onclick="event.stopPropagation()">
+                    {{ link.destination_url }}
+                </a>
+            </small>
+
+            <div class="link-meta">
+                <span>Rp {{ "{:,.0f}".format(link.price|default(0)).replace(",", ".") }}</span>
+                <span>{{ link.clicks|default(0) }} klik</span>
+            </div>
+
+        </div>
+
+        <div class="link-actions">
+
+            <!-- COPY -->
+            <button type="button"
+                class="btn-icon copy"
+                onclick="event.stopPropagation(); copyText('{{ base_url }}/s/{{ link.short_code }}', this)">
+                <i class="fas fa-copy"></i>
+            </button>
+
+            <!-- EDIT -->
+            <button type="button"
+                class="btn-icon edit"
+                onclick='event.stopPropagation(); openEditModal(
+                    "{{ link.id }}",
+                    {{ link.destination_url|tojson }},
+                    "sell",
+                    {{ link.price|default(0)|int }},
+                    {{ (base_url ~ "/s/" ~ link.short_code)|tojson }}
+                )'>
+                <i class="fas fa-pen"></i>
+            </button>
+
+            <!-- DELETE -->
+            <button type="button"
+                class="btn-icon delete"
+                onclick="event.stopPropagation(); deleteLink('{{ link.id }}')">
+                <i class="fas fa-trash"></i>
+            </button>
+
         </div>
 
     </div>
 
-    <div class="link-actions">
-
-        <!-- COPY -->
-        <button
-            type="button"
-            class="btn-icon copy"
-            onclick="event.stopPropagation(); copyText('{{ base_url }}/s/{{ link.short_code }}', this)">
-            <i class="fas fa-copy"></i>
-        </button>
-
-        <!-- EDIT -->
-        <button
-            type="button"
-            class="btn-icon edit"
-            onclick='event.stopPropagation(); openEditModal(
-                "{{ link.id }}",
-                {{ link.destination_url|tojson }},
-                "sell",
-                {{ link.price|default(0)|int }},
-                {{ (base_url ~ "/s/" ~ link.short_code)|tojson }}
-            )'>
-            <i class="fas fa-pen"></i>
-        </button>
-
-        <!-- DELETE -->
-        <button
-            type="button"
-            class="btn-icon delete"
-            onclick="event.stopPropagation(); deleteLink('{{ link.id }}')">
-            <i class="fas fa-trash"></i>
-        </button>
-
-    </div>
-
-</div>
-
-{% endfor %}
+    {% endfor %}
 
 {% else %}
 
-<div class="card" style="text-align:center;padding:40px;">
-    <h3>Belum ada Paid Link</h3>
-    <p>Mulai dengan membuat paid link pertamamu.</p>
-</div>
+    <div class="card" style="text-align:center;padding:40px;">
+        <h3>Belum ada Paid Link</h3>
+        <p>Mulai dengan membuat paid link pertamamu.</p>
+    </div>
 
 {% endif %}
+
 </div>
 <!-- ================= EDIT MODAL ================= -->
 <div id="editModal" class="modal">
@@ -848,14 +844,14 @@ justify-content:flex-end;
 
 </div>
 
-{% if total_pages > 1 and links|length > 0 %}
+{% if total_pages > 1 %}
 
 <div class="pagination">
 
     {% if page > 1 %}
         <a
             class="page-btn"
-            href="?page={{ page - 1 }}&tab={{ request.query_params.get('tab', 'ads') }}"
+            href="?page={{ page - 1 }}&tab={{ tab }}"
             aria-label="Halaman sebelumnya">
             ‹
         </a>
@@ -864,15 +860,13 @@ justify-content:flex-end;
     {% for p in range(1, total_pages + 1) %}
 
         {% if p == page %}
-            <span
-                class="page-btn active"
-                aria-current="page">
+            <span class="page-btn active" aria-current="page">
                 {{ p }}
             </span>
         {% else %}
             <a
                 class="page-btn"
-                href="?page={{ p }}">
+                href="?page={{ p }}&tab={{ tab }}">
                 {{ p }}
             </a>
         {% endif %}
@@ -882,7 +876,7 @@ justify-content:flex-end;
     {% if page < total_pages %}
         <a
             class="page-btn"
-            href="?page={{ page + 1 }}&tab={{ request.query_params.get('tab', 'ads') }}"
+            href="?page={{ page + 1 }}&tab={{ tab }}"
             aria-label="Halaman berikutnya">
             ›
         </a>
