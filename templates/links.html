@@ -102,8 +102,9 @@ color:var(--muted);
     margin-top:6px;
 }
 .stat-card.highlight{
-background:linear-gradient(135deg,var(--primary),var(--primary-dark));
-color:#fff;
+    background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+    color:#fff;
+    box-shadow:0 10px 30px rgba(59,130,246,.35);
 }
 /* ================= FORM ================= */
 .form-group{
@@ -129,6 +130,10 @@ box-shadow:0 0 0 2px rgba(59,130,246,.2);
     border-radius:12px;
     border:1px solid #e5e7eb;
     margin-bottom:16px;
+}
+.search-box:focus-within{
+    border-color:var(--primary);
+    box-shadow:0 0 0 2px rgba(59,130,246,.2);
 }
 
 .search-box input{
@@ -186,6 +191,10 @@ box-shadow:0 10px 25px rgba(59,130,246,.3);
 
 .link-card:hover::before{
     opacity:1;
+}
+.link-card:active{
+    transform:scale(.98);
+    box-shadow:0 6px 14px rgba(0,0,0,.08);
 }
 
 .link-card:hover{
@@ -320,6 +329,37 @@ align-items:flex-start;
 width:100%;
 justify-content:flex-end;
 }
+}
+#loadingOverlay{
+    position:fixed;
+    inset:0;
+    background:rgba(255,255,255,.6);
+    backdrop-filter:blur(4px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    opacity:0;
+    pointer-events:none;
+    transition:.2s;
+    z-index:9999;
+}
+
+#loadingOverlay.active{
+    opacity:1;
+    pointer-events:auto;
+}
+
+.loader{
+    width:40px;
+    height:40px;
+    border:4px solid #e5e7eb;
+    border-top:4px solid var(--primary);
+    border-radius:50%;
+    animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+    to{transform:rotate(360deg);}
 }
 </style>
 {% endblock %}
@@ -501,8 +541,9 @@ justify-content:flex-end;
 
     {% else %}
         <div class="empty-state">
-            <p>Belum ada link</p>
-        </div>
+    <p style="font-weight:600;">Belum ada link</p>
+    <small style="color:#94a3b8;">Mulai dengan membuat shortlink pertama kamu 🚀</small>
+</div>
     {% endif %}
 
 </div>
@@ -570,8 +611,9 @@ justify-content:flex-end;
 
     {% else %}
         <div class="empty-state">
-            <p>Belum ada link</p>
-        </div>
+    <p style="font-weight:600;">Belum ada link</p>
+    <small style="color:#94a3b8;">Mulai dengan membuat shortlink pertama kamu 🚀</small>
+</div>
     {% endif %}
 
 </div>
@@ -638,6 +680,8 @@ justify-content:flex-end;
 {% endif %}
 <script>
 function openEditModal(id, url, type, price){
+    const modal = document.getElementById("editModal");
+    modal.classList.add("active");
 
     document.getElementById("editModal").style.display = "block";
 
@@ -661,9 +705,8 @@ function openEditModal(id, url, type, price){
 }
 
 function closeModal(){
-    document.getElementById("editModal").style.display = "none";
+    document.getElementById("editModal").classList.remove("active");
 }
-
 async function submitEdit(){
 
     const id = document.getElementById("edit_id").value;
@@ -786,16 +829,22 @@ function showToast(msg){
 function copyText(text, el){
     navigator.clipboard.writeText(text).then(()=>{
         showToast("Link copied!");
+
+        if(el){
+            el.innerHTML = '<i class="fas fa-check"></i>';
+            el.style.background = "#10b981";
+            el.style.color = "#fff";
+
+            setTimeout(()=>{
+                el.innerHTML = '<i class="fas fa-copy"></i>';
+                el.style.background = "";
+                el.style.color = "";
+            },1200);
+        }
+
     }).catch(()=>{
         showToast("Gagal copy");
     });
-
-    if(el){
-        el.innerHTML = "✓";
-        setTimeout(()=>{
-            el.innerHTML = '<i class="fas fa-copy"></i>';
-        },1000);
-    }
 }
 </script>
 <script>
