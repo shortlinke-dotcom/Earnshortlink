@@ -1754,6 +1754,7 @@ async def links(request: Request, page: int = Query(1, ge=1)):
         "links.html",
         {
             "request": request,
+            "tab": tab,
             "user": user,
             "user_data": user_data,
             "ads_links_page": links_data,
