@@ -242,16 +242,14 @@ FLOATING TELEGRAM
 ========================= */
 
 .telegram-float{
-
 position:fixed;
 right:25px;
 bottom:25px;
 z-index:99999;
-
+cursor:grab;
 }
 
 .telegram-btn{
-
 width:68px;
 height:68px;
 border-radius:50%;
@@ -260,85 +258,92 @@ display:flex;
 justify-content:center;
 align-items:center;
 font-size:30px;
-color:white;
-box-shadow:0 10px 35px rgba(0,136,204,.35);
+color:#fff;
+text-decoration:none;
+box-shadow:0 12px 30px rgba(0,136,204,.35);
 animation:pulse 2s infinite;
 position:relative;
-
 }
 
 .telegram-btn::after{
-
 content:"1";
 position:absolute;
-top:-2px;
-right:-2px;
+top:-5px;
+right:-5px;
 width:22px;
 height:22px;
-border-radius:50%;
 background:#ef4444;
-color:white;
-font-size:12px;
+border-radius:50%;
 display:flex;
 justify-content:center;
 align-items:center;
+color:#fff;
+font-size:12px;
 font-weight:bold;
-
 }
 
 .telegram-popup{
-
 position:absolute;
-bottom:80px;
-right:0;
-width:260px;
-background:white;
+right:80px;
+bottom:0;
+width:280px;
+background:#fff;
 border-radius:18px;
 padding:18px;
-box-shadow:0 20px 50px rgba(0,0,0,.15);
-
+box-shadow:0 20px 45px rgba(0,0,0,.18);
+animation:popup .4s ease;
 }
 
 .telegram-popup h4{
-
-font-size:16px;
 margin-bottom:8px;
+font-size:17px;
 color:#111827;
-
 }
 
 .telegram-popup p{
-
 font-size:14px;
-color:#64748b;
+line-height:1.6;
 margin-bottom:15px;
-
+color:#64748b;
 }
 
 .telegram-popup a{
-
 display:block;
-text-align:center;
-padding:12px;
 background:#0088cc;
-color:white;
+color:#fff;
+padding:12px;
 border-radius:10px;
+text-align:center;
 font-weight:700;
-
 }
 
-@keyframes pulse{
-
-0%{
-transform:scale(1);
+.close-popup{
+position:absolute;
+top:8px;
+right:10px;
+border:none;
+background:none;
+font-size:22px;
+cursor:pointer;
+color:#64748b;
 }
 
-50%{
-transform:scale(1.08);
+@keyframes popup{
+from{
+opacity:0;
+transform:translateX(20px);
+}
+to{
+opacity:1;
+transform:none;
+}
 }
 
-100%{
-transform:scale(1);
+@media(max-width:600px){
+
+.telegram-popup{
+width:230px;
+right:75px;
 }
 
 }
@@ -607,41 +612,36 @@ Tempat terbaik untuk mendapatkan penghasilan melalui shortlink dengan sistem cep
 
 <!-- FLOATING TELEGRAM -->
 
-<div class="telegram-float">
+<div class="telegram-float" id="telegramFloat">
 
-<div class="telegram-popup">
+    <div class="telegram-popup" id="telegramPopup">
 
-<h4>
-📩 Pesan Baru
-</h4>
+        <button class="close-popup" onclick="closeTelegramPopup()">
+            ×
+        </button>
 
-<p>
+        <h4>📩 Pesan Baru</h4>
 
-Mau lihat Video Viral?
-Masuk Disini Sekarang.
+        <p>
+            Mau lihat Video Viral?<br>
+            Masuk Disini Sekarang.
+        </p>
 
-</p>
+        <a href="https://t.me/+3g_yhHwxCrc5ZTg9" target="_blank">
+            Masuk Telegram
+        </a>
 
-<a href="https://t.me/+3g_yhHwxCrc5ZTg9" target="_blank">
+    </div>
 
-Masuk Telegram
+    <a href="https://t.me/+3g_yhHwxCrc5ZTg9"
+       target="_blank"
+       class="telegram-btn">
 
-</a>
+        ✉️
 
-</div>
-
-<a
-href="https://t.me/+3g_yhHwxCrc5ZTg9"
-target="_blank"
-class="telegram-btn">
-
-✉️
-
-</a>
+    </a>
 
 </div>
-
-<div class="container">
 <!-- =========================
 ARTIKEL 1
 ========================= -->
@@ -975,8 +975,8 @@ FOOTER
 ========================= -->
 
 <footer style="
-background:#0f172a;
-color:#cbd5e1;
+background:#ffffff;
+border-top:1px solid #e5e7eb;
 padding:60px 20px 30px;
 margin-top:80px;
 ">
@@ -986,7 +986,8 @@ margin-top:80px;
 <div style="
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-gap:40px;
+gap:50px;
+align-items:flex-start;
 ">
 
 <div>
@@ -994,43 +995,66 @@ gap:40px;
 <h2 style="
 font-size:28px;
 font-weight:800;
-color:#fff;
+color:#111827;
 margin-bottom:15px;
 ">
-EARN<span style="color:#3b82f6;">SHORTLINK</span>
+EARN<span style="color:#2563eb;">SHORTLINK</span>
 </h2>
 
-<p>
-Platform yang dirancang dengan tampilan modern, cepat, dan nyaman digunakan di perangkat Android maupun Desktop.
+<p style="
+color:#64748b;
+line-height:1.8;
+">
+Platform modern dengan tampilan responsif yang nyaman digunakan di Android maupun Desktop.
 </p>
 
 </div>
 
 <div>
 
-<h3 style="margin-bottom:15px;color:#fff;">
+<h3 style="
+margin-bottom:18px;
+color:#111827;
+font-size:20px;
+">
 Navigasi
 </h3>
 
-<ul style="list-style:none;line-height:2;">
+<ul style="
+list-style:none;
+line-height:2.3;
+color:#64748b;
+">
+
 <li><a href="/">Home</a></li>
 <li><a href="/login">Login</a></li>
 <li><a href="/register">Register</a></li>
+
 </ul>
 
 </div>
 
 <div>
 
-<h3 style="margin-bottom:15px;color:#fff;">
-Informasi
+<h3 style="
+margin-bottom:18px;
+color:#111827;
+font-size:20px;
+">
+Keunggulan
 </h3>
 
-<ul style="list-style:none;line-height:2;">
-<li>Responsive Design</li>
-<li>Fast Loading</li>
-<li>Modern UI</li>
-<li>Best Experience</li>
+<ul style="
+list-style:none;
+line-height:2.3;
+color:#64748b;
+">
+
+<li>✔ Responsive Design</li>
+<li>✔ Fast Loading</li>
+<li>✔ Modern Interface</li>
+<li>✔ Best CPM</li>
+
 </ul>
 
 </div>
@@ -1038,24 +1062,35 @@ Informasi
 </div>
 
 <hr style="
-margin:40px 0 25px;
+margin:45px 0 25px;
 border:none;
 height:1px;
-background:rgba(255,255,255,.1);
+background:#e5e7eb;
 ">
 
 <div style="
-text-align:center;
+display:flex;
+justify-content:space-between;
+align-items:center;
+flex-wrap:wrap;
+gap:15px;
+color:#64748b;
 font-size:15px;
 ">
 
-© 2026 EarnShortlink — Best CPM. All Rights Reserved.
+<div>
+© 2026 <strong>EarnShortlink</strong>. All Rights Reserved.
+</div>
 
+<div>
+EarnShortlink • Best CPM
 </div>
 
 </div>
 
-</footer>
+</div>
+
+</footer>>
 
 <!-- =========================
 BACK TO TOP
@@ -1293,6 +1328,88 @@ document.getElementById("downloadBtn").style.display="inline-block";
 },1000);
 
 }
+
+</script>
+<script>
+
+function closeTelegramPopup(){
+    document.getElementById("telegramPopup").style.display="none";
+}
+
+// Hilang otomatis setelah 12 detik
+setTimeout(function(){
+    const popup=document.getElementById("telegramPopup");
+    if(popup){
+        popup.style.display="none";
+    }
+},12000);
+
+
+// =======================
+// DRAG FLOAT BUTTON
+// =======================
+
+const drag=document.getElementById("telegramFloat");
+
+let active=false;
+let startX=0;
+let startY=0;
+
+drag.addEventListener("touchstart",function(e){
+
+active=true;
+
+startX=e.touches[0].clientX-drag.offsetLeft;
+startY=e.touches[0].clientY-drag.offsetTop;
+
+});
+
+drag.addEventListener("touchmove",function(e){
+
+if(!active) return;
+
+drag.style.left=(e.touches[0].clientX-startX)+"px";
+drag.style.top=(e.touches[0].clientY-startY)+"px";
+
+drag.style.right="auto";
+drag.style.bottom="auto";
+
+});
+
+drag.addEventListener("touchend",function(){
+
+active=false;
+
+});
+
+// Desktop
+
+drag.onmousedown=function(e){
+
+active=true;
+
+startX=e.clientX-drag.offsetLeft;
+startY=e.clientY-drag.offsetTop;
+
+};
+
+document.onmousemove=function(e){
+
+if(!active) return;
+
+drag.style.left=(e.clientX-startX)+"px";
+drag.style.top=(e.clientY-startY)+"px";
+
+drag.style.right="auto";
+drag.style.bottom="auto";
+
+};
+
+document.onmouseup=function(){
+
+active=false;
+
+};
 
 </script>
 
