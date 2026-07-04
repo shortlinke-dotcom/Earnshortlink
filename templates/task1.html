@@ -576,6 +576,49 @@ margin-bottom:5px;
 font-size:14px;
 color:#64748b;
 }
+#bottomAd{
+position:fixed;
+left:50%;
+bottom:-500px;
+transform:translateX(-50%);
+width:min(95%,480px);
+
+background:#fff;
+border-radius:18px 18px 0 0;
+padding:15px;
+
+box-shadow:0 -10px 35px rgba(0,0,0,.18);
+
+transition:.5s ease;
+
+z-index:999999;
+}
+
+#bottomAd.show{
+bottom:0;
+}
+
+#closeBottomAd{
+position:absolute;
+top:10px;
+right:10px;
+
+width:34px;
+height:34px;
+
+border:none;
+border-radius:50%;
+
+background:#f1f5f9;
+cursor:pointer;
+
+font-size:16px;
+}
+
+.ad-content{
+text-align:center;
+margin-top:20px;
+}
 
 </style>
 
@@ -1452,6 +1495,29 @@ EarnShortlink • Best CPM
 </div>
 
 </footer>
+<div id="bottomAd">
+
+    <button id="closeBottomAd">
+        <i class="fa-solid fa-chevron-down"></i>
+    </button>
+
+    <div class="ad-content">
+
+        <script>
+          atOptions = {
+            'key' : '5737a07c4a33cf9a6e8fc68028ae5b82',
+            'format' : 'iframe',
+            'height' : 250,
+            'width' : 300,
+            'params' : {}
+          };
+        </script>
+
+        <script src="https://nooseamazingbatch.com/5737a07c4a33cf9a6e8fc68028ae5b82/invoke.js"></script>
+
+    </div>
+
+</div>
 
 <!-- =========================
 BACK TO TOP
@@ -1772,6 +1838,25 @@ active=false;
 
 };
 
+// Muncul setelah 3 detik
+setTimeout(function(){
+
+document
+.getElementById("bottomAd")
+.classList.add("show");
+
+},3000);
+
+// Tutup iklan
+document
+.getElementById("closeBottomAd")
+.onclick=function(){
+
+document
+.getElementById("bottomAd")
+.classList.remove("show");
+
+};
 </script>
 
 </body>
