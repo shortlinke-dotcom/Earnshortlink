@@ -510,144 +510,104 @@ justify-content:flex-end;
     </div>
 
 <!-- ADS -->
-<div id="adsTab" class="tab-content">
+{% if ads_links_page %}
+{% for link in ads_links_page %}
 
-    {% if ads_links_page %}
-        {% for link in ads_links %}
-
-        <div class="link-card" onclick="openEdit('{{ link.id }}', 0, event)">
-
-            <!-- INFO -->
-            <div class="link-info">
-
-                <h4 class="link-title">
-                    <a href="{{ base_url }}/s/{{ link.short_code }}"
-                       target="_blank"
-                       onclick="event.stopPropagation()">
-                        {{ base_url }}/s/{{ link.short_code }}
-                    </a>
-                    <span class="badge ads">ADS</span>
-                </h4>
-
-                <small class="link-destination">
-                    <a href="{{ link.destination_url }}"
-                       target="_blank"
-                       onclick="event.stopPropagation()">
-                        {{ link.destination_url }}
-                    </a>
-                </small>
-
-                <div class="link-meta">
-                    <span>{{ link.clicks|default(0) }} klik</span>
-                    <span>
-                        Rp {{ "{:,.0f}".format(link.earnings|default(0)).replace(",", ".") }}
-                    </span>
-                </div>
-
-            </div>
-
-            <!-- ACTIONS -->
-            <div class="link-actions">
-
-                <button class="btn-icon copy"
-                    onclick="event.stopPropagation(); copyText('{{ base_url }}/s/{{ link.short_code }}', this)">
-                    <i class="fas fa-copy"></i>
-                </button>
-
-                <button class="btn-icon edit"
-                    onclick="event.stopPropagation(); openEditModal('{{ link.id }}','{{ link.destination_url }}','ads',0)">
-                    <i class="fas fa-pen"></i>
-                </button>
-
-                <button class="btn-icon delete"
-                    onclick="event.stopPropagation(); deleteLink('{{ link.id }}')">
-                    <i class="fas fa-trash"></i>
-                </button>
-
-            </div>
-
+<div class="link-card" onclick="openEdit('{{ link.id }}', 0, event)">
+    <div class="link-info">
+        <h4 class="link-title">
+            <a href="{{ base_url }}/s/{{ link.short_code }}"
+               target="_blank"
+               onclick="event.stopPropagation()">
+                {{ base_url }}/s/{{ link.short_code }}
+            </a>
+            <span class="badge ads">ADS</span>
+        </h4>
+        <small class="link-destination">
+            <a href="{{ link.destination_url }}"
+               target="_blank"
+               onclick="event.stopPropagation()">
+                {{ link.destination_url }}
+            </a>
+        </small>
+        <div class="link-meta">
+            <span>{{ link.clicks|default(0) }} klik</span>
+            <span>
+                Rp {{ "{:,.0f}".format(link.earnings|default(0)).replace(",", ".") }}
+            </span>
         </div>
-
-        {% endfor %}
-
-    {% else %}
-        <div class="empty-state">
-    <p style="font-weight:600;">Belum ada link</p>
-    <small style="color:#94a3b8;">Mulai dengan membuat shortlink pertama kamu 🚀</small>
+    </div>
+    <div class="link-actions">
+        <button class="btn-icon copy"
+            onclick="event.stopPropagation(); copyText('{{ base_url }}/s/{{ link.short_code }}', this)">
+            <i class="fas fa-copy"></i>
+        </button>
+        <button class="btn-icon edit"
+            onclick="event.stopPropagation(); openEditModal('{{ link.id }}','{{ link.destination_url }}','ads',0)">
+            <i class="fas fa-pen"></i>
+        </button>
+        <button class="btn-icon delete"
+            onclick="event.stopPropagation(); deleteLink('{{ link.id }}')">
+            <i class="fas fa-trash"></i>
+        </button>
+    </div>
 </div>
-    {% endif %}
+{% endfor %}
 
-</div>
+{% else %}
+Belum ada link
+Mulai dengan membuat shortlink pertama kamu
+{% endif %}
 
 <!-- SELL -->
-<div id="sellTab" class="tab-content">
+{% if sell_links_page %}
+{% for link in sell_links_page %}
 
-    {% if sell_links_page %}
-        {% for link in sell_links %}
-
-        <div class="link-card" onclick="openEdit('{{ link.id }}', {{ link.price|int }}, event)">
-
-            <!-- INFO -->
-            <div class="link-info">
-
-                <h4 class="link-title">
-                    <a href="{{ base_url }}/s/{{ link.short_code }}"
-                       target="_blank"
-                       onclick="event.stopPropagation()">
-                        {{ base_url }}/s/{{ link.short_code }}
-                    </a>
-                    <span class="badge sell">SELL</span>
-                </h4>
-
-                <small class="link-destination">
-                    <a href="{{ link.destination_url }}"
-                       target="_blank"
-                       onclick="event.stopPropagation()">
-                        {{ link.destination_url }}
-                    </a>
-                </small>
-
-                <div class="link-meta">
-                    <span>
-                        Rp {{ "{:,.0f}".format(link.price).replace(",", ".") }}
-                    </span>
-                    <span>{{ link.clicks|default(0) }} klik</span>
-                </div>
-
-            </div>
-
-            <!-- ACTIONS -->
-            <div class="link-actions">
-
-                <button class="btn-icon copy"
-                    onclick="event.stopPropagation(); copyText('{{ base_url }}/s/{{ link.short_code }}', this)">
-                    <i class="fas fa-copy"></i>
-                </button>
-
-                <button class="btn-icon edit"
-                    onclick="event.stopPropagation(); openEditModal('{{ link.id }}','{{ link.destination_url }}','sell','{{ link.price }}')">
-                    <i class="fas fa-pen"></i>
-                </button>
-
-                <button class="btn-icon delete"
-                    onclick="event.stopPropagation(); deleteLink('{{ link.id }}')">
-                    <i class="fas fa-trash"></i>
-                </button>
-
-            </div>
-
+<div class="link-card" onclick="openEdit('{{ link.id }}', {{ link.price|int }}, event)">
+    <div class="link-info">
+        <h4 class="link-title">
+            <a href="{{ base_url }}/s/{{ link.short_code }}"
+               target="_blank"
+               onclick="event.stopPropagation()">
+                {{ base_url }}/s/{{ link.short_code }}
+            </a>
+            <span class="badge sell">SELL</span>
+        </h4>
+        <small class="link-destination">
+            <a href="{{ link.destination_url }}"
+               target="_blank"
+               onclick="event.stopPropagation()">
+                {{ link.destination_url }}
+            </a>
+        </small>
+        <div class="link-meta">
+            <span>
+                Rp {{ "{:,.0f}".format(link.price).replace(",", ".") }}
+            </span>
+            <span>{{ link.clicks|default(0) }} klik</span>
         </div>
-
-        {% endfor %}
-
-    {% else %}
-        <div class="empty-state">
-    <p style="font-weight:600;">Belum ada link</p>
-    <small style="color:#94a3b8;">Mulai dengan membuat shortlink pertama kamu 🚀</small>
+    </div>
+    <div class="link-actions">
+        <button class="btn-icon copy"
+            onclick="event.stopPropagation(); copyText('{{ base_url }}/s/{{ link.short_code }}', this)">
+            <i class="fas fa-copy"></i>
+        </button>
+        <button class="btn-icon edit"
+            onclick="event.stopPropagation(); openEditModal('{{ link.id }}','{{ link.destination_url }}','sell','{{ link.price }}')">
+            <i class="fas fa-pen"></i>
+        </button>
+        <button class="btn-icon delete"
+            onclick="event.stopPropagation(); deleteLink('{{ link.id }}')">
+            <i class="fas fa-trash"></i>
+        </button>
+    </div>
 </div>
-    {% endif %}
+{% endfor %}
 
-</div>
+{% else %}
+Belum ada link
+Mulai dengan membuat shortlink pertama kamu
+{% endif %}
 <!-- ================= EDIT MODAL ================= -->
 <div id="editModal" class="modal">
   <div class="modal-content">
