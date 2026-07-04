@@ -376,7 +376,7 @@ justify-content:flex-end;
     {% if ads_links %}
         {% for link in ads_links %}
 
-        <div class="link-card" onclick="openEdit('{{ link.id }}', 0)">
+        <div class="link-card" onclick="openEdit('{{ link.id }}', 0, event)">
 
             <!-- INFO -->
             <div class="link-info">
@@ -445,7 +445,7 @@ justify-content:flex-end;
     {% if sell_links %}
         {% for link in sell_links %}
 
-        <div class="link-card" onclick="openEdit('{{ link.id }}', 0, event)">
+        <div class="link-card" onclick="openEdit('{{ link.id }}', {{ link.price|int }}, event)">
 
             <!-- INFO -->
             <div class="link-info">
@@ -794,7 +794,12 @@ document.addEventListener("DOMContentLoaded", function(){
     });
 
 });
-function openEdit(id, price){
+function openEdit(id, price, e){
+    // ⛔ STOP kalau klik link atau tombol
+    if(e && e.target.closest("a, button")){
+        return;
+    }
+
     if(price > 0){
         window.location.href = `/edit-sell-link/${id}`;
     }else{
