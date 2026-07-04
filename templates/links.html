@@ -577,50 +577,48 @@ body{
 
 <!-- ADS -->
 <div id="adsTab" class="tab-content">
-
-    {% if ads_links %}
-        {% for link in ads_links %}
-
-        <div class="link-card" onclick="openEdit('{{ link.id }}', 0)">
-
-            <div class="link-info">
-    <h4>{{ base_url }}/s/{{ link.short_code }}</h4>
-
-    <!-- ✅ TARUH DI SINI -->
-    <small style="display:block; word-break:break-all; color:#94a3b8;">
-        {{ link.destination_url }}
-    </small>
-
-    <div class="link-meta">
-        <span>{{ link.clicks|default(0) }} klik</span>
-        <span>Rp {{ "{:,.0f}".format(link.earnings|default(0)).replace(",",".") }}</span>
-    </div>
-</div>
-
-            <div class="link-actions">
-                <button class="btn-icon copy"
-                    onclick="event.stopPropagation(); copyText('{{ base_url }}/s/{{ link.short_code }}', this)">
-                    <i class="fas fa-copy"></i>
-                </button>
-
-                <button class="btn-icon edit"
-                    onclick="event.stopPropagation(); openEditModal('{{ link.id }}','{{ link.destination_url }}','ads',0)">
-                    <i class="fas fa-pen"></i>
-                </button>
-
-                <button class="btn-icon delete"
-                    onclick="event.stopPropagation(); deleteLink('{{ link.id }}')">
-                    <i class="fas fa-trash"></i>
-                </button>
+{% if ads_links %}
+    {% for link in ads_links %}
+    
+    <div class="link-card" onclick="openEdit('{{ link.id }}', 0)">
+        <div class="link-info">
+            <h4>
+                <a href="{{ base_url }}/s/{{ link.short_code }}" 
+                   target="_blank" 
+                   onclick="event.stopPropagation()">
+                    {{ base_url }}/s/{{ link.short_code }}
+                </a>
+            </h4>
+            <small>
+                <a href="{{ link.destination_url }}" 
+                   target="_blank" 
+                   onclick="event.stopPropagation()">
+                    {{ link.destination_url }}
+                </a>
+            </small>
+            <div class="link-meta">
+                <span>{{ link.clicks|default(0) }} klik</span>
+                <span>Rp {{ "{:,.0f}".format(link.earnings|default(0)).replace(",",".") }}</span>
             </div>
-
         </div>
-
-        {% endfor %}
-    {% else %}
-        <div class="empty-state"><p>Belum ada link</p></div>
-    {% endif %}
-
+        <div class="link-actions">
+            <button onclick="event.stopPropagation(); copyText('{{ base_url }}/s/{{ link.short_code }}', this)">
+                Copy
+            </button>
+            <button onclick="event.stopPropagation(); openEditModal('{{ link.id }}','{{ link.destination_url }}','ads',0)">
+                Edit
+            </button>
+            <button onclick="event.stopPropagation(); deleteLink('{{ link.id }}')">
+                Delete
+            </button>
+        </div>
+    </div>
+    {% endfor %}
+{% else %}
+    <div class="empty-state">
+        <p>Belum ada link</p>
+    </div>
+{% endif %}
 </div>
 
 
