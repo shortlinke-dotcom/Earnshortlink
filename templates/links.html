@@ -83,19 +83,23 @@ gap:14px;
 margin:18px 0;
 }
 .stat-card{
-background:#fff;
-border-radius:14px;
-padding:16px;
-box-shadow:0 4px 12px rgba(0,0,0,.05);
+    background:#fff;
+    border-radius:14px;
+    padding:18px;
+    box-shadow:0 6px 16px rgba(0,0,0,.05);
+    transition:.2s;
+}
+.stat-card:hover{
+    transform:translateY(-2px);
 }
 .stat-label{
 font-size:12px;
 color:var(--muted);
 }
 .stat-value{
-font-size:22px;
-font-weight:800;
-margin-top:4px;
+    font-size:24px;
+    font-weight:800;
+    margin-top:6px;
 }
 .stat-card.highlight{
 background:linear-gradient(135deg,var(--primary),var(--primary-dark));
@@ -115,6 +119,28 @@ transition:.2s;
 .form-group input:focus{
 border-color:var(--primary);
 box-shadow:0 0 0 2px rgba(59,130,246,.2);
+}
+.search-box{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background:#fff;
+    padding:10px 14px;
+    border-radius:12px;
+    border:1px solid #e5e7eb;
+    margin-bottom:16px;
+}
+
+.search-box input{
+    border:none;
+    outline:none;
+    width:100%;
+    font-size:14px;
+}
+.highlight{
+    background:yellow;
+    border-radius:3px;
+    padding:0 2px;
 }
 /* ================= PRICE ================= */
 #priceBox{display:none;}
@@ -136,40 +162,64 @@ box-shadow:0 10px 25px rgba(59,130,246,.3);
 }
 /* ================= LINK CARD ================= */
 .link-card{
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:14px;
-border-radius:12px;
-background:#fff;
-border:1px solid #e5e7eb;
-transition:.2s;
-cursor:pointer;
-}
-.link-card:hover{
-transform:translateY(-3px);
-box-shadow:0 10px 25px rgba(0,0,0,.08);
-}
-.link-title a{
-font-weight:600;
-color:#0f172a;
-text-decoration:none;
-}
-.link-title a:hover{
-color:var(--primary);
-}
-.link-destination{
-font-size:12px;
-color:#94a3b8;
-}
-.link-title a,
-.link-destination a{
-    position: relative;
-    z-index: 2;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:16px;
+    border-radius:14px;
+    background:#fff;
+    border:1px solid #e5e7eb;
+    transition:all .25s ease;
+    cursor:pointer;
+    position:relative;
+    overflow:hidden;
 }
 
-.link-card{
-    position: relative;
+.link-card::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(120deg,transparent,rgba(59,130,246,.08),transparent);
+    opacity:0;
+    transition:.3s;
+}
+
+.link-card:hover::before{
+    opacity:1;
+}
+
+.link-card:hover{
+    transform:translateY(-4px);
+    box-shadow:0 14px 35px rgba(0,0,0,.08);
+    border-color:#dbeafe;
+}
+.link-title a{
+    font-weight:600;
+    font-size:14px;
+    color:#0f172a;
+    text-decoration:none;
+    transition:.2s;
+}
+
+.link-title a:hover{
+    color:var(--primary);
+}
+
+.link-destination{
+    font-size:12px;
+    color:#94a3b8;
+    margin-top:3px;
+}
+
+.link-destination a:hover{
+    text-decoration:underline;
+}
+.link-meta{
+    display:flex;
+    gap:12px;
+    font-size:12px;
+    margin-top:6px;
+    color:#64748b;
 }
 /* ================= ACTION ================= */
 .link-actions{
@@ -178,27 +228,45 @@ gap:6px;
 margin-left:12px;
 }
 .btn-icon{
-width:32px;
-height:32px;
-border-radius:8px;
-display:flex;
-align-items:center;
-justify-content:center;
-border:none;
-cursor:pointer;
-background:#f1f5f9;
-transition:.2s;
+    width:34px;
+    height:34px;
+    border-radius:10px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border:none;
+    cursor:pointer;
+    background:#f8fafc;
+    transition:all .2s ease;
 }
-.btn-icon:hover{transform:scale(1.1);}
-.btn-icon.copy{background:#e0f2fe;}
-.btn-icon.edit{background:#fef9c3;}
-.btn-icon.delete{background:#fee2e2;}
+
+.btn-icon:hover{
+    transform:translateY(-2px) scale(1.05);
+    box-shadow:0 6px 12px rgba(0,0,0,.1);
+}
+
+.btn-icon.copy:hover{
+    background:#38bdf8;
+    color:#fff;
+}
+
+.btn-icon.edit:hover{
+    background:#facc15;
+    color:#000;
+}
+
+.btn-icon.delete:hover{
+    background:#ef4444;
+    color:#fff;
+}
 /* ================= BADGE ================= */
 .badge{
-font-size:10px;
-padding:3px 7px;
-border-radius:999px;
-margin-left:6px;
+    font-size:10px;
+    padding:4px 8px;
+    border-radius:999px;
+    margin-left:8px;
+    font-weight:600;
+    letter-spacing:.3px;
 }
 .badge.ads{
 background:#e0f2fe;
