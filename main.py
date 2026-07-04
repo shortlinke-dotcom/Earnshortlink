@@ -1697,7 +1697,7 @@ async def links(request: Request, page: int = Query(1, ge=1)):
     total_links = (count_links.count or 0) + (count_sell.count or 0)
 
     # ================= PAGINATION =================
-    per_page = 10
+    per_page = 5
     total_pages = max(1, ceil(total_links / per_page))
 
     page = max(1, min(page, total_pages))
@@ -1756,8 +1756,8 @@ async def links(request: Request, page: int = Query(1, ge=1)):
             "request": request,
             "user": user,
             "user_data": user_data,
-            "ads_links": links_data,
-            "sell_links": sell_links,
+            "ads_links_page": links_data,
+            "sell_links_page": sell_links,
             "base_url": str(request.base_url).rstrip("/"),
             "links": paginated_links,  # 🔥 SUDAH DIGABUNG
             "total_links": total_links,
