@@ -3,38 +3,36 @@
 
 {% block extra_css %}
 <style>
-/* ================= ROOT (FIX BUG) ================= */
+<style>
+/* ================= ROOT ================= */
 :root{
-–primary:#3b82f6;
-–primary-dark:#2563eb;
-–success:#10b981;
-–warning:#f59e0b;
-–danger:#ef4444;
-–text:#0f172a;
-–muted:#64748b;
+--primary:#3b82f6;
+--primary-dark:#2563eb;
+--success:#10b981;
+--warning:#f59e0b;
+--danger:#ef4444;
+--text:#0f172a;
+--muted:#64748b;
 }
-
 /* ================= BASE ================= */
 body{
-font-family:“Poppins”,sans-serif;
+font-family:"Poppins",sans-serif;
 min-height:100vh;
-color:var(–text);
+color:var(--text);
 background:
 radial-gradient(circle at top left,#dbeafe 0%,transparent 45%),
 radial-gradient(circle at bottom right,#bfdbfe 0%,transparent 40%),
 linear-gradient(135deg,#f8fafc,#eef4ff);
 }
-
 /* ================= HEADER ================= */
 .page-header h1{
 font-size:26px;
 font-weight:800;
 }
 .page-header p{
-color:var(–muted);
+color:var(--muted);
 font-size:14px;
 }
-
 /* ================= CARD ================= */
 .card{
 background:#fff;
@@ -46,7 +44,6 @@ transition:.25s;
 .card:hover{
 transform:translateY(-2px);
 }
-
 /* ================= SWITCH ================= */
 .link-switch{
 display:flex;
@@ -63,14 +60,13 @@ cursor:pointer;
 font-weight:600;
 }
 .switch-btn.active{
-background:var(–primary);
+background:var(--primary);
 color:#fff;
 }
 .switch-btn.locked{
 opacity:.5;
 cursor:not-allowed;
 }
-
 /* ================= LOCK INFO ================= */
 .lock-info{
 background:#fef3c7;
@@ -80,7 +76,6 @@ border-radius:10px;
 font-size:12px;
 margin-bottom:10px;
 }
-
 /* ================= STATS ================= */
 .stats{
 display:grid;
@@ -88,30 +83,25 @@ grid-template-columns:repeat(3,1fr);
 gap:14px;
 margin:18px 0;
 }
-
 .stat-card{
 background:#fff;
 border-radius:14px;
 padding:16px;
 box-shadow:0 4px 12px rgba(0,0,0,.05);
 }
-
 .stat-label{
 font-size:12px;
-color:var(–muted);
+color:var(--muted);
 }
-
 .stat-value{
 font-size:22px;
 font-weight:800;
 margin-top:4px;
 }
-
 .stat-card.highlight{
-background:linear-gradient(135deg,var(–primary),var(–primary-dark));
+background:linear-gradient(135deg,var(--primary),var(--primary-dark));
 color:#fff;
 }
-
 /* ================= FORM ================= */
 .form-group{
 margin-bottom:14px;
@@ -124,25 +114,19 @@ border:1px solid #e2e8f0;
 transition:.2s;
 }
 .form-group input:focus{
-border-color:var(–primary);
+border-color:var(--primary);
 box-shadow:0 0 0 2px rgba(59,130,246,.2);
 }
-
-/* ================= PRICE TOGGLE ================= */
-#priceBox{
-display:none;
-}
-#priceBox.show{
-display:block;
-}
-
+/* ================= PRICE ================= */
+#priceBox{display:none;}
+#priceBox.show{display:block;}
 /* ================= BUTTON ================= */
 .btn-create{
 width:100%;
 padding:13px;
 border:none;
 border-radius:12px;
-background:linear-gradient(135deg,var(–primary),var(–primary-dark));
+background:linear-gradient(135deg,var(--primary),var(--primary-dark));
 color:#fff;
 font-weight:700;
 cursor:pointer;
@@ -151,7 +135,6 @@ cursor:pointer;
 transform:translateY(-2px);
 box-shadow:0 10px 25px rgba(59,130,246,.3);
 }
-
 /* ================= LINK CARD ================= */
 .link-card{
 display:flex;
@@ -168,28 +151,24 @@ cursor:pointer;
 transform:translateY(-3px);
 box-shadow:0 10px 25px rgba(0,0,0,.08);
 }
-
 .link-title a{
 font-weight:600;
 color:#0f172a;
 text-decoration:none;
 }
 .link-title a:hover{
-color:var(–primary);
+color:var(--primary);
 }
-
 .link-destination{
 font-size:12px;
 color:#94a3b8;
 }
-
 /* ================= ACTION ================= */
 .link-actions{
 display:flex;
 gap:6px;
 margin-left:12px;
 }
-
 .btn-icon{
 width:32px;
 height:32px;
@@ -202,14 +181,10 @@ cursor:pointer;
 background:#f1f5f9;
 transition:.2s;
 }
-.btn-icon:hover{
-transform:scale(1.1);
-}
-
+.btn-icon:hover{transform:scale(1.1);}
 .btn-icon.copy{background:#e0f2fe;}
 .btn-icon.edit{background:#fef9c3;}
 .btn-icon.delete{background:#fee2e2;}
-
 /* ================= BADGE ================= */
 .badge{
 font-size:10px;
@@ -217,17 +192,14 @@ padding:3px 7px;
 border-radius:999px;
 margin-left:6px;
 }
-
 .badge.ads{
 background:#e0f2fe;
 color:#0369a1;
 }
-
 .badge.sell{
 background:#dcfce7;
 color:#166534;
 }
-
 /* ================= TABS ================= */
 .link-tabs{
 display:flex;
@@ -243,10 +215,9 @@ background:#e2e8f0;
 cursor:pointer;
 }
 .tab-btn.active{
-background:var(–primary);
+background:var(--primary);
 color:#fff;
 }
-
 /* ================= MODAL ================= */
 .modal{
 display:none;
@@ -262,7 +233,6 @@ border-radius:14px;
 max-width:400px;
 margin:100px auto;
 }
-
 /* ================= RESPONSIVE ================= */
 @media(max-width:768px){
 .stats{grid-template-columns:1fr;}
@@ -275,6 +245,7 @@ width:100%;
 justify-content:flex-end;
 }
 }
+</style>
 </style>
 {% endblock %}
 
