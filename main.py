@@ -1756,6 +1756,8 @@ async def links(request: Request, page: int = Query(1, ge=1)):
             "request": request,
             "user": user,
             "user_data": user_data,
+            "ads_links": links_data,
+            "sell_links": sell_links,
             "base_url": str(request.base_url).rstrip("/"),
             "links": paginated_links,  # 🔥 SUDAH DIGABUNG
             "total_links": total_links,
