@@ -1,1253 +1,1131 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<script src="https://nooseamazingbatch.com/ab/80/ed/ab80ed2aaa28a3dd93bd1cd7c7d44835.js"></script>
+
 <meta charset="UTF-8">
-<script src="https://nooseamazingbatch.com/d3/2b/cf/d32bcff5f18bf12434b8174312acf206.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EarnShortlink</title>
+<meta name="description" content="EarnShortlink - Best CPM 2026">
+<meta name="theme-color" content="#2563eb">
+
+<title>EarnShortlink - Best CPM 2026</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
 <!-- POPUNDER -->
 <script src="https://nooseamazingbatch.com/ab/80/ed/ab80ed2aaa28a3dd93bd1cd7c7d44835.js"></script>
 
-<!-- SOCIAL BAR -->
-<script src="https://nooseamazingbatch.com/d3/2b/cf/d32bcff5f18bf12434b8174312acf206.js"></script>
-
 <style>
+
 *{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:'Poppins',sans-serif;
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:"Poppins",sans-serif;
 }
 
 html{
-    scroll-behavior:smooth;
+scroll-behavior:smooth;
 }
 
 body{
-    background:#020817;
-    color:#fff;
-    overflow-x:hidden;
-    line-height:1.7;
+background:#ffffff;
+color:#1e293b;
+overflow-x:hidden;
+line-height:1.8;
 }
 
-.bg{
-    position:fixed;
-    inset:0;
-    background:
-        linear-gradient(rgba(0,0,0,.75),rgba(0,0,0,.85)),
-        url("https://images.unsplash.com/photo-1462331940025-496dfbfc7564");
-    background-size:cover;
-    background-position:center;
-    z-index:-1;
+a{
+text-decoration:none;
+color:inherit;
 }
 
-/* NAVBAR */
+img{
+max-width:100%;
+display:block;
+}
+
+.container{
+width:min(1200px,94%);
+margin:auto;
+}
+
+/* =========================
+NAVBAR
+========================= */
+
+header{
+position:sticky;
+top:0;
+z-index:9999;
+background:rgba(255,255,255,.95);
+backdrop-filter:blur(18px);
+box-shadow:0 5px 20px rgba(0,0,0,.05);
+}
 
 .navbar{
-    position:sticky;
-    top:0;
-    z-index:999;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:16px 20px;
-    background:rgba(0,0,0,.45);
-    backdrop-filter:blur(18px);
-    border-bottom:1px solid rgba(255,255,255,.08);
+height:72px;
+display:flex;
+justify-content:space-between;
+align-items:center;
 }
 
 .logo{
-    font-size:28px;
-    font-weight:800;
+font-size:28px;
+font-weight:800;
+color:#111827;
+letter-spacing:.5px;
 }
 
 .logo span{
-    color:#2196f3;
+color:#2563eb;
 }
 
-/* CONTAINER */
-
-.container{
-    width:100%;
-    max-width:100%;
-    padding:0;
-    margin:0;
+.nav-right{
+display:flex;
+align-items:center;
+gap:12px;
 }
 
-/* CARD UNTUK DOWNLOAD / NOTICE / VERIFY */
+.login-btn{
 
-.card{
-    width:min(1100px,95%);
-    margin:25px auto;
-    background:rgba(15,23,42,.45);
-    border:1px solid rgba(255,255,255,.08);
-    border-radius:18px;
-    padding:25px;
-    backdrop-filter:blur(12px);
+padding:11px 22px;
+border-radius:12px;
+font-weight:600;
+background:#eff6ff;
+color:#2563eb;
+transition:.3s;
+
 }
 
-/* ARTIKEL FULL PUTIH */
+.login-btn:hover{
 
-.article{
-    width:100%;
-    max-width:100%;
-    background:#fff;
-    color:#1e293b;
-    border:none;
-    border-radius:0;
-    padding:60px max(20px,calc((100vw - 1000px)/2));
-    margin:35px 0;
+background:#2563eb;
+color:white;
+
 }
 
-.article h2{
-    color:#2563eb;
-    font-size:30px;
-    margin-bottom:22px;
-    font-weight:700;
+.register-btn{
+
+padding:11px 22px;
+border-radius:12px;
+font-weight:600;
+background:#22c55e;
+color:white;
+transition:.3s;
+box-shadow:0 10px 25px rgba(34,197,94,.25);
+
 }
 
-.article p{
-    color:#334155;
-    font-size:17px;
-    line-height:1.95;
-    margin-bottom:18px;
+.register-btn:hover{
+
+transform:translateY(-3px);
+
 }
 
-.article ul{
-    margin-top:18px;
-    margin-left:22px;
-    color:#334155;
-    line-height:1.9;
+/* =========================
+HERO
+========================= */
+
+.hero{
+
+padding:70px 0;
+background:
+linear-gradient(135deg,#eff6ff,#ffffff);
+
 }
 
-.article li{
-    margin-bottom:10px;
+.hero-grid{
+
+display:grid;
+grid-template-columns:1.2fr .8fr;
+gap:50px;
+align-items:center;
+
 }
 
-.notice{
-    border-left:5px solid #22c55e;
+.hero h1{
+
+font-size:48px;
+font-weight:800;
+line-height:1.2;
+margin-bottom:20px;
+color:#111827;
+
 }
 
-.notice p{
-    line-height:1.8;
-    color:#cbd5e1;
+.hero h1 span{
+
+color:#2563eb;
+
 }
 
-.ad-wrapper{
-    width:100%;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    margin:20px 0;
-    overflow:hidden;
+.hero p{
+
+font-size:18px;
+color:#64748b;
+margin-bottom:35px;
+
 }
 
-.download-section{
-    text-align:center;
-}
+.hero-buttons{
 
-.btn{
-    display:inline-flex;
-    justify-content:center;
-    align-items:center;
-    padding:15px 30px;
-    border:none;
-    border-radius:15px;
-    font-weight:700;
-    cursor:pointer;
-    text-decoration:none;
+display:flex;
+gap:15px;
+flex-wrap:wrap;
+
 }
 
 .btn-primary{
-    background:#2196f3;
-    color:#fff;
+
+background:#2563eb;
+color:white;
+padding:16px 34px;
+border-radius:14px;
+font-weight:700;
+transition:.3s;
+box-shadow:0 15px 35px rgba(37,99,235,.25);
+
 }
 
-.btn-success{
-    background:#22c55e;
-    color:#fff;
+.btn-primary:hover{
+
+transform:translateY(-4px);
+
 }
 
-.timer{
-    display:none;
-    font-size:50px;
-    font-weight:800;
-    margin-top:20px;
-    color:#22c55e;
+.btn-secondary{
+
+background:#22c55e;
+color:white;
+padding:16px 34px;
+border-radius:14px;
+font-weight:700;
+transition:.3s;
+box-shadow:0 15px 35px rgba(34,197,94,.25);
+
 }
 
-#scrollBtn{
-    display:none;
-    margin-top:20px;
+.btn-secondary:hover{
+
+transform:translateY(-4px);
+
 }
 
-.verify-box{
-    text-align:center;
+.hero-card{
+
+background:white;
+padding:35px;
+border-radius:24px;
+box-shadow:0 20px 60px rgba(0,0,0,.08);
+
 }
 
-#loadingBox{
-    display:none;
-    margin-top:20px;
-    font-weight:700;
+.hero-card h3{
+
+font-size:24px;
+margin-bottom:15px;
+color:#111827;
+
 }
 
-#downloadBox{
-    display:none;
-    margin-top:20px;
+.hero-card p{
+
+color:#64748b;
+
 }
 
-.footer{
-    padding:25px;
-    text-align:center;
-    opacity:.8;
-    font-size:14px;
+/* =========================
+FLOATING TELEGRAM
+========================= */
+
+.telegram-float{
+
+position:fixed;
+right:25px;
+bottom:25px;
+z-index:99999;
+
 }
 
-@media (max-width:768px){
+.telegram-btn{
 
-    .navbar{
-        padding:14px;
-    }
+width:68px;
+height:68px;
+border-radius:50%;
+background:#0088cc;
+display:flex;
+justify-content:center;
+align-items:center;
+font-size:30px;
+color:white;
+box-shadow:0 10px 35px rgba(0,136,204,.35);
+animation:pulse 2s infinite;
+position:relative;
 
-    .logo{
-        font-size:22px;
-    }
-
-    .btn,
-    .claim-btn,
-    .sponsor-btn{
-        width:100%;
-    }
-
-    .article{
-        padding:35px 20px;
-    }
-
-    .article h2{
-        font-size:24px;
-    }
-
-    .article p{
-        font-size:16px;
-    }
-
-    .timer{
-        font-size:36px;
-    }
 }
 
-/* TEXT BERJALAN */
-.marquee-wrap{
-    width:100%;
-    overflow:hidden;
-    background:#16a34a;
-    padding:10px 0;
-    border-bottom:1px solid rgba(255,255,255,.1);
+.telegram-btn::after{
+
+content:"1";
+position:absolute;
+top:-2px;
+right:-2px;
+width:22px;
+height:22px;
+border-radius:50%;
+background:#ef4444;
+color:white;
+font-size:12px;
+display:flex;
+justify-content:center;
+align-items:center;
+font-weight:bold;
+
 }
 
-.marquee{
-    white-space:nowrap;
-    display:inline-block;
-    padding-left:100%;
-    font-weight:700;
-    animation:marquee 18s linear infinite;
+.telegram-popup{
+
+position:absolute;
+bottom:80px;
+right:0;
+width:260px;
+background:white;
+border-radius:18px;
+padding:18px;
+box-shadow:0 20px 50px rgba(0,0,0,.15);
+
 }
 
-@keyframes marquee{
-    0%{ transform:translateX(0); }
-    100%{ transform:translateX(-100%); }
+.telegram-popup h4{
+
+font-size:16px;
+margin-bottom:8px;
+color:#111827;
+
 }
 
-/* ANIMASI GLOBAL (FIX: hanya satu pulse) */
+.telegram-popup p{
+
+font-size:14px;
+color:#64748b;
+margin-bottom:15px;
+
+}
+
+.telegram-popup a{
+
+display:block;
+text-align:center;
+padding:12px;
+background:#0088cc;
+color:white;
+border-radius:10px;
+font-weight:700;
+
+}
+
 @keyframes pulse{
-    0%{ transform:scale(1); }
-    50%{ transform:scale(1.08); }
-    100%{ transform:scale(1); }
+
+0%{
+transform:scale(1);
 }
 
-/* TOMBOL SPONSOR */
-.sponsor-btn{
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    padding:16px 30px;
-    border-radius:16px;
-    text-decoration:none;
-    font-weight:800;
-    color:#fff;
-    background:linear-gradient(45deg,#2196f3,#22c55e);
-    animation:pulse 1.5s infinite;
-    box-shadow:0 0 20px rgba(33,150,243,.4);
+50%{
+transform:scale(1.08);
 }
 
-/* TOMBOL CLAIM */
-.claim-btn{
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    padding:16px 28px;
-    border-radius:18px;
-    font-weight:800;
-    font-size:16px;
-    text-decoration:none;
-    color:#fff;
-    background:linear-gradient(45deg,#22c55e,#16a34a);
-    box-shadow:0 0 25px rgba(34,197,94,.35);
-    animation:pulse 1.5s infinite;
-    transition:.3s;
+100%{
+transform:scale(1);
 }
 
-.claim-btn:hover{
-    transform:scale(1.05);
 }
 
-/* LIGHTNING BUTTON */
-.lightning-btn{
-    position:relative;
-    overflow:hidden;
+/* =========================
+SECTION
+========================= */
+
+.section{
+
+padding:70px 0;
+
 }
 
-.lightning-btn::before{
-    content:"⚡";
-    position:absolute;
-    left:-40px;
-    top:50%;
-    transform:translateY(-50%);
-    font-size:22px;
-    animation:lightningMove 2s linear infinite;
+.section-title{
+
+font-size:34px;
+font-weight:800;
+margin-bottom:25px;
+text-align:center;
+color:#111827;
+
 }
 
-@keyframes lightningMove{
-    0%{
-        left:-40px;
-        opacity:0;
-    }
-    20%{ opacity:1; }
-    100%{
-        left:110%;
-        opacity:0;
-    }
+.section-desc{
+
+text-align:center;
+color:#64748b;
+max-width:700px;
+margin:auto;
+margin-bottom:45px;
+
 }
 
-/* FLOATING AD */
-#floatingAd{
-    position:fixed;
-    bottom:0;
-    left:50%;
-    transform:translateX(-50%);
-    z-index:9999;
-    background:#111;
-    border-radius:12px 12px 0 0;
-    box-shadow:0 -5px 20px rgba(0,0,0,.4);
-    animation:slideUp .5s ease;
-    max-width:100%;
+/* =========================
+ARTICLE
+========================= */
+
+.article{
+
+background:white;
+padding:40px;
+border-radius:20px;
+box-shadow:0 10px 30px rgba(0,0,0,.05);
+margin-bottom:35px;
+
 }
 
-.ad-header{
-    display:flex;
-    justify-content:flex-end;
-    gap:5px;
-    padding:5px;
-    background:#222;
-}
+.article h2{
 
-.ad-header button{
-    border:none;
-    background:#333;
-    color:#fff;
-    cursor:pointer;
-    width:28px;
-    height:28px;
-    border-radius:6px;
-}
+font-size:30px;
+margin-bottom:20px;
+color:#2563eb;
 
-.ad-content{
-    padding:5px;
-}
-
-.minimized .ad-content{
-    display:none;
-}
-
-@keyframes slideUp{
-    from{ bottom:-200px; }
-    to{ bottom:0; }
-}
-
-/* POPUP IKLAN */
-#adOverlay{
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    background:rgba(0,0,0,.75);
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    z-index:99999;
-    opacity:0;
-    visibility:hidden;
-    transition:opacity .5s ease;
-}
-
-#adOverlay.show{
-    opacity:1;
-    visibility:visible;
-}
-
-#adPopup{
-    width:340px;
-    max-width:95%;
-    background:#111827;
-    border-radius:20px;
-    padding:20px;
-    position:relative;
-    text-align:center;
-    transform:translateY(100px);
-    transition:transform .6s ease;
-}
-
-#adOverlay.show #adPopup{
-    transform:translateY(0);
-}
-
-#adClose{
-    position:absolute;
-    top:10px;
-    right:10px;
-    width:35px;
-    height:35px;
-    border:none;
-    border-radius:50%;
-    background:#ef4444;
-    color:#fff;
-    font-size:18px;
-    font-weight:bold;
-    cursor:pointer;
-    z-index:100000;
-}
-
-.ad-title{
-    font-size:18px;
-    font-weight:700;
-    margin-bottom:15px;
-}
-
-.ad-container{
-    width:300px;
-    height:250px;
-    margin:auto;
-    overflow:hidden;
-}
-.login-btn{
-    padding:6px 12px;
-    border-radius:8px;
-    font-size:13px;
-    font-weight:600;
-    text-decoration:none;
-    color:#fff;
-    background:rgba(59,130,246,.85);
-    border:1px solid rgba(59,130,246,.3);
-    animation: blinkGlow 2s infinite;
-}
-
-.register-btn{
-    padding:6px 12px;
-    border-radius:8px;
-    font-size:13px;
-    font-weight:600;
-    text-decoration:none;
-    color:#fff;
-    background:rgba(34,197,94,.85);
-    border:1px solid rgba(34,197,94,.3);
-    animation: shakePulse 2.5s infinite;
-}
-
-/* LOGIN KEDIP */
-@keyframes blinkGlow {
-    0% {opacity:1;}
-    50% {opacity:0.5; box-shadow:0 0 10px rgba(59,130,246,.6);}
-    100% {opacity:1;}
-}
-
-/* REGISTER GETAR */
-@keyframes shakePulse {
-    0% {transform:rotate(0);}
-    20% {transform:rotate(2deg);}
-    40% {transform:rotate(-2deg);}
-    60% {transform:rotate(1deg);}
-    80% {transform:rotate(-1deg);}
-    100% {transform:rotate(0);}
-}
-.card{
-    transition:.35s;
-}
-
-.card:hover{
-    transform:translateY(-4px);
-    border-color:rgba(33,150,243,.35);
-}
-
-.btn,
-.claim-btn,
-.sponsor-btn{
-    transition:.3s;
-}
-
-.btn:hover,
-.claim-btn:hover,
-.sponsor-btn:hover{
-    transform:translateY(-2px);
-}
-
-.article h2::after{
-    content:"";
-    display:block;
-    width:70px;
-    height:4px;
-    background:#2563eb;
-    border-radius:10px;
-    margin-top:12px;
 }
 
 .article p{
-    text-align:justify;
-}
 
-.ad-wrapper{
-    margin:35px auto;
-}
-
-.footer{
-    padding:40px 20px;
-    text-align:center;
-    color:#cbd5e1;
-    background:#020617;
-}
-</style>
-</head>
-<body>
-
-<div class="bg"></div>
-
-<!-- TEXT BERJALAN -->
-<div class="marquee-wrap">
-    <div class="marquee">
-        🔥 Join Group Telegram 18+ sekarang juga • Update harian • Komunitas aktif • Klik tombol sponsor di bawah untuk melihat penawaran mitra 🔥
-    </div>
-</div>
-
-<!-- NAVBAR -->
-
-<div class="navbar" style="display:flex;justify-content:space-between;align-items:center;">
-
-    <div class="logo">
-
-        EARN<span>SHORTLINK</span>
-
-    </div>
-
-    <div style="display:flex;gap:8px;">
-
-        <!-- LOGIN (BLINK) -->
-
-        <a href="/login" class="login-btn">
-
-            Login
-
-        </a>
-
-        <!-- REGISTER (SHAKE) -->
-
-        <a href="/register" class="register-btn">
-
-            Register
-
-        </a>
-
-    </div>
-
-</div>
-<div class="container">
-
-    <!-- NOTIFIKASI -->
-    <div class="card notice">
-        <h2>📢 Notifikasi</h2>
-        <p>
-            Mau Cuan Tambahan?? Daftar Sekarang Juga Di Sini...
-        </p>
-    </div>
-
-   <!-- DOWNLOAD -->
-    <div class="card download-section">
-
-        <h2>⬇️ Download Access</h2>
-
-        <p style="margin:15px 0;color:#cbd5e1;">
-            Verifikasi terlebih dahulu untuk memastikan Anda benar-benar bukan robot.
-        </p>
-
-        <button
-            class="btn btn-primary"
-            onclick="startCountdown()">
-            🚀 MULAI VERIFIKASI
-        </button>
-
-        <div id="timer" class="timer">
-            10
-        </div>
-
-        <button
-            id="scrollBtn"
-            class="btn btn-success"
-            onclick="scrollToBottom()">
-            ⬇️ SCROLL DOWN TO DOWNLOAD
-        </button>
-
-        <div style="margin-top:20px;font-size:14px;color:#94a3b8;">
-            Mohon tunggu sebentar hingga proses verifikasi selesai...
-        </div>
-
-    </div>
-
-    <!-- TOMBOL SPONSOR -->
-    <div class="card download-section">
-        <a
-            href="https://nooseamazingbatch.com/pcxdx71e?key=d3f1614512a0ab30d02f2c2f9831bcb5"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="sponsor-btn">
-            🎁 LIHAT PENAWARAN SPONSOR
-        </a>
-    </div>
-
-    <!-- BANNER 320x50 -->
-    <div class="ad-wrapper">
-        <script>
-        atOptions = {
-            'key':'ccf15142f738c1098b148a5b80b9d570',
-            'format':'iframe',
-            'height':50,
-            'width':320,
-            'params':{}
-        };
-        </script>
-
-        <script src="https://nooseamazingbatch.com/ccf15142f738c1098b148a5b80b9d570/invoke.js"></script>
-    </div>
-
-<!-- ARTIKEL -->
-<section class="article">
-    <h2>📈 Kembangkan Potensi Anda</h2>
-    <p>
-        Banyak pengguna memulai dari langkah kecil dan secara bertahap meningkatkan aktivitas mereka seiring bertambahnya pengalaman. Dengan memanfaatkan setiap fitur yang tersedia serta mengikuti proses yang telah disediakan, Anda dapat memahami cara kerja platform dengan lebih baik dan meningkatkan efektivitas penggunaan dari waktu ke waktu.
-    </p>
-    <p>
-        Konsistensi merupakan salah satu faktor penting dalam memperoleh hasil yang optimal. Semakin sering Anda mempelajari informasi, menyelesaikan tahapan yang tersedia, serta memanfaatkan berbagai peluang yang ada, semakin besar pula potensi yang dapat dicapai sesuai dengan tujuan Anda.
-    </p>
-    <p>
-        Luangkan waktu untuk mengeksplorasi seluruh fitur yang tersedia dan ikuti setiap langkah dengan baik. Dengan pendekatan yang tepat serta penggunaan yang konsisten, Anda dapat memperoleh pengalaman yang lebih maksimal sekaligus memanfaatkan seluruh layanan yang disediakan secara optimal.
-    </p>
-</section>
-
-        <div style="text-align:center;margin-top:25px;">
-            <a
-                href="https://nooseamazingbatch.com/pcxdx71e?key=d3f1614512a0ab30d02f2c2f9831bcb5"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="claim-btn">
-                🎁 KLAIM BONUS RP 100.000 SEKARANG
-            </a>
-        </div>
-
-    <!-- BANNER 728x90 -->
-    <div class="ad-wrapper">
-
-        <script>
-        atOptions = {
-            'key':'c683046fae98c4e9a864553821c5556a',
-            'format':'iframe',
-            'height':90,
-            'width':728,
-            'params':{}
-        };
-        </script>
-
-        <script src="https://nooseamazingbatch.com/c683046fae98c4e9a864553821c5556a/invoke.js"></script>
-
-    </div>
-
-    <!-- TOMBOL DOWNLOAD FAST -->
-    <div style="text-align:center;margin-top:25px;">
-
-        <a
-            href="https://nooseamazingbatch.com/pcxdx71e?key=d3f1614512a0ab30d02f2c2f9831bcb5"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="claim-btn lightning-btn">
-            ⚡ DOWNLOAD FAST ⚡
-        </a>
-
-    </div>
-
-<script async="async" data-cfasync="false" src="https://nooseamazingbatch.com/7b6346e206e1400770a7906ec463d82c/invoke.js"></script>
-<div id="container-7b6346e206e1400770a7906ec463d82c"></div>
-
-<!-- ARTIKEL -->
-<section class="article">
-
-    <h2>💰 Peluang Penghasilan yang Menarik</h2>
-
-    <p>
-        Sebagai member <b>EarnShortlink</b>, Anda dapat mengakses berbagai fitur yang dirancang untuk membantu meningkatkan potensi penghasilan secara bertahap dan konsisten.
-    </p>
-
-    <p>
-        Semakin aktif Anda menggunakan layanan yang tersedia, seperti membuat shortlink, membagikan link, dan menyelesaikan proses verifikasi, semakin besar peluang yang bisa diperoleh dari sistem reward yang berjalan.
-    </p>
-
-    <p>
-        Banyak anggota memanfaatkan platform ini sebagai sumber penghasilan tambahan untuk kebutuhan harian, tabungan, atau tujuan finansial jangka panjang.
-    </p>
-
-    <p>
-        Sistem dirancang agar tetap sederhana, fleksibel, dan dapat digunakan oleh siapa saja tanpa perlu keahlian khusus.
-    </p>
-
-    <ul style="margin-top:15px; padding-left:20px; color:#dbeafe; line-height:1.8;">
-        <li>✔ Buat shortlink dengan mudah</li>
-        <li>✔ Dapatkan reward dari aktivitas user</li>
-        <li>✔ Pantau saldo secara real-time</li>
-        <li>✔ Sistem otomatis tanpa ribet</li>
-    </ul>
-
-</section>
-
-<!-- BANNER 300x250 -->
-<div class="ad-wrapper">
-    <script>
-    atOptions = {
-        'key':'5737a07c4a33cf9a6e8fc68028ae5b82',
-        'format':'iframe',
-        'height':250,
-        'width':300,
-        'params':{}
-    };
-    </script>
-    <script src="https://nooseamazingbatch.com/5737a07c4a33cf9a6e8fc68028ae5b82/invoke.js"></script>
-</div>
-        <div style="text-align:center;margin-top:25px;">
-            <a
-                href="https://nooseamazingbatch.com/pcxdx71e?key=d3f1614512a0ab30d02f2c2f9831bcb5"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="claim-btn">
-                DOWNLOAD NOW
-            </a>
-        </div>
-<!-- ARTIKEL -->
-<section class="article">
-
-    <h2>🌍 Dapat Diakses Kapan Saja dan Di Mana Saja</h2>
-
-    <p>
-        Salah satu keunggulan <b>EarnShortlink</b> adalah fleksibilitasnya yang memungkinkan pengguna mengakses platform kapan saja tanpa batasan waktu.
-    </p>
-
-    <p>
-        Platform ini dapat digunakan melalui perangkat apa pun seperti komputer, laptop, maupun smartphone selama terhubung dengan koneksi internet yang stabil.
-    </p>
-
-    <p>
-        Anda tidak perlu datang ke lokasi tertentu atau mengikuti jadwal kerja yang ketat. Semua aktivitas dapat dilakukan secara mandiri sesuai waktu luang Anda.
-    </p>
-
-    <p>
-        Hal ini membuat EarnShortlink cocok untuk pelajar, pekerja, maupun siapa saja yang ingin mendapatkan penghasilan tambahan secara fleksibel.
-    </p>
-
-    <ul style="margin-top:15px; padding-left:20px; color:#dbeafe; line-height:1.8;">
-        <li>✔ Akses 24 jam tanpa batas waktu</li>
-        <li>✔ Bisa dari HP, laptop, atau PC</li>
-        <li>✔ Tidak perlu lokasi khusus</li>
-        <li>✔ Cocok untuk semua kalangan</li>
-    </ul>
-
-</section>
-        <div style="text-align:center;margin-top:25px;">
-            <a
-                href="https://nooseamazingbatch.com/pcxdx71e?key=d3f1614512a0ab30d02f2c2f9831bcb5"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="claim-btn">
-                DOWNLOAD LINK
-            </a>
-        </div>
-<!-- VERIFIKASI -->
-<div id="bottomSection">
-    <div class="card verify-box">
-
-        <h2>✅ Verifikasi</h2>
-
-        <button
-            id="verifyBtn"
-            class="btn btn-success"
-            disabled
-            style="opacity:.5;cursor:not-allowed;"
-            onclick="startVerification()">
-            🔒 TERKUNCI
-        </button>
-
-        <div id="loadingBox">
-            ⏳ Memproses...
-            <span id="loadingTimer">5</span>
-        </div>
-
-        <!-- Muncul setelah verifikasi -->
-        <div id="downloadBox" style="display:none;margin-top:20px;">
-
-            <button
-                id="downloadBtn"
-                class="btn btn-success"
-                onclick="openTask2()">
-                ⬇️ DOWNLOAD NOW
-            </button>
-
-        </div>
-
-        <p style="margin-top:15px;color:#94a3b8;font-size:14px;">
-            Verifikasi terlebih dahulu untuk membuka tombol Download Now.
-        </p>
-
-    </div>
-</div>
-<!-- ARTIKEL -->
-<section class="article">
-
-    <h2>⚡ Proses Cepat dan Mudah</h2>
-
-    <p>
-        <b>EarnShortlink</b> dirancang dengan antarmuka yang sederhana sehingga mudah digunakan oleh semua kalangan, bahkan untuk pengguna baru sekalipun.
-    </p>
-
-    <p>
-        Proses pendaftaran hanya membutuhkan beberapa langkah singkat. Setelah itu, Anda sudah bisa langsung membuat shortlink, membagikan, dan mulai mendapatkan penghasilan.
-    </p>
-
-    <p>
-        Semua sistem dibuat ringan, cepat, dan responsif sehingga nyaman digunakan baik di perangkat mobile maupun desktop tanpa kendala.
-    </p>
-
-    <p>
-        Tidak diperlukan skill teknis khusus — cukup daftar, login, dan mulai menggunakan fitur yang tersedia.
-    </p>
-
-    <ul style="margin-top:15px; padding-left:20px; color:#dbeafe; line-height:1.8;">
-        <li>✔ Daftar hanya dalam beberapa detik</li>
-        <li>✔ Interface sederhana & mudah dipahami</li>
-        <li>✔ Tidak perlu kemampuan teknis</li>
-        <li>✔ Langsung bisa mulai menghasilkan</li>
-    </ul>
-
-</section>
-<!-- BANNER 468x60 -->
-<div class="ad-wrapper">
-    <script>
-    atOptions = {
-        'key':'8573bb1dc88e1ef48abf8c9c09e4c546',
-        'format':'iframe',
-        'height':60,
-        'width':468,
-        'params':{}
-    };
-    </script>
-    <script src="https://nooseamazingbatch.com/8573bb1dc88e1ef48abf8c9c09e4c546/invoke.js"></script>
-</div>
-<!-- ARTIKEL -->
-<section class="article">
-
-    <h2>🔒 Aman dan Nyaman Digunakan</h2>
-
-    <p>
-        Keamanan pengguna merupakan salah satu prioritas utama di <b>EarnShortlink</b>. Sistem dirancang untuk menjaga kenyamanan dan keamanan akun setiap pengguna selama menggunakan platform.
-    </p>
-
-    <p>
-        Kami menyarankan setiap anggota untuk menggunakan akun secara bijak, menjaga kerahasiaan data login, serta mengikuti aturan yang telah ditetapkan agar pengalaman tetap aman dan stabil.
-    </p>
-
-    <p>
-        Dengan sistem yang terstruktur dan pengawasan otomatis, aktivitas di platform dapat berjalan lebih tertib dan minim risiko penyalahgunaan.
-    </p>
-
-    <p>
-        Dengan demikian, Anda dapat fokus memaksimalkan fitur yang tersedia tanpa perlu khawatir terhadap keamanan akun.
-    </p>
-
-    <ul style="margin-top:15px; padding-left:20px; color:#dbeafe; line-height:1.8;">
-        <li>✔ Sistem keamanan terkontrol</li>
-        <li>✔ Proteksi akun pengguna</li>
-        <li>✔ Anti penyalahgunaan sistem</li>
-        <li>✔ Penggunaan lebih stabil & nyaman</li>
-    </ul>
-
-</section>
-</div> <!-- END .container -->
-<!-- FOOTER -->
-<div class="footer">
-    © 2026 EarnShortlink
-</div>
-
-<!-- FLOATING BANNER -->
-<div id="floatingAd">
-    <div class="ad-header">
-        <button onclick="minimizeAd()">▲</button>
-        <button onclick="closeFloatingAd()">✕</button>
-    </div>
-    <div class="ad-content">
-        <!-- ADSTERRA 320x50 -->
-        <script>
-        atOptions = {
-            'key':'ccf15142f738c1098b148a5b80b9d570',
-            'format':'iframe',
-            'height':50,
-            'width':320,
-            'params':{}
-        };
-        </script>
-        <script src="https://nooseamazingbatch.com/ccf15142f738c1098b148a5b80b9d570/invoke.js"></script>
-    </div>
-</div>
-<!-- POPUP IKLAN -->
-<div id="adOverlay">
-    <div id="adPopup">
-        <button
-            id="adClose"
-            onclick="closePopupAd()">
-            ✕
-        </button>
-        <div class="ad-title">
-            Sponsor
-        </div>
-        <div class="ad-container">
-            <!-- ADSTERRA 300x250 -->
-            <script>
-            atOptions = {
-                'key':'5737a07c4a33cf9a6e8fc68028ae5b82',
-                'format':'iframe',
-                'height':250,
-                'width':300,
-                'params':{}
-            };
-            </script>
-            <script src="https://nooseamazingbatch.com/5737a07c4a33cf9a6e8fc68028ae5b82/invoke.js"></script>
-        </div>
-    </div>
-</div>
-<script>
-/* =========================
-
-   LOGIN BLINK EFFECT
-
-========================= */
-
-.login-btn{
-
-    padding:6px 12px;
-
-    border-radius:8px;
-
-    text-decoration:none;
-
-    font-weight:600;
-
-    font-size:13px;
-
-    color:#fff;
-
-    background:rgba(59,130,246,.85);
-
-    border:1px solid rgba(59,130,246,.3);
-
-    animation: blinkGlow 2s infinite;
-
-}
-
-@keyframes blinkGlow {
-
-    0% {
-
-        opacity:1;
-
-        box-shadow:0 0 0 rgba(59,130,246,0);
-
-    }
-
-    50% {
-
-        opacity:0.6;
-
-        box-shadow:0 0 12px rgba(59,130,246,0.6);
-
-    }
-
-    100% {
-
-        opacity:1;
-
-        box-shadow:0 0 0 rgba(59,130,246,0);
-
-    }
+font-size:17px;
+color:#475569;
+margin-bottom:20px;
+text-align:justify;
 
 }
 
 /* =========================
-
-   REGISTER SHAKE EFFECT
-
+ADS
 ========================= */
 
+.ad-box{
+
+display:flex;
+justify-content:center;
+align-items:center;
+margin:40px auto;
+overflow:hidden;
+
+}
+
+/* =========================
+RESPONSIVE
+========================= */
+
+@media(max-width:900px){
+
+.hero-grid{
+
+grid-template-columns:1fr;
+
+}
+
+.hero{
+
+padding:50px 0;
+
+}
+
+.hero h1{
+
+font-size:36px;
+
+}
+
+.hero-buttons{
+
+flex-direction:column;
+
+}
+
+.btn-primary,
+.btn-secondary{
+
+width:100%;
+text-align:center;
+
+}
+
+.telegram-popup{
+
+display:none;
+
+}
+
+}
+
+@media(max-width:600px){
+
+.logo{
+
+font-size:22px;
+
+}
+
+.login-btn,
 .register-btn{
 
-    padding:6px 12px;
-
-    border-radius:8px;
-
-    text-decoration:none;
-
-    font-weight:600;
-
-    font-size:13px;
-
-    color:#fff;
-
-    background:rgba(34,197,94,.85);
-
-    border:1px solid rgba(34,197,94,.3);
-
-    animation: shakePulse 2.5s infinite;
+padding:10px 16px;
+font-size:14px;
 
 }
 
-@keyframes shakePulse {
+.hero h1{
 
-    0% {
-
-        transform:scale(1) rotate(0deg);
-
-    }
-
-    10% {
-
-        transform:scale(1.03) rotate(1deg);
-
-    }
-
-    20% {
-
-        transform:scale(1.03) rotate(-1deg);
-
-    }
-
-    30% {
-
-        transform:scale(1.03) rotate(1deg);
-
-    }
-
-    40% {
-
-        transform:scale(1.03) rotate(-1deg);
-
-    }
-
-    60% {
-
-        transform:scale(1);
-
-    }
-
-    100% {
-
-        transform:scale(1);
-
-    }
+font-size:30px;
 
 }
-</script>
+
+.article{
+
+padding:25px;
+
+}
+
+.article h2{
+
+font-size:24px;
+
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<div class="container navbar">
+
+<div class="logo">
+EARN<span>SHORTLINK</span>
+</div>
+
+<div class="nav-right">
+
+<a href="/login" class="login-btn">
+Login
+</a>
+
+<a href="/register" class="register-btn">
+Register
+</a>
+
+</div>
+
+</div>
+
+</header>
+
+<div class="hero">
+
+<div class="container hero-grid">
+
+<div>
+
+<h1>
+Download File Lebih Cepat Bersama
+<span>EarnShortlink</span>
+</h1>
+
+<p>
+
+Silakan ikuti langkah verifikasi untuk melanjutkan proses download. Semua proses cepat, mudah, dan aman.
+
+</p>
+
+<div class="hero-buttons">
+
+<a href="#" class="btn-primary">
+⬇️ Mulai Download
+</a>
+
+<a href="https://nooseamazingbatch.com/pcxdx71e?key=d3f1614512a0ab30d02f2c2f9831bcb5"
+class="btn-secondary"
+target="_blank">
+
+🎁 Lihat Penawaran
+
+</a>
+
+</div>
+
+</div>
+
+<div class="hero-card">
+
+<h3>
+🚀 Best CPM 2026
+</h3>
+
+<p>
+
+Tempat terbaik untuk mendapatkan penghasilan melalui shortlink dengan sistem cepat, mudah, dan responsif.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- FLOATING TELEGRAM -->
+
+<div class="telegram-float">
+
+<div class="telegram-popup">
+
+<h4>
+📩 Pesan Baru
+</h4>
+
+<p>
+
+Mau lihat Video Viral?
+Masuk Disini Sekarang.
+
+</p>
+
+<a href="https://t.me/+3g_yhHwxCrc5ZTg9" target="_blank">
+
+Masuk Telegram
+
+</a>
+
+</div>
+
+<a
+href="https://t.me/+3g_yhHwxCrc5ZTg9"
+target="_blank"
+class="telegram-btn">
+
+✉️
+
+</a>
+
+</div>
+
+<div class="container">
+<!-- =========================
+ARTIKEL 1
+========================= -->
+
+<section class="section">
+
+<div class="container">
+
+<h2 class="section-title">
+Mulai Download dengan Mudah
+</h2>
+
+<p class="section-desc">
+Ikuti langkah yang tersedia untuk melanjutkan proses download. Seluruh proses dirancang sederhana dan mudah digunakan.
+</p>
+
+<div class="article">
+
+<h2>Judul Artikel Pertama</h2>
+
+<p>
+Silakan ganti paragraf ini dengan artikel Anda sendiri.
+Template ini dibuat full width agar nyaman dibaca baik di Android maupun Desktop.
+</p>
+
+<p>
+Anda dapat menambahkan gambar, heading, list, maupun informasi lainnya sesuai kebutuhan.
+</p>
+
+<p>
+Layout akan otomatis menyesuaikan ukuran layar sehingga tetap rapi di semua perangkat.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- TEMPAT IKLAN 320x50 -->
+
+<div class="ad-box">
+
+<!-- PASANG SCRIPT IKLAN 320x50 DI SINI -->
+
+</div>
+
+<!-- =========================
+ARTIKEL 2
+========================= -->
+
+<section class="section">
+
+<div class="container">
+
+<div class="article">
+
+<h2>Artikel Kedua</h2>
+
+<p>
+Isi artikel kedua di sini.
+</p>
+
+<p>
+Gunakan artikel untuk memberikan informasi kepada pengunjung sebelum mereka melanjutkan ke langkah berikutnya.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- TEMPAT IKLAN 300x250 -->
+
+<div class="ad-box">
+
+<!-- PASANG SCRIPT IKLAN 300x250 -->
+
+</div>
+
+<!-- =========================
+FITUR
+========================= -->
+
+<section class="section">
+
+<div class="container">
+
+<h2 class="section-title">
+Kenapa Memilih EarnShortlink?
+</h2>
+
+<p class="section-desc">
+Platform dirancang agar mudah digunakan oleh semua pengguna.
+</p>
+
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:25px;">
+
+<div class="article">
+
+<h2>⚡ Cepat</h2>
+
+<p>
+Placeholder fitur pertama.
+</p>
+
+</div>
+
+<div class="article">
+
+<h2>🔒 Aman</h2>
+
+<p>
+Placeholder fitur kedua.
+</p>
+
+</div>
+
+<div class="article">
+
+<h2>📱 Responsive</h2>
+
+<p>
+Placeholder fitur ketiga.
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- TEMPAT IKLAN 728x90 -->
+
+<div class="ad-box">
+
+<!-- PASANG SCRIPT IKLAN 728x90 -->
+
+</div>
+
+<!-- =========================
+ARTIKEL 3
+========================= -->
+
+<section class="section">
+
+<div class="container">
+
+<div class="article">
+
+<h2>Artikel Ketiga</h2>
+
+<p>
+Tambahkan artikel sebanyak yang Anda inginkan.
+</p>
+
+<p>
+Template ini sudah menggunakan padding dan typography yang nyaman dibaca.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- TEMPAT NATIVE BAR -->
+
+<div class="ad-box">
+
+<!-- PASANG NATIVE BAR -->
+
+</div>
+
+<!-- =========================
+CALL TO ACTION
+========================= -->
+
+<section class="section">
+
+<div class="container">
+
+<div style="
+background:linear-gradient(135deg,#2563eb,#1d4ed8);
+padding:60px;
+border-radius:25px;
+text-align:center;
+color:white;
+">
+
+<h2 style="font-size:38px;margin-bottom:20px;">
+Siap Melanjutkan?
+</h2>
+
+<p style="max-width:650px;margin:auto;margin-bottom:35px;opacity:.9;">
+Klik tombol di bawah untuk menuju langkah berikutnya.
+</p>
+
+<a
+href="#"
+class="btn-primary"
+style="background:white;color:#2563eb;">
+Lanjutkan
+</a>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- TEMPAT IKLAN 468x60 -->
+
+<div class="ad-box">
+
+<!-- PASANG SCRIPT IKLAN 468x60 -->
+
+</div>
+
+<!-- =========================
+FAQ
+========================= -->
+
+<section class="section">
+
+<div class="container">
+
+<h2 class="section-title">
+Pertanyaan Umum
+</h2>
+
+<div class="article">
+
+<h2>Apa itu EarnShortlink?</h2>
+
+<p>
+Silakan isi jawaban di sini.
+</p>
+
+</div>
+
+<div class="article">
+
+<h2>Bagaimana cara menggunakan?</h2>
+
+<p>
+Silakan isi jawaban di sini.
+</p>
+
+</div>
+
+<div class="article">
+
+<h2>Apakah bisa di HP?</h2>
+
+<p>
+Silakan isi jawaban di sini.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- TEMPAT IKLAN 160x300 / 160x600 (Desktop) -->
+
+<div class="ad-box">
+
+<!-- PASANG IKLAN SIDEBAR -->
+
+</div>
+<!-- =========================
+FOOTER
+========================= -->
+
+<footer style="
+background:#0f172a;
+color:#cbd5e1;
+padding:60px 20px 30px;
+margin-top:80px;
+">
+
+<div class="container">
+
+<div style="
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:40px;
+">
+
+<div>
+
+<h2 style="
+font-size:28px;
+font-weight:800;
+color:#fff;
+margin-bottom:15px;
+">
+EARN<span style="color:#3b82f6;">SHORTLINK</span>
+</h2>
+
+<p>
+Platform yang dirancang dengan tampilan modern, cepat, dan nyaman digunakan di perangkat Android maupun Desktop.
+</p>
+
+</div>
+
+<div>
+
+<h3 style="margin-bottom:15px;color:#fff;">
+Navigasi
+</h3>
+
+<ul style="list-style:none;line-height:2;">
+<li><a href="/">Home</a></li>
+<li><a href="/login">Login</a></li>
+<li><a href="/register">Register</a></li>
+</ul>
+
+</div>
+
+<div>
+
+<h3 style="margin-bottom:15px;color:#fff;">
+Informasi
+</h3>
+
+<ul style="list-style:none;line-height:2;">
+<li>Responsive Design</li>
+<li>Fast Loading</li>
+<li>Modern UI</li>
+<li>Best Experience</li>
+</ul>
+
+</div>
+
+</div>
+
+<hr style="
+margin:40px 0 25px;
+border:none;
+height:1px;
+background:rgba(255,255,255,.1);
+">
+
+<div style="
+text-align:center;
+font-size:15px;
+">
+
+© 2026 EarnShortlink — Best CPM. All Rights Reserved.
+
+</div>
+
+</div>
+
+</footer>
+
+<!-- =========================
+BACK TO TOP
+========================= -->
+
+<button id="backTop">
+
+↑
+
+</button>
+
+<style>
+
+#backTop{
+
+position:fixed;
+right:25px;
+bottom:25px;
+
+width:55px;
+height:55px;
+
+border:none;
+border-radius:50%;
+
+background:#2563eb;
+color:white;
+
+font-size:24px;
+font-weight:bold;
+
+cursor:pointer;
+
+display:none;
+
+box-shadow:0 15px 35px rgba(37,99,235,.3);
+
+transition:.3s;
+
+z-index:999;
+
+}
+
+#backTop:hover{
+
+transform:translateY(-4px);
+
+}
+
+.fade-item{
+
+opacity:0;
+transform:translateY(35px);
+transition:.8s;
+
+}
+
+.fade-item.show{
+
+opacity:1;
+transform:none;
+
+}
+
+</style>
+
 <script>
-// =========================
-// OPEN TASK2 VIA BACKEND
-// =========================
 
-function openTask2() {
-    window.location.href = "/task2/{{ token }}";
+/* =========================
+BACK TO TOP
+========================= */
+
+const backTop=document.getElementById("backTop");
+
+window.addEventListener("scroll",()=>{
+
+if(window.scrollY>350){
+
+backTop.style.display="block";
+
+}else{
+
+backTop.style.display="none";
+
 }
-// =========================
-// POPUP ADS
-// =========================
-
-let popupInterval = null;
-
-function showPopupAd() {
-    document.getElementById("adOverlay").classList.add("show");
-}
-
-function closePopupAd() {
-    document.getElementById("adOverlay").classList.remove("show");
-}
-
-window.addEventListener("load", () => {
-
-    // Muncul pertama kali setelah 3 detik
-    setTimeout(showPopupAd, 3000);
-
-    // Muncul setiap 30 detik
-    popupInterval = setInterval(showPopupAd, 30000);
 
 });
 
+backTop.onclick=()=>{
 
-// =========================
-// DOWNLOAD VERIFICATION
-// =========================
+window.scrollTo({
 
-let countdownFinished = false;
-let countdownRunning = false;
+top:0,
+behavior:"smooth"
 
-function startCountdown() {
+});
 
-    if (countdownRunning || countdownFinished) return;
+};
 
-    countdownRunning = true;
+/* =========================
+FADE ANIMATION
+========================= */
 
-    const timer = document.getElementById("timer");
-    const scrollBtn = document.getElementById("scrollBtn");
+const observer=new IntersectionObserver((entries)=>{
 
-    timer.style.display = "block";
+entries.forEach(entry=>{
 
-    let count = 10;
+if(entry.isIntersecting){
 
-    timer.textContent = count;
-
-    const interval = setInterval(() => {
-
-        count--;
-
-        timer.textContent = count;
-
-        if (count <= 0) {
-
-            clearInterval(interval);
-
-            countdownFinished = true;
-
-            timer.textContent = "✅ Selesai";
-
-            scrollBtn.style.display = "inline-flex";
-
-        }
-
-    }, 1000);
+entry.target.classList.add("show");
 
 }
 
+});
 
-function scrollToBottom() {
+},{
 
-    if (!countdownFinished) return;
+threshold:.15
 
-    document.getElementById("bottomSection").scrollIntoView({
-        behavior: "smooth"
-    });
+});
 
-    const verifyBtn = document.getElementById("verifyBtn");
+document.querySelectorAll(".article,.section").forEach(el=>{
 
-    verifyBtn.disabled = false;
-    verifyBtn.style.opacity = "1";
-    verifyBtn.style.cursor = "pointer";
-    verifyBtn.innerHTML = "✅ BUKA VERIFIKASI";
+el.classList.add("fade-item");
 
-}
+observer.observe(el);
 
+});
 
-function startVerification() {
+/* =========================
+TELEGRAM POPUP
+========================= */
 
-    const verifyBtn = document.getElementById("verifyBtn");
+const popup=document.querySelector(".telegram-popup");
 
-    verifyBtn.disabled = true;
+setTimeout(()=>{
 
-    const loadingBox = document.getElementById("loadingBox");
-    const loadingTimer = document.getElementById("loadingTimer");
+if(popup){
 
-    loadingBox.style.display = "block";
-
-    let count = 5;
-
-    loadingTimer.textContent = count;
-
-    const interval = setInterval(() => {
-
-        count--;
-
-        loadingTimer.textContent = count;
-
-        if (count <= 0) {
-
-            clearInterval(interval);
-
-            loadingBox.innerHTML = "✅ Verifikasi Berhasil";
-
-            document.getElementById("downloadBox").style.display = "block";
-
-        }
-
-    }, 1000);
+popup.style.display="none";
 
 }
 
+},10000);
 
-// =========================
-// FLOATING ADS
-// =========================
-
-function minimizeAd() {
-
-    document
-        .getElementById("floatingAd")
-        .classList
-        .toggle("minimized");
-
-}
-
-function closeFloatingAd() {
-
-    document.getElementById("floatingAd").style.display = "none";
-
-}
-
-let authOpen = true;
-
-function toggleAuth(){
-
-    const panel = document.getElementById("authPanel");
-    const btn = document.getElementById("openAuthBtn");
-
-    authOpen = !authOpen;
-
-    if(!authOpen){
-        panel.classList.add("auth-hidden");
-        btn.style.display = "block";
-    } else {
-        panel.classList.remove("auth-hidden");
-        btn.style.display = "none";
-    }
-}
 </script>
 
 </body>
