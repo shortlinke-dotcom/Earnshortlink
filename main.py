@@ -1873,30 +1873,29 @@ async def final_reward(request: Request, token: str = Form(...)):
         return HTMLResponse("Unauthorized", 401)
 
     # =========================
-    # GET TOKEN (STRICT LOCK)
+    # GET TOKEN (NO STEP FILTER)
     # =========================
-    try:
-        token_res = supabase.table("download_tokens") \
-            .select("*") \
-            .eq("token", token) \
-            .eq("step", 2) \
-            .eq("used", False) \
-            .limit(1) \
-            .execute()
-
-    except Exception as e:
-        print("DB ERROR FINAL REWARD:", e)
-        return HTMLResponse("Server error", 500)
+    token_res = supabase.table("download_tokens") \
+        .select("*") \
+        .eq("token", token) \
+        .limit(1) \
+        .execute()
 
     if not token_res.data:
         return HTMLResponse("Invalid Token", 403)
 
     token_data = token_res.data[0]
 
+    # =========================
+    # SAFETY CHECK (OPTIONAL)
+    # =========================
+    if not token_data.get("used"):
+        return HTMLResponse("Belum selesai task terakhir", 403)
+
     short_code = token_data["short_code"]
 
     # =========================
-    # CHECK LINK OWNER
+    # CEK OWNER LINK
     # =========================
     link = supabase.table("links") \
         .select("user_id") \
@@ -1909,9 +1908,6 @@ async def final_reward(request: Request, token: str = Form(...)):
 
     owner_id = link.data[0]["user_id"]
 
-    # =========================
-    # HARD SECURITY CHECK
-    # =========================
     if owner_id != user_id:
         return HTMLResponse("Forbidden", 403)
 
@@ -1919,23 +1915,7 @@ async def final_reward(request: Request, token: str = Form(...)):
     commission = int(reward * 0.10)
 
     # =========================
-    # 🔥 ATOMIC LOCK (IMPORTANT FIX)
-    # =========================
-    lock = supabase.table("download_tokens") \
-        .update({
-            "used": True,
-            "step": 3
-        }) \
-        .eq("token", token) \
-        .eq("step", 2) \
-        .eq("used", False) \
-        .execute()
-
-    if not lock.data:
-        return HTMLResponse("Already claimed or expired", 409)
-
-    # =========================
-    # UPDATE OWNER BALANCE
+    # UPDATE SALDO
     # =========================
     supabase.rpc("increment_saldo", {
         "uid": owner_id,
@@ -1948,7 +1928,7 @@ async def final_reward(request: Request, token: str = Form(...)):
     }).execute()
 
     # =========================
-    # REFERRAL COMMISSION
+    # REFERRAL
     # =========================
     ref = supabase.table("referrals") \
         .select("user_id") \
@@ -1964,11 +1944,10 @@ async def final_reward(request: Request, token: str = Form(...)):
             "amount": commission
         }).execute()
 
-    print("REWARD CLAIMED:", {
-        "user": user_id,
-        "owner": owner_id,
-        "token": token
-    })
+    # =========================
+    # LOG
+    # =========================
+    print("REWARD CLAIMED:", token)
 
     return RedirectResponse("/", 303)
 # =========================
