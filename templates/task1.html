@@ -826,20 +826,87 @@ margin:20px 0;
 min-height:250px;
 }
 
+.bonus-card{
+margin-top:40px;
+padding:30px;
+text-align:center;
+border-radius:20px;
+background:linear-gradient(135deg,#1e3a8a,#2563eb);
+color:#fff;
+overflow:hidden;
+position:relative;
+}
+
+.bonus-icon{
+font-size:70px;
+animation:bounce 1.5s infinite;
+}
+
+@keyframes bounce{
+0%,100%{transform:translateY(0);}
+50%{transform:translateY(-12px);}
+}
+
+.money-rain{
+font-size:28px;
+margin:20px 0;
+animation:rain 3s linear infinite;
+}
+
+@keyframes rain{
+0%{
+transform:translateY(-8px);
+opacity:.4;
+}
+50%{
+transform:translateY(8px);
+opacity:1;
+}
+100%{
+transform:translateY(-8px);
+opacity:.4;
+}
+}
+
+.reward-lock{
+margin:20px auto;
+padding:12px;
+width:max-content;
+background:#f59e0b;
+color:#111827;
+font-weight:bold;
+border-radius:30px;
+}
+
 #bonusBtn{
 display:inline-block;
-padding:15px 30px;
-background:#2563eb;
-color:#fff;
+margin-top:20px;
+padding:16px 30px;
+border-radius:14px;
 text-decoration:none;
+font-size:18px;
 font-weight:700;
-border-radius:12px;
 transition:.3s;
 }
 
-#bonusBtn:hover{
-transform:translateY(-2px);
-background:#1d4ed8;
+#bonusBtn.locked{
+background:#94a3b8;
+color:white;
+pointer-events:none;
+cursor:not-allowed;
+}
+
+#bonusBtn.unlocked{
+background:#22c55e;
+color:white;
+pointer-events:auto;
+animation:pulse 1s infinite;
+}
+
+@keyframes pulse{
+0%{transform:scale(1);}
+50%{transform:scale(1.05);}
+100%{transform:scale(1);}
 }
 
 </style>
@@ -2028,25 +2095,35 @@ required></textarea>
 </button>
 </div>
 
-<div id="bonusBox">
+<div id="bonusBox" class="bonus-card">
 
-    <div class="reward-title">
-        🎉 Semua pertanyaan telah selesai!
+    <div class="bonus-icon">
+        🤖
     </div>
 
-    <div class="reward-sub">
-        Lihat iklan di bawah lalu ambil bonus.
+    <h2>Bot Reward Aktif</h2>
+
+    <p>
+        Selesaikan semua pertanyaan untuk membuka hadiah.
+    </p>
+
+    <div class="money-rain">
+        💵 💰 🪙 💎 💵 🪙 💰
+    </div>
+
+    <div class="reward-lock" id="rewardStatus">
+        🔒 Bonus Terkunci
     </div>
 
     <div class="ad-box">
 
         <script>
-        atOptions = {
-            'key' : '5737a07c4a33cf9a6e8fc68028ae5b82',
-            'format' : 'iframe',
-            'height' : 250,
-            'width' : 300,
-            'params' : {}
+        atOptions={
+            'key':'5737a07c4a33cf9a6e8fc68028ae5b82',
+            'format':'iframe',
+            'height':250,
+            'width':300,
+            'params':{}
         };
         </script>
 
@@ -2054,28 +2131,14 @@ required></textarea>
 
     </div>
 
-    <a
-        href="https://nooseamazingbatch.com/pcxdx71e?key=d3f1614512a0ab30d02f2c2f9831bcb5"
-        target="_blank"
-        id="bonusBtn">
-        🎁 Ambil Bonus
+    <a href="https://nooseamazingbatch.com/pcxdx71e?key=d3f1614512a0ab30d02f2c2f9831bcb5"
+       target="_blank"
+       id="bonusBtn"
+       class="locked">
+
+        🔒 Selesaikan Semua Pertanyaan
+
     </a>
-
-</div>
-
-<!-- TEMPAT IKLAN 160x300 / 160x600 (Desktop) -->
-
-<div class="ad-box">
-<script>
-  atOptions = {
-    'key' : 'fb97dfc2cbc446778d6eafd830633d5b',
-    'format' : 'iframe',
-    'height' : 600,
-    'width' : 160,
-    'params' : {}
-  };
-</script>
-<script src="https://nooseamazingbatch.com/fb97dfc2cbc446778d6eafd830633d5b/invoke.js"></script>
 
 </div>
 <!-- =========================
@@ -2421,11 +2484,14 @@ const done=document.querySelectorAll(".done-btn.done").length;
 
 if(total===done){
 
-document.querySelector(".reward-lock").style.display="none";
+const btn=document.getElementById("bonusBtn");
 
-document.getElementById("bonusContent").style.display="block";
+btn.classList.remove("locked");
+btn.classList.add("unlocked");
 
-document.getElementById("bonusBox").style.display="block";
+btn.innerHTML="🎁 Ambil Bonus";
+
+document.getElementById("rewardStatus").innerHTML="✅ Bonus Siap Diambil";
 
 }
 
