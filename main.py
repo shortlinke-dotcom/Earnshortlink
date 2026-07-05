@@ -1901,7 +1901,6 @@ async def final_reward(request: Request, token: str = Form(...)):
         supabase.table("download_tokens")
         .select("*")
         .eq("token", token)
-        .limit(1)
         .single()
         .execute()
     )
@@ -1921,7 +1920,7 @@ async def final_reward(request: Request, token: str = Form(...)):
     # =========================
     link_res = (
         supabase.table("links")
-        .select("*")
+        .select("destination_url, user_id")
         .eq("short_code", short_code)
         .single()
         .execute()
@@ -1932,23 +1931,24 @@ async def final_reward(request: Request, token: str = Form(...)):
 
     link_data = link_res.data
 
-    raw_owner_id = link_data["user_id"]
+    owner_id = link_data["user_id"]
 
     # =========================
-    # 🔥 IMPORTANT: VALIDATE UUID
+    # ⚠️ VALIDATE OWNER ID IS UUID
     # =========================
-    user_res = (
+    user_check = (
         supabase.table("users")
         .select("id")
-        .eq("id", raw_owner_id)
-        .maybe_single()
+        .eq("id", owner_id)
+        .single()
         .execute()
     )
 
-    if not user_res.data:
+    if not user_check.data:
+        print("INVALID OWNER ID:", owner_id)
         return HTMLResponse("Invalid owner mapping", 500)
 
-    owner_id = user_res.data["id"]
+    owner_id = user_check.data["id"]
 
     destination_url = link_data["destination_url"]
 
@@ -1973,12 +1973,12 @@ async def final_reward(request: Request, token: str = Form(...)):
         supabase.table("referrals")
         .select("user_id")
         .eq("referred_user_id", owner_id)
-        .limit(1)
+        .single()
         .execute()
     )
 
     if ref.data:
-        referrer_id = ref.data[0]["user_id"]
+        referrer_id = ref.data["user_id"]
 
         supabase.rpc(
             "increment_user_balance",
