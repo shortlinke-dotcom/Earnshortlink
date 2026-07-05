@@ -1734,7 +1734,21 @@ async def task3(request: Request, token: str):
         }
     )
 
+@app.post("/complete-task3")
+async def complete_task3(request: Request, token: str = Form(...)):
+    # cek token step 2
+    data = supabase.table("download_tokens") \
+        .select("*") \
+        .eq("token", token) \
+        .eq("step", 2) \
+        .eq("used", False) \
+        .limit(1) \
+        .execute()
 
+    if not data.data:
+        return HTMLResponse("Invalid token", 403)
+
+    return RedirectResponse(f"/final-reward", 303)
 # =========================
 # FINAL REWARD
 # =========================
