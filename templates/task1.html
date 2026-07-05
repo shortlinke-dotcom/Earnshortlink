@@ -1199,6 +1199,22 @@ transform:translateX(5px);
 }
 
 }
+.progress-box{
+    width:280px;
+    max-width:90%;
+    height:14px;
+    margin:0 auto 15px;
+    background:#e5e7eb;
+    border-radius:999px;
+    overflow:hidden;
+}
+
+.progress-fill{
+    width:0%;
+    height:100%;
+    background:linear-gradient(90deg,#22c55e,#16a34a);
+    transition:width .15s linear;
+}
 </style>
 
 <div class="article" style="text-align:center;">
@@ -1776,15 +1792,11 @@ Verifikasi
 
 <div id="verifyLoading" style="display:none;margin-top:25px;">
 
-<div
-id="verifyTimer"
-style="font-size:55px;font-weight:800;color:#22c55e;">
+    <div class="progress-box">
+        <div id="verifyProgress" class="progress-fill"></div>
+    </div>
 
-10
-
-</div>
-
-<p>Memverifikasi...</p>
+    <p id="verifyText">Memverifikasi...</p>
 
 </div>
 
@@ -1871,28 +1883,30 @@ FOOTER
 ========================= -->
 
 <footer style="
-background:#ffffff;
+background:#fff;
 border-top:1px solid #e5e7eb;
-padding:60px 20px 30px;
-margin-top:80px;
+padding:40px 20px;
+margin-top:70px;
 ">
 
 <div class="container">
 
 <div style="
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-gap:50px;
+display:flex;
+justify-content:space-between;
 align-items:flex-start;
+gap:40px;
+flex-wrap:wrap;
 ">
 
-<div>
+<!-- Logo -->
+<div style="flex:1;min-width:240px;">
 
 <h2 style="
-font-size:28px;
+font-size:30px;
 font-weight:800;
+margin-bottom:12px;
 color:#111827;
-margin-bottom:15px;
 ">
 EARN<span style="color:#2563eb;">SHORTLINK</span>
 </h2>
@@ -1900,65 +1914,78 @@ EARN<span style="color:#2563eb;">SHORTLINK</span>
 <p style="
 color:#64748b;
 line-height:1.8;
+max-width:420px;
 ">
-Platform modern dengan tampilan responsif yang nyaman digunakan di Android maupun Desktop.
+Platform shortlink modern dengan performa cepat, desain responsif, dan pengalaman terbaik di semua perangkat.
 </p>
 
 </div>
 
+<!-- Menu -->
+<div style="
+display:flex;
+gap:70px;
+flex-wrap:wrap;
+">
+
 <div>
 
-<h3 style="
-margin-bottom:18px;
+<h4 style="
+margin-bottom:15px;
+font-size:18px;
 color:#111827;
-font-size:20px;
 ">
-Navigasi
-</h3>
+Menu
+</h4>
 
-<ul style="
-list-style:none;
-line-height:2.3;
-color:#64748b;
+<div style="
+display:flex;
+flex-direction:column;
+gap:10px;
 ">
 
-<li><a href="/">Home</a></li>
-<li><a href="/login">Login</a></li>
-<li><a href="/register">Register</a></li>
+<a href="/">Home</a>
+<a href="/login">Login</a>
+<a href="/register">Register</a>
 
-</ul>
+</div>
 
 </div>
 
 <div>
 
-<h3 style="
-margin-bottom:18px;
+<h4 style="
+margin-bottom:15px;
+font-size:18px;
 color:#111827;
-font-size:20px;
 ">
 Keunggulan
-</h3>
+</h4>
 
-<ul style="
-list-style:none;
-line-height:2.3;
-color:#64748b;
+<div style="
+display:flex;
+flex-direction:column;
+gap:12px;
 ">
 
-<li>✔ Responsive Design</li>
-<li>✔ Fast Loading</li>
-<li>✔ Modern Interface</li>
-<li>✔ Best CPM</li>
+<span><i class="fa-solid fa-bolt" style="color:#f59e0b;width:20px;"></i> Fast Loading</span>
 
-</ul>
+<span><i class="fa-solid fa-shield-halved" style="color:#22c55e;width:20px;"></i> Secure</span>
+
+<span><i class="fa-solid fa-mobile-screen-button" style="color:#2563eb;width:20px;"></i> Responsive</span>
+
+<span><i class="fa-solid fa-sack-dollar" style="color:#10b981;width:20px;"></i> Best CPM</span>
+
+</div>
+
+</div>
 
 </div>
 
 </div>
 
 <hr style="
-margin:45px 0 25px;
+margin:35px 0 20px;
 border:none;
 height:1px;
 background:#e5e7eb;
@@ -1969,17 +1996,45 @@ display:flex;
 justify-content:space-between;
 align-items:center;
 flex-wrap:wrap;
-gap:15px;
+gap:10px;
+font-size:14px;
 color:#64748b;
-font-size:15px;
 ">
 
-<div>
-© 2026 <strong>EarnShortlink</strong>. All Rights Reserved.
-</div>
+<div style="
+display:flex;
+justify-content:space-between;
+align-items:center;
+flex-wrap:wrap;
+gap:12px;
+color:#64748b;
+font-size:14px;
+">
 
-<div>
-EarnShortlink • Best CPM
+    <span style="display:flex;align-items:center;gap:8px;">
+        <i class="fa-regular fa-copyright"></i>
+        <strong>2026 EarnShortlink</strong>
+        <span style="color:#94a3b8;">All Rights Reserved</span>
+    </span>
+
+    <span style="
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:8px 14px;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:999px;
+    font-size:13px;
+    font-weight:600;
+    ">
+
+        <i class="fa-solid fa-flag" style="color:#dc2626;"></i>
+        Made by Indonesian Teen Developer
+        <i class="fa-solid fa-laptop-code" style="color:#2563eb;"></i>
+
+    </span>
+
 </div>
 
 </div>
@@ -2248,53 +2303,50 @@ document.getElementById("scrollBtn").style.display="inline-block";
 
 function scrollDownload(){
 
-document.getElementById("downloadSection").scrollIntoView({
+    window.scrollTo({
+        top: document.documentElement.scrollHeight,
+        behavior: "smooth"
+    });
 
-behavior:"smooth"
+    const btn = document.getElementById("verifyBtn");
 
-});
-
-const btn=document.getElementById("verifyBtn");
-
-btn.disabled=false;
-
-btn.style.opacity="1";
+    btn.disabled = false;
+    btn.style.opacity = "1";
 
 }
 
 function startVerify(){
 
-const btn=document.getElementById("verifyBtn");
+    const btn=document.getElementById("verifyBtn");
+    btn.disabled=true;
+    btn.style.display="none";
 
-btn.disabled=true;
+    document.getElementById("verifyLoading").style.display="block";
 
-btn.style.display="none";
+    const bar=document.getElementById("verifyProgress");
+    const text=document.getElementById("verifyText");
 
-document.getElementById("verifyLoading").style.display="block";
+    let progress=0;
 
-let count=10;
+    const loading=setInterval(()=>{
 
-const timer=document.getElementById("verifyTimer");
+        progress+=2;
+        bar.style.width=progress+"%";
 
-timer.innerHTML=count;
+        if(progress>=25) text.innerHTML="Memeriksa link...";
+        if(progress>=55) text.innerHTML="Menyiapkan download...";
+        if(progress>=85) text.innerHTML="Hampir selesai...";
 
-const x=setInterval(()=>{
+        if(progress>=100){
 
-count--;
+            clearInterval(loading);
 
-timer.innerHTML=count;
+            document.getElementById("verifyLoading").style.display="none";
+            document.getElementById("downloadBtn").style.display="inline-block";
 
-if(count<=0){
+        }
 
-clearInterval(x);
-
-document.getElementById("verifyLoading").style.display="none";
-
-document.getElementById("downloadBtn").style.display="inline-block";
-
-}
-
-},1000);
+    },80);
 
 }
 
