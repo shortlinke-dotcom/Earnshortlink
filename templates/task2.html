@@ -19,7 +19,59 @@
 <script src="https://nooseamazingbatch.com/ab/80/ed/ab80ed2aaa28a3dd93bd1cd7c7d44835.js"></script>
 <script src="https://nooseamazingbatch.com/d3/2b/cf/d32bcff5f18bf12434b8174312acf206.js"></script>
 <style>
+.smart-download-btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
 
+    padding:16px 32px;
+    border-radius:14px;
+
+    background:linear-gradient(135deg,#2563eb,#1d4ed8);
+    color:#fff;
+
+    font-size:17px;
+    font-weight:700;
+
+    text-decoration:none;
+    cursor:pointer;
+
+    box-shadow:0 18px 40px rgba(37,99,235,.28);
+
+    transition:.3s ease;
+
+    animation:downloadPulse 2s infinite;
+}
+
+.smart-download-btn:hover{
+    transform:translateY(-4px) scale(1.03);
+    box-shadow:0 22px 50px rgba(37,99,235,.4);
+}
+
+.smart-download-btn:active{
+    transform:scale(.96);
+}
+
+.smart-download-btn i{
+    font-size:18px;
+}
+
+@keyframes downloadPulse{
+
+0%{
+    transform:scale(1);
+}
+
+50%{
+    transform:scale(1.04);
+}
+
+100%{
+    transform:scale(1);
+}
+
+}
 *{
 margin:0;
 padding:0;
@@ -3127,6 +3179,30 @@ document.getElementById("bonusBox").style.display="block";
 }
 
 }
+document.querySelectorAll(".smart-download-btn").forEach(btn=>{
+
+    btn.addEventListener("click",function(e){
+
+        e.preventDefault();
+
+        const url=this.href;
+
+        this.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Menyiapkan Download...';
+        this.style.pointerEvents="none";
+
+        setTimeout(()=>{
+
+            window.open(url,"_blank");
+
+            this.innerHTML='<i class="fa-solid fa-circle-check"></i> Download Dibuka';
+            this.style.pointerEvents="auto";
+
+        },2000);
+
+    });
+
+});
 </script>
+
 </body>
 </html>
