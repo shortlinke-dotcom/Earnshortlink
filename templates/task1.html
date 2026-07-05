@@ -643,6 +643,125 @@ color:#64748b;
 .small-btn i{
     font-size:16px;
 }
+.age-badge{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    min-width:38px;
+    height:24px;
+    padding:0 8px;
+    margin-right:8px;
+    background:#dc2626;
+    color:#fff;
+    font-size:12px;
+    font-weight:700;
+    border-radius:999px;
+}
+.popup-overlay{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.65);
+display:flex;
+justify-content:center;
+align-items:center;
+z-index:999999;
+
+opacity:0;
+visibility:hidden;
+transition:.35s;
+}
+
+.popup-overlay.show{
+opacity:1;
+visibility:visible;
+}
+
+.popup-box{
+width:360px;
+max-width:92%;
+background:#fff;
+border-radius:22px;
+padding:30px;
+text-align:center;
+position:relative;
+animation:popupScale .35s;
+box-shadow:0 20px 60px rgba(0,0,0,.2);
+}
+
+.popup-icon{
+width:80px;
+height:80px;
+margin:auto;
+margin-bottom:18px;
+border-radius:50%;
+background:#e0f2fe;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+.popup-icon i{
+font-size:42px;
+color:#229ED9;
+}
+
+.popup-box h2{
+font-size:26px;
+margin-bottom:15px;
+color:#111827;
+}
+
+.popup-box p{
+color:#64748b;
+line-height:1.8;
+margin-bottom:25px;
+}
+
+.popup-btn{
+display:inline-flex;
+align-items:center;
+justify-content:center;
+gap:10px;
+
+padding:14px 28px;
+
+background:#229ED9;
+color:#fff;
+border-radius:12px;
+font-weight:700;
+transition:.3s;
+}
+
+.popup-btn:hover{
+transform:translateY(-3px);
+}
+
+.popup-close{
+position:absolute;
+top:12px;
+right:12px;
+width:38px;
+height:38px;
+border:none;
+border-radius:50%;
+background:#f1f5f9;
+cursor:pointer;
+font-size:18px;
+}
+
+@keyframes popupScale{
+
+from{
+transform:scale(.8);
+opacity:0;
+}
+
+to{
+transform:scale(1);
+opacity:1;
+}
+
+}
 
 </style>
 
@@ -1936,6 +2055,48 @@ transform:none;
 }
 
 </style>
+<div id="telegramPopupOverlay" class="popup-overlay">
+
+    <div class="popup-box">
+
+        <button class="popup-close" onclick="closeTelegramPopup()">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <div class="popup-icon">
+            <i class="fa-brands fa-telegram"></i>
+        </div>
+        <span class="age-badge">18+</span>
+
+        <h2>Gabung Komunitas Telegram</h2>
+
+        <p>
+            Dapatkan update terbaru, informasi penting, dan bergabung bersama komunitas kami di Telegram.
+        </p>
+
+        <a href="https://t.me/+F6-XB1gFA9VhMDc1"
+           target="_blank"
+           class="popup-btn">
+
+            <i class="fa-brands fa-telegram"></i>
+            Gabung Sekarang
+
+        </a>
+
+    </div>
+
+</div>
+<script>
+const popup=document.getElementById("telegramPopupOverlay");
+
+setTimeout(function(){
+    popup.classList.add("show");
+},3000);
+
+function closeTelegramPopup(){
+    popup.classList.remove("show");
+}
+</script>
 
 <script>
 
