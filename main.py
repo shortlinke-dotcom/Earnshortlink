@@ -1916,11 +1916,11 @@ async def final_reward(request: Request, token: str = Form(...)):
     short_code = token_data["short_code"]
 
     # =========================
-    # GET LINK
+    # GET LINK (PAKAI UUID FIELD YANG BENAR)
     # =========================
     link_res = (
         supabase.table("links")
-        .select("destination_url, user_id")
+        .select("destination_url, user_uuid")
         .eq("short_code", short_code)
         .single()
         .execute()
@@ -1931,24 +1931,7 @@ async def final_reward(request: Request, token: str = Form(...)):
 
     link_data = link_res.data
 
-    owner_id = link_data["user_id"]
-
-    # =========================
-    # ⚠️ VALIDATE OWNER ID IS UUID
-    # =========================
-    user_check = (
-        supabase.table("users")
-        .select("id")
-        .eq("id", owner_id)
-        .single()
-        .execute()
-    )
-
-    if not user_check.data:
-        print("INVALID OWNER ID:", owner_id)
-        return HTMLResponse("Invalid owner mapping", 500)
-
-    owner_id = user_check.data["id"]
+    owner_id = link_data["user_uuid"]  # ✅ FIX UTAMA
 
     destination_url = link_data["destination_url"]
 
