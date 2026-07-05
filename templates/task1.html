@@ -1294,6 +1294,70 @@ transform:translateX(5px);
     background:linear-gradient(90deg,#22c55e,#16a34a);
     transition:width .15s linear;
 }
+.reward-card{
+text-align:center;
+padding:25px;
+border-radius:20px;
+background:#fff;
+box-shadow:0 10px 30px rgba(0,0,0,.08);
+}
+
+.gift-icon{
+font-size:60px;
+animation:gift 1.5s infinite;
+}
+
+@keyframes gift{
+0%,100%{transform:rotate(-8deg);}
+50%{transform:rotate(8deg);}
+}
+
+.reward-lock{
+margin-top:15px;
+padding:12px;
+background:#fff7ed;
+color:#ea580c;
+border-radius:10px;
+font-weight:700;
+}
+
+.reward-success{
+margin:20px 0;
+font-size:20px;
+font-weight:700;
+color:#16a34a;
+animation:pop .5s;
+}
+
+@keyframes pop{
+from{
+transform:scale(.8);
+opacity:0;
+}
+to{
+transform:scale(1);
+opacity:1;
+}
+}
+
+#bonusBtn{
+display:inline-block;
+margin-top:20px;
+padding:15px 35px;
+border-radius:12px;
+background:#2563eb;
+color:#fff;
+font-size:18px;
+font-weight:700;
+text-decoration:none;
+animation:pulse 1.3s infinite;
+}
+
+@keyframes pulse{
+0%{transform:scale(1);}
+50%{transform:scale(1.06);}
+100%{transform:scale(1);}
+}
 </style>
 
 <div class="article" style="text-align:center;">
@@ -1966,47 +2030,38 @@ required></textarea>
 
 <div id="bonusBox">
 
-<div class="reward-title">
-🎉 Semua pertanyaan telah selesai!
-</div>
+    <div class="reward-title">
+        🎉 Semua pertanyaan telah selesai!
+    </div>
 
-<div class="reward-sub">
-Lihat iklan di bawah lalu ambil bonus.
-</div>
+    <div class="reward-sub">
+        Lihat iklan di bawah lalu ambil bonus.
+    </div>
 
-<div class="ad-box">
+    <div class="ad-box">
 
-<!-- IKLAN ADSTERRA -->
-<div class="ad-box">
+        <script>
+        atOptions = {
+            'key' : '5737a07c4a33cf9a6e8fc68028ae5b82',
+            'format' : 'iframe',
+            'height' : 250,
+            'width' : 300,
+            'params' : {}
+        };
+        </script>
 
-<script>
-atOptions = {
-    'key' : '5737a07c4a33cf9a6e8fc68028ae5b82',
-    'format' : 'iframe',
-    'height' : 250,
-    'width' : 300,
-    'params' : {}
-};
-</script>
+        <script src="https://nooseamazingbatch.com/5737a07c4a33cf9a6e8fc68028ae5b82/invoke.js"></script>
 
-<script src="https://nooseamazingbatch.com/5737a07c4a33cf9a6e8fc68028ae5b82/invoke.js"></script>
+    </div>
 
-</div>
-
-<a
-href="https://nooseamazingbatch.com/pcxdx71e?key=d3f1614512a0ab30d02f2c2f9831bcb5"
-target="_blank"
-id="bonusBtn">
-🎁 Ambil Bonus
-</a>
+    <a
+        href="https://nooseamazingbatch.com/pcxdx71e?key=d3f1614512a0ab30d02f2c2f9831bcb5"
+        target="_blank"
+        id="bonusBtn">
+        🎁 Ambil Bonus
+    </a>
 
 </div>
-
-</form>
-
-</div>
-
-</section>
 
 <!-- TEMPAT IKLAN 160x300 / 160x600 (Desktop) -->
 
@@ -2359,6 +2414,22 @@ promoPopup.addEventListener("click", function (e) {
         closePromoPopup();
     }
 });
+function checkFinished(){
+
+const total=document.querySelectorAll(".done-btn").length;
+const done=document.querySelectorAll(".done-btn.done").length;
+
+if(total===done){
+
+document.querySelector(".reward-lock").style.display="none";
+
+document.getElementById("bonusContent").style.display="block";
+
+document.getElementById("bonusBox").style.display="block";
+
+}
+
+}
 /* =========================
 FADE ANIMATION
 ========================= */
