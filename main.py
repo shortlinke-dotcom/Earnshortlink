@@ -1890,7 +1890,8 @@ async def complete_task3(request: Request, token: str = Form(...)):
 @app.post("/final-reward")
 async def final_reward(request: Request, token: str = Form(...)):
 
-    if not request.session.get("user_id"):
+    user_session = request.session.get("user_id")
+    if not user_session:
         return HTMLResponse("Unauthorized", 401)
 
     # =========================
@@ -1901,13 +1902,14 @@ async def final_reward(request: Request, token: str = Form(...)):
         .select("*")
         .eq("token", token)
         .limit(1)
+        .single()
         .execute()
     )
 
     if not token_res.data:
         return HTMLResponse("Invalid Token", 403)
 
-    token_data = token_res.data[0]
+    token_data = token_res.data
 
     if not token_data.get("used"):
         return HTMLResponse("Task belum selesai", 403)
@@ -1917,20 +1919,37 @@ async def final_reward(request: Request, token: str = Form(...)):
     # =========================
     # GET LINK
     # =========================
-    link = (
+    link_res = (
         supabase.table("links")
         .select("*")
         .eq("short_code", short_code)
-        .limit(1)
+        .single()
         .execute()
     )
 
-    if not link.data:
+    if not link_res.data:
         return HTMLResponse("Link not found", 404)
 
-    link_data = link.data[0]
+    link_data = link_res.data
 
-    owner_id = link_data["user_id"]
+    raw_owner_id = link_data["user_id"]
+
+    # =========================
+    # 🔥 IMPORTANT: VALIDATE UUID
+    # =========================
+    user_res = (
+        supabase.table("users")
+        .select("id")
+        .eq("id", raw_owner_id)
+        .maybe_single()
+        .execute()
+    )
+
+    if not user_res.data:
+        return HTMLResponse("Invalid owner mapping", 500)
+
+    owner_id = user_res.data["id"]
+
     destination_url = link_data["destination_url"]
 
     reward = 300
