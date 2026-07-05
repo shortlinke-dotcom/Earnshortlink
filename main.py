@@ -1553,11 +1553,13 @@ async def task2(request: Request, token: str):
     # GET TOKEN DATA
     # =========================
     try:
-        token_res = supabase.table("download_tokens") \
-            .select("*") \
-            .eq("token", token) \
-            .limit(1) \
+        token_res = (
+            supabase.table("download_tokens")
+            .select("*")
+            .eq("token", token)
+            .limit(1)
             .execute()
+        )
 
     except Exception as e:
         print("DB ERROR TASK2:", e)
@@ -1573,34 +1575,42 @@ async def task2(request: Request, token: str):
     data = token_res.data[0]
 
     # =========================
-    # SAFE DEFAULTS (IMPORTANT FIX)
+    # SAFE DEFAULTS
     # =========================
-    step = data.get("step") or 0
-    used = data.get("used") or False
+    step = int(data.get("step") or 0)
+    used = bool(data.get("used") or False)
+
+    short_code = data.get("short_code")
 
     # =========================
-    # USED CHECK
+    # HARD SECURITY CHECK
     # =========================
     if used:
         print("TASK2 DENIED: token already used")
         return HTMLResponse("Access denied (token used)", 403)
 
+    if step < 1:
+        print(f"TASK2 DENIED: invalid step ({step})")
+        return HTMLResponse("Access denied (invalid flow)", 403)
+
     # =========================
-    # STEP CHECK (STRICT FLOW)
+    # USER BINDING (ANTI COPY TOKEN)
     # =========================
-    if step != 1:
-        print(f"TASK2 DENIED: wrong step ({step})")
-        return HTMLResponse("Access denied (invalid step)", 403)
+    if data.get("user_id") and data["user_id"] != user_id:
+        print("TASK2 DENIED: user mismatch")
+        return HTMLResponse("Access denied (invalid user)", 403)
 
     # =========================
     # SHORTLINK CHECK
     # =========================
     try:
-        link_check = supabase.table("links") \
-            .select("id") \
-            .eq("short_code", data["short_code"]) \
-            .limit(1) \
+        link_check = (
+            supabase.table("links")
+            .select("id")
+            .eq("short_code", short_code)
+            .limit(1)
             .execute()
+        )
 
     except Exception as e:
         print("LINK CHECK ERROR:", e)
@@ -1609,6 +1619,16 @@ async def task2(request: Request, token: str):
     if not link_check.data:
         print("TASK2 DENIED: shortlink missing")
         return HTMLResponse("Access denied (link missing)", 403)
+
+    # =========================
+    # 🔒 AUTO RECOVERY (FIX STUCK STEP)
+    # =========================
+    if step == 0:
+        supabase.table("download_tokens") \
+            .update({"step": 1}) \
+            .eq("token", token) \
+            .execute()
+        step = 1
 
     # =========================
     # DEBUG LOG
