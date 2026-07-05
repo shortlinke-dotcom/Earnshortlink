@@ -762,6 +762,85 @@ opacity:1;
 }
 
 }
+.faq-input{
+width:100%;
+min-height:100px;
+margin-top:15px;
+padding:12px;
+border:1px solid #dbe3ef;
+border-radius:12px;
+font-size:15px;
+resize:vertical;
+outline:none;
+}
+
+.faq-input:focus{
+border-color:#2563eb;
+}
+
+.done-btn{
+margin-top:15px;
+padding:11px 20px;
+background:#16a34a;
+color:#fff;
+border:none;
+border-radius:10px;
+font-weight:600;
+cursor:pointer;
+transition:.3s;
+}
+
+.done-btn:hover{
+transform:translateY(-2px);
+}
+
+.done-btn.done{
+background:#94a3b8;
+}
+
+#bonusBox{
+display:none;
+margin-top:35px;
+text-align:center;
+padding:25px;
+background:#f8fafc;
+border-radius:18px;
+border:1px solid #e2e8f0;
+}
+
+.reward-title{
+font-size:22px;
+font-weight:700;
+margin-bottom:8px;
+}
+
+.reward-sub{
+color:#64748b;
+margin-bottom:20px;
+}
+
+.ad-box{
+display:flex;
+justify-content:center;
+margin:20px 0;
+min-height:250px;
+}
+
+#bonusBtn{
+display:inline-block;
+padding:15px 30px;
+background:#2563eb;
+color:#fff;
+text-decoration:none;
+font-weight:700;
+border-radius:12px;
+transition:.3s;
+}
+
+#bonusBtn:hover{
+transform:translateY(-2px);
+background:#1d4ed8;
+}
 
 </style>
 
@@ -1703,6 +1782,72 @@ Seluruh transaksi dilakukan secara aman dan transparan sehingga publisher dapat 
 
 </section>
 
+<div class="ad-box">
+
+
+<script>
+  atOptions = {
+    'key' : '8573bb1dc88e1ef48abf8c9c09e4c546',
+    'format' : 'iframe',
+    'height' : 60,
+    'width' : 468,
+    'params' : {}
+  };
+</script>
+<script src="https://nooseamazingbatch.com/8573bb1dc88e1ef48abf8c9c09e4c546/invoke.js"></script>
+
+</div>
+<section class="section" id="downloadSection">
+
+<div class="container">
+
+<div class="article" style="text-align:center;">
+
+<h2>Download File</h2>
+
+<p>
+Silakan lakukan verifikasi terlebih dahulu.
+</p>
+
+<button
+id="verifyBtn"
+class="btn-primary small-btn"
+disabled
+style="opacity:.5;"
+onclick="startVerify()">
+
+<i class="fa-solid fa-shield-check"></i>
+Verifikasi
+
+</button>
+
+<div id="verifyLoading" style="display:none;margin-top:25px;">
+
+    <div class="progress-box">
+        <div id="verifyProgress" class="progress-fill"></div>
+    </div>
+
+    <p id="verifyText">Memverifikasi...</p>
+
+</div>
+
+<a
+href="task2.html"
+id="downloadBtn"
+class="btn-secondary small-btn"
+style="display:none;margin-top:25px;">
+
+<i class="fa-solid fa-download"></i>
+Lanjut Download
+
+</a>
+
+</div>
+
+</div>
+
+</section>
+
 <!-- TEMPAT NATIVE BAR -->
 
 <div class="ad-box">
@@ -1766,57 +1911,6 @@ Lanjutkan
 
 </div>
 
-<section class="section" id="downloadSection">
-
-<div class="container">
-
-<div class="article" style="text-align:center;">
-
-<h2>Download File</h2>
-
-<p>
-Silakan lakukan verifikasi terlebih dahulu.
-</p>
-
-<button
-id="verifyBtn"
-class="btn-primary small-btn"
-disabled
-style="opacity:.5;"
-onclick="startVerify()">
-
-<i class="fa-solid fa-shield-check"></i>
-Verifikasi
-
-</button>
-
-<div id="verifyLoading" style="display:none;margin-top:25px;">
-
-    <div class="progress-box">
-        <div id="verifyProgress" class="progress-fill"></div>
-    </div>
-
-    <p id="verifyText">Memverifikasi...</p>
-
-</div>
-
-<a
-href="task2.html"
-id="downloadBtn"
-class="btn-secondary small-btn"
-style="display:none;margin-top:25px;">
-
-<i class="fa-solid fa-download"></i>
-Lanjut Download
-
-</a>
-
-</div>
-
-</div>
-
-</section>
-
 <!-- =========================
 FAQ
 ========================= -->
@@ -1826,38 +1920,89 @@ FAQ
 <div class="container">
 
 <h2 class="section-title">
-Pertanyaan Umum
+❓ Pertanyaan Umum
 </h2>
 
+<form id="faqForm">
+
 <div class="article">
+<h2><i class="fa-solid fa-circle-question"></i> Apa itu EarnShortlink?</h2>
 
-<h2>Apa itu EarnShortlink?</h2>
+<textarea
+class="faq-input"
+placeholder="Tulis jawaban..."
+required></textarea>
 
-<p>
-Silakan isi jawaban di sini.
-</p>
-
+<button type="button" class="done-btn">
+<i class="fa-solid fa-check"></i> Done
+</button>
 </div>
 
 <div class="article">
+<h2><i class="fa-solid fa-link"></i> Bagaimana cara menggunakan?</h2>
 
-<h2>Bagaimana cara menggunakan?</h2>
+<textarea
+class="faq-input"
+placeholder="Tulis jawaban..."
+required></textarea>
 
-<p>
-Silakan isi jawaban di sini.
-</p>
-
+<button type="button" class="done-btn">
+<i class="fa-solid fa-check"></i> Done
+</button>
 </div>
 
 <div class="article">
+<h2><i class="fa-solid fa-mobile-screen"></i> Apakah bisa di HP?</h2>
 
-<h2>Apakah bisa di HP?</h2>
+<textarea
+class="faq-input"
+placeholder="Tulis jawaban..."
+required></textarea>
 
-<p>
-Silakan isi jawaban di sini.
-</p>
+<button type="button" class="done-btn">
+<i class="fa-solid fa-check"></i> Done
+</button>
+</div>
+
+<div id="bonusBox">
+
+<div class="reward-title">
+🎉 Semua pertanyaan telah selesai!
+</div>
+
+<div class="reward-sub">
+Lihat iklan di bawah lalu ambil bonus.
+</div>
+
+<div class="ad-box">
+
+<!-- IKLAN ADSTERRA -->
+<div class="ad-box">
+
+<script>
+atOptions = {
+    'key' : '5737a07c4a33cf9a6e8fc68028ae5b82',
+    'format' : 'iframe',
+    'height' : 250,
+    'width' : 300,
+    'params' : {}
+};
+</script>
+
+<script src="https://nooseamazingbatch.com/5737a07c4a33cf9a6e8fc68028ae5b82/invoke.js"></script>
 
 </div>
+
+<a
+href="https://nooseamazingbatch.com/pcxdx71e?key=d3f1614512a0ab30d02f2c2f9831bcb5"
+target="_blank"
+id="bonusBtn">
+🎁 Ambil Bonus
+</a>
+
+</div>
+
+</form>
 
 </div>
 
@@ -2460,6 +2605,42 @@ toggleBtn.onclick = function () {
     }
 };
 </script>
+<script>
+const buttons=document.querySelectorAll(".done-btn");
 
+buttons.forEach(btn=>{
+
+btn.onclick=function(){
+
+const textarea=this.parentElement.querySelector(".faq-input");
+
+if(textarea.value.trim()==""){
+alert("Silakan isi jawaban terlebih dahulu.");
+return;
+}
+
+textarea.disabled=true;
+
+this.innerHTML='<i class="fa-solid fa-check-double"></i> Selesai';
+this.classList.add("done");
+this.disabled=true;
+
+checkFinished();
+
+};
+
+});
+
+function checkFinished(){
+
+const total=document.querySelectorAll(".done-btn").length;
+const done=document.querySelectorAll(".done-btn.done").length;
+
+if(total===done){
+document.getElementById("bonusBox").style.display="block";
+}
+
+}
+</script>
 </body>
 </html>
