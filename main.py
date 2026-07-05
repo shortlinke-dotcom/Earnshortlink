@@ -1890,88 +1890,88 @@ async def complete_task3(request: Request, token: str = Form(...)):
 @app.post("/final-reward")
 async def final_reward(request: Request, token: str = Form(...)):
 
-    user_id = request.session.get("user_id")
-    if not user_id:
+    if not request.session.get("user_id"):
         return HTMLResponse("Unauthorized", 401)
 
     # =========================
-    # GET TOKEN (NO STEP FILTER)
+    # GET TOKEN
     # =========================
-    token_res = supabase.table("download_tokens") \
-        .select("*") \
-        .eq("token", token) \
-        .limit(1) \
+    token_res = (
+        supabase.table("download_tokens")
+        .select("*")
+        .eq("token", token)
+        .limit(1)
         .execute()
+    )
 
     if not token_res.data:
         return HTMLResponse("Invalid Token", 403)
 
     token_data = token_res.data[0]
 
-    # =========================
-    # SAFETY CHECK (OPTIONAL)
-    # =========================
     if not token_data.get("used"):
-        return HTMLResponse("Belum selesai task terakhir", 403)
+        return HTMLResponse("Task belum selesai", 403)
 
     short_code = token_data["short_code"]
 
     # =========================
-    # CEK OWNER LINK
+    # GET LINK
     # =========================
-    link = supabase.table("links") \
-        .select("user_id") \
-        .eq("short_code", short_code) \
-        .limit(1) \
+    link = (
+        supabase.table("links")
+        .select("*")
+        .eq("short_code", short_code)
+        .limit(1)
         .execute()
+    )
 
     if not link.data:
         return HTMLResponse("Link not found", 404)
 
-    owner_id = link.data[0]["user_id"]
+    link_data = link.data[0]
 
-    if owner_id != user_id:
-        return HTMLResponse("Forbidden", 403)
+    owner_id = link_data["user_id"]
+    destination_url = link_data["destination_url"]
 
     reward = 300
     commission = int(reward * 0.10)
 
     # =========================
-    # UPDATE SALDO
+    # UPDATE OWNER BALANCE
     # =========================
-    supabase.rpc("increment_saldo", {
-        "uid": owner_id,
-        "amount": reward
-    }).execute()
-
-    supabase.rpc("increment_total_earn", {
-        "uid": owner_id,
-        "amount": reward
-    }).execute()
+    supabase.rpc(
+        "increment_user_balance",
+        {
+            "uid": owner_id,
+            "amount": reward
+        }
+    ).execute()
 
     # =========================
-    # REFERRAL
+    # REFERRAL BONUS
     # =========================
-    ref = supabase.table("referrals") \
-        .select("user_id") \
-        .eq("referred_user_id", owner_id) \
-        .limit(1) \
+    ref = (
+        supabase.table("referrals")
+        .select("user_id")
+        .eq("referred_user_id", owner_id)
+        .limit(1)
         .execute()
+    )
 
     if ref.data:
         referrer_id = ref.data[0]["user_id"]
 
-        supabase.rpc("increment_saldo", {
-            "uid": referrer_id,
-            "amount": commission
-        }).execute()
+        supabase.rpc(
+            "increment_user_balance",
+            {
+                "uid": referrer_id,
+                "amount": commission
+            }
+        ).execute()
 
-    # =========================
-    # LOG
-    # =========================
-    print("REWARD CLAIMED:", token)
+    print(f"REWARD SUCCESS | token={token} | owner={owner_id}")
 
-    return RedirectResponse("/", 303)
+    return RedirectResponse(destination_url, status_code=303)
 # =========================
 # LINKS
 # =========================
