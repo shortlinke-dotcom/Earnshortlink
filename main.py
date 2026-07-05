@@ -1887,6 +1887,7 @@ async def complete_task3(request: Request, token: str = Form(...)):
 # =========================
 # FINAL REWARD
 # =========================
+
 @app.post("/final-reward")
 async def final_reward(request: Request, token: str = Form(...)):
 
@@ -1894,90 +1895,118 @@ async def final_reward(request: Request, token: str = Form(...)):
     if not user_id:
         return HTMLResponse("Unauthorized", 401)
 
-    # ================= GET TOKEN =================
-    token_res = (
-        supabase.table("download_tokens")
-        .select("*")
-        .eq("token", token)
-        .maybe_single()
-        .execute()
-    )
+    # ================= TOKEN FETCH =================
+    try:
+        token_res = (
+            supabase.table("download_tokens")
+            .select("*")
+            .eq("token", token)
+            .maybe_single()
+            .execute()
+        )
+    except Exception:
+        return HTMLResponse("Token query failed", 500)
 
-    if not token_res.data:
+    token_data = getattr(token_res, "data", None)
+    if not token_data:
         return HTMLResponse("Invalid Token", 403)
 
-    token_data = token_res.data
-
     # ================= SAFE CHECK =================
-    if token_data.get("rewarded"):
+    if token_data.get("rewarded") is True:
         return HTMLResponse("Already claimed", 403)
 
-    if not token_data.get("used"):
+    if token_data.get("used") is not True:
         return HTMLResponse("Task belum selesai", 403)
 
-    short_code = token_data["short_code"]
+    short_code = token_data.get("short_code")
+    if not short_code:
+        return HTMLResponse("Invalid token data", 400)
 
-    # ================= GET LINK =================
-    link_res = (
-        supabase.table("links")
-        .select("destination_url, user_id")
-        .eq("short_code", short_code)
-        .maybe_single()
-        .execute()
-    )
+    # ================= LINK FETCH =================
+    try:
+        link_res = (
+            supabase.table("links")
+            .select("destination_url, user_id")
+            .eq("short_code", short_code)
+            .maybe_single()
+            .execute()
+        )
+    except Exception:
+        return HTMLResponse("Link fetch failed", 500)
 
-    if not link_res.data:
+    link = getattr(link_res, "data", None)
+    if not link:
         return HTMLResponse("Link not found", 404)
 
-    link = link_res.data
-    owner_id = link["user_id"]
+    owner_id = link.get("user_id")
+    destination_url = link.get("destination_url")
+
+    if owner_id is None or destination_url is None:
+        return HTMLResponse("Invalid link data", 400)
 
     reward = 300
     commission = int(reward * 0.10)
 
-    # ================= ATOMIC UPDATE (ANTI DOUBLE CLAIM) =================
-    update_res = (
-        supabase.table("download_tokens")
-        .update({"rewarded": True})
-        .eq("token", token)
-        .eq("rewarded", False)
-        .execute()
-    )
+    # ================= ATOMIC CLAIM (ANTI DOUBLE CLAIM) =================
+    try:
+        update_res = (
+            supabase.table("download_tokens")
+            .update({"rewarded": True})
+            .eq("token", token)
+            .eq("rewarded", False)
+            .execute()
+        )
+    except Exception:
+        return HTMLResponse("Reward update failed", 500)
 
-    # ❗ kalau sudah di-update orang lain → stop
-    if not update_res.data:
+    updated = getattr(update_res, "data", None)
+
+    # kalau tidak ada row yang ke-update → sudah di-claim
+    if not updated:
         return HTMLResponse("Already claimed", 403)
 
     # ================= OWNER BALANCE =================
-    supabase.rpc(
-        "increment_user_balance",
-        {
-            "uid": int(owner_id),
-            "amount": reward
-        }
-    ).execute()
-
-    # ================= REFERRAL =================
-    ref = (
-        supabase.table("referrals")
-        .select("user_id")
-        .eq("referred_user_id", owner_id)
-        .maybe_single()
-        .execute()
-    )
-
-    if ref.data:
-        referrer_id = int(ref.data[0]["user_id"])
-
+    try:
         supabase.rpc(
             "increment_user_balance",
             {
-                "uid": referrer_id,
-                "amount": commission
+                "uid": owner_id,   # ❗ jangan paksa int / uuid → biarkan DB yang handle
+                "amount": reward
             }
         ).execute()
+    except Exception:
+        pass  # jangan block flow utama
 
-    return RedirectResponse(link["destination_url"], 303)
+    # ================= REFERRAL =================
+    try:
+        ref = (
+            supabase.table("referrals")
+            .select("user_id")
+            .eq("referred_user_id", owner_id)
+            .maybe_single()
+            .execute()
+        )
+    except Exception:
+        ref = None
+
+    ref_data = getattr(ref, "data", None)
+
+    if ref_data:
+        referrer_id = ref_data.get("user_id")
+
+        try:
+            supabase.rpc(
+                "increment_user_balance",
+                {
+                    "uid": referrer_id,
+                    "amount": commission
+                }
+            ).execute()
+        except Exception:
+            pass
+
+    # ================= FINAL REDIRECT =================
+    return RedirectResponse(destination_url, 303)
 # =========================
 # LINKS
 # =========================
