@@ -1573,17 +1573,21 @@ async def task2(request: Request, token: str):
     data = token_res.data[0]
 
     # =========================
+    # SAFE DEFAULTS (IMPORTANT FIX)
+    # =========================
+    step = data.get("step") or 0
+    used = data.get("used") or False
+
+    # =========================
     # USED CHECK
     # =========================
-    if data.get("used") is True:
+    if used:
         print("TASK2 DENIED: token already used")
         return HTMLResponse("Access denied (token used)", 403)
 
     # =========================
-    # STEP CHECK (FIXED LOGIC)
+    # STEP CHECK (STRICT FLOW)
     # =========================
-    step = data.get("step")
-
     if step != 1:
         print(f"TASK2 DENIED: wrong step ({step})")
         return HTMLResponse("Access denied (invalid step)", 403)
@@ -1607,7 +1611,7 @@ async def task2(request: Request, token: str):
         return HTMLResponse("Access denied (link missing)", 403)
 
     # =========================
-    # DEBUG (TEMP)
+    # DEBUG LOG
     # =========================
     print("TASK2 OK:", {
         "token": token,
@@ -1616,7 +1620,7 @@ async def task2(request: Request, token: str):
     })
 
     # =========================
-    # RENDER
+    # RENDER TASK2
     # =========================
     return templates.TemplateResponse(
         "task2.html",
@@ -1638,7 +1642,7 @@ async def complete_task2(request: Request, token: str = Form(...)):
         return HTMLResponse("Unauthorized", 401)
 
     # =========================
-    # GET TOKEN (LOCK CHECK)
+    # GET TOKEN
     # =========================
     try:
         token_res = supabase.table("download_tokens") \
@@ -1657,38 +1661,66 @@ async def complete_task2(request: Request, token: str = Form(...)):
     token_row = token_res.data[0]
 
     # =========================
-    # STEP VALIDATION (IMPORTANT)
+    # SAFE DEFAULTS
     # =========================
-    if token_row.get("step") != 1:
-        print("INVALID STEP:", token_row.get("step"))
-        return HTMLResponse("Invalid Step", 403)
+    step = token_row.get("step") or 0
+    used = token_row.get("used") or False
 
-    if token_row.get("used"):
+    # =========================
+    # VALIDATION
+    # =========================
+    if used:
         return HTMLResponse("Token already used", 403)
+
+    if step != 1:
+        print("INVALID STEP:", step)
+        return HTMLResponse("Invalid Step", 403)
 
     # =========================
     # SHORTLINK CHECK
     # =========================
-    link_check = supabase.table("links") \
-        .select("id") \
-        .eq("short_code", token_row["short_code"]) \
-        .limit(1) \
-        .execute()
+    try:
+        link_check = supabase.table("links") \
+            .select("id") \
+            .eq("short_code", token_row["short_code"]) \
+            .limit(1) \
+            .execute()
+
+    except Exception as e:
+        print("LINK CHECK ERROR:", e)
+        return HTMLResponse("Server error", 500)
 
     if not link_check.data:
         return HTMLResponse("Invalid Link", 403)
 
     # =========================
-    # SAFE UPDATE (ANTI DOUBLE CLICK)
+    # SAFE UPDATE (ANTI RACE CONDITION)
     # =========================
     update = supabase.table("download_tokens") \
-        .update({"step": 2}) \
+        .update({
+            "step": 2,
+            "used": False   # tetap false sampai final task (kalau ada task3)
+        }) \
         .eq("token", token) \
         .eq("step", 1) \
+        .eq("used", False) \
         .execute()
 
-    # ⚠️ jangan terlalu strict pakai .data
-    print("TASK2 UPDATE RESULT:", update)
+    # =========================
+    # CHECK UPDATE RESULT (IMPORTANT FIX)
+    # =========================
+    if not update.data:
+        print("UPDATE FAILED OR ALREADY PROCESSED:", token)
+        return HTMLResponse("Already processed or expired", 409)
+
+    # =========================
+    # DEBUG LOG
+    # =========================
+    print("TASK2 COMPLETED:", {
+        "token": token,
+        "user": username,
+        "new_step": 2
+    })
 
     # =========================
     # REDIRECT SAFE
@@ -1712,11 +1744,9 @@ async def task3(request: Request, token: str):
     # GET TOKEN
     # =========================
     try:
-        data = supabase.table("download_tokens") \
+        res = supabase.table("download_tokens") \
             .select("*") \
             .eq("token", token) \
-            .eq("step", 2) \
-            .eq("used", False) \
             .limit(1) \
             .execute()
 
@@ -1724,14 +1754,29 @@ async def task3(request: Request, token: str):
         print("DB ERROR TASK3:", e)
         return HTMLResponse("Server error", 500)
 
-    if not data.data:
-        print("TASK3 DENIED: token invalid / step wrong / used")
+    if not res.data:
         return HTMLResponse("Access denied (invalid token)", 403)
 
-    token_row = data.data[0]
+    token_row = res.data[0]
 
     # =========================
-    # VALIDATE SHORTLINK STILL EXISTS
+    # SAFE DEFAULTS
+    # =========================
+    step = token_row.get("step") or 0
+    used = token_row.get("used") or False
+
+    # =========================
+    # VALIDATION STRICT
+    # =========================
+    if used:
+        return HTMLResponse("Access denied (used token)", 403)
+
+    if step != 2:
+        print("TASK3 DENIED: wrong step", step)
+        return HTMLResponse("Access denied (invalid step)", 403)
+
+    # =========================
+    # LINK CHECK
     # =========================
     link_check = supabase.table("links") \
         .select("id") \
@@ -1740,11 +1785,10 @@ async def task3(request: Request, token: str):
         .execute()
 
     if not link_check.data:
-        print("TASK3 DENIED: link missing")
         return HTMLResponse("Access denied (link missing)", 403)
 
     # =========================
-    # OK RENDER
+    # RENDER
     # =========================
     return templates.TemplateResponse(
         "task3.html",
@@ -1757,17 +1801,66 @@ async def task3(request: Request, token: str):
 @app.post("/complete-task3")
 async def complete_task3(request: Request, token: str = Form(...)):
 
-    data = supabase.table("download_tokens") \
-        .select("*") \
-        .eq("token", token) \
-        .eq("step", 2) \
-        .eq("used", False) \
+    username = request.session.get("username")
+    user_id = request.session.get("user_id")
+
+    if not username or not user_id:
+        return HTMLResponse("Unauthorized", 401)
+
+    # =========================
+    # GET TOKEN
+    # =========================
+    try:
+        res = supabase.table("download_tokens") \
+            .select("*") \
+            .eq("token", token) \
+            .eq("step", 2) \
+            .eq("used", False) \
+            .limit(1) \
+            .execute()
+
+    except Exception as e:
+        print("DB ERROR COMPLETE TASK3:", e)
+        return HTMLResponse("Server error", 500)
+
+    if not res.data:
+        return HTMLResponse("Invalid token", 403)
+
+    token_row = res.data[0]
+
+    # =========================
+    # LINK VALIDATION
+    # =========================
+    link_check = supabase.table("links") \
+        .select("id") \
+        .eq("short_code", token_row["short_code"]) \
         .limit(1) \
         .execute()
 
-    if not data.data:
-        return HTMLResponse("Invalid token", 403)
+    if not link_check.data:
+        return HTMLResponse("Invalid link", 403)
 
+    # =========================
+    # FINAL LOCK UPDATE (IMPORTANT)
+    # =========================
+    update = supabase.table("download_tokens") \
+        .update({
+            "step": 3,
+            "used": True
+        }) \
+        .eq("token", token) \
+        .eq("step", 2) \
+        .eq("used", False) \
+        .execute()
+
+    if not update.data:
+        return HTMLResponse("Already processed", 409)
+
+    print("TASK3 COMPLETED:", token)
+
+    # =========================
+    # REDIRECT REWARD
+    # =========================
     return RedirectResponse(f"/final-reward?token={token}", 303)
 # =========================
 # FINAL REWARD
@@ -1780,15 +1873,20 @@ async def final_reward(request: Request, token: str = Form(...)):
         return HTMLResponse("Unauthorized", 401)
 
     # =========================
-    # GET TOKEN (LOCK STYLE CHECK)
+    # GET TOKEN (STRICT LOCK)
     # =========================
-    token_res = supabase.table("download_tokens") \
-        .select("*") \
-        .eq("token", token) \
-        .eq("step", 2) \
-        .eq("used", False) \
-        .limit(1) \
-        .execute()
+    try:
+        token_res = supabase.table("download_tokens") \
+            .select("*") \
+            .eq("token", token) \
+            .eq("step", 2) \
+            .eq("used", False) \
+            .limit(1) \
+            .execute()
+
+    except Exception as e:
+        print("DB ERROR FINAL REWARD:", e)
+        return HTMLResponse("Server error", 500)
 
     if not token_res.data:
         return HTMLResponse("Invalid Token", 403)
@@ -1803,16 +1901,16 @@ async def final_reward(request: Request, token: str = Form(...)):
     link = supabase.table("links") \
         .select("user_id") \
         .eq("short_code", short_code) \
-        .single() \
+        .limit(1) \
         .execute()
 
     if not link.data:
         return HTMLResponse("Link not found", 404)
 
-    owner_id = link.data["user_id"]
+    owner_id = link.data[0]["user_id"]
 
     # =========================
-    # HARD CHECK (ANTI ABUSE)
+    # HARD SECURITY CHECK
     # =========================
     if owner_id != user_id:
         return HTMLResponse("Forbidden", 403)
@@ -1821,19 +1919,23 @@ async def final_reward(request: Request, token: str = Form(...)):
     commission = int(reward * 0.10)
 
     # =========================
-    # 🔥 LOCK TOKEN FIRST (IMPORTANT FIX)
+    # 🔥 ATOMIC LOCK (IMPORTANT FIX)
     # =========================
     lock = supabase.table("download_tokens") \
-        .update({"used": True}) \
+        .update({
+            "used": True,
+            "step": 3
+        }) \
         .eq("token", token) \
+        .eq("step", 2) \
         .eq("used", False) \
         .execute()
 
     if not lock.data:
-        return HTMLResponse("Already claimed", 409)
+        return HTMLResponse("Already claimed or expired", 409)
 
     # =========================
-    # UPDATE OWNER BALANCE (SAFE VERSION)
+    # UPDATE OWNER BALANCE
     # =========================
     supabase.rpc("increment_saldo", {
         "uid": owner_id,
@@ -1861,6 +1963,12 @@ async def final_reward(request: Request, token: str = Form(...)):
             "uid": referrer_id,
             "amount": commission
         }).execute()
+
+    print("REWARD CLAIMED:", {
+        "user": user_id,
+        "owner": owner_id,
+        "token": token
+    })
 
     return RedirectResponse("/", 303)
 # =========================
