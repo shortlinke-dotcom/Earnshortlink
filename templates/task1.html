@@ -198,15 +198,23 @@ transform:translateY(-4px);
 }
 
 .btn-secondary{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
 
-background:#22c55e;
-color:white;
-padding:16px 34px;
-border-radius:14px;
-font-weight:700;
-transition:.3s;
-box-shadow:0 15px 35px rgba(34,197,94,.25);
+    width:fit-content;
+    padding:12px 24px;
 
+    background:#22c55e;
+    color:#fff;
+    border:none;
+    border-radius:12px;
+    font-size:16px;
+    font-weight:700;
+    cursor:pointer;
+    transition:.3s;
+    box-shadow:0 15px 35px rgba(34,197,94,.25);
 }
 
 .btn-secondary:hover{
@@ -467,10 +475,8 @@ flex-direction:column;
 
 .btn-primary,
 .btn-secondary{
-
-width:100%;
-text-align:center;
-
+    width:fit-content;
+    margin:auto;
 }
 
 .telegram-popup{
@@ -617,6 +623,25 @@ color:#64748b;
     padding:6px 9px;
     cursor:pointer;
     z-index:10;
+}
+.small-btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+
+    width:fit-content;
+    padding:12px 22px;
+
+    font-size:15px;
+    font-weight:700;
+
+    border-radius:12px;
+    margin:20px auto 0;
+}
+
+.small-btn i{
+    font-size:16px;
 }
 
 </style>
@@ -1281,12 +1306,13 @@ Silakan lakukan verifikasi terlebih dahulu.
 
 <button
 id="verifyBtn"
-class="btn-primary"
+class="btn-primary small-btn"
 disabled
 style="opacity:.5;"
 onclick="startVerify()">
 
-🔒 Verifikasi
+<i class="fa-solid fa-shield-check"></i>
+Verifikasi
 
 </button>
 
@@ -1307,10 +1333,11 @@ style="font-size:55px;font-weight:800;color:#22c55e;">
 <a
 href="task2.html"
 id="downloadBtn"
-class="btn-secondary"
+class="btn-secondary small-btn"
 style="display:none;margin-top:25px;">
 
-⬇️ Lanjut Download
+<i class="fa-solid fa-download"></i>
+Lanjut Download
 
 </a>
 
