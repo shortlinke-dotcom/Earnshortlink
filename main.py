@@ -1952,7 +1952,7 @@ async def final_reward(request: Request, token: str = Form(...)):
     supabase.rpc(
         "increment_user_balance",
         {
-            "uid": owner_id,
+            "uid": int(owner_id),
             "amount": reward
         }
     ).execute()
@@ -1967,7 +1967,7 @@ async def final_reward(request: Request, token: str = Form(...)):
     )
 
     if ref.data:
-        referrer_id = ref.data["user_id"]
+        referrer_id = int(ref.data[0]["user_id"])
 
         supabase.rpc(
             "increment_user_balance",
