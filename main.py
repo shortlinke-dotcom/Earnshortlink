@@ -1890,13 +1890,11 @@ async def complete_task3(request: Request, token: str = Form(...)):
 @app.post("/final-reward")
 async def final_reward(request: Request, token: str = Form(...)):
 
-    user_session = request.session.get("user_id")
-    if not user_session:
+    user_id = request.session.get("user_id")
+    if not user_id:
         return HTMLResponse("Unauthorized", 401)
 
-    # =========================
-    # TOKEN
-    # =========================
+    # ================= TOKEN =================
     token_res = (
         supabase.table("download_tokens")
         .select("*")
@@ -1910,17 +1908,19 @@ async def final_reward(request: Request, token: str = Form(...)):
 
     token_data = token_res.data
 
+    # ❗ STOP DOUBLE CLAIM
+    if token_data.get("rewarded"):
+        return HTMLResponse("Already claimed", 403)
+
     if not token_data.get("used"):
         return HTMLResponse("Task belum selesai", 403)
 
     short_code = token_data["short_code"]
 
-    # =========================
-    # LINK (PAKAI user_uuid ❗)
-    # =========================
+    # ================= LINK =================
     link_res = (
         supabase.table("links")
-        .select("destination_url, user_uuid")
+        .select("destination_url, user_id")
         .eq("short_code", short_code)
         .single()
         .execute()
@@ -1929,39 +1929,37 @@ async def final_reward(request: Request, token: str = Form(...)):
     if not link_res.data:
         return HTMLResponse("Link not found", 404)
 
-    link_data = link_res.data
-
-    owner_id = link_data["user_uuid"]   # 🔥 FIX UTAMA
-
-    destination_url = link_data["destination_url"]
+    link = link_res.data
+    owner_id = link["user_id"]   # 🔥 FIX UTAMA
 
     reward = 300
     commission = int(reward * 0.10)
 
-    # =========================
-    # UPDATE SALDO (UUID SAFE)
-    # =========================
+    # ================= MARK REWARDED (ANTI DOUBLE HIT) =================
+    supabase.table("download_tokens").update({
+        "rewarded": True
+    }).eq("token", token).execute()
+
+    # ================= OWNER BALANCE =================
     supabase.rpc(
         "increment_user_balance",
         {
-            "uid": owner_id,   # UUID ✔
+            "uid": owner_id,
             "amount": reward
         }
     ).execute()
 
-    # =========================
-    # REFERRAL
-    # =========================
+    # ================= REFERRAL SAFE =================
     ref = (
         supabase.table("referrals")
         .select("user_id")
         .eq("referred_user_id", owner_id)
-        .single()
+        .limit(1)
         .execute()
     )
 
     if ref.data:
-        referrer_id = ref.data["user_id"]
+        referrer_id = ref.data[0]["user_id"]
 
         supabase.rpc(
             "increment_user_balance",
@@ -1971,9 +1969,7 @@ async def final_reward(request: Request, token: str = Form(...)):
             }
         ).execute()
 
-    print(f"REWARD SUCCESS | token={token} | owner={owner_id}")
-
-    return RedirectResponse(destination_url, 303)
+    return RedirectResponse(link["destination_url"], 303)
 # =========================
 # LINKS
 # =========================
