@@ -1894,12 +1894,12 @@ async def final_reward(request: Request, token: str = Form(...)):
     if not user_id:
         return HTMLResponse("Unauthorized", 401)
 
-    # ================= TOKEN =================
+    # ================= GET TOKEN =================
     token_res = (
         supabase.table("download_tokens")
         .select("*")
         .eq("token", token)
-        .single()
+        .maybe_single()
         .execute()
     )
 
@@ -1908,7 +1908,7 @@ async def final_reward(request: Request, token: str = Form(...)):
 
     token_data = token_res.data
 
-    # ❗ STOP DOUBLE CLAIM
+    # ================= SAFE CHECK =================
     if token_data.get("rewarded"):
         return HTMLResponse("Already claimed", 403)
 
@@ -1917,12 +1917,12 @@ async def final_reward(request: Request, token: str = Form(...)):
 
     short_code = token_data["short_code"]
 
-    # ================= LINK =================
+    # ================= GET LINK =================
     link_res = (
         supabase.table("links")
         .select("destination_url, user_id")
         .eq("short_code", short_code)
-        .single()
+        .maybe_single()
         .execute()
     )
 
@@ -1930,15 +1930,23 @@ async def final_reward(request: Request, token: str = Form(...)):
         return HTMLResponse("Link not found", 404)
 
     link = link_res.data
-    owner_id = link["user_id"]   # 🔥 FIX UTAMA
+    owner_id = link["user_id"]
 
     reward = 300
     commission = int(reward * 0.10)
 
-    # ================= MARK REWARDED (ANTI DOUBLE HIT) =================
-    supabase.table("download_tokens").update({
-        "rewarded": True
-    }).eq("token", token).execute()
+    # ================= ATOMIC UPDATE (ANTI DOUBLE CLAIM) =================
+    update_res = (
+        supabase.table("download_tokens")
+        .update({"rewarded": True})
+        .eq("token", token)
+        .eq("rewarded", False)
+        .execute()
+    )
+
+    # ❗ kalau sudah di-update orang lain → stop
+    if not update_res.data:
+        return HTMLResponse("Already claimed", 403)
 
     # ================= OWNER BALANCE =================
     supabase.rpc(
@@ -1949,17 +1957,17 @@ async def final_reward(request: Request, token: str = Form(...)):
         }
     ).execute()
 
-    # ================= REFERRAL SAFE =================
+    # ================= REFERRAL =================
     ref = (
         supabase.table("referrals")
         .select("user_id")
         .eq("referred_user_id", owner_id)
-        .limit(1)
+        .maybe_single()
         .execute()
     )
 
     if ref.data:
-        referrer_id = ref.data[0]["user_id"]
+        referrer_id = ref.data["user_id"]
 
         supabase.rpc(
             "increment_user_balance",
