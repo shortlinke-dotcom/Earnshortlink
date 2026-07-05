@@ -1774,6 +1774,7 @@ async def task3(request: Request, token: str):
         }
     )
 
+
 @app.post("/complete-task3")
 async def complete_task3(request: Request, token: str = Form(...)):
 
@@ -1783,17 +1784,16 @@ async def complete_task3(request: Request, token: str = Form(...)):
     if not username or not user_id:
         return HTMLResponse("Unauthorized", 401)
 
-    # =========================
-    # GET TOKEN
-    # =========================
     try:
-        res = supabase.table("download_tokens") \
-            .select("*") \
-            .eq("token", token) \
-            .eq("step", 2) \
-            .eq("used", False) \
-            .limit(1) \
+        res = (
+            supabase.table("download_tokens")
+            .select("*")
+            .eq("token", token)
+            .eq("step", 2)
+            .eq("used", False)
+            .limit(1)
             .execute()
+        )
 
     except Exception as e:
         print("DB ERROR COMPLETE TASK3:", e)
@@ -1804,40 +1804,40 @@ async def complete_task3(request: Request, token: str = Form(...)):
 
     token_row = res.data[0]
 
-    # =========================
-    # LINK VALIDATION
-    # =========================
-    link_check = supabase.table("links") \
-        .select("id") \
-        .eq("short_code", token_row["short_code"]) \
-        .limit(1) \
+    # Validasi link
+    link_check = (
+        supabase.table("links")
+        .select("id")
+        .eq("short_code", token_row["short_code"])
+        .limit(1)
         .execute()
+    )
 
     if not link_check.data:
         return HTMLResponse("Invalid link", 403)
 
-    # =========================
-    # FINAL LOCK UPDATE (IMPORTANT)
-    # =========================
-    update = supabase.table("download_tokens") \
+    # Update step terakhir
+    update = (
+        supabase.table("download_tokens")
         .update({
             "step": 3,
             "used": True
-        }) \
-        .eq("token", token) \
-        .eq("step", 2) \
-        .eq("used", False) \
+        })
+        .eq("token", token)
+        .eq("step", 2)
+        .eq("used", False)
         .execute()
+    )
 
     if not update.data:
         return HTMLResponse("Already processed", 409)
 
     print("TASK3 COMPLETED:", token)
 
-    # =========================
-    # REDIRECT REWARD
-    # =========================
-    return RedirectResponse(f"/final-reward?token={token}", 303)
+    # JANGAN REDIRECT
+    return JSONResponse({
+        "success": True
+    })
 # =========================
 # FINAL REWARD
 # =========================
