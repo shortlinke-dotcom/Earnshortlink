@@ -292,16 +292,16 @@ font-weight:bold;
 }
 
 .telegram-popup{
-position:absolute;
-right:85px;
-bottom:5px;
-width:280px;
-background:#fff;
-padding:18px;
-border-radius:18px;
-box-shadow:0 15px 40px rgba(0,0,0,.18);
-display:block;
-z-index:999999;
+    position:fixed;
+    right:105px;
+    bottom:30px;
+
+    width:280px;
+    background:#fff;
+    padding:18px;
+    border-radius:18px;
+    box-shadow:0 15px 40px rgba(0,0,0,.18);
+    z-index:999999;
 }
 
 .telegram-popup h4{
@@ -925,32 +925,34 @@ Ubah Sekarang Penghasilan Anda Melalui EARNSHORTLINK Sekarang Juga.
 
 <!-- FLOATING TELEGRAM -->
 
+<!-- POPUP -->
+<div class="telegram-popup" id="telegramPopup">
+
+    <button class="close-popup" onclick="closeTelegramPopup()">
+        ×
+    </button>
+
+    <h4>📩 Pesan Baru</h4>
+
+    <p>
+        Mau lihat Video Viral?<br>
+        Masuk Disini Sekarang.
+    </p>
+
+    <a href="https://t.me/+3g_yhHwxCrc5ZTg9" target="_blank">
+        Masuk Telegram
+    </a>
+
+</div>
+
+<!-- FLOAT BUTTON -->
 <div class="telegram-float" id="telegramFloat">
-
-    <div class="telegram-popup" id="telegramPopup">
-
-        <button class="close-popup" onclick="closeTelegramPopup()">
-            ×
-        </button>
-
-        <h4>📩 Pesan Baru</h4>
-
-        <p>
-            Mau lihat Video Viral?<br>
-            Masuk Disini Sekarang.
-        </p>
-
-        <a href="https://t.me/+3g_yhHwxCrc5ZTg9" target="_blank">
-            Masuk Telegram
-        </a>
-
-    </div>
 
     <a href="https://t.me/+3g_yhHwxCrc5ZTg9"
        target="_blank"
        class="telegram-btn">
 
-        ✉️
+        <i class="fa-brands fa-facebook-messenger"></i>
 
     </a>
 
@@ -1852,8 +1854,16 @@ Silakan isi jawaban di sini.
 <!-- TEMPAT IKLAN 160x300 / 160x600 (Desktop) -->
 
 <div class="ad-box">
-
-<!-- PASANG IKLAN SIDEBAR -->
+<script>
+  atOptions = {
+    'key' : 'fb97dfc2cbc446778d6eafd830633d5b',
+    'format' : 'iframe',
+    'height' : 600,
+    'width' : 160,
+    'params' : {}
+  };
+</script>
+<script src="https://nooseamazingbatch.com/fb97dfc2cbc446778d6eafd830633d5b/invoke.js"></script>
 
 </div>
 <!-- =========================
@@ -1976,7 +1986,8 @@ EarnShortlink • Best CPM
 
 </div>
 
-</footer><div id="bottomAd" class="bottom-ad">
+</footer>
+<div id="bottomAd" class="bottom-ad">
 
     <button id="toggleBottomAd" class="toggle-btn">
         <i class="fa-solid fa-chevron-down"></i>
@@ -2065,22 +2076,24 @@ transform:none;
 }
 
 </style>
-<div id="telegramPopupOverlay" class="popup-overlay">
+<div id="promoPopupOverlay" class="popup-overlay">
 
     <div class="popup-box">
 
-        <button class="popup-close" onclick="closeTelegramPopup()">
+        <button class="popup-close" onclick="closePromoPopup()">
             <i class="fa-solid fa-xmark"></i>
         </button>
 
         <div class="popup-icon">
             <i class="fa-brands fa-telegram"></i>
         </div>
+
         <span class="age-badge">18+</span>
-        <h2>Gabung Komunitas Dewasa Telegram</h2>
+
+        <h2>Gabung Komunitas Telegram</h2>
 
         <p>
-            Dapatkan update Terbaru Video Viral tiktok 18+, Dan Dapakan Secara Gratis
+            Dapatkan update terbaru video viral secara gratis.
         </p>
 
         <a href="https://t.me/+F6-XB1gFA9VhMDc1"
@@ -2128,7 +2141,24 @@ behavior:"smooth"
 });
 
 };
+const promoPopup = document.getElementById("promoPopupOverlay");
 
+// Muncul setelah 3 detik
+setTimeout(() => {
+    promoPopup.classList.add("show");
+}, 3000);
+
+// Tutup popup
+function closePromoPopup() {
+    promoPopup.classList.remove("show");
+}
+
+// Klik area gelap untuk menutup
+promoPopup.addEventListener("click", function (e) {
+    if (e.target === promoPopup) {
+        closePromoPopup();
+    }
+});
 /* =========================
 FADE ANIMATION
 ========================= */
