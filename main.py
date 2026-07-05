@@ -1508,21 +1508,22 @@ async def shortlink(request: Request, short_code: str):
 @app.get("/task2/{token}")
 async def task2(request: Request, token: str):
 
-    token_data = (
-        supabase.table("download_tokens")
-        .select("*")
-        .eq("token", token)
-        .eq("step", 1)
-        .eq("used", False)
-        .limit(1)
+    username = request.session.get("username")
+    user_id = request.session.get("user_id")
+
+    if not username or not user_id:
+        return HTMLResponse("Unauthorized", 401)
+
+    token_data = supabase.table("download_tokens") \
+        .select("*") \
+        .eq("token", token) \
+        .eq("step", 1) \
+        .eq("used", False) \
+        .limit(1) \
         .execute()
-    )
 
     if not token_data.data:
         return HTMLResponse("Access denied", 403)
-
-    if not request.session.get("username"):
-        return HTMLResponse("Unauthorized", 401)
 
     return templates.TemplateResponse(
         "task2.html",
@@ -1536,25 +1537,26 @@ async def task2(request: Request, token: str):
 @app.post("/complete-task2")
 async def complete_task2(request: Request, token: str = Form(...)):
 
-    if not request.session.get("username"):
+    username = request.session.get("username")
+    if not username:
         return HTMLResponse("Unauthorized", 401)
 
-    data = (
-        supabase.table("download_tokens")
-        .select("*")
-        .eq("token", token)
-        .eq("step", 1)
-        .eq("used", False)
-        .limit(1)
+    data = supabase.table("download_tokens") \
+        .select("*") \
+        .eq("token", token) \
+        .eq("step", 1) \
+        .eq("used", False) \
+        .limit(1) \
         .execute()
-    )
 
     if not data.data:
         return HTMLResponse("Invalid Token", 403)
 
-    supabase.table("download_tokens").update({
-        "step": 2
-    }).eq("token", token).execute()
+    # 🔒 update step
+    supabase.table("download_tokens") \
+        .update({"step": 2}) \
+        .eq("token", token) \
+        .execute()
 
     return RedirectResponse(f"/task3/{token}", 303)
 
@@ -1565,18 +1567,17 @@ async def complete_task2(request: Request, token: str = Form(...)):
 @app.get("/task3/{token}")
 async def task3(request: Request, token: str):
 
-    if not request.session.get("username"):
+    username = request.session.get("username")
+    if not username:
         return HTMLResponse("Unauthorized", 401)
 
-    data = (
-        supabase.table("download_tokens")
-        .select("*")
-        .eq("token", token)
-        .eq("step", 2)
-        .eq("used", False)
-        .limit(1)
+    data = supabase.table("download_tokens") \
+        .select("*") \
+        .eq("token", token) \
+        .eq("step", 2) \
+        .eq("used", False) \
+        .limit(1) \
         .execute()
-    )
 
     if not data.data:
         return HTMLResponse("Access denied", 403)
@@ -1593,18 +1594,17 @@ async def task3(request: Request, token: str):
 @app.post("/final-reward")
 async def final_reward(request: Request, token: str = Form(...)):
 
-    if not request.session.get("username"):
+    user_id = request.session.get("user_id")
+    if not user_id:
         return HTMLResponse("Unauthorized", 401)
 
-    token_res = (
-        supabase.table("download_tokens")
-        .select("*")
-        .eq("token", token)
-        .eq("step", 2)
-        .eq("used", False)
-        .limit(1)
+    token_res = supabase.table("download_tokens") \
+        .select("*") \
+        .eq("token", token) \
+        .eq("step", 2) \
+        .eq("used", False) \
+        .limit(1) \
         .execute()
-    )
 
     if not token_res.data:
         return HTMLResponse("Invalid Token", 403)
@@ -1613,35 +1613,31 @@ async def final_reward(request: Request, token: str = Form(...)):
 
     short_code = token_data["short_code"]
 
-    link = (
-        supabase.table("links")
-        .select("user_id")
-        .eq("short_code", short_code)
-        .single()
+    # ambil owner link
+    link = supabase.table("links") \
+        .select("user_id") \
+        .eq("short_code", short_code) \
+        .single() \
         .execute()
-    )
 
     if not link.data:
         return HTMLResponse("Link not found", 404)
 
     owner_id = link.data["user_id"]
 
-    owner = (
-        supabase.table("users")
-        .select("saldo,total_earn")
-        .eq("id", owner_id)
-        .single()
-        .execute()
-    )
-
-    if not owner.data:
-        return HTMLResponse("User not found", 404)
-
-    # =========================
-    # REWARD PEMILIK LINK
-    # =========================
+    # 🔒 OPTIONAL HARD CHECK (anti abuse)
+    if owner_id != user_id:
+        return HTMLResponse("Forbidden", 403)
 
     reward = 300
+    commission = int(reward * 0.10)
+
+    # update owner
+    owner = supabase.table("users") \
+        .select("saldo,total_earn") \
+        .eq("id", owner_id) \
+        .single() \
+        .execute()
 
     saldo = owner.data.get("saldo") or 0
     total = owner.data.get("total_earn") or 0
@@ -1651,49 +1647,35 @@ async def final_reward(request: Request, token: str = Form(...)):
         "total_earn": total + reward
     }).eq("id", owner_id).execute()
 
-    # =========================
-    # KOMISI REFERRAL (10%)
-    # =========================
-
-    commission = int(reward * 0.10)
-
-    ref = (
-        supabase.table("referrals")
-        .select("user_id")
-        .eq("referred_user_id", owner_id)
-        .limit(1)
+    # referral
+    ref = supabase.table("referrals") \
+        .select("user_id") \
+        .eq("referred_user_id", owner_id) \
+        .limit(1) \
         .execute()
-    )
 
     if ref.data:
-
         referrer_id = ref.data[0]["user_id"]
 
-        referrer = (
-            supabase.table("users")
-            .select("saldo")
-            .eq("id", referrer_id)
-            .single()
+        referrer = supabase.table("users") \
+            .select("saldo") \
+            .eq("id", referrer_id) \
+            .single() \
             .execute()
-        )
 
-        if referrer.data:
+        ref_saldo = referrer.data.get("saldo") or 0
 
-            ref_saldo = referrer.data.get("saldo") or 0
+        supabase.table("users").update({
+            "saldo": ref_saldo + commission
+        }).eq("id", referrer_id).execute()
 
-            supabase.table("users").update({
-                "saldo": ref_saldo + commission
-            }).eq("id", referrer_id).execute()
+    # mark used
+    supabase.table("download_tokens") \
+        .update({"used": True}) \
+        .eq("token", token) \
+        .execute()
 
-    # =========================
-    # TOKEN SELESAI
-    # =========================
-
-    supabase.table("download_tokens").update({
-        "used": True
-    }).eq("token", token).execute()
-
-    return RedirectResponse("/", status_code=303)
+    return RedirectResponse("/", 303)
 # =========================
 # LINKS
 # =========================
