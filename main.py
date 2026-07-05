@@ -1532,9 +1532,12 @@ async def shortlink(request: Request, short_code: str):
         traceback.print_exc()
         return HTMLResponse("Internal Server Error", 500)
 
+
 # =========================
 # TASK2
-# =========================@app.get("/task2/{token}")
+# ========================
+
+@app.get("/task2/{token}")
 async def task2(request: Request, token: str):
 
     username = request.session.get("username")
