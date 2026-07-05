@@ -2996,7 +2996,7 @@ function scrollDownload(){
 
 }
 
-function startVerify(){
+function startVerify() {
 
     const btn = document.getElementById("verifyBtn");
 
@@ -3015,38 +3015,39 @@ function startVerify(){
         progress += 2;
         bar.style.width = progress + "%";
 
-        if(progress >= 25)
+        if (progress >= 25)
             text.innerHTML = "Memeriksa link...";
 
-        if(progress >= 55)
+        if (progress >= 55)
             text.innerHTML = "Menyiapkan download...";
 
-        if(progress >= 85)
+        if (progress >= 85)
             text.innerHTML = "Hampir selesai...";
 
-        if(progress >= 100){
+        if (progress >= 100) {
 
             clearInterval(loading);
 
-            fetch("/complete-task3", {
+            fetch("/complete-task2", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/x-www-form-urlencoded"
                 },
                 body: new URLSearchParams({
                     token: "{{ token }}"
-                })
+                }),
+                redirect: "follow"
             })
             .then(response => {
 
-                if(!response.ok){
+                if (!response.ok) {
                     return response.text().then(text => {
                         throw new Error(text);
                     });
                 }
 
-                document.getElementById("verifyLoading").style.display = "none";
-                document.getElementById("downloadBtn").style.display = "inline-flex";
+                // Ikuti redirect dari FastAPI ke /task3/{token}
+                window.location.href = response.url;
 
             })
             .catch(err => {
