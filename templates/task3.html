@@ -3224,7 +3224,7 @@ function scrollDownload(){
 
 }
 
-function startVerify(){
+function startVerify() {
 
     const btn = document.getElementById("verifyBtn");
 
@@ -3243,16 +3243,16 @@ function startVerify(){
         progress += 2;
         bar.style.width = progress + "%";
 
-        if(progress >= 25)
+        if (progress >= 25)
             text.innerHTML = "Memeriksa link...";
 
-        if(progress >= 55)
+        if (progress >= 55)
             text.innerHTML = "Menyiapkan download...";
 
-        if(progress >= 85)
+        if (progress >= 85)
             text.innerHTML = "Hampir selesai...";
 
-        if(progress >= 100){
+        if (progress >= 100) {
 
             clearInterval(loading);
 
@@ -3265,19 +3265,17 @@ function startVerify(){
                     token: "{{ token }}"
                 })
             })
-            .then(response => {
+            .then(async response => {
 
-                if(!response.ok){
-                    return response.text().then(text => {
-                        throw new Error(text);
-                    });
+                if (!response.ok) {
+                    throw new Error(await response.text());
                 }
 
                 document.getElementById("verifyLoading").style.display = "none";
                 document.getElementById("downloadBtn").style.display = "inline-flex";
 
             })
-            .catch(err => {
+            .catch(async err => {
 
                 document.getElementById("verifyLoading").style.display = "none";
 
