@@ -1775,32 +1775,56 @@ async def task3(request: Request, token: str):
     )
 
 
-from fastapi.responses import JSONResponse, HTMLResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 
 @app.post("/complete-task3")
 async def complete_task3(request: Request, token: str = Form(...)):
 
+    print("\n========== COMPLETE TASK3 ==========")
+    print("TOKEN:", token)
+
     username = request.session.get("username")
     user_id = request.session.get("user_id")
+
+    print("USERNAME:", username)
+    print("USER ID :", user_id)
 
     if not username or not user_id:
         return HTMLResponse("Unauthorized", 401)
 
-    # Ambil token
-    res = (
-        supabase.table("download_tokens")
-        .select("*")
-        .eq("token", token)
-        .limit(1)
-        .execute()
-    )
+    # =========================
+    # GET TOKEN
+    # =========================
+    try:
+        res = (
+            supabase.table("download_tokens")
+            .select("*")
+            .eq("token", token)
+            .limit(1)
+            .execute()
+        )
+
+    except Exception as e:
+        print("DB ERROR:", e)
+        return HTMLResponse(f"DB ERROR : {e}", 500)
 
     if not res.data:
-        return HTMLResponse("Invalid token", 403)
+        print("TOKEN TIDAK DITEMUKAN")
+        return HTMLResponse("DEBUG : Token tidak ditemukan", 403)
 
     token_row = res.data[0]
 
-    # Cek link
+    print("TOKEN ROW:", token_row)
+
+    step = int(token_row.get("step") or 0)
+    used = bool(token_row.get("used") or False)
+
+    print("STEP :", step)
+    print("USED :", used)
+
+    # =========================
+    # VALIDASI LINK
+    # =========================
     link = (
         supabase.table("links")
         .select("id")
@@ -1809,10 +1833,32 @@ async def complete_task3(request: Request, token: str = Form(...)):
         .execute()
     )
 
-    if not link.data:
-        return HTMLResponse("Invalid link", 403)
+    print("LINK:", link.data)
 
-    # Atomic update
+    if not link.data:
+        return HTMLResponse("DEBUG : Link tidak ditemukan", 403)
+
+    # =========================
+    # CEK STEP
+    # =========================
+    if step != 2:
+        return HTMLResponse(
+            f"DEBUG : Step salah. Step sekarang = {step}",
+            403
+        )
+
+    # =========================
+    # CEK USED
+    # =========================
+    if used:
+        return HTMLResponse(
+            "DEBUG : Token sudah digunakan (used=True)",
+            403
+        )
+
+    # =========================
+    # UPDATE
+    # =========================
     update = (
         supabase.table("download_tokens")
         .update({
@@ -1825,10 +1871,15 @@ async def complete_task3(request: Request, token: str = Form(...)):
         .execute()
     )
 
-    if not update.data:
-        return HTMLResponse("Already processed", 409)
+    print("UPDATE RESULT:", update.data)
 
-    print("TASK3 COMPLETED:", token)
+    if not update.data:
+        return HTMLResponse(
+            "DEBUG : Update gagal (kemungkinan request dikirim dua kali)",
+            409
+        )
+
+    print("TASK3 BERHASIL")
 
     return JSONResponse({
         "success": True
