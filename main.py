@@ -1789,8 +1789,6 @@ async def complete_task3(request: Request, token: str = Form(...)):
             supabase.table("download_tokens")
             .select("*")
             .eq("token", token)
-            .eq("step", 2)
-            .eq("used", False)
             .limit(1)
             .execute()
         )
@@ -1800,11 +1798,26 @@ async def complete_task3(request: Request, token: str = Form(...)):
         return HTMLResponse("Server error", 500)
 
     if not res.data:
+        print("TOKEN TIDAK DITEMUKAN:", token)
         return HTMLResponse("Invalid token", 403)
 
     token_row = res.data[0]
 
-    # Validasi link
+    print("TOKEN ROW:", token_row)
+
+    step = int(token_row.get("step") or 0)
+    used = bool(token_row.get("used") or False)
+
+    print("STEP:", step)
+    print("USED:", used)
+
+    if used:
+        return HTMLResponse("Token already used", 403)
+
+    if step != 2:
+        return HTMLResponse(f"Invalid step ({step})", 403)
+
+    # Cek link
     link_check = (
         supabase.table("links")
         .select("id")
@@ -1816,7 +1829,7 @@ async def complete_task3(request: Request, token: str = Form(...)):
     if not link_check.data:
         return HTMLResponse("Invalid link", 403)
 
-    # Update step terakhir
+    # Update step
     update = (
         supabase.table("download_tokens")
         .update({
@@ -1834,7 +1847,6 @@ async def complete_task3(request: Request, token: str = Form(...)):
 
     print("TASK3 COMPLETED:", token)
 
-    # JANGAN REDIRECT
     return JSONResponse({
         "success": True
     })
@@ -1929,9 +1941,7 @@ async def final_reward(request: Request, token: str = Form(...)):
 # =========================
 # LINKS
 # =========================
-from math import ceil
-from fastapi import Request, Query
-from fastapi.responses import RedirectResponse
+
 
 from math import ceil
 from fastapi import Request, Query
