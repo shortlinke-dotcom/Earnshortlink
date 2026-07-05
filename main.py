@@ -1655,70 +1655,42 @@ async def task2(request: Request, token: str):
 @app.post("/complete-task2")
 async def complete_task2(request: Request, token: str = Form(...)):
 
-    print("=== COMPLETE TASK2 ===")
-    print("TOKEN DITERIMA:", token)
-
     username = request.session.get("username")
     user_id = request.session.get("user_id")
 
     if not username or not user_id:
         return HTMLResponse("Unauthorized", 401)
 
-    try:
-        token_res = (
-            supabase.table("download_tokens")
-            .select("*")
-            .eq("token", token)
-            .limit(1)
-            .execute()
-        )
-
-        print("HASIL QUERY:", token_res.data)
-
-    except Exception as e:
-        print("DB ERROR COMPLETE TASK2:", e)
-        return HTMLResponse("Server error", 500)
+    token_res = (
+        supabase.table("download_tokens")
+        .select("*")
+        .eq("token", token)
+        .limit(1)
+        .execute()
+    )
 
     if not token_res.data:
-        print("TOKEN TIDAK DITEMUKAN:", token)
         return HTMLResponse("Invalid Token", 403)
 
     token_row = token_res.data[0]
-
-    print("TOKEN ROW:", token_row)
 
     step = int(token_row.get("step") or 0)
     used = bool(token_row.get("used") or False)
 
     if used:
-        print("TOKEN SUDAH DIGUNAKAN")
         return HTMLResponse("Token already used", 403)
 
-    if step != 1:
-        print("INVALID STEP:", step)
+    # Kalau sudah di task3, langsung lanjut
+    if step >= 2:
+        return RedirectResponse(f"/task3/{token}", status_code=303)
+
+    if step < 1:
         return HTMLResponse("Invalid Step", 403)
-
-    try:
-        link_check = (
-            supabase.table("links")
-            .select("id")
-            .eq("short_code", token_row["short_code"])
-            .limit(1)
-            .execute()
-        )
-
-    except Exception as e:
-        print("LINK CHECK ERROR:", e)
-        return HTMLResponse("Server error", 500)
-
-    if not link_check.data:
-        return HTMLResponse("Invalid Link", 403)
 
     update = (
         supabase.table("download_tokens")
         .update({
-            "step": 2,
-            "used": False
+            "step": 2
         })
         .eq("token", token)
         .eq("step", 1)
@@ -1726,13 +1698,8 @@ async def complete_task2(request: Request, token: str = Form(...)):
         .execute()
     )
 
-    print("UPDATE RESULT:", update.data)
-
     if not update.data:
-        print("UPDATE GAGAL")
-        return HTMLResponse("Already processed or expired", 409)
-
-    print("TASK2 COMPLETED:", token)
+        return RedirectResponse(f"/task3/{token}", status_code=303)
 
     return RedirectResponse(f"/task3/{token}", status_code=303)
 
