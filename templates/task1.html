@@ -1940,6 +1940,7 @@ Seluruh transaksi dilakukan secara aman dan transparan sehingga publisher dapat 
 Silakan lakukan verifikasi terlebih dahulu.
 </p>
 
+<!-- VERIFIKASI BUTTON -->
 <button
 id="verifyBtn"
 class="btn-primary small-btn"
@@ -1952,6 +1953,7 @@ Verifikasi
 
 </button>
 
+<!-- LOADING -->
 <div id="verifyLoading" style="display:none;margin-top:25px;">
 
     <div class="progress-box">
@@ -1962,11 +1964,12 @@ Verifikasi
 
 </div>
 
+<!-- LINK LANJUT (SUDAH FIX) -->
 <a
-href="task2.html"
 id="downloadBtn"
 class="btn-secondary small-btn"
-style="display:none;margin-top:25px;">
+style="display:none;margin-top:25px;"
+href="/task2/{{ token }}">
 
 <i class="fa-solid fa-download"></i>
 Lanjut Download
@@ -2544,42 +2547,36 @@ popup.style.display="none";
 
 </script>
 <script>
-
-let running=false;
+let running = false;
 
 function startDownload(){
 
-if(running)return;
+    if(running) return;
 
-running=true;
+    running = true;
 
-document.getElementById("startBtn").style.display="none";
+    document.getElementById("startBtn").style.display = "none";
+    document.getElementById("heroLoading").style.display = "block";
 
-document.getElementById("heroLoading").style.display="block";
+    let count = 10;
+    const timer = document.getElementById("heroTimer");
+    timer.innerHTML = count;
 
-let count=10;
+    const x = setInterval(() => {
 
-const timer=document.getElementById("heroTimer");
+        count--;
+        timer.innerHTML = count;
 
-timer.innerHTML=count;
+        if(count <= 0){
 
-const x=setInterval(()=>{
+            clearInterval(x);
 
-count--;
+            document.getElementById("heroLoading").style.display = "none";
+            document.getElementById("scrollBtn").style.display = "inline-block";
 
-timer.innerHTML=count;
+        }
 
-if(count<=0){
-
-clearInterval(x);
-
-document.getElementById("heroLoading").style.display="none";
-
-document.getElementById("scrollBtn").style.display="inline-block";
-
-}
-
-},1000);
+    }, 1000);
 
 }
 
@@ -2591,7 +2588,6 @@ function scrollDownload(){
     });
 
     const btn = document.getElementById("verifyBtn");
-
     btn.disabled = false;
     btn.style.opacity = "1";
 
@@ -2599,39 +2595,73 @@ function scrollDownload(){
 
 function startVerify(){
 
-    const btn=document.getElementById("verifyBtn");
-    btn.disabled=true;
-    btn.style.display="none";
+    const btn = document.getElementById("verifyBtn");
 
-    document.getElementById("verifyLoading").style.display="block";
+    btn.disabled = true;
+    btn.style.display = "none";
 
-    const bar=document.getElementById("verifyProgress");
-    const text=document.getElementById("verifyText");
+    document.getElementById("verifyLoading").style.display = "block";
 
-    let progress=0;
+    const bar = document.getElementById("verifyProgress");
+    const text = document.getElementById("verifyText");
 
-    const loading=setInterval(()=>{
+    let progress = 0;
 
-        progress+=2;
-        bar.style.width=progress+"%";
+    const loading = setInterval(() => {
 
-        if(progress>=25) text.innerHTML="Memeriksa link...";
-        if(progress>=55) text.innerHTML="Menyiapkan download...";
-        if(progress>=85) text.innerHTML="Hampir selesai...";
+        progress += 2;
+        bar.style.width = progress + "%";
 
-        if(progress>=100){
+        if(progress >= 25)
+            text.innerHTML = "Memeriksa link...";
+
+        if(progress >= 55)
+            text.innerHTML = "Menyiapkan download...";
+
+        if(progress >= 85)
+            text.innerHTML = "Hampir selesai...";
+
+        if(progress >= 100){
 
             clearInterval(loading);
 
-            document.getElementById("verifyLoading").style.display="none";
-            document.getElementById("downloadBtn").style.display="inline-block";
+            fetch("/complete-task2", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: new URLSearchParams({
+                    token: "{{ token }}"
+                })
+            })
+            .then(response => {
+
+                if(!response.ok){
+                    return response.text().then(text => {
+                        throw new Error(text);
+                    });
+                }
+
+                document.getElementById("verifyLoading").style.display = "none";
+                document.getElementById("downloadBtn").style.display = "inline-flex";
+
+            })
+            .catch(err => {
+
+                document.getElementById("verifyLoading").style.display = "none";
+
+                btn.style.display = "inline-flex";
+                btn.disabled = false;
+
+                alert(err.message || "Terjadi kesalahan.");
+
+            });
 
         }
 
-    },80);
+    }, 80);
 
 }
-
 </script>
 <script>
 
