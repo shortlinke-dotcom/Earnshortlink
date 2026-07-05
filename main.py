@@ -1895,7 +1895,7 @@ async def final_reward(request: Request, token: str = Form(...)):
         return HTMLResponse("Unauthorized", 401)
 
     # =========================
-    # GET TOKEN
+    # TOKEN
     # =========================
     token_res = (
         supabase.table("download_tokens")
@@ -1916,7 +1916,7 @@ async def final_reward(request: Request, token: str = Form(...)):
     short_code = token_data["short_code"]
 
     # =========================
-    # GET LINK (PAKAI UUID FIELD YANG BENAR)
+    # LINK (PAKAI user_uuid ❗)
     # =========================
     link_res = (
         supabase.table("links")
@@ -1931,7 +1931,7 @@ async def final_reward(request: Request, token: str = Form(...)):
 
     link_data = link_res.data
 
-    owner_id = link_data["user_uuid"]  # ✅ FIX UTAMA
+    owner_id = link_data["user_uuid"]   # 🔥 FIX UTAMA
 
     destination_url = link_data["destination_url"]
 
@@ -1939,18 +1939,18 @@ async def final_reward(request: Request, token: str = Form(...)):
     commission = int(reward * 0.10)
 
     # =========================
-    # UPDATE OWNER BALANCE
+    # UPDATE SALDO (UUID SAFE)
     # =========================
     supabase.rpc(
         "increment_user_balance",
         {
-            "uid": owner_id,
+            "uid": owner_id,   # UUID ✔
             "amount": reward
         }
     ).execute()
 
     # =========================
-    # REFERRAL BONUS
+    # REFERRAL
     # =========================
     ref = (
         supabase.table("referrals")
@@ -1973,7 +1973,7 @@ async def final_reward(request: Request, token: str = Form(...)):
 
     print(f"REWARD SUCCESS | token={token} | owner={owner_id}")
 
-    return RedirectResponse(destination_url, status_code=303)
+    return RedirectResponse(destination_url, 303)
 # =========================
 # LINKS
 # =========================
