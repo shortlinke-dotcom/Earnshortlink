@@ -1775,6 +1775,8 @@ async def task3(request: Request, token: str):
     )
 
 
+from fastapi.responses import JSONResponse, HTMLResponse
+
 @app.post("/complete-task3")
 async def complete_task3(request: Request, token: str = Form(...)):
 
@@ -1784,41 +1786,22 @@ async def complete_task3(request: Request, token: str = Form(...)):
     if not username or not user_id:
         return HTMLResponse("Unauthorized", 401)
 
-    try:
-        res = (
-            supabase.table("download_tokens")
-            .select("*")
-            .eq("token", token)
-            .limit(1)
-            .execute()
-        )
-
-    except Exception as e:
-        print("DB ERROR COMPLETE TASK3:", e)
-        return HTMLResponse("Server error", 500)
+    # Ambil token
+    res = (
+        supabase.table("download_tokens")
+        .select("*")
+        .eq("token", token)
+        .limit(1)
+        .execute()
+    )
 
     if not res.data:
-        print("TOKEN TIDAK DITEMUKAN:", token)
         return HTMLResponse("Invalid token", 403)
 
     token_row = res.data[0]
 
-    print("TOKEN ROW:", token_row)
-
-    step = int(token_row.get("step") or 0)
-    used = bool(token_row.get("used") or False)
-
-    print("STEP:", step)
-    print("USED:", used)
-
-    if used:
-        return HTMLResponse("Token already used", 403)
-
-    if step != 2:
-        return HTMLResponse(f"Invalid step ({step})", 403)
-
     # Cek link
-    link_check = (
+    link = (
         supabase.table("links")
         .select("id")
         .eq("short_code", token_row["short_code"])
@@ -1826,10 +1809,10 @@ async def complete_task3(request: Request, token: str = Form(...)):
         .execute()
     )
 
-    if not link_check.data:
+    if not link.data:
         return HTMLResponse("Invalid link", 403)
 
-    # Update step
+    # Atomic update
     update = (
         supabase.table("download_tokens")
         .update({
