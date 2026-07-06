@@ -1895,7 +1895,7 @@ async def final_reward(request: Request, token: str = Form(...)):
     if not user_id:
         return HTMLResponse("Unauthorized", 401)
 
-    # ================= GET TOKEN =================
+    # ================= TOKEN SAFE FETCH =================
     token_res = (
         supabase.table("download_tokens")
         .select("*")
@@ -1905,20 +1905,21 @@ async def final_reward(request: Request, token: str = Form(...)):
     )
 
     token_data = token_res.data[0] if token_res.data else None
-
     if not token_data:
         return HTMLResponse("Invalid Token", 403)
 
-    # ================= CHECK STATUS =================
+    # ================= STATUS CHECK =================
     if token_data.get("used") is not True:
         return HTMLResponse("Task belum selesai", 403)
 
     if token_data.get("rewarded") is True:
         return HTMLResponse("Already claimed", 403)
 
-    short_code = token_data["short_code"]
+    short_code = token_data.get("short_code")
+    if not short_code:
+        return HTMLResponse("Invalid short_code", 400)
 
-    # ================= GET LINK =================
+    # ================= LINK SAFE FETCH =================
     link_res = (
         supabase.table("links")
         .select("destination_url, user_id")
@@ -1928,16 +1929,19 @@ async def final_reward(request: Request, token: str = Form(...)):
     )
 
     link_data = link_res.data[0] if link_res.data else None
-
     if not link_data:
         return HTMLResponse("Link not found", 404)
 
-    owner_id = link_data["user_id"]  # UUID jangan diubah
+    owner_id = link_data.get("user_id")
+    destination_url = link_data.get("destination_url")
+
+    if not owner_id or not destination_url:
+        return HTMLResponse("Broken link data", 500)
 
     reward = 165
     commission = int(reward * 0.10)
 
-    # ================= ATOMIC UPDATE =================
+    # ================= ATOMIC CLAIM (ANTI DOUBLE CLICK) =================
     update_res = (
         supabase.table("download_tokens")
         .update({"rewarded": True})
@@ -1946,20 +1950,24 @@ async def final_reward(request: Request, token: str = Form(...)):
         .execute()
     )
 
-    # kalau tidak ada row yang berubah → sudah di-claim
+    # kalau tidak ada row yang berubah → sudah diklaim
     if not update_res.data:
         return HTMLResponse("Already claimed", 403)
 
-    # ================= OWNER BALANCE =================
-    supabase.rpc(
-        "increment_user_balance",
-        {
-            "uid": owner_id,   # ❗ JANGAN int()
-            "amount": reward
-        }
-    ).execute()
+    # ================= OWNER BALANCE SAFE RPC =================
+    try:
+        supabase.rpc(
+            "increment_user_balance",
+            {
+                "uid": owner_id,   # HARUS SAMA TIPE DI DB (UUID / TEXT)
+                "amount": reward
+            }
+        ).execute()
+    except Exception as e:
+        # rollback mindset (opsional log)
+        return HTMLResponse(f"Reward error: {str(e)}", 500)
 
-    # ================= REFERRAL (SAFE) =================
+    # ================= REFERRAL SAFE =================
     ref_res = (
         supabase.table("referrals")
         .select("user_id")
@@ -1970,18 +1978,21 @@ async def final_reward(request: Request, token: str = Form(...)):
 
     ref_data = ref_res.data[0] if ref_res.data else None
 
-    if ref_data:
+    if ref_data and ref_data.get("user_id"):
         referrer_id = ref_data["user_id"]
 
-        supabase.rpc(
-            "increment_user_balance",
-            {
-                "uid": referrer_id,  # UUID
-                "amount": commission
-            }
-        ).execute()
+        try:
+            supabase.rpc(
+                "increment_user_balance",
+                {
+                    "uid": referrer_id,
+                    "amount": commission
+                }
+            ).execute()
+        except:
+            pass  # jangan ganggu flow utama
 
-    return RedirectResponse(link_data["destination_url"], 303)
+    return RedirectResponse(destination_url, 303)
 # =========================
 # LINKS
 # =========================
