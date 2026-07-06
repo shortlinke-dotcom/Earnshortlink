@@ -1900,17 +1900,21 @@ async def final_reward(request: Request, token: str = Form(...)):
         supabase.table("download_tokens")
         .select("*")
         .eq("token", token)
-        .single()
+        .limit(1)
         .execute()
     )
 
-    if not token_res.data:
+    token_data = token_res.data[0] if token_res.data else None
+
+    if not token_data:
         return HTMLResponse("Invalid Token", 403)
 
-    token_data = token_res.data
-
-    if not token_data.get("used"):
+    # ================= CHECK STATUS =================
+    if token_data.get("used") is not True:
         return HTMLResponse("Task belum selesai", 403)
+
+    if token_data.get("rewarded") is True:
+        return HTMLResponse("Already claimed", 403)
 
     short_code = token_data["short_code"]
 
@@ -1919,21 +1923,22 @@ async def final_reward(request: Request, token: str = Form(...)):
         supabase.table("links")
         .select("destination_url, user_id")
         .eq("short_code", short_code)
-        .single()
+        .limit(1)
         .execute()
     )
 
-    if not link_res.data:
+    link_data = link_res.data[0] if link_res.data else None
+
+    if not link_data:
         return HTMLResponse("Link not found", 404)
 
-    link = link_res.data
-    owner_id = link["user_id"]
+    owner_id = link_data["user_id"]  # UUID jangan diubah
 
-    reward = 300
+    reward = 165
     commission = int(reward * 0.10)
 
-    # ================= 🔥 ATOMIC CLAIM LOCK =================
-    claim_res = (
+    # ================= ATOMIC UPDATE =================
+    update_res = (
         supabase.table("download_tokens")
         .update({"rewarded": True})
         .eq("token", token)
@@ -1941,44 +1946,42 @@ async def final_reward(request: Request, token: str = Form(...)):
         .execute()
     )
 
-    # kalau tidak ada row yang di-update → sudah diklaim
-    if not claim_res.data:
+    # kalau tidak ada row yang berubah → sudah di-claim
+    if not update_res.data:
         return HTMLResponse("Already claimed", 403)
-
-    # ================= FIX UUID SAFETY =================
-    # JANGAN cast int kalau column UUID
-    uid = owner_id  # biarkan string UUID
 
     # ================= OWNER BALANCE =================
     supabase.rpc(
         "increment_user_balance",
         {
-            "uid": uid,
+            "uid": owner_id,   # ❗ JANGAN int()
             "amount": reward
         }
     ).execute()
 
-    # ================= REFERRAL SAFE =================
+    # ================= REFERRAL (SAFE) =================
     ref_res = (
         supabase.table("referrals")
         .select("user_id")
-        .eq("referred_user_id", uid)
-        .maybe_single()
+        .eq("referred_user_id", owner_id)
+        .limit(1)
         .execute()
     )
 
-    if ref_res.data:
-        referrer_id = ref_res.data["user_id"]
+    ref_data = ref_res.data[0] if ref_res.data else None
+
+    if ref_data:
+        referrer_id = ref_data["user_id"]
 
         supabase.rpc(
             "increment_user_balance",
             {
-                "uid": referrer_id,
+                "uid": referrer_id,  # UUID
                 "amount": commission
             }
         ).execute()
 
-    return RedirectResponse(link["destination_url"], 303)
+    return RedirectResponse(link_data["destination_url"], 303)
 # =========================
 # LINKS
 # =========================
